@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.1] - 2026-03-01
+
+### Fixed
+
+- **`/wos:report-issue` skill improvements.** Added adaptive follow-up probing
+  for vague bug reports (capped at 2 probes), duplicate search phase before
+  drafting via `gh issue list --search`, title quality check enforcing
+  component + behavior + context, "Workaround / Proposed Fix" section in bug
+  template, and "Acceptance Criteria" section in feature template.
+  ([#112](https://github.com/bcbeidel/wos/issues/112),
+  [#113](https://github.com/bcbeidel/wos/pull/113))
+- **`/wos:retrospective` skill improvements.** Replaced abstract questions with
+  incident-anchored prompts that ask for specific moments. Added adaptive
+  follow-up with 3 probe types (vague, abstract, missing-why) capped at 1 per
+  question, duplicate search phase before drafting, and a new "Synthesize Action
+  Items" phase using Observation-Impact-Request structure with severity labels
+  (`blocking`/`friction`/`nit`). Workflow expanded from 5 to 7 phases.
+  ([#111](https://github.com/bcbeidel/wos/issues/111),
+  [#114](https://github.com/bcbeidel/wos/pull/114))
+
 ## [0.8.0] - 2026-02-28
 
 ### Added
@@ -606,6 +626,7 @@ implemented with 229 tests passing.
 - Build roadmap with session protocol and dependency graph
 - 18 design principles across four layers
 
+[0.8.1]: https://github.com/bcbeidel/wos/releases/tag/v0.8.1
 [0.8.0]: https://github.com/bcbeidel/wos/releases/tag/v0.8.0
 [0.7.0]: https://github.com/bcbeidel/wos/releases/tag/v0.7.0
 [0.6.0]: https://github.com/bcbeidel/wos/releases/tag/v0.6.0
