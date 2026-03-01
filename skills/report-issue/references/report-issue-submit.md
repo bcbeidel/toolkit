@@ -38,6 +38,9 @@ incomplete, ask one targeted follow-up before moving on:
 - No error output mentioned → "Did you see any error messages or
   unexpected output?"
 
+If the user describes multiple distinct problems, ask which one to file
+first and note the others for follow-up issues.
+
 Cap at 2 follow-up probes total. If the response is already specific
 and complete, proceed to classification.
 
@@ -70,13 +73,15 @@ If ambiguous, ask: "Should I file this as a **bug report** or a
 Before drafting, search for related existing issues:
 
 ```bash
-gh issue list --repo bcbeidel/wos --state open --search "KEYWORDS_HERE" --limit 5
+gh issue list --repo bcbeidel/wos --state all --search "KEYWORDS_HERE" --limit 5
 ```
 
 Use 2-3 keywords extracted from the user's description. Vary terms
 (e.g., "crash" vs. "error") to catch near-duplicates.
 
-If related issues are found, show them to the user and offer:
+If related issues are found, show them to the user. For closed issues,
+note the resolution (fixed, won't-fix, duplicate) so the user has
+context. Then offer:
 
 1. **Comment on existing** — add new context to the existing issue
 2. **File new with cross-reference** — proceed, mentioning related

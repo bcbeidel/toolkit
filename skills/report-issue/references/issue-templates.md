@@ -6,8 +6,6 @@ with gathered context.
 ## Bug Report
 
 ```markdown
-> **One issue per report.** If you have multiple problems, file separate issues.
-
 ## Description
 
 [What happened — clear, concise description of the bug]
@@ -26,6 +24,10 @@ with gathered context.
 ## Actual Behavior
 
 [What actually happened, including full error messages]
+
+## Workaround / Proposed Fix
+
+[Optional: any workaround you found, or ideas for a fix]
 
 ## Environment
 
