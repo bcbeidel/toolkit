@@ -25,6 +25,10 @@ with gathered context.
 
 [What actually happened, including full error messages]
 
+## Workaround / Proposed Fix
+
+[Optional: any workaround you found, or ideas for a fix]
+
 ## Environment
 
 - **wos version:** [version from plugin.json]
@@ -47,6 +51,12 @@ where behavior changes.
 
 - **Scope:** What's included in this proposal
 - **Non-goals:** What's explicitly excluded to prevent scope creep]
+
+## Acceptance Criteria
+
+This issue is resolved when:
+
+- [specific observable condition]
 
 ## Environment
 
