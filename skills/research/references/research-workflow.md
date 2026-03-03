@@ -1,6 +1,6 @@
 # Research Workflow
 
-Six-phase investigation process. All research modes follow these phases,
+Eight-phase investigation process. All research modes follow these phases,
 with SIFT intensity and Challenge sub-steps varying by mode (see
 research-modes.md).
 
@@ -16,7 +16,9 @@ Read the document to determine which phases are complete:
 - Has `sources:` in frontmatter but no tier annotations in body → resume at Phase 3
 - Has tier annotations but no `## Challenge` section → resume at Phase 4
 - Has `## Challenge` section but no `## Findings` section → resume at Phase 5
-- Has `## Findings` section but still has `<!-- DRAFT -->` → resume at Phase 6
+- Has `## Findings` section but no `## Claims` section → resume at Phase 5.5a
+- Has `## Claims` section with `unverified` entries → resume at Phase 5.5b
+- Has `## Claims` section with no `unverified` entries but still has `<!-- DRAFT -->` → resume at Phase 6
 
 When resuming, read the document fully to recover context before continuing.
 
