@@ -214,8 +214,13 @@ Three sub-steps, applied based on research mode (see research-modes.md):
 6. Identify actionable insights
 7. Note limitations — what couldn't be determined and why
 8. Suggest follow-up questions if the investigation revealed new unknowns
+9. **Writing constraint for claims:** When writing findings, ensure every
+   quote, statistic, attribution, and superlative is traceable to a cited
+   source. If you cannot point to a specific source for a factual claim,
+   do not include it. General observations and trend descriptions are fine
+   without specific citations.
 
-9. **Update the document on disk.** Add a `## Findings` section organized
+10. **Update the document on disk.** Add a `## Findings` section organized
    by sub-question with confidence levels, counter-evidence (if applicable),
    and a connections/implications section. Update the `description:` in
    frontmatter to reflect actual findings.
