@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-03-03
+
+### Added
+
+- **Claim verification for `/wos:research` skill.** New claim-level fact-checking
+  workflow that catches fabricated quotes, inflated statistics, misattributions,
+  and incorrect superlatives before research documents are finalized. Includes:
+  - 4 claim types (quote, statistic, attribution, superlative) with a Claims Table
+    format for registering and tracking verification status
+  - Phase 5.5a (CoVe self-verification): extracts claims and verifies them
+    independently to prevent confirmation bias
+  - Phase 5.5b (citation re-verification): re-fetches sources and cross-checks
+    claims against actual source content
+  - 5 resolution statuses (verified, corrected, removed, unverifiable, human-review)
+    with uniform contradiction resolution procedure
+  - Writing constraints in Phase 5, gate checks in Phase 6, updated Quality Checklist
+  - Context-reset resumption logic for the new phases
+  - New reference file: `skills/research/references/claim-verification.md`
+  ([#118](https://github.com/bcbeidel/wos/issues/118),
+  [#121](https://github.com/bcbeidel/wos/pull/121))
+
 ## [0.8.1] - 2026-03-01
 
 ### Fixed
