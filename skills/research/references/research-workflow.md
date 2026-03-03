@@ -225,6 +225,51 @@ Three sub-steps, applied based on research mode (see research-modes.md):
    and a connections/implications section. Update the `description:` in
    frontmatter to reflect actual findings.
 
+## Phase 5.5a: Self-Verify Claims (CoVe)
+
+Extract and self-verify all high-risk claims before citation re-checking.
+See `references/claim-verification.md` for claim types, table format, and
+full procedure.
+
+1. Scan the Findings section. Extract every quote, statistic, attribution,
+   and superlative into a `## Claims` table in the document. All statuses
+   start as `unverified`.
+2. For each claim, generate a verification question appropriate to its type.
+3. Answer each verification question in a **separate LLM call without the
+   draft in context** to prevent confirmation bias.
+4. Compare CoVe answers to claims:
+   - Agrees → advance to Phase 5.5b
+   - Contradicts → route through contradiction resolution
+     (see `references/claim-verification.md`)
+   - Uncertain → advance to Phase 5.5b
+
+5. **Update the document on disk.** The `## Claims` table should now exist
+   with all claims extracted and CoVe-processed.
+
+**Gate:** Claims Table populated. All claims processed through CoVe.
+Contradictions routed or resolved.
+
+## Phase 5.5b: Citation Re-Verify Claims
+
+Cross-check claims against their cited sources. See
+`references/claim-verification.md` for resolution statuses and procedure.
+
+1. Group remaining `unverified` claims by source URL.
+2. Re-fetch each source URL via WebFetch.
+3. For each claim citing that source, search the fetched content for the
+   specific fact. Assign final status: `verified`, `corrected`, `removed`,
+   `unverifiable`, or `human-review`.
+4. For `corrected` claims: update the claim text in the document body to
+   match the source. Note the original wording in the Claims Table.
+5. For `removed` claims: delete the claim from the document body. Keep the
+   row in the Claims Table with `removed` status.
+
+6. **Update the document on disk.** Claims Table should have no `unverified`
+   statuses remaining.
+
+**Gate:** No `unverified` claims remain. `unverifiable` and `human-review`
+claims are annotated.
+
 ## Phase 6: Finalize Research Document
 
 The document already exists on disk with content from Phases 2-5. This phase
