@@ -6,16 +6,16 @@ vary in SIFT rigor, source requirements, and counter-evidence needs.
 
 ## Mode Matrix
 
-| Mode | Min Sources | SIFT Rigor | Counter-Evidence | Challenge | Typical Duration |
-|------|-------------|------------|------------------|-----------|------------------|
-| deep-dive | 8+ | High | Required | Full | Long |
-| landscape | 6+ | Medium | Optional | Partial | Medium |
-| technical | 6+ | High | Required | Partial | Long |
-| feasibility | 4+ | Medium | Required | Full | Medium |
-| competitive | 6+ | Medium | Optional | Full | Medium |
-| options | 6+ | High | Required | Full | Long |
-| historical | 4+ | Low | Optional | Partial | Short |
-| open-source | 4+ | Medium | Optional | Partial | Medium |
+| Mode | Min Sources | SIFT Rigor | Counter-Evidence | Challenge | Claim Verification | Typical Duration |
+|------|-------------|------------|------------------|-----------|-------------------|------------------|
+| deep-dive | 8+ | High | Required | Full | Full | Long |
+| landscape | 6+ | Medium | Optional | Partial | Full | Medium |
+| technical | 6+ | High | Required | Partial | Full | Long |
+| feasibility | 4+ | Medium | Required | Full | Full | Medium |
+| competitive | 6+ | Medium | Optional | Full | Full | Medium |
+| options | 6+ | High | Required | Full | Full | Long |
+| historical | 4+ | Low | Optional | Partial | Full | Short |
+| open-source | 4+ | Medium | Optional | Partial | Full | Medium |
 
 ## Challenge Sub-Steps by Mode
 
