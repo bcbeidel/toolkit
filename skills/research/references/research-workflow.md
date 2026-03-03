@@ -301,13 +301,18 @@ restructures it for the final reader and runs validation.
 
 3. **Remove the `<!-- DRAFT -->` marker** from the document.
 
-4. **Regenerate index files:**
+4. **Verify claims status.** Check the `## Claims` table: no claims should
+   have `unverified` status. Claims marked `unverifiable` or `human-review`
+   must have annotations visible in the document body (e.g., "[unverifiable —
+   source returned 403]" or "[human-review — CoVe contradicted, no source]").
+
+5. **Regenerate index files:**
 
 ```bash
 uv run <plugin-scripts-dir>/reindex.py --root .
 ```
 
-5. **Validate the document:**
+6. **Validate the document:**
 
 ```bash
 uv run <plugin-scripts-dir>/audit.py <file> --root . --no-urls
@@ -325,6 +330,9 @@ Before removing the `<!-- DRAFT -->` marker, verify:
 - [ ] Counter-evidence section present (if mode requires it)
 - [ ] No T6 (AI-generated) sources cited
 - [ ] Search protocol section present with all searches logged
+- [ ] All high-risk claims (quotes, statistics, attributions, superlatives) registered in Claims Table
+- [ ] No claims with `unverified` status remain
+- [ ] `unverifiable` and `human-review` claims annotated in document body
 - [ ] Implications connected to the user's context
 - [ ] Document passes validation:
   `uv run <plugin-scripts-dir>/audit.py <file> --root . --no-urls`
