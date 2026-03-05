@@ -85,7 +85,7 @@ instructions, areas table, metadata format, and communication preferences.
 
 ### Skills
 
-Prefix: `/wos:` (e.g., `/wos:init`, `/wos:audit`). 8 skills:
+Prefix: `/wos:` (e.g., `/wos:init`, `/wos:audit`). 7 skills:
 
 | Skill | Purpose |
 |-------|---------|
@@ -93,10 +93,16 @@ Prefix: `/wos:` (e.g., `/wos:init`, `/wos:audit`). 8 skills:
 | `/wos:audit` | Validate project health (7 checks + auto-fix) |
 | `/wos:research` | SIFT-based research with source verification |
 | `/wos:distill` | Convert research artifacts into focused context files |
-| `/wos:consider` | Mental models for problem analysis |
 | `/wos:refine-prompt` | Assess and refine prompts using evidence-backed techniques |
 | `/wos:report-issue` | File GitHub issues against WOS repo |
 | `/wos:retrospective` | Session review and feedback submission |
+
+### Commands
+
+| Command | Purpose |
+|---------|---------|
+| `/wos:consider` | Mental models for problem analysis (16 models) |
+| `/wos:consider:{model}` | Apply a specific mental model (e.g., `first-principles`, `inversion`) |
 
 ### Validation (7 checks, warn/fail severity)
 

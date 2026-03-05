@@ -1,7 +1,6 @@
 ---
 description: Assess decision risk by classifying as one-way or two-way door
 argument-hint: "[decision to evaluate for reversibility]"
-user-invocable: true
 ---
 
 <objective>

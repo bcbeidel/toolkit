@@ -1,18 +1,11 @@
 ---
-name: consider
-description: >
-  This skill should be used when the user wants to "think through",
-  "analyze", "consider", "evaluate", "reason about", "break down",
-  "prioritize", or apply structured thinking to a problem. Each model
-  is a separate sub-skill invoked as /wos:consider:{model-name}.
+description: Apply structured mental models to think through problems
 argument-hint: "{model-name} [topic to analyze]"
-user-invocable: true
 ---
 
-# Consider Skill
-
-Apply structured mental models to problems. Each model is a sub-skill in its
-own directory — adding a new model requires creating a `<model-name>/SKILL.md` file.
+Apply structured mental models to problems. If a specific model was requested,
+invoke the matching `/consider:{model-name}` command. If no model was specified,
+help the user choose by presenting the options below.
 
 ## Available Models
 
@@ -37,12 +30,11 @@ own directory — adding a new model requires creating a `<model-name>/SKILL.md`
 
 ## Usage
 
-Invoke any model with a topic:
-
 ```
-/wos:consider:first-principles how to design a caching system
-/wos:consider:inversion how to make our product successful
-/wos:consider:pareto where to focus testing effort
+/consider:first-principles how to design a caching system
+/consider:inversion how to make our product successful
+/consider:pareto where to focus testing effort
 ```
 
-If no topic is provided, apply the model to the current discussion context.
+If no model is specified, ask the user what they want to think through, then
+suggest 2-3 models that would be most relevant to their problem.
