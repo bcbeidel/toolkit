@@ -98,7 +98,7 @@ def _reindex_directory(directory: Path, generate_index_fn, extract_preamble_fn) 
 
 def _update_agents_md_areas(root: Path) -> None:
     """Auto-update the AGENTS.md areas table from disk state."""
-    from wos.agents_md import discover_areas, update_agents_md
+    from wos.agents_md import discover_areas, extract_preferences, update_agents_md
 
     agents_path = root / "AGENTS.md"
     if not agents_path.is_file():
@@ -106,7 +106,8 @@ def _update_agents_md_areas(root: Path) -> None:
 
     areas = discover_areas(root)
     content = agents_path.read_text(encoding="utf-8")
-    updated = update_agents_md(content, areas)
+    preferences = extract_preferences(content)
+    updated = update_agents_md(content, areas, preferences=preferences or None)
     if updated != content:
         agents_path.write_text(updated, encoding="utf-8")
         print(f"Updated AGENTS.md areas table ({len(areas)} areas).")

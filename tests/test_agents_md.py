@@ -348,6 +348,47 @@ class TestReindexUpdatesAgentsMd:
         assert "| API documentation | docs/context/api |" in updated
         assert "old" not in updated
 
+    def test_reindex_preserves_existing_preferences(self, tmp_path: Path) -> None:
+        from wos.agents_md import render_wos_section
+        from wos.index import generate_index
+
+        # Set up a project with an area
+        area_dir = tmp_path / "docs" / "context" / "api"
+        area_dir.mkdir(parents=True)
+        (area_dir / "_index.md").write_text(
+            generate_index(area_dir, preamble="API documentation")
+        )
+        (area_dir / "endpoints.md").write_text(
+            "---\nname: Endpoints\ndescription: API endpoints\n---\n"
+        )
+
+        # Create AGENTS.md with preferences already set
+        prefs = ["**Directness:** Be direct.", "**Tone:** Keep it casual."]
+        agents_path = tmp_path / "AGENTS.md"
+        agents_content = (
+            f"# AGENTS.md\n\n"
+            f"{render_wos_section(areas=[], preferences=prefs)}"
+        )
+        agents_path.write_text(agents_content)
+
+        result = subprocess.run(
+            [
+                sys.executable, str(SCRIPTS_DIR / "reindex.py"),
+                "--root", str(tmp_path),
+            ],
+            capture_output=True,
+            text=True,
+        )
+        assert result.returncode == 0
+
+        updated = agents_path.read_text()
+        # Areas should be updated
+        assert "| API documentation | docs/context/api |" in updated
+        # Preferences should be preserved
+        assert "### Preferences" in updated
+        assert "- **Directness:** Be direct." in updated
+        assert "- **Tone:** Keep it casual." in updated
+
     def test_reindex_skips_when_no_agents_md(self, tmp_path: Path) -> None:
         # Set up docs/ but no AGENTS.md
         docs_dir = tmp_path / "docs" / "context" / "api"
