@@ -1,7 +1,7 @@
 """Shared marker-based section replacement for managed file sections.
 
 Provides a single function for replacing content between marker comments
-in text files. Used by agents_md.py and preferences.py.
+in text files. Used by agents_md.py.
 """
 
 from __future__ import annotations

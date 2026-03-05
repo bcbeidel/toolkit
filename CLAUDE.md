@@ -55,14 +55,14 @@ Full descriptions: [Design Principles](docs/research/2026-02-22-design-principle
   - `url_checker.py` — HTTP HEAD/GET URL reachability (urllib)
   - `agents_md.py` — marker-based AGENTS.md section management
   - `markers.py` — shared marker-based section replacement
-  - `preferences.py` — communication preferences capture
+  - `preferences.py` — communication preferences dimensions and rendering
   - `research_protocol.py` — search protocol logging (`SearchEntry`, `SearchProtocol`, formatters)
 - `scripts/` — thin CLI entry points with argparse and PEP 723 inline metadata
   - `audit.py` — run validation checks (`--root`, `--no-urls`, `--json`, `--fix`, `--strict`)
   - `reindex.py` — regenerate all `_index.md` files (preamble-preserving)
   - `check_runtime.py` — canary script to validate `uv run` + PEP 723 pipeline
   - `check_url.py` — URL reachability checking via `wos.url_checker`
-  - `update_preferences.py` — communication preferences updates
+  - `update_preferences.py` — write communication preferences to AGENTS.md
   - `get_version.py` — print plugin version from `plugin.json`
 - `skills/` — skill definitions (SKILL.md + references/) auto-discovered by Claude Code
 - `tests/` — pytest tests
@@ -85,7 +85,7 @@ instructions, areas table, metadata format, and communication preferences.
 
 ### Skills
 
-Prefix: `/wos:` (e.g., `/wos:init`, `/wos:audit`). 9 skills:
+Prefix: `/wos:` (e.g., `/wos:init`, `/wos:audit`). 8 skills:
 
 | Skill | Purpose |
 |-------|---------|
@@ -97,7 +97,7 @@ Prefix: `/wos:` (e.g., `/wos:init`, `/wos:audit`). 9 skills:
 | `/wos:refine-prompt` | Assess and refine prompts using evidence-backed techniques |
 | `/wos:report-issue` | File GitHub issues against WOS repo |
 | `/wos:retrospective` | Session review and feedback submission |
-| `/wos:preferences` | Capture communication preferences |
+
 
 ### Validation (7 checks, warn/fail severity)
 
