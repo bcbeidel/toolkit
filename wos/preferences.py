@@ -1,18 +1,12 @@
-"""Communication preferences — dimension mapping and CLAUDE.md writer.
+"""Communication preferences — dimension mapping and rendering.
 
-Captures user communication preferences as structured dimensions and
-writes them as LLM instructions in CLAUDE.md using marker-based sections.
+Maps user communication preferences to structured dimensions and
+renders them as instruction strings for AGENTS.md.
 """
 
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Dict, List
-
-# ── Markers ──────────────────────────────────────────────────────
-
-COMM_MARKER_BEGIN = "<!-- wos:communication:begin -->"
-COMM_MARKER_END = "<!-- wos:communication:end -->"
 
 # ── Dimensions ───────────────────────────────────────────────────
 
@@ -94,19 +88,23 @@ _DISPLAY_NAMES = {
 # ── Render ───────────────────────────────────────────────────────
 
 
-def render_preferences(prefs: Dict[str, str]) -> str:
-    """Render preference dimensions as markdown instruction lines.
+def render_preferences(prefs: Dict[str, str]) -> List[str]:
+    """Render preference dimensions as instruction strings.
+
+    Each string is formatted as ``**Dimension:** instruction`` without
+    a bullet prefix. Pass the returned list to
+    ``render_wos_section(preferences=...)`` which adds bullets.
 
     Args:
-        prefs: Mapping of dimension name to level (e.g., {"directness": "blunt"}).
+        prefs: Mapping of dimension name to level.
 
     Returns:
-        Markdown string with one instruction per dimension.
+        List of formatted instruction strings.
 
     Raises:
         ValueError: If an unknown dimension or level is provided.
     """
-    lines: List[str] = []
+    result: List[str] = []
     for dim, level in prefs.items():
         if dim not in DIMENSIONS:
             raise ValueError(f"Unknown dimension: {dim}")
@@ -117,39 +115,5 @@ def render_preferences(prefs: Dict[str, str]) -> str:
             )
         instruction = DIMENSION_INSTRUCTIONS[(dim, level)]
         display = _DISPLAY_NAMES[dim]
-        lines.append(f"- **{display}:** {instruction}")
-    return "\n".join(lines)
-
-
-# ── Writer ───────────────────────────────────────────────────────
-
-
-def update_preferences(file_path: str, prefs: Dict[str, str]) -> None:
-    """Write communication preferences to CLAUDE.md using markers.
-
-    Creates the file if it doesn't exist. Replaces existing preferences
-    section if markers are found. Appends if no markers exist.
-    """
-    path = Path(file_path)
-    rendered = render_preferences(prefs)
-
-    section = (
-        f"{COMM_MARKER_BEGIN}\n"
-        f"## Communication\n"
-        f"\n"
-        f"{rendered}\n"
-        f"\n"
-        f"{COMM_MARKER_END}\n"
-    )
-
-    from wos.markers import replace_marker_section
-
-    if not path.exists():
-        path.write_text(section, encoding="utf-8")
-        return
-
-    content = path.read_text(encoding="utf-8")
-    updated = replace_marker_section(
-        content, COMM_MARKER_BEGIN, COMM_MARKER_END, section
-    )
-    path.write_text(updated, encoding="utf-8")
+        result.append(f"**{display}:** {instruction}")
+    return result
