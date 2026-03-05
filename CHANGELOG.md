@@ -7,6 +7,62 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.2] - 2026-03-05
+
+### Changed
+
+- **`/wos:consider` models moved from skills to commands.** Consider models are
+  now registered as commands rather than sub-skills, enabling terminal
+  autocompletion for `/wos:consider:{model-name}`.
+
+## [0.12.1] - 2026-03-05
+
+### Changed
+
+- **`/wos:consider` models restructured as nested sub-skills.** Intermediate
+  step in restructuring consider models for better autocompletion support.
+
+## [0.12.0] - 2026-03-05
+
+### Changed
+
+- **`/wos:consider` models flattened for autocompletion.** Consider models
+  restructured so terminal autocompletion surfaces individual model names.
+
+## [0.11.0] - 2026-03-05
+
+### Added
+
+- **`/wos:init` skill replaces `/wos:create`.** New unified initialization skill
+  that sets up or updates WOS project context. Idempotent — safe to run multiple
+  times. Includes Document Standards subsection in AGENTS.md render.
+  ([#123](https://github.com/bcbeidel/wos/pull/123))
+- **Communication preferences merged into `/wos:init`.** Preferences capture
+  (previously a separate `/wos:preferences` skill) is now an integrated step in
+  the init workflow. Preferences are written to AGENTS.md instead of CLAUDE.md,
+  with a pointer added to CLAUDE.md.
+- **`extract_preferences()` in `agents_md.py`.** New function to read existing
+  preferences from AGENTS.md.
+
+### Changed
+
+- **`render_preferences()` returns `List[str]`.** Removed direct CLAUDE.md
+  writer; preferences are now rendered as lines for AGENTS.md integration.
+- **`update_preferences.py` writes to AGENTS.md.** Script updated to use
+  `--root` flag and write preferences via AGENTS.md markers.
+
+### Fixed
+
+- **Preferences preserved during reindex.** `reindex.py` no longer clobbers
+  communication preferences when updating AGENTS.md.
+- **Stray `/wos:create` and `/wos:preferences` references removed.** Updated
+  all skill docs and cross-references to point to `/wos:init`.
+
+### Removed
+
+- **`/wos:create` skill** — replaced by `/wos:init`.
+- **`/wos:preferences` skill** — merged into `/wos:init`.
+
 ## [0.10.0] - 2026-03-05
 
 ### Removed
@@ -658,6 +714,10 @@ implemented with 229 tests passing.
 - Build roadmap with session protocol and dependency graph
 - 18 design principles across four layers
 
+[0.12.2]: https://github.com/bcbeidel/wos/releases/tag/v0.12.2
+[0.12.1]: https://github.com/bcbeidel/wos/releases/tag/v0.12.1
+[0.12.0]: https://github.com/bcbeidel/wos/releases/tag/v0.12.0
+[0.11.0]: https://github.com/bcbeidel/wos/releases/tag/v0.11.0
 [0.10.0]: https://github.com/bcbeidel/wos/releases/tag/v0.10.0
 [0.9.0]: https://github.com/bcbeidel/wos/releases/tag/v0.9.0
 [0.8.1]: https://github.com/bcbeidel/wos/releases/tag/v0.8.1
