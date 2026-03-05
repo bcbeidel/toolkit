@@ -85,11 +85,11 @@ instructions, areas table, metadata format, and communication preferences.
 
 ### Skills
 
-Prefix: `/wos:` (e.g., `/wos:create`, `/wos:audit`). 9 skills:
+Prefix: `/wos:` (e.g., `/wos:init-wos`, `/wos:audit`). 9 skills:
 
 | Skill | Purpose |
 |-------|---------|
-| `/wos:create` | Create project context, areas, or documents |
+| `/wos:init-wos` | Initialize or update WOS project context |
 | `/wos:audit` | Validate project health (7 checks + auto-fix) |
 | `/wos:research` | SIFT-based research with source verification |
 | `/wos:distill` | Convert research artifacts into focused context files |
