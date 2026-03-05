@@ -71,9 +71,9 @@ building the tool.
 ## 3. Project Structure
 
 ```
-wos/                          # Python package (10 modules, ~1,200 LOC)
-scripts/                      # CLI entry points (7 scripts, PEP 723 metadata)
-skills/                       # Skill definitions (9 skills + shared references)
+wos/                          # Python package (9 modules, ~1,200 LOC)
+scripts/                      # CLI entry points (6 scripts, PEP 723 metadata)
+skills/                       # Skill definitions (8 skills + shared references)
 tests/                        # pytest tests (17 files, ~2,400 LOC)
 docs/plans/              # Design docs and implementation plans
 docs/research/           # Research artifacts
@@ -93,7 +93,6 @@ docs/research/           # Research artifacts
 | `markers.py` | Shared marker-based section replacement |
 | `preferences.py` | Communication preferences capture |
 | `research_protocol.py` | Search protocol logging (`SearchEntry`, `SearchProtocol`) |
-| `experiment_state.py` | Experiment lifecycle state machine (phase transitions, status tracking) |
 
 ### Scripts: `scripts/`
 
@@ -105,7 +104,6 @@ docs/research/           # Research artifacts
 | `check_url.py` | none | URL reachability checking |
 | `update_preferences.py` | none | Preference key=value updates |
 | `get_version.py` | none | Print plugin version |
-| `experiment_state.py` | none | Experiment state transitions CLI |
 
 All scripts use `sys.path` self-insertion for plugin cache compatibility.
 Skills invoke them as `uv run <plugin-scripts-dir>/script.py`.
@@ -121,7 +119,6 @@ Skills invoke them as `uv run <plugin-scripts-dir>/script.py`.
 | consider | `/wos:consider` | Mental models for analysis (16 models) |
 | refine-prompt | `/wos:refine-prompt` | Assess and refine prompts with evidence-backed techniques |
 | report-issue | `/wos:report-issue` | File issues against WOS repo |
-| experiment | `/wos:experiment` | Structured experiment lifecycle (design through publication) |
 | preferences | `/wos:preferences` | Capture communication preferences |
 
 Shared references live in `skills/_shared/references/` (e.g., `preflight.md`

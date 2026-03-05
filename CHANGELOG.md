@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-03-05
+
+### Removed
+
+- **`/wos:experiment` skill deleted.** Removed the experiment skill, state
+  machine module (`wos/experiment_state.py`), CLI script
+  (`scripts/experiment_state.py`), tests, and plan documents. The feature was
+  fully implemented in v0.7.0 but never used in practice. To revisit, see the
+  v0.7.0 changelog entry and `git log --all -- skills/experiment wos/experiment_state.py`
+  for the original implementation.
+
 ## [0.9.0] - 2026-03-03
 
 ### Added
@@ -647,6 +658,8 @@ implemented with 229 tests passing.
 - Build roadmap with session protocol and dependency graph
 - 18 design principles across four layers
 
+[0.10.0]: https://github.com/bcbeidel/wos/releases/tag/v0.10.0
+[0.9.0]: https://github.com/bcbeidel/wos/releases/tag/v0.9.0
 [0.8.1]: https://github.com/bcbeidel/wos/releases/tag/v0.8.1
 [0.8.0]: https://github.com/bcbeidel/wos/releases/tag/v0.8.0
 [0.7.0]: https://github.com/bcbeidel/wos/releases/tag/v0.7.0

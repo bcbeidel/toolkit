@@ -47,7 +47,7 @@ Full descriptions: [Design Principles](docs/research/2026-02-22-design-principle
 
 ### Package Structure
 
-- `wos/` — importable Python package (10 modules)
+- `wos/` — importable Python package (9 modules)
   - `frontmatter.py` — custom YAML subset parser (stdlib-only)
   - `document.py` — `Document` dataclass + `parse_document()`
   - `index.py` — `_index.md` generation + sync checking (preamble-preserving)
@@ -57,7 +57,6 @@ Full descriptions: [Design Principles](docs/research/2026-02-22-design-principle
   - `markers.py` — shared marker-based section replacement
   - `preferences.py` — communication preferences capture
   - `research_protocol.py` — search protocol logging (`SearchEntry`, `SearchProtocol`, formatters)
-  - `experiment_state.py` — experiment lifecycle state machine (phase transitions, status tracking)
 - `scripts/` — thin CLI entry points with argparse and PEP 723 inline metadata
   - `audit.py` — run validation checks (`--root`, `--no-urls`, `--json`, `--fix`, `--strict`)
   - `reindex.py` — regenerate all `_index.md` files (preamble-preserving)
@@ -65,7 +64,6 @@ Full descriptions: [Design Principles](docs/research/2026-02-22-design-principle
   - `check_url.py` — URL reachability checking via `wos.url_checker`
   - `update_preferences.py` — communication preferences updates
   - `get_version.py` — print plugin version from `plugin.json`
-  - `experiment_state.py` — experiment state transitions CLI
 - `skills/` — skill definitions (SKILL.md + references/) auto-discovered by Claude Code
 - `tests/` — pytest tests
 
@@ -87,7 +85,7 @@ instructions, areas table, metadata format, and communication preferences.
 
 ### Skills
 
-Prefix: `/wos:` (e.g., `/wos:create`, `/wos:audit`). 10 skills:
+Prefix: `/wos:` (e.g., `/wos:create`, `/wos:audit`). 9 skills:
 
 | Skill | Purpose |
 |-------|---------|
@@ -97,7 +95,6 @@ Prefix: `/wos:` (e.g., `/wos:create`, `/wos:audit`). 10 skills:
 | `/wos:distill` | Convert research artifacts into focused context files |
 | `/wos:consider` | Mental models for problem analysis |
 | `/wos:refine-prompt` | Assess and refine prompts using evidence-backed techniques |
-| `/wos:experiment` | Structured experiment lifecycle (design through publication) |
 | `/wos:report-issue` | File GitHub issues against WOS repo |
 | `/wos:retrospective` | Session review and feedback submission |
 | `/wos:preferences` | Capture communication preferences |
