@@ -112,14 +112,14 @@ Skills invoke them as `uv run <plugin-scripts-dir>/script.py`.
 
 | Skill | Prefix | Purpose |
 |-------|--------|---------|
-| create | `/wos:create` | Create projects, areas, or documents |
+| init | `/wos:init` | Initialize or update WOS project context |
 | audit | `/wos:audit` | Validate project health (5 checks + auto-fix) |
 | research | `/wos:research` | SIFT-based research with source verification |
 | distill | `/wos:distill` | Convert research into focused context files |
 | consider | `/wos:consider` | Mental models for analysis (16 models) |
 | refine-prompt | `/wos:refine-prompt` | Assess and refine prompts with evidence-backed techniques |
 | report-issue | `/wos:report-issue` | File issues against WOS repo |
-| preferences | `/wos:preferences` | Capture communication preferences |
+| retrospective | `/wos:retrospective` | Session review and feedback submission |
 
 Shared references live in `skills/_shared/references/` (e.g., `preflight.md`
 for the uv run preflight pattern).

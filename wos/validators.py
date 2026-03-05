@@ -312,7 +312,7 @@ def check_project_files(root: Path) -> List[dict]:
     if not agents_path.is_file():
         issues.append({
             "file": "AGENTS.md",
-            "issue": "No AGENTS.md found. Run /wos:create to initialize.",
+            "issue": "No AGENTS.md found. Run /wos:init to initialize.",
             "severity": "warn",
         })
     else:
@@ -331,7 +331,7 @@ def check_project_files(root: Path) -> List[dict]:
     if not claude_path.is_file():
         issues.append({
             "file": "CLAUDE.md",
-            "issue": "No CLAUDE.md found. Run /wos:create to initialize.",
+            "issue": "No CLAUDE.md found. Run /wos:init to initialize.",
             "severity": "warn",
         })
     else:

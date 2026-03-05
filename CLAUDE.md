@@ -98,7 +98,6 @@ Prefix: `/wos:` (e.g., `/wos:init`, `/wos:audit`). 8 skills:
 | `/wos:report-issue` | File GitHub issues against WOS repo |
 | `/wos:retrospective` | Session review and feedback submission |
 
-
 ### Validation (7 checks, warn/fail severity)
 
 1. **Frontmatter** (fail + warn) — `name`/`description` non-empty, research sources, dict source warnings, context `related` field warnings

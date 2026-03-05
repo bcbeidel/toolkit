@@ -26,14 +26,14 @@ an areas table, metadata format, and communication preferences.
 
 | Skill | Purpose |
 |-------|---------|
-| `/wos:create` | Create project context, areas, or documents |
-| `/wos:audit` | Validate project health (5 checks + auto-fix) |
+| `/wos:init` | Initialize or update WOS project context |
+| `/wos:audit` | Validate project health (7 checks + auto-fix) |
 | `/wos:research` | SIFT-based research with source verification |
 | `/wos:distill` | Convert research artifacts into focused context files |
 | `/wos:consider` | Mental models for problem analysis |
 | `/wos:refine-prompt` | Assess and refine prompts using evidence-backed techniques |
 | `/wos:report-issue` | File GitHub issues against WOS repo |
-| `/wos:preferences` | Capture communication preferences |
+| `/wos:retrospective` | Session review and feedback submission |
 
 ## Project Structure
 
@@ -59,7 +59,7 @@ skills/                # Skill definitions (SKILL.md + references/)
   _shared/references/  # Shared references (e.g., preflight.md)
 tests/                 # pytest tests
 docs/                  # Documentation, plans, and research
-  context/             # Topic areas (created by /wos:create)
+  context/             # Topic areas (created by /wos:init)
   plans/               # Design docs and implementation plans
   research/            # Research artifacts
 ```
