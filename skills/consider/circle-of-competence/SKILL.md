@@ -1,6 +1,7 @@
 ---
 description: Scope decisions by distinguishing what you know well from what you don't
 argument-hint: "[domain or decision where expertise boundaries matter]"
+user-invocable: true
 ---
 
 <objective>

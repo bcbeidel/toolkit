@@ -1,6 +1,7 @@
 ---
 description: Improve by removing problems rather than adding solutions
 argument-hint: "[system, process, or situation to improve]"
+user-invocable: true
 ---
 
 <objective>

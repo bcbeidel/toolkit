@@ -11,8 +11,8 @@ user-invocable: true
 
 # Consider Skill
 
-Apply structured mental models to problems. Each model is an independent
-file in `models/` — adding a new model requires only adding a new `.md` file.
+Apply structured mental models to problems. Each model is a sub-skill in its
+own directory — adding a new model requires creating a `<model-name>/SKILL.md` file.
 
 ## Available Models
 

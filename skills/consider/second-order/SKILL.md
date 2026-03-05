@@ -1,6 +1,7 @@
 ---
 description: Think through the consequences of consequences before acting
 argument-hint: "[decision or action to evaluate]"
+user-invocable: true
 ---
 
 <objective>

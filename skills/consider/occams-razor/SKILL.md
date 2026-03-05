@@ -1,6 +1,7 @@
 ---
 description: Find the simplest explanation or solution that accounts for all known facts
 argument-hint: "[phenomenon or problem with multiple possible explanations]"
+user-invocable: true
 ---
 
 <objective>
