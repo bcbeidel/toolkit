@@ -40,7 +40,7 @@ Versioning policy and version bump process: see [CONTRIBUTING.md](CONTRIBUTING.m
 9. **Separate reads from writes** — audit observes; fixes require explicit action
 10. **Bottom line up front** — key insights at top and bottom, detail in the middle
 
-Full descriptions: [Design Principles](docs/research/2026-02-22-design-principles.md)
+Full descriptions: [Design Principles](PRINCIPLES.md)
 
 ## Architecture
 
@@ -113,13 +113,13 @@ Prefix: `/wos:` (e.g., `/wos:init`, `/wos:audit`). 7 skills:
 5. **Related paths** (fail) — file paths in `related` frontmatter exist on disk
 6. **Index sync** (fail + warn) — `_index.md` matches directory contents, preamble presence
 7. **Project files** (warn) — AGENTS.md/CLAUDE.md existence and configuration
-8. **Skill density** (warn) — skill instruction lines exceeding threshold (default 200, configurable)
+8. **Skill quality** (fail + warn) — skill name format/reserved words (fail), description length/XML/voice (warn), instruction lines exceeding threshold (warn, default 200, configurable), SKILL.md body exceeding 500 lines (warn)
 
 ### Key Entry Points
 
 - `wos/document.py` — Document dataclass and `parse_document()`
 - `wos/validators.py` — `validate_project()` runs all checks
-- `wos/skill_audit.py` — `check_skill_sizes()` measures skill instruction density
+- `wos/skill_audit.py` — `check_skill_sizes()` and `check_skill_meta()` for skill quality
 - `wos/index.py` — `generate_index()` and `check_index_sync()`
 - `scripts/audit.py` — CLI for validation
 - `scripts/reindex.py` — CLI for index regeneration
@@ -127,7 +127,7 @@ Prefix: `/wos:` (e.g., `/wos:init`, `/wos:audit`). 7 skills:
 ## Reference
 
 - Architecture: [WOS Architecture Reference](docs/plans/2026-02-27-architecture-reference.md)
-- Design principles: [WOS Design Principles](docs/research/2026-02-22-design-principles.md)
+- Design principles: [WOS Design Principles](PRINCIPLES.md)
 - Simplification history: [Simplification Design](docs/plans/2026-02-22-simplification-design.md)
 
 ## Plans

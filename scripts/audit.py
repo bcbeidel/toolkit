@@ -141,7 +141,7 @@ def main() -> None:
         issues = remaining
 
     # Skill instruction density reporting
-    from wos.skill_audit import check_skill_sizes
+    from wos.skill_audit import check_skill_meta, check_skill_sizes
 
     skills_dir = root / "skills"
     if skills_dir.is_dir():
@@ -149,6 +149,12 @@ def main() -> None:
             skills_dir, max_lines=args.skill_max_lines,
         )
         issues.extend(skill_issues)
+
+        for entry in sorted(skills_dir.iterdir()):
+            if not entry.is_dir() or entry.name.startswith("_"):
+                continue
+            if (entry / "SKILL.md").exists():
+                issues.extend(check_skill_meta(entry))
 
         if summaries and not args.json_output:
             print("Skill Instruction Density:", file=sys.stderr)

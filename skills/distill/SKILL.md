@@ -1,10 +1,10 @@
 ---
 name: distill
 description: >
-  This skill should be used when the user wants to "distill research",
-  "extract findings", "create context from research", "summarize research
-  into context files", "operationalize research", or convert any research
-  artifact into focused context documents.
+  Converts research artifacts into focused context documents. Use when the
+  user wants to "distill research", "extract findings", "create context
+  from research", "summarize research into context files", or
+  "operationalize research".
 argument-hint: "[path to research artifact]"
 user-invocable: true
 references:

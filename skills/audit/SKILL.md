@@ -9,6 +9,7 @@ argument-hint: "[check|audit|review|coverage|freshness]"
 user-invocable: true
 references:
   - ../_shared/references/preflight.md
+  - references/skill-authoring-guide.md
 ---
 
 # Audit Skill
@@ -144,3 +145,33 @@ After presenting audit results, offer to help resolve actionable warnings:
 - Audit is read-only (except `--fix` which only regenerates `_index.md` files)
 - Use `/wos:init` to initialize missing project structure
 - Empty project (no `docs/` directory) exits 0 with no issues
+
+## Skill Evaluation
+
+When audit encounters a skill directory (a directory containing `SKILL.md`),
+it runs two layers of checks:
+
+1. **Automated checks** (Python) — name format, description length/voice,
+   body size, instruction density. These appear in the standard issue table.
+
+2. **Judgment checks** (guided by this section) — evaluate the skill against
+   the criteria in [skill-authoring-guide.md](references/skill-authoring-guide.md).
+
+For judgment checks, read the target skill's SKILL.md and references, then
+evaluate against the "Judgment" criteria table in the guide. Report findings
+with explanations that reference the relevant guide section.
+
+Present judgment findings as a narrative after the automated results:
+
+```
+Skill Evaluation: [skill-name]
+
+- **Description triggers:** [finding + explanation]
+- **Freedom ↔ fragility:** [finding + explanation]
+- **Unnecessary context:** [finding + explanation]
+- **Examples:** [finding + explanation]
+- **Terminology:** [finding + explanation]
+- **Reference depth:** [finding + explanation]
+```
+
+Only report issues — if a criterion passes, omit it.
