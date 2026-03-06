@@ -649,6 +649,7 @@ git commit -m "feat: add worked examples to all 16 consider command models (#126
 - Trim each file individually: "would the model do the wrong thing without this?"
 - File count may go up, down, or stay the same — it's not a goal
 - The research skill's write-to-disk phase gates mean references load on demand, not all at once
+- **Deterministic stays in code, reasoning stays in skills.** Instructions that tell the model to run Python scripts (`audit.py`, `reindex.py`, `check_url.py`) are deterministic enforcement anchors — never trim these. Only trim duplicated reasoning/judgment instructions where the same procedure appears in multiple files.
 
 ### Task 18: Measure baseline word counts
 
@@ -663,39 +664,31 @@ Expected baseline: ~5,805 total words across 9 files.
 
 Record the output — this is the "before" measurement.
 
-### Task 19: Remove python-utilities.md (fully duplicated)
+### Task 19: Review python-utilities.md (deterministic tooling reference)
 
 **Files:**
-- Modify: `skills/research/SKILL.md`
-- Delete: `skills/research/references/python-utilities.md`
+- Review: `skills/research/references/python-utilities.md` (223 words)
 
-**Rationale:** `python-utilities.md` (223 words) is not MECE — every command
-it documents already appears in `research-workflow.md` Phase 6 and SKILL.md's
-output format section:
-- `uv run audit.py` → workflow Phase 6 step 6
-- `uv run reindex.py` → workflow Phase 6 step 5
-- Document Model fields → SKILL.md output format + workflow Phase 2
+**Rationale:** `python-utilities.md` documents the deterministic Python tooling
+(`audit.py`, `reindex.py`, `check_url.py`, Document model). Even though these
+commands also appear in `research-workflow.md` Phase 6, this file serves as a
+dedicated reference that anchors the model to **running the actual tools**.
+Per the principle "structure in code, quality in skills" — deterministic tool
+references are load-bearing. **Keep this file.**
 
-This file doesn't own a discrete concern — it's a duplicate index.
+**Step 1: Apply density test**
 
-**Step 1: Update SKILL.md**
+- Validate a Single Document section: **KEEP** — deterministic tool reference
+- Validate Entire Project section: **EVALUATE** — is this used during research?
+  If not, it may be extraneous to this skill (but harmless at 2 lines).
+- Regenerate Index Files section: **KEEP** — deterministic tool reference
+- Document Model table: **KEEP** — quick reference for frontmatter fields
 
-Remove the references line:
-```
-  - references/python-utilities.md
-```
+**Step 2: Trim only if a section is truly extraneous**
 
-Remove body reference at line 104:
-```
-(see `references/python-utilities.md`).
-```
-Replace with a period — the workflow already shows the commands.
-
-**Step 2: Delete python-utilities.md**
-
-```bash
-git rm skills/research/references/python-utilities.md
-```
+If "Validate Entire Project" is never referenced by the research workflow or
+SKILL.md, it can be removed. Otherwise leave the file as-is — it's already
+223 words and serves a clear purpose.
 
 ### Task 20: Make claim-verification.md MECE with research-workflow.md
 
@@ -877,13 +870,14 @@ or that the model handles correctly without prompting.
   **EVALUATE** — is the 9-line explanation of why the protocol lives in an
   HTML comment necessary? The model would place it there if told to; the
   "why" may be extraneous instruction.
-- **Phase 3: Verify & Evaluate** (lines 132-183): URL verification steps
-  duplicate `source-verification.md`. **TRIM** — replace inline steps with
-  a reference to `source-verification.md`, keeping only the SIFT evaluation
-  steps. Currently Phase 3 is a merged phase — URL verification then SIFT.
-  Consider whether splitting into Phase 3a (URL verification, ref:
-  `source-verification.md`) and Phase 3b (SIFT evaluation, ref:
-  `sift-framework.md`) would be cleaner. Only split if it improves clarity.
+- **Phase 3: Verify & Evaluate** (lines 132-183): This phase contains both
+  URL verification (deterministic — runs `check_url.py`) and SIFT evaluation
+  (model reasoning). **PROTECT all `uv run` commands and tool invocation
+  instructions** — these are deterministic enforcement anchors, not candidates
+  for trimming. Only evaluate whether the SIFT evaluation prose duplicates
+  what's already in `sift-framework.md`. If the inline SIFT steps are just
+  pointers ("see `references/sift-framework.md`"), they're fine. If they
+  restate the full SIFT procedure, that's reasoning duplication — trim.
 - **Phase 5.5a/5.5b** (lines 235-278): These reference `claim-verification.md`
   and provide the procedure. After Task 20 made claim-verification.md a
   lookup-only reference, the workflow correctly owns the procedure. **KEEP.**
@@ -1032,6 +1026,7 @@ Verify:
 - All `references/` paths in SKILL.md and research-workflow.md point to existing files
 - Phase gate structure in SKILL.md unchanged (or improved per primacy audit)
 - Reference files are MECE — no procedure appears in two files
+- All deterministic tool invocations (`uv run` commands for `audit.py`, `reindex.py`, `check_url.py`) preserved
 
 **Step 2: Commit**
 
@@ -1039,10 +1034,10 @@ Verify:
 git add skills/research/
 git commit -m "refactor: reduce research skill instruction density (#124)
 
-Remove python-utilities.md (fully duplicated by workflow and SKILL.md).
 Make claim-verification.md MECE with workflow (lookup only, no procedure).
-Trim source-verification.md (remove duplicated timing info).
-Audit and trim research-workflow.md and SKILL.md per best practices.
+Trim duplicated reasoning across references.
+Audit SKILL.md structure per instructional design best practices.
+Preserve all deterministic tool invocations (audit, reindex, check_url).
 
 Before: 5,805 words across 9 files
 After: [X] words across [Y] files
