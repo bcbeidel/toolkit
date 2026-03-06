@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.0] - 2026-03-05
+
+### Changed
+
+- **Refine-prompt: replace aggressive instruction language.** Rewrote
+  `CRITICAL: You are a prompt ANALYST, not a prompt EXECUTOR` to clear, direct
+  language without ALL-CAPS or aggressive markers. The analyst-not-executor
+  guardrail is preserved — only the tone changed.
+  ([#130](https://github.com/bcbeidel/wos/issues/130))
+- **Refine-prompt: add target-model awareness.** The skill now asks which model
+  or platform the refined prompt targets before proceeding. Format selection in
+  technique #2 uses the answer to choose XML, Markdown, or hybrid structuring.
+  Default changed from XML (Claude-optimized) to Markdown headers (broadest
+  compatibility). Technique renamed from "XML Structuring" to "Structured
+  Sectioning". Claude-specific over-prompting reference removed.
+  ([#117](https://github.com/bcbeidel/wos/issues/117))
+
 ## [0.12.4] - 2026-03-05
 
 ### Added

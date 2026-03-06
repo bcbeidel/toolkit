@@ -28,7 +28,7 @@ Rewrite for directness and specificity:
 
 ---
 
-## 2. XML Structuring
+## 2. Structured Sectioning
 
 **Impact:** HIGH
 **When to apply:** Multi-section prompt OR prompt has 3+ distinct components
@@ -57,9 +57,9 @@ quality improvement on complex prompts. Claude uses tags as parsing boundaries.
 | Llama (Meta) | Markdown + XML | Hybrid approach per Meta docs; minimal format sensitivity |
 | Multi-model / unknown | Markdown headers | Broadest compatibility; XML underperforms on non-Claude models |
 
-When the target model is not specified, default to XML (Claude-optimized)
-since this skill runs inside Claude Code. Note the format choice and
-rationale in the change log.
+When the target model is not specified, default to Markdown headers for
+broadest compatibility. Note the format choice and rationale in the change
+log.
 
 **Research:** [LLM Format Preferences](../../../docs/research/2026-03-05-llm-format-preferences.md)
 
