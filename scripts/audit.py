@@ -8,6 +8,7 @@
 Usage:
     uv run scripts/audit.py [FILE] [--root DIR] [--no-urls] [--json]
                             [--fix] [--strict] [--context-max-words N]
+                            [--context-min-words N]
 """
 from __future__ import annotations
 
@@ -73,6 +74,12 @@ def main() -> None:
         type=int,
         default=800,
         help="Word count threshold for context file warnings (default: 800)",
+    )
+    parser.add_argument(
+        "--context-min-words",
+        type=int,
+        default=100,
+        help="Minimum word count for context file warnings (default: 100)",
     )
     args = parser.parse_args()
 
