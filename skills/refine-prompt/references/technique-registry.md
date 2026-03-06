@@ -144,14 +144,3 @@ expert" adds nothing).
 **Evidence:** Anthropic Tier 1 documentation — "Even a single sentence of
 role context makes a measurable difference on domain-specific tasks."
 
----
-
-## Excluded Techniques
-
-These were evaluated and intentionally excluded:
-
-| Technique | Why excluded |
-|-----------|-------------|
-| Chain-of-thought injection | Decreasing value on reasoning models (Claude 4.x has built-in reasoning); 20-80% latency cost (Mollick et al., Wharton 2025) |
-| Self-reflection loops | Unreliable without external feedback; TACL survey shows minimal benefit |
-| Meta-prompting | Handled by agent/subagent systems, not individual prompts |

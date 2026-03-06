@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.3] - 2026-03-05
+
+### Removed
+
+- **Excluded Techniques section removed from technique-registry.md.** Removed
+  ~155 words describing techniques that were intentionally excluded from the
+  registry. Mentioning excluded techniques by name may prime models to consider
+  them, and every token competes for attention budget.
+  ([#120](https://github.com/bcbeidel/wos/issues/120))
+
 ## [0.12.2] - 2026-03-05
 
 ### Changed
