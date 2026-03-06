@@ -118,9 +118,14 @@ above with the current accumulated protocol.
 ```
 
 The search protocol JSON is stored in the document itself (inside the
-`<!-- search-protocol ... -->` comment), not in agent memory. After each
-search, update the comment with the accumulated JSON. This ensures the
-protocol survives context resets alongside the source list.
+`<!-- search-protocol ... -->` comment), not in agent memory or frontmatter.
+This is operational metadata (workflow state for context reset recovery), not
+semantic metadata (document identity for discovery). It lives in an HTML
+comment because: (1) it survives context resets alongside the source list,
+(2) it's machine-readable but invisible to human readers, and (3) it has a
+different lifecycle than frontmatter — it's work-in-progress state that gets
+rendered to a markdown table in Phase 6. After each search, update the comment
+with the accumulated JSON.
 
 This checkpoint means the source list survives a context reset.
 
