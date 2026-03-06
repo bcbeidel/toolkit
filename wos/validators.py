@@ -79,8 +79,9 @@ def check_content(
     doc: Document,
     context_path: str = "docs/context",
     max_words: int = 800,
+    min_words: int = 100,
 ) -> List[dict]:
-    """Warn when context files exceed word count threshold.
+    """Warn when context files exceed or fall below word count thresholds.
 
     Only checks files under context_path. Non-context files and _index.md
     files are excluded.
@@ -88,10 +89,11 @@ def check_content(
     Args:
         doc: A parsed Document instance.
         context_path: Path prefix for context files.
-        max_words: Word count threshold (default 800).
+        max_words: Upper word count threshold (default 800).
+        min_words: Lower word count threshold (default 100).
 
     Returns:
-        List of issue dicts. Empty if within threshold.
+        List of issue dicts. Empty if within thresholds.
     """
     if not doc.path.startswith(context_path + "/"):
         return []
@@ -103,6 +105,12 @@ def check_content(
         return [{
             "file": doc.path,
             "issue": f"Context file is {word_count} words (threshold: {max_words})",
+            "severity": "warn",
+        }]
+    if word_count < min_words:
+        return [{
+            "file": doc.path,
+            "issue": f"Context file is {word_count} words (minimum: {min_words})",
             "severity": "warn",
         }]
     return []
@@ -247,7 +255,11 @@ def check_all_indexes(directory: Path) -> List[dict]:
 
 
 def validate_file(
-    path: Path, root: Path, verify_urls: bool = True
+    path: Path,
+    root: Path,
+    verify_urls: bool = True,
+    context_max_words: int = 800,
+    context_min_words: int = 100,
 ) -> List[dict]:
     """Validate a single markdown file.
 
@@ -283,7 +295,9 @@ def validate_file(
 
     issues: List[dict] = []
     issues.extend(check_frontmatter(doc))
-    issues.extend(check_content(doc))
+    issues.extend(check_content(
+        doc, max_words=context_max_words, min_words=context_min_words,
+    ))
     issues.extend(check_draft_markers(doc))
     if verify_urls:
         issues.extend(check_source_urls(doc))
@@ -353,7 +367,10 @@ def check_project_files(root: Path) -> List[dict]:
 
 
 def validate_project(
-    root: Path, verify_urls: bool = True
+    root: Path,
+    verify_urls: bool = True,
+    context_max_words: int = 800,
+    context_min_words: int = 100,
 ) -> List[dict]:
     """Validate all markdown files in a project.
 
@@ -393,6 +410,11 @@ def validate_project(
                 if not filename.endswith(".md"):
                     continue
                 file_path = Path(dirpath) / filename
-                issues.extend(validate_file(file_path, root, verify_urls=verify_urls))
+                issues.extend(validate_file(
+                    file_path, root,
+                    verify_urls=verify_urls,
+                    context_max_words=context_max_words,
+                    context_min_words=context_min_words,
+                ))
 
     return issues

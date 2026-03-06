@@ -46,18 +46,19 @@ Full descriptions: [Design Principles](docs/research/2026-02-22-design-principle
 
 ### Package Structure
 
-- `wos/` — importable Python package (9 modules)
+- `wos/` — importable Python package (10 modules)
   - `frontmatter.py` — custom YAML subset parser (stdlib-only)
   - `document.py` — `Document` dataclass + `parse_document()`
   - `index.py` — `_index.md` generation + sync checking (preamble-preserving)
   - `validators.py` — 5 validation checks with warn/fail severity (frontmatter, content length, URLs, related paths, index sync)
+  - `skill_audit.py` — skill instruction density measurement (line counting, size thresholds)
   - `url_checker.py` — HTTP HEAD/GET URL reachability (urllib)
   - `agents_md.py` — marker-based AGENTS.md section management
   - `markers.py` — shared marker-based section replacement
   - `preferences.py` — communication preferences dimensions and rendering
   - `research_protocol.py` — search protocol logging (`SearchEntry`, `SearchProtocol`, formatters)
 - `scripts/` — thin CLI entry points with argparse and PEP 723 inline metadata
-  - `audit.py` — run validation checks (`--root`, `--no-urls`, `--json`, `--fix`, `--strict`)
+  - `audit.py` — run validation checks (`--root`, `--no-urls`, `--json`, `--fix`, `--strict`, `--context-min-words`, `--context-max-words`, `--skill-max-lines`)
   - `reindex.py` — regenerate all `_index.md` files (preamble-preserving)
   - `check_runtime.py` — canary script to validate `uv run` + PEP 723 pipeline
   - `check_url.py` — URL reachability checking via `wos.url_checker`
@@ -103,20 +104,22 @@ Prefix: `/wos:` (e.g., `/wos:init`, `/wos:audit`). 7 skills:
 | `/wos:consider` | Mental models for problem analysis (16 models) |
 | `/wos:consider:{model}` | Apply a specific mental model (e.g., `first-principles`, `inversion`) |
 
-### Validation (7 checks, warn/fail severity)
+### Validation (8 checks, warn/fail severity)
 
 1. **Frontmatter** (fail + warn) — `name`/`description` non-empty, research sources, dict source warnings, context `related` field warnings
-2. **Content length** (warn) — context files exceeding 800 words
+2. **Content length** (warn) — context files below 100 or exceeding 800 words (configurable)
 3. **Draft markers** (warn) — research documents containing `<!-- DRAFT -->` markers
 4. **Source URLs** (fail + warn) — URLs in `sources` reachable; 403/429 downgraded to `warn`
 5. **Related paths** (fail) — file paths in `related` frontmatter exist on disk
 6. **Index sync** (fail + warn) — `_index.md` matches directory contents, preamble presence
 7. **Project files** (warn) — AGENTS.md/CLAUDE.md existence and configuration
+8. **Skill density** (warn) — skill instruction lines exceeding threshold (default 200, configurable)
 
 ### Key Entry Points
 
 - `wos/document.py` — Document dataclass and `parse_document()`
-- `wos/validators.py` — `validate_project()` runs all 5 checks
+- `wos/validators.py` — `validate_project()` runs all checks
+- `wos/skill_audit.py` — `check_skill_sizes()` measures skill instruction density
 - `wos/index.py` — `generate_index()` and `check_index_sync()`
 - `scripts/audit.py` — CLI for validation
 - `scripts/reindex.py` — CLI for index regeneration

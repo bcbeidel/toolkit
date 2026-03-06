@@ -7,6 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.0] - 2026-03-06
+
+### Added
+
+- **Minimum word count warning for context files.** `check_content()` now warns
+  when context files fall below a configurable minimum (default 100 words).
+  CLI flag: `--context-min-words N`. Same exclusions as the max check
+  (`_index.md` files and non-context files skipped).
+  ([#132](https://github.com/bcbeidel/wos/issues/132))
+- **Skill instruction density reporting.** New `wos/skill_audit.py` module with
+  `strip_frontmatter()`, `count_instruction_lines()`, and `check_skill_sizes()`.
+  The audit prints a skill density summary table to stderr and warns when skills
+  exceed a configurable instruction line threshold (default 200). CLI flag:
+  `--skill-max-lines N` (0 to disable warnings while preserving the summary).
+  ([#133](https://github.com/bcbeidel/wos/issues/133))
+- **Research: skill density threshold.** New research document at
+  `docs/research/2026-03-05-skill-density-threshold.md` establishing the
+  200-line default, anchored on Claude Code's documented guidance and supported
+  by IFScale and Du et al. findings.
+
+### Fixed
+
+- **CLI flags `--context-min-words` and `--context-max-words` now wired
+  through.** Both flags are passed from `scripts/audit.py` through
+  `validate_file()` and `validate_project()` to `check_content()`.
+  Previously `--context-max-words` was silently ignored (pre-existing on main).
+- **`strip_frontmatter()` no longer matches `---` inside YAML values.**
+  Changed delimiter search from `text.find("---", 3)` to
+  `text.find("\n---", 3)` to match `frontmatter.py` behavior.
+
 ## [0.13.0] - 2026-03-05
 
 ### Changed
@@ -758,6 +788,10 @@ implemented with 229 tests passing.
 - Build roadmap with session protocol and dependency graph
 - 18 design principles across four layers
 
+[0.14.0]: https://github.com/bcbeidel/wos/releases/tag/v0.14.0
+[0.13.0]: https://github.com/bcbeidel/wos/releases/tag/v0.13.0
+[0.12.4]: https://github.com/bcbeidel/wos/releases/tag/v0.12.4
+[0.12.3]: https://github.com/bcbeidel/wos/releases/tag/v0.12.3
 [0.12.2]: https://github.com/bcbeidel/wos/releases/tag/v0.12.2
 [0.12.1]: https://github.com/bcbeidel/wos/releases/tag/v0.12.1
 [0.12.0]: https://github.com/bcbeidel/wos/releases/tag/v0.12.0
