@@ -200,6 +200,68 @@ class TestCheckContent:
         issues = check_content(doc)
         assert issues == []
 
+    def test_below_min_words_warns(self) -> None:
+        from wos.validators import check_content
+
+        doc = _make_doc(
+            path="docs/context/api/auth.md",
+            content="Word " * 50,
+        )
+        issues = check_content(doc)
+        assert len(issues) == 1
+        assert issues[0]["severity"] == "warn"
+        assert "50" in issues[0]["issue"]
+
+    def test_above_min_words_no_warning(self) -> None:
+        from wos.validators import check_content
+
+        doc = _make_doc(
+            path="docs/context/api/auth.md",
+            content="Word " * 200,
+        )
+        issues = check_content(doc)
+        assert issues == []
+
+    def test_exactly_at_min_threshold_no_warning(self) -> None:
+        from wos.validators import check_content
+
+        doc = _make_doc(
+            path="docs/context/api/auth.md",
+            content="Word " * 100,
+        )
+        issues = check_content(doc)
+        assert issues == []
+
+    def test_custom_min_words(self) -> None:
+        from wos.validators import check_content
+
+        doc = _make_doc(
+            path="docs/context/api/auth.md",
+            content="Word " * 150,
+        )
+        issues = check_content(doc, min_words=200)
+        assert len(issues) == 1
+
+    def test_artifact_file_no_min_warning(self) -> None:
+        from wos.validators import check_content
+
+        doc = _make_doc(
+            path="docs/research/topic.md",
+            content="Word " * 10,
+        )
+        issues = check_content(doc)
+        assert issues == []
+
+    def test_index_file_excluded_from_min_check(self) -> None:
+        from wos.validators import check_content
+
+        doc = _make_doc(
+            path="docs/context/api/_index.md",
+            content="Word " * 10,
+        )
+        issues = check_content(doc)
+        assert issues == []
+
 
 # ── check_draft_markers ────────────────────────────────────────
 

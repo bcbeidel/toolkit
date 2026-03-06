@@ -79,8 +79,9 @@ def check_content(
     doc: Document,
     context_path: str = "docs/context",
     max_words: int = 800,
+    min_words: int = 100,
 ) -> List[dict]:
-    """Warn when context files exceed word count threshold.
+    """Warn when context files exceed or fall below word count thresholds.
 
     Only checks files under context_path. Non-context files and _index.md
     files are excluded.
@@ -88,10 +89,11 @@ def check_content(
     Args:
         doc: A parsed Document instance.
         context_path: Path prefix for context files.
-        max_words: Word count threshold (default 800).
+        max_words: Upper word count threshold (default 800).
+        min_words: Lower word count threshold (default 100).
 
     Returns:
-        List of issue dicts. Empty if within threshold.
+        List of issue dicts. Empty if within thresholds.
     """
     if not doc.path.startswith(context_path + "/"):
         return []
@@ -103,6 +105,12 @@ def check_content(
         return [{
             "file": doc.path,
             "issue": f"Context file is {word_count} words (threshold: {max_words})",
+            "severity": "warn",
+        }]
+    if word_count < min_words:
+        return [{
+            "file": doc.path,
+            "issue": f"Context file is {word_count} words (minimum: {min_words})",
             "severity": "warn",
         }]
     return []
