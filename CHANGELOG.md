@@ -7,6 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.15.0] - 2026-03-06
+
+### Added
+
+- **Skill metadata validation (`check_skill_meta`).** 7 deterministic quality
+  checks for SKILL.md frontmatter: name format (lowercase+hyphens, ≤64 chars,
+  no reserved words), description quality (≤1024 chars, no XML tags,
+  third-person voice heuristic), and body length (≤500 non-blank lines).
+  New `parse_skill_meta(text)` extracts name/description from SKILL.md raw
+  text, handling YAML block scalars (`>` and `|`). Wired into `scripts/audit.py`
+  — runs automatically when a `skills/` directory exists.
+  ([#128](https://github.com/bcbeidel/wos/issues/128),
+  [#140](https://github.com/bcbeidel/wos/pull/140))
+- **Skill authoring guide.** New reference file at
+  `skills/audit/references/skill-authoring-guide.md` with conventions for
+  writing high-quality skills. Linked from `/wos:audit` skill evaluation
+  section.
+- **PRINCIPLES.md.** Extracted design principles from CLAUDE.md into a
+  standalone file with full descriptions and tension examples.
+- **Research: skill authoring rubric.** New research document at
+  `docs/research/2026-03-06-skill-authoring-rubric.md` synthesizing skill
+  quality conventions from 12 verified sources.
+
+### Fixed
+
+- **Distill skill description updated to third-person voice** for consistency
+  with skill naming conventions.
+- **Init skill name normalized.** Renamed from `wos:init` to `init` in
+  SKILL.md frontmatter for consistency with other skills.
+
 ## [0.14.0] - 2026-03-06
 
 ### Added
@@ -788,6 +818,7 @@ implemented with 229 tests passing.
 - Build roadmap with session protocol and dependency graph
 - 18 design principles across four layers
 
+[0.15.0]: https://github.com/bcbeidel/wos/releases/tag/v0.15.0
 [0.14.0]: https://github.com/bcbeidel/wos/releases/tag/v0.14.0
 [0.13.0]: https://github.com/bcbeidel/wos/releases/tag/v0.13.0
 [0.12.4]: https://github.com/bcbeidel/wos/releases/tag/v0.12.4
