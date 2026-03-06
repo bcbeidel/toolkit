@@ -40,7 +40,7 @@ Versioning policy and version bump process: see [CONTRIBUTING.md](CONTRIBUTING.m
 9. **Separate reads from writes** — audit observes; fixes require explicit action
 10. **Bottom line up front** — key insights at top and bottom, detail in the middle
 
-Full descriptions: [Design Principles](docs/research/2026-02-22-design-principles.md)
+Full descriptions: [Design Principles](PRINCIPLES.md)
 
 ## Architecture
 
@@ -127,7 +127,7 @@ Prefix: `/wos:` (e.g., `/wos:init`, `/wos:audit`). 7 skills:
 ## Reference
 
 - Architecture: [WOS Architecture Reference](docs/plans/2026-02-27-architecture-reference.md)
-- Design principles: [WOS Design Principles](docs/research/2026-02-22-design-principles.md)
+- Design principles: [WOS Design Principles](PRINCIPLES.md)
 - Simplification history: [Simplification Design](docs/plans/2026-02-22-simplification-design.md)
 
 ## Plans
