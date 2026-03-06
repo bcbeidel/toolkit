@@ -71,6 +71,11 @@ remaining technique condition triggers.
 **Key constraint:** Be selective. Over-prompting degrades Claude 4.x
 performance. Apply only techniques whose conditions are clearly met.
 
+**Structuring format:** When applying technique #2, consult the format
+selection table in the technique registry to choose the right format for the
+target model. Default to XML (Claude-optimized) when no target is specified.
+Note the format choice and rationale in the change log.
+
 ### 3. Present
 
 Show the user:
@@ -95,7 +100,9 @@ Format the output as:
 
 ## Refined Prompt
 
+```text
 [Complete prompt text here, ready to copy]
+```
 
 ## Change Log
 
@@ -119,3 +126,7 @@ Format the output as:
   the research backing the technique used.
 - **Preserve intent.** Refinement improves expression, not meaning. Never
   change what the prompt asks for.
+- **Fenced code output.** Always wrap the refined prompt in a ` ```text `
+  fenced code block. This ensures the prompt is copyable as-is and renders
+  correctly in all environments. Without fencing, XML tags, angle brackets,
+  and other markup may be interpreted rather than displayed.

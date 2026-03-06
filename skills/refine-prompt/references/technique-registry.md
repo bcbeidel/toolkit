@@ -47,6 +47,22 @@ Use descriptive tag names. Nest when hierarchy is natural.
 **Evidence:** Anthropic Tier 1 documentation — XML tags provide up to 40%
 quality improvement on complex prompts. Claude uses tags as parsing boundaries.
 
+**Format selection by target model:**
+
+| Target model | Recommended format | Rationale |
+|-------------|-------------------|-----------|
+| Claude (Anthropic) | XML tags | Trained on XML as parsing boundaries; up to 40% quality gain |
+| GPT (OpenAI) | Markdown headers | OpenAI recommends Markdown; XML acceptable; JSON poor for docs |
+| Gemini (Google) | XML or Markdown | Format-agnostic; consistency within prompt matters most |
+| Llama (Meta) | Markdown + XML | Hybrid approach per Meta docs; minimal format sensitivity |
+| Multi-model / unknown | Markdown headers | Broadest compatibility; XML underperforms on non-Claude models |
+
+When the target model is not specified, default to XML (Claude-optimized)
+since this skill runs inside Claude Code. Note the format choice and
+rationale in the change log.
+
+**Research:** [LLM Format Preferences](../../../docs/research/2026-03-05-llm-format-preferences.md)
+
 ---
 
 ## 3. Completeness Fill

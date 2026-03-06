@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.4] - 2026-03-05
+
+### Added
+
+- **Format-selection mapping table for refine-prompt skill.** Technique #2
+  (XML Structuring) now includes a vendor-specific format recommendation table
+  based on official documentation and independent benchmarks. Claude defaults
+  to XML; GPT to Markdown; Gemini to either; Llama to Markdown+XML; multi-model
+  to Markdown headers. Format choice and rationale are logged in the change log.
+  ([#125](https://github.com/bcbeidel/wos/issues/125))
+- **Fenced code output rule for refine-prompt.** Refined prompts are always
+  wrapped in ` ```text ` blocks so XML tags and other markup render correctly
+  in Claude Code.
+- **Research: LLM format preferences by vendor.** New research document at
+  `docs/research/2026-03-05-llm-format-preferences.md` with benchmark data
+  from ImprovingAgents and He et al. (arXiv:2411.10541).
+
 ## [0.12.3] - 2026-03-05
 
 ### Removed
