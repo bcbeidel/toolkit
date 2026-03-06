@@ -25,8 +25,7 @@ No runtime dependencies (stdlib only). Dev dependencies in `pyproject.toml`.
 
 Note: `ruff` may not be installed locally; CI runs it via GitHub Actions.
 
-Version bump requires updating all three: `pyproject.toml`,
-`.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`
+Versioning policy and version bump process: see [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## Design Principles
 
