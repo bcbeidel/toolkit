@@ -243,7 +243,7 @@ class TestCheckSkillMeta:
         _create_skill(
             tmp_path, "good-skill",
             "---\nname: good-skill\n"
-            "description: Performs good actions. Use when the user asks for good things.\n"
+            "description: Performs good actions. Use when asked.\n"
             "---\n# Good Skill\n\n- Do good\n",
         )
         issues = check_skill_meta(tmp_path / "good-skill")

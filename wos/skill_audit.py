@@ -10,7 +10,6 @@ import re
 from pathlib import Path
 from typing import List, Tuple
 
-
 _NAME_RE = re.compile(r"^[a-z0-9-]+$")
 _XML_TAG_RE = re.compile(r"<[a-zA-Z]")
 _RESERVED_WORDS = ("anthropic", "claude")
