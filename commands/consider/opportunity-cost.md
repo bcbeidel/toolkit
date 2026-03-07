@@ -42,6 +42,31 @@ up. Prevents tunnel vision on the chosen path.
 [Does the favored option justify its opportunity cost?]
 </output_format>
 
+<example>
+## Opportunity Cost Analysis: Build vs Buy Authentication
+
+### Decision
+Whether to build a custom auth system or use Auth0.
+
+### Options
+| Option | Direct Value | Direct Cost | Key Tradeoff |
+|--------|-------------|-------------|-------------|
+| A: Build custom | Full control, no vendor dependency | 3 engineer-months, ongoing maintenance | Time to market vs control |
+| B: Auth0 | Ships in 1 week, managed security patches | $1,200/month, vendor lock-in | Cost vs speed |
+| Do nothing | No cost | Users can't log in — not viable | — |
+
+### Opportunity Cost
+If we build custom, we forgo 3 engineer-months of product work. At our current pace, that's the entire notifications feature our top 5 customers are waiting for. The opportunity cost isn't $0 — it's the revenue risk of delaying notifications by a quarter.
+
+### Hidden Costs
+- Custom auth requires ongoing security patching — not a one-time build
+- Auth0 lock-in means switching later requires re-implementing session management
+- Custom auth expertise leaves with the engineer who built it
+
+### Verdict
+Auth0 justified. The opportunity cost of building (delayed notifications = revenue risk) exceeds Auth0's dollar cost by roughly 10x. Revisit only if we outgrow Auth0's pricing tier or need auth behavior they can't support.
+</example>
+
 <success_criteria>
 - At least 3 alternatives listed (including "do nothing")
 - Value estimates are specific, not vague hand-waving

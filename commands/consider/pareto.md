@@ -43,6 +43,35 @@ focus there for maximum leverage.
 [Where to redirect effort for maximum impact]
 </output_format>
 
+<example>
+## Pareto Analysis: Reducing Support Ticket Volume
+
+### Outcome to Optimize
+Reduce monthly support tickets from 500 to under 200.
+
+### Input-to-Outcome Mapping
+| Input | Est. Contribution | Cumulative |
+|-------|------------------|-----------|
+| Password reset issues | 35% | 35% |
+| Confusing billing page | 25% | 60% |
+| API error messages unclear | 15% | 75% |
+| Feature requests misfiled as bugs | 10% | 85% |
+| Onboarding confusion | 8% | 93% |
+| Account deletion requests | 4% | 97% |
+| Other | 3% | 100% |
+
+### Vital Few (the 20%)
+- Password resets: add self-service reset flow (currently requires support ticket to trigger)
+- Billing page: redesign the plan comparison table — 80% of billing tickets ask "what's the difference between plans?"
+
+### Trivial Many (candidates for reduction)
+- Feature requests as bugs: not worth building a routing system for 10% of volume
+- Account deletion: low volume, legally required to handle manually anyway
+
+### Recommended Focus Shift
+Two changes (self-service password reset + billing page redesign) would eliminate ~60% of tickets. Everything else combined is less impactful than either of these alone. Start with password reset — it's a weekend project with the highest single-category impact.
+</example>
+
 <success_criteria>
 - Inputs are specific and enumerable, not vague categories
 - Contribution estimates are grounded in evidence or reasoning

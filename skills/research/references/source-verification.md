@@ -3,12 +3,6 @@
 Mechanical URL verification to catch dead links and hallucinated sources.
 Run this after gathering sources and before SIFT evaluation.
 
-## When to Run
-
-After Phase 2 (Initial Source Gathering) completes, before Phase 3 (Source
-Evaluation). Every source collected during gathering must pass verification
-before entering the SIFT pipeline.
-
 ## How to Run
 
 Use the `wos.url_checker` module to verify source URLs are reachable:

@@ -41,6 +41,33 @@ unnecessary, or creating friction. Subtraction before addition.
 [Elements that seem removable but are load-bearing]
 </output_format>
 
+<example>
+## Via Negativa Analysis: Deployment Pipeline
+
+### Current State
+Deployment pipeline has 12 steps: lint, unit test, integration test, build Docker image, push to registry, deploy to staging, run smoke tests, wait for manual approval, deploy to canary, monitor for 30 minutes, deploy to production, run production smoke tests.
+
+### Removal Candidates
+| Element | Remove? | What improves | What breaks |
+|---------|---------|--------------|-------------|
+| Manual approval gate | Yes | Deploy time drops 2-4 hours (waiting for approver) | Nothing — canary + smoke tests catch issues automatically |
+| Separate lint step | Yes | 2 min saved — linting runs in IDE and pre-commit hooks already | Nothing — issues caught earlier in workflow |
+| Staging environment | Yes | Eliminates a flaky environment that causes 30% of pipeline failures | Need canary to be reliable (it already is) |
+| 30-min canary monitor | No | — | Removing loses the safety net for slow-burn issues |
+| Integration tests | No | — | Only place we catch cross-service contract breaks |
+
+### Recommended Removals
+1. Manual approval gate — replaced by automated canary monitoring, which is more consistent than a human glancing at dashboards
+2. Separate lint step — redundant with pre-commit hooks; lint errors haven't reached CI in 4 months
+3. Staging environment — flaky environment causes more failed deploys than it prevents; canary on production traffic is a better signal
+
+### Simplified Version
+9 steps: unit test, integration test, build, push, deploy canary, monitor 30 min, deploy production, smoke test. Still catches regressions, still has gradual rollout, but 30% faster and no flaky staging.
+
+### What NOT to Remove
+The 30-minute canary monitor looks like wasted time but caught a memory leak last month that smoke tests missed. It's load-bearing.
+</example>
+
 <success_criteria>
 - Current state inventoried before proposing removals
 - At least 5 elements evaluated for removal

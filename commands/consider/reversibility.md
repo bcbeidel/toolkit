@@ -44,6 +44,26 @@ of analysis.
 - **Recommendation:** Analyze thoroughly before committing
 </output_format>
 
+<example>
+## Reversibility Analysis: Choosing a Database for the Events Service
+
+### Decision
+Use PostgreSQL vs DynamoDB for a new event-sourcing service.
+
+### Classification: One-Way Door
+
+### Reversibility Assessment
+- **Can it be undone?** Partially — data can be migrated, but schema design and query patterns are deeply coupled
+- **Cost to reverse:** High — rewriting data access layer, migrating data, revalidating correctness
+- **Time to reverse:** Months (data migration + regression testing + gradual cutover)
+- **Blast radius:** Team — affects the events team and all downstream consumers of the event stream
+
+### If One-Way Door
+- **What makes it irreversible:** Query patterns, schema design, and operational tooling all become database-specific within weeks. After 6 months of production data, migration becomes a project in itself.
+- **Ways to reduce commitment:** Start with a repository abstraction layer so business logic doesn't call database APIs directly. Build for PostgreSQL first (team knows it), but keep the option to swap the storage backend if DynamoDB's scaling becomes necessary.
+- **Recommendation:** Analyze thoroughly. Default to PostgreSQL (known quantity, team expertise, adequate for projected scale). Revisit DynamoDB only if event volume exceeds 50K/sec — a threshold we're unlikely to hit in year one.
+</example>
+
 <success_criteria>
 - Classification is justified with specific reasoning, not gut feel
 - Cost, time, and blast radius of reversal are all assessed

@@ -40,6 +40,30 @@ fundamentals to find novel solutions.
 [What changes when you reason from fundamentals vs convention]
 </output_format>
 
+<example>
+## First-Principles Analysis: Monolith vs Microservices
+
+### Problem Statement
+Our team assumes we need microservices because we're scaling, but deploys are slow and coordination costs are high.
+
+### Assumptions Identified
+- Microservices improve scalability — convention (monoliths scale vertically too)
+- Independent deploys are faster — convention (coordination overhead can negate this)
+- Our team is big enough to own separate services — unverified (we have 4 engineers)
+- Network calls between services are negligible — unverified (latency adds up)
+
+### Fundamental Truths
+1. We need to deploy changes without breaking unrelated features
+2. Our current bottleneck is deploy pipeline speed, not runtime scaling
+3. Four engineers cannot maintain more than 2-3 independent services effectively
+
+### Rebuilt Reasoning
+A modular monolith with clear internal boundaries gives us deploy isolation (via feature flags and targeted rollouts) without the coordination cost of service boundaries. Split only when a module's scaling needs diverge measurably from the rest.
+
+### Key Insight
+The assumption "scaling = microservices" skipped the question "what are we actually scaling?" Our bottleneck is deploy speed, not request throughput — a problem microservices make worse, not better.
+</example>
+
 <success_criteria>
 - At least 3 assumptions identified and explicitly challenged
 - Each assumption classified as fundamental, convention, or unverified

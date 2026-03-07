@@ -41,6 +41,37 @@ Often clearer than direct optimization.
 [What failure modes might we be missing?]
 </output_format>
 
+<example>
+## Inversion Analysis: Developer Platform Launch
+
+### Desired Outcome
+Launch an internal developer platform adopted by 80% of engineering teams within 6 months.
+
+### Guaranteed Failure Modes
+1. Build without talking to teams about their actual pain points — likelihood: high, severity: high
+2. Require migration from existing tools on day one — likelihood: medium, severity: high
+3. No documentation or onboarding path — likelihood: medium, severity: medium
+4. Platform team operates in isolation, slow to fix bugs — likelihood: medium, severity: high
+5. Mandate adoption top-down without demonstrating value — likelihood: high, severity: medium
+6. Over-engineer for future scale instead of solving current problems — likelihood: medium, severity: medium
+
+### Avoidance Strategies
+| Failure Mode | Avoidance Strategy |
+|-------------|-------------------|
+| Build without input | Interview 5 teams before writing code; co-design with 2 pilot teams |
+| Forced migration | Run alongside existing tools; migrate incrementally when platform proves faster |
+| No docs | Onboarding guide ships with v1; pilot teams write the first tutorials |
+| Slow bug response | Dedicated on-call rotation; SLA of 1 business day for blocking issues |
+| Top-down mandate | Demo wins from pilot teams; let adoption spread organically before any mandates |
+| Over-engineering | Ship MVP for the top 3 pain points only; add capabilities based on demand |
+
+### Positive Plan
+Start with pilot teams, solve their top 3 pain points, ship fast bug fixes, let results drive adoption. Documentation and incremental migration from day one.
+
+### Blind Spots
+We haven't considered what happens if pilot teams' pain points diverge significantly — the platform might fragment into team-specific solutions rather than a shared one.
+</example>
+
 <success_criteria>
 - At least 5 specific failure modes identified (not generic)
 - Failure modes ranked by both likelihood and severity

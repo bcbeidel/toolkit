@@ -33,8 +33,6 @@ vary in SIFT rigor, source requirements, and counter-evidence needs.
 - **Full** = Assumptions check + ACH + Premortem
 - **Partial** = Assumptions check + Premortem (no ACH)
 
-See `references/challenge-phase.md` for detailed procedures.
-
 ## Mode Descriptions
 
 ### deep-dive

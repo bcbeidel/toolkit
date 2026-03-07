@@ -44,6 +44,32 @@ defending weaknesses against threats.
 [Single most important action based on the analysis]
 </output_format>
 
+<example>
+## SWOT Analysis: Open-Source CLI Tool Competitive Position
+
+### Internal
+| Strengths | Weaknesses |
+|-----------|-----------|
+| Zero dependencies — easy install | No GUI — limits non-technical adoption |
+| Fast execution (stdlib only) | Small maintainer team (2 active) |
+| Clear documentation and examples | No plugin ecosystem yet |
+
+### External
+| Opportunities | Threats |
+|--------------|---------|
+| Growing demand for CLI-first developer tools | Well-funded competitor launching similar tool |
+| Conference talk accepted — visibility boost | Key maintainer may leave in 6 months |
+| Integration request from popular IDE plugin | AI-assisted alternatives reducing need for CLI tools |
+
+### Strategic Options
+- **Leverage (S+O):** Zero-dep install + IDE integration request = ship an IDE adapter that wraps the CLI, capturing both audiences
+- **Defend (W+T):** Small team + competitor launch = focus on what competitor can't easily copy (simplicity, no vendor lock-in)
+- **Improve (W+O):** No plugins + conference visibility = announce plugin API at conference to attract contributors
+
+### Priority Action
+Ship the IDE adapter integration — it leverages the core strength (simple CLI) to reach a new audience (IDE users) at exactly the moment visibility is growing (conference).
+</example>
+
 <success_criteria>
 - At least 3 items in each quadrant (S, W, O, T)
 - Strengths and weaknesses are internal (within control)

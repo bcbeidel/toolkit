@@ -40,6 +40,34 @@ repeatedly to uncover hidden costs, feedback loops, and unintended effects.
 [Should we proceed, modify, or abandon given full consequence chain?]
 </output_format>
 
+<example>
+## Second-Order Analysis: Mandatory Code Review Policy
+
+### Proposed Action
+Require two approvals on every pull request before merge.
+
+### Consequence Chain
+- **1st order:** PRs take longer to merge (reviewers must be available)
+  - **2nd order:** Developers batch smaller changes into larger PRs to reduce review overhead
+    - **3rd order:** Larger PRs get superficial reviews — reviewers skim instead of reading carefully
+- **1st order:** More eyes on code catches bugs earlier
+  - **2nd order:** Developers rely on reviewers as a safety net, writing less carefully
+- **1st order:** Junior developers get feedback and learn faster
+  - **2nd order:** Senior developers spend significant time reviewing, reducing their own output
+    - **3rd order:** Seniors become bottlenecks; review queues grow; teams start rubber-stamping
+
+### Feedback Loops
+- Larger PRs → worse reviews → more bugs slip through → pressure to add more reviewers → even longer queues (amplifying)
+- Junior learning → better code quality over time → reviews get faster (dampening, but slow)
+
+### Unintended Consequences
+- Review bottlenecks create a two-class system: people who review and people who wait. Resentment builds.
+- Two-approval rule optimizes for risk avoidance but penalizes the 90% of changes that are low-risk.
+
+### Revised Assessment
+Keep mandatory review but with one approval, not two. Add a "trivial" label for changes under 20 lines that need only one reviewer. This preserves the learning and bug-catching benefits while avoiding the bottleneck spiral.
+</example>
+
 <success_criteria>
 - At least 3 first-order effects traced to second-order
 - At least 1 third-order consequence identified

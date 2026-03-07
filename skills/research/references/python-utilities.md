@@ -30,14 +30,6 @@ file                                     | sev  | issue
 docs/research/my-research.md             | fail | Research document has no sources
 ```
 
-## Validate Entire Project
-
-Runs all checks across `docs/` subdirectories.
-
-```bash
-uv run <plugin-scripts-dir>/audit.py [--root DIR] [--no-urls] [--json] [--fix] [--strict]
-```
-
 ## Regenerate Index Files
 
 Regenerate all `_index.md` files under `docs/` subdirectories.

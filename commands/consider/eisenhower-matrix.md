@@ -42,6 +42,34 @@ from crowding out what actually matters.
 [What's crowding out the important-not-urgent work?]
 </output_format>
 
+<example>
+## Eisenhower Matrix: Sprint Planning Priorities
+
+### Items to Prioritize
+1. Fix production login bug (users locked out)
+2. Write Q2 architecture proposal (due in 3 weeks)
+3. Review 4 pending pull requests
+4. Update team wiki with onboarding docs
+5. Respond to vendor demo scheduling emails
+6. Refactor auth module (tech debt)
+
+### Matrix
+
+|  | Urgent | Not Urgent |
+|--|--------|-----------|
+| **Important** | Q1: Fix login bug | Q2: Architecture proposal, Refactor auth |
+| **Not Important** | Q3: Vendor emails, PR reviews | Q4: Wiki updates |
+
+### Quadrant Assignments
+- **Q1 (Do Now):** Fix production login bug — users are blocked, revenue impact
+- **Q2 (Schedule):** Architecture proposal (block 2hrs Thursday), Auth refactor (next sprint)
+- **Q3 (Delegate):** Vendor emails (admin can schedule), PR reviews (assign to senior dev)
+- **Q4 (Eliminate):** Wiki updates — onboarding isn't happening this quarter
+
+### Key Insight
+PR reviews feel urgent because notifications pile up, but they're not important enough to displace the architecture proposal. Batching reviews to end-of-day prevents them from fragmenting deep work on Q2 items.
+</example>
+
 <success_criteria>
 - All items explicitly placed in exactly one quadrant
 - Urgency and importance assessments are justified, not arbitrary

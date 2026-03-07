@@ -42,6 +42,31 @@ becomes easier or unnecessary?"
 [What to deprioritize to protect focus on the one thing]
 </output_format>
 
+<example>
+## One Thing Analysis: Improving Developer Onboarding
+
+### Goal
+Reduce time-to-first-commit for new engineers from 2 weeks to 3 days.
+
+### Candidate Actions
+| Action | Domino Effect | Makes others easier? |
+|--------|-------------|---------------------|
+| Write comprehensive onboarding docs | New hires self-serve answers | Partially — still need environment to work |
+| Fix the dev environment setup script | New hires have working code on day 1 | Yes — unblocks everything downstream |
+| Assign onboarding buddies | New hires get personalized help | Partially — buddies still fight the broken setup |
+| Create a "first task" ticket template | Clear first contribution path | Partially — useless if environment isn't working |
+| Record architecture walkthrough video | Context available on-demand | No — doesn't unblock the setup bottleneck |
+
+### The One Thing
+Fix the dev environment setup script. Every other onboarding improvement assumes the new hire has a working environment. A broken setup script means buddies spend their time debugging Docker instead of teaching architecture, docs describe a system the new hire can't run, and first tasks can't be attempted.
+
+### Definition of Done
+A new hire can run `make setup` on a fresh laptop and have all services running with seed data in under 30 minutes. Tested by having someone outside the team follow the instructions.
+
+### Say No To
+Pause the architecture video project and the onboarding doc rewrite until setup works. Both are wasted effort if people can't run the code.
+</example>
+
 <success_criteria>
 - At least 4 candidate actions evaluated before selecting one
 - Domino effects are specific (not "it helps everything")

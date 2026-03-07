@@ -1,10 +1,11 @@
 ---
 name: audit
 description: >
-  This skill should be used when the user asks to "check health",
-  "validate documents", "run validation", "audit content quality",
-  "review documents", "check coverage", "check freshness",
-  "run health check", or "what needs attention".
+  Validates project content quality and reports frontmatter, URL, index,
+  and skill issues. Use when the user asks to "check health", "validate
+  documents", "run validation", "audit content quality", "review documents",
+  "check coverage", "check freshness", "run health check", or "what needs
+  attention".
 argument-hint: "[check|audit|review|coverage|freshness]"
 user-invocable: true
 references:
@@ -87,8 +88,6 @@ file                              | sev  | issue
 docs/context/api/auth.md           | fail | Frontmatter 'name' is empty
 docs/context/api/_index.md        | warn | Index has no area description (preamble)
 ```
-
-Exit code: 1 if any `fail`, 0 if only `warn`. Use `--strict` to exit 1 on any issue.
 
 With `--json`, output is a JSON array of objects:
 

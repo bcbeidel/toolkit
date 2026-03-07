@@ -39,6 +39,31 @@ simplicity, but not at the cost of explanatory power.
 [What would confirm or rule out alternatives]
 </output_format>
 
+<example>
+## Occam's Razor Analysis: API Response Time Increase
+
+### Observations to Explain
+- P95 latency increased from 200ms to 800ms last Tuesday
+- No code deployments that day
+- Database CPU is normal
+- Only affects the /search endpoint
+- Traffic volume unchanged
+
+### Candidate Explanations
+| Explanation | Assumptions | Fits all facts? |
+|-------------|------------|----------------|
+| Search index corrupted | 1 (index can silently corrupt) | Yes |
+| Upstream provider slowed down | 1 (provider had an incident) | Yes — /search calls external API |
+| DNS resolution intermittent | 2 (DNS issue + only affects one endpoint) | Partial — why only /search? |
+| Memory leak in search service | 2 (leak exists + triggered Tuesday) | Partial — would worsen over time |
+
+### Simplest Sufficient Explanation
+Upstream search provider experienced degradation. This requires only one assumption (provider incident), explains why only /search is affected (it's the only endpoint calling that provider), and fits the Tuesday timing without needing a code change.
+
+### Distinguishing Evidence
+Check the provider's status page for Tuesday incidents. If clean, run `curl` directly against the provider API to measure current latency. If provider is fast, re-examine the search index.
+</example>
+
 <success_criteria>
 - All known facts explicitly listed before generating explanations
 - At least 3 candidate explanations with different complexity levels

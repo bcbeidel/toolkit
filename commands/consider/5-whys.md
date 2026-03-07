@@ -42,6 +42,29 @@ that, if addressed, prevents recurrence.
 [Specific step to address the root cause]
 </output_format>
 
+<example>
+## 5 Whys Analysis: CI Builds Failing Intermittently
+
+### Problem Statement
+Integration tests fail roughly 20% of the time on CI but pass locally.
+
+### Why Chain
+1. Why? Tests depend on a shared database that sometimes has stale data from previous runs.
+2. Why? Test teardown doesn't reset the database — it relies on transactions that sometimes don't roll back.
+3. Why? Two test suites run in parallel and share a single test database instance.
+4. Why? The CI config was copied from a project that ran tests sequentially.
+5. Why? No one reviewed the CI config when we added the second test suite six months ago.
+
+### Root Cause
+CI infrastructure was never updated when test parallelism was introduced. The shared database assumption held for sequential runs but breaks under concurrency.
+
+### Verification
+Giving each parallel suite its own database instance would eliminate the shared-state race condition, preventing the intermittent failures.
+
+### Action
+Create per-suite database instances in CI using a template database that's cloned at suite start and destroyed at suite end.
+</example>
+
 <success_criteria>
 - Problem statement describes a specific, observable symptom
 - Each "why" answer is causal (not just restating the previous level)
