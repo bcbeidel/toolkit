@@ -22,6 +22,8 @@ _SECOND_PERSON_PATTERNS = (
     "i will",
     "this skill should be used when",
 )
+_RIGID_DIRECTIVE_RE = re.compile(r"\b(?:MUST|NEVER|ALWAYS|REQUIRED|FORBIDDEN)\b")
+_RIGID_DIRECTIVE_THRESHOLD = 3
 
 
 def strip_frontmatter(text: str) -> str:
@@ -255,8 +257,21 @@ def check_skill_meta(skill_dir: Path) -> List[dict]:
                 })
                 break
 
-    # Raw line count
+    # Rigid directive density
     body = strip_frontmatter(raw)
+    directive_matches = _RIGID_DIRECTIVE_RE.findall(body)
+    if len(directive_matches) >= _RIGID_DIRECTIVE_THRESHOLD:
+        issues.append({
+            "file": file_str,
+            "issue": (
+                f"SKILL.md body has {len(directive_matches)} ALL-CAPS "
+                f"directives (MUST/NEVER/ALWAYS/etc.) — consider "
+                f"explaining rationale instead of rigid commands"
+            ),
+            "severity": "warn",
+        })
+
+    # Raw line count
     raw_lines = sum(1 for line in body.splitlines() if line.strip())
     if raw_lines > 500:
         issues.append({

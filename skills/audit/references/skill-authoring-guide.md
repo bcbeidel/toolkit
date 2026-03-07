@@ -84,13 +84,22 @@ The body contains instructions Claude follows when the skill triggers.
 - **Imperative voice:** "Read the document" not "The document should be read"
 - **Consistent terminology:** Pick one term and use it throughout
 - **No time-sensitive information**
+- **Adapt to audience:** Consider the likely technical range of users.
+  Briefly explain domain-specific terms (e.g., "assertion", "JSON")
+  when context cues suggest the user may not know them. Don't
+  over-explain for expert audiences.
 
-### The Conciseness Test
+### The Token-Earning Test
 
-For every instruction, ask: "Does Claude already know this?" Claude is
-a highly capable model — only add context it doesn't have. A paragraph
-explaining what PDFs are wastes tokens. A line showing which library to
-use earns its place.
+Every instruction should earn its place. Two questions to ask:
+
+1. **"Does Claude already know this?"** — A paragraph explaining what
+   PDFs are wastes tokens. A line showing which library to use earns
+   its place.
+2. **"Is this pulling its weight?"** — An instruction can be correct
+   and still not help. If removing a section wouldn't change output
+   quality, the section is dead weight. Lean skills outperform verbose
+   ones because signal isn't diluted by noise.
 
 ### Freedom Matches Fragility
 
@@ -162,8 +171,12 @@ When evaluating a skill, check these criteria:
 | Check | What to evaluate |
 |-------|-----------------|
 | Description triggers | Does it include both what + when? |
+| Description breadth | Does it cast a wide enough net? Claude undertriggers — descriptions should be slightly "pushy", covering adjacent phrasings and contexts even when the user doesn't name the skill explicitly. |
 | Freedom ↔ fragility | Do guardrail vs. guidance levels match the task? |
+| Rationale over rigidity | Does the skill explain *why* behind instructions, or rely on rigid ALL-CAPS directives (MUST, NEVER, ALWAYS)? Explaining reasoning produces more intelligent adaptation than rigid commands. |
 | Unnecessary context | Does the skill explain things Claude already knows? |
+| Token-earning | Is every instruction pulling its weight, or could sections be removed without affecting output quality? |
+| Generality | Is the skill written for broad use, or narrowly overfit to specific examples? Constraints should serve the general purpose, not patch individual test cases. |
 | Examples quality | Are examples concrete and demonstrate expected depth? |
 | Terminology consistency | Is vocabulary consistent throughout? |
 | Reference depth | Are all references one level deep from SKILL.md? |

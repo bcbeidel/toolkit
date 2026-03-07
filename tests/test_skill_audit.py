@@ -319,6 +319,39 @@ class TestCheckSkillMeta:
         issues = check_skill_meta(tmp_path / "long-skill")
         assert any("500" in i["issue"] for i in issues)
 
+    def test_rigid_directives_under_threshold_no_warn(self, tmp_path: Path) -> None:
+        from wos.skill_audit import check_skill_meta
+        _create_skill(
+            tmp_path, "mild-skill",
+            "---\nname: mild-skill\ndescription: Valid skill.\n---\n"
+            "# Mild\n\nMUST do X.\nNEVER do Y.\n",
+        )
+        issues = check_skill_meta(tmp_path / "mild-skill")
+        assert not any("directives" in i["issue"] for i in issues)
+
+    def test_rigid_directives_at_threshold_warns(self, tmp_path: Path) -> None:
+        from wos.skill_audit import check_skill_meta
+        _create_skill(
+            tmp_path, "rigid-skill",
+            "---\nname: rigid-skill\ndescription: Valid skill.\n---\n"
+            "# Rigid\n\nMUST do X.\nNEVER do Y.\nALWAYS do Z.\n",
+        )
+        issues = check_skill_meta(tmp_path / "rigid-skill")
+        directive_issues = [i for i in issues if "directives" in i["issue"]]
+        assert len(directive_issues) == 1
+        assert directive_issues[0]["severity"] == "warn"
+
+    def test_rigid_directives_ignores_lowercase(self, tmp_path: Path) -> None:
+        from wos.skill_audit import check_skill_meta
+        _create_skill(
+            tmp_path, "lowercase-skill",
+            "---\nname: lowercase-skill\ndescription: Valid skill.\n---\n"
+            "# Lowercase\n\nYou must do X.\nNever do Y.\nAlways do Z.\n"
+            "This is required.\nThis is forbidden.\n",
+        )
+        issues = check_skill_meta(tmp_path / "lowercase-skill")
+        assert not any("directives" in i["issue"] for i in issues)
+
     def test_no_skill_md_returns_empty(self, tmp_path: Path) -> None:
         from wos.skill_audit import check_skill_meta
         (tmp_path / "empty-dir").mkdir()

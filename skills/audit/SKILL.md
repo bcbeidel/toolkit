@@ -167,8 +167,12 @@ Present judgment findings as a narrative after the automated results:
 Skill Evaluation: [skill-name]
 
 - **Description triggers:** [finding + explanation]
+- **Description breadth:** [finding + explanation]
 - **Freedom ↔ fragility:** [finding + explanation]
+- **Rationale over rigidity:** [finding + explanation]
 - **Unnecessary context:** [finding + explanation]
+- **Token-earning:** [finding + explanation]
+- **Generality:** [finding + explanation]
 - **Examples:** [finding + explanation]
 - **Terminology:** [finding + explanation]
 - **Reference depth:** [finding + explanation]
