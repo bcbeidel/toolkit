@@ -1,8 +1,7 @@
 # Research Workflow
 
 Eight-phase investigation process. All research modes follow these phases,
-with SIFT intensity and Challenge sub-steps varying by mode (see
-research-modes.md).
+with SIFT intensity and Challenge sub-steps varying by mode.
 
 The research document is created in Phase 2 and built progressively —
 each phase writes its output to disk so work survives context resets.
@@ -74,14 +73,10 @@ When resuming, read the document fully to recover context before continuing.
 ]
 ```
 
-> **Handling fetch failures:** When parallel `WebFetch` calls fail, a single
-> failure can cascade to sibling calls ("Sibling tool call errored"). Retry
-> failed URLs individually. Common failure modes:
-> - **403** — bot protection; source exists but can't be fetched. Retain if
->   from a published venue.
-> - **303/301** — redirect; retry with the redirect URL.
-> - **Timeout** — retry once, then skip. Do not drop sources solely because
->   fetching failed — assess based on URL verification status.
+> **Handling fetch failures:** When parallel `WebFetch` calls fail, retry
+> failed URLs individually. Retry 3xx redirects with the redirect URL;
+> keep 403 sources if from a published venue; retry timeouts once then skip.
+> Do not drop sources solely because fetching failed.
 
 8. **Write the initial document to disk.** Create the file at
    `docs/research/{date}-{slug}.md` with a `<!-- DRAFT -->` marker,
@@ -117,17 +112,8 @@ Update this section after each search. Replace the JSON in the comment
 above with the current accumulated protocol.
 ```
 
-The search protocol JSON is stored in the document itself (inside the
-`<!-- search-protocol ... -->` comment), not in agent memory or frontmatter.
-This is operational metadata (workflow state for context reset recovery), not
-semantic metadata (document identity for discovery). It lives in an HTML
-comment because: (1) it survives context resets alongside the source list,
-(2) it's machine-readable but invisible to human readers, and (3) it has a
-different lifecycle than frontmatter — it's work-in-progress state that gets
-rendered to a markdown table in Phase 6. After each search, update the comment
-with the accumulated JSON.
-
-This checkpoint means the source list survives a context reset.
+After each search, update the `<!-- search-protocol ... -->` comment with
+the accumulated JSON. This checkpoint survives context resets.
 
 ## Phase 3: Verify & Evaluate
 
@@ -144,7 +130,6 @@ Mechanical URL verification followed by SIFT evaluation in a single phase.
        'https://example.com/source-2'
    ```
 
-   (Full reference: `references/source-verification.md`)
 3. Review the results:
    - Remove sources where `reachable=False` with status 404 or 0
    - Keep sources where `reachable=False` with status 403/5xx but note issues
@@ -153,18 +138,8 @@ Mechanical URL verification followed by SIFT evaluation in a single phase.
 
 ### SIFT Evaluation
 
-Apply SIFT framework (see `references/sift-framework.md`) at the mode's
-intensity level.
-
-For each source:
-
-1. **Stop** — Is this source known to me? Flag as unverified if not.
-2. **Investigate** — Check domain authority, author credentials, bias.
-   Classify into source hierarchy tier (T1-T6, see `references/source-evaluation.md`).
-3. **Find better** — For key claims, search for the same information from a
-   higher-tier source. Upgrade when found.
-4. **Trace** — For critical claims, follow the citation chain to the primary
-   source. Verify the claim matches the original context.
+Apply SIFT (Stop, Investigate, Find better, Trace) at the mode's intensity
+level. Classify each source into a tier (T1-T6).
 
 After evaluation:
 - Drop sources below T5 unless no better source exists
@@ -184,10 +159,9 @@ After evaluation:
 
 ## Phase 4: Challenge
 
-Stress-test reasoning before synthesis. See `references/challenge-phase.md`
-for full procedures.
+Stress-test reasoning before synthesis.
 
-Three sub-steps, applied based on research mode (see research-modes.md):
+Three sub-steps, applied based on research mode:
 
 1. **Assumptions check** (all modes) — List 3-5 key assumptions, check
    evidence for/against each, assess impact if false
@@ -234,48 +208,26 @@ Three sub-steps, applied based on research mode (see research-modes.md):
 
 ## Phase 5.5a: Self-Verify Claims (CoVe)
 
-Extract and self-verify all high-risk claims before citation re-checking.
-See `references/claim-verification.md` for claim types, table format, and
-full procedure.
+Extract every quote, statistic, attribution, and superlative from
+Findings into a `## Claims` table. Run Chain-of-Verification: generate
+a verification question per claim, answer it in a separate LLM call
+without the draft in context, then compare.
 
-1. Scan the Findings section. Extract every quote, statistic, attribution,
-   and superlative into a `## Claims` table in the document. All statuses
-   start as `unverified`.
-2. For each claim, generate a verification question appropriate to its type.
-3. Answer each verification question in a **separate LLM call without the
-   draft in context** to prevent confirmation bias.
-4. Compare CoVe answers to claims:
-   - Agrees → advance to Phase 5.5b
-   - Contradicts → route through contradiction resolution
-     (see `references/claim-verification.md`)
-   - Uncertain → advance to Phase 5.5b
-
-5. **Update the document on disk.** The `## Claims` table should now exist
-   with all claims extracted and CoVe-processed.
+**Update the document on disk.** The `## Claims` table should now exist
+with all claims extracted and CoVe-processed.
 
 **Gate:** Claims Table populated. All claims processed through CoVe.
-Contradictions routed or resolved.
 
 ## Phase 5.5b: Citation Re-Verify Claims
 
-Cross-check claims against their cited sources. See
-`references/claim-verification.md` for resolution statuses and procedure.
+Re-fetch each cited source via WebFetch. For each claim, search the
+fetched content for the specific fact. Assign final status: `verified`,
+`corrected`, `removed`, `unverifiable`, or `human-review`.
 
-1. Group remaining `unverified` claims by source URL.
-2. Re-fetch each source URL via WebFetch.
-3. For each claim citing that source, search the fetched content for the
-   specific fact. Assign final status: `verified`, `corrected`, `removed`,
-   `unverifiable`, or `human-review`.
-4. For `corrected` claims: update the claim text in the document body to
-   match the source. Note the original wording in the Claims Table.
-5. For `removed` claims: delete the claim from the document body. Keep the
-   row in the Claims Table with `removed` status.
+**Update the document on disk.** Claims Table should have no `unverified`
+statuses remaining.
 
-6. **Update the document on disk.** Claims Table should have no `unverified`
-   statuses remaining.
-
-**Gate:** No `unverified` claims remain. `unverifiable` and `human-review`
-claims are annotated.
+**Gate:** No `unverified` claims remain.
 
 ## Phase 6: Finalize Research Document
 

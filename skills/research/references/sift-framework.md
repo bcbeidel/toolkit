@@ -1,8 +1,6 @@
 # SIFT Framework Reference
 
-The SIFT framework (Mike Caulfield, University of Washington) provides
-a systematic approach to evaluating information quality. Each step maps
-to concrete agent actions.
+Each SIFT step maps to concrete agent actions during source evaluation.
 
 ## S — Stop
 
@@ -26,7 +24,7 @@ Check who's behind the information:
 1. Domain authority — is this an official/institutional site?
 2. Author credentials — do they have relevant expertise?
 3. Publication history — is the source consistently reliable?
-4. Classify using the source hierarchy (see source-evaluation.md)
+4. Classify into a source hierarchy tier (T1-T6)
 
 ## F — Find Better Coverage
 
