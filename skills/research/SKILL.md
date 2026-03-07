@@ -12,13 +12,12 @@ user-invocable: true
 compatibility: "Requires Python 3 (stdlib only), WOS plugin (audit, reindex), WebSearch, WebFetch"
 references:
   - references/research-workflow.md
-  - references/sift-framework.md
-  - references/source-evaluation.md
-  - references/source-verification.md
-  - references/challenge-phase.md
+  - references/source-quality.md
+  - references/challenge.md
+  - references/synthesis-guide.md
+  - references/claim-verification.md
   - references/research-modes.md
   - references/python-utilities.md
-  - references/claim-verification.md
 ---
 
 # Research Skill
@@ -49,8 +48,8 @@ A **deep dive** (comprehensive), **options comparison**, or
 
 ## Workflow
 
-All modes follow the same workflow with varying SIFT intensity.
-See `references/research-workflow.md` for the full 8-phase process.
+All modes follow the same 9-phase workflow with varying intensity.
+See `references/research-workflow.md` for the full process.
 
 ## Phase Gates (Mandatory)
 
@@ -58,14 +57,15 @@ Each phase ends with a checkpoint. Do not proceed until the gate is met.
 
 | Phase | Gate | How to Verify |
 |-------|------|---------------|
-| 1. Frame -> 2. Gather | User confirmed sub-questions | User said "yes" or equivalent |
-| 2. Gather -> 3. Verify | DRAFT file exists on disk with `<!-- DRAFT -->` marker | Read the file |
-| 3. Verify -> 4. Challenge | Sources table has Tier + Status columns | Read the file |
-| 4. Challenge -> 5. Synthesize | `## Challenge` section exists on disk | Read the file |
-| 5. Synthesize -> 5.5a. Self-Verify | `## Findings` section exists on disk | Read the file |
-| 5.5a. Self-Verify -> 5.5b. Citation Re-Verify | `## Claims` table populated, CoVe complete | Read the file |
-| 5.5b. Citation Re-Verify -> 6. Finalize | No `unverified` claims in Claims Table | Read the file |
-| 6. Finalize -> Done | `<!-- DRAFT -->` removed, audit passes | Run audit |
+| 1. Frame → 2. Gather | User confirmed sub-questions | User said "yes" or equivalent |
+| 2. Gather → 3. Verify Sources | DRAFT file exists on disk with `<!-- DRAFT -->` marker | Read the file |
+| 3. Verify Sources → 4. Evaluate Sources | URLs checked, unreachable removed from frontmatter | Read the file |
+| 4. Evaluate Sources → 5. Challenge | Sources table has Tier + Status columns | Read the file |
+| 5. Challenge → 6. Synthesize | `## Challenge` section exists on disk | Read the file |
+| 6. Synthesize → 7. Self-Verify Claims | `## Findings` section exists on disk | Read the file |
+| 7. Self-Verify Claims → 8. Citation Re-Verify | `## Claims` table populated, CoVe complete | Read the file |
+| 8. Citation Re-Verify → 9. Finalize | No `unverified` claims in Claims Table | Read the file |
+| 9. Finalize → Done | `<!-- DRAFT -->` removed, audit passes | Run audit |
 
 STOP at each gate. If the condition is not met, complete it before proceeding.
 
@@ -74,7 +74,7 @@ STOP at each gate. If the condition is not met, complete it before proceeding.
 - **Do not write the entire document in one pass at the end.** Each phase
   writes to disk. If you haven't written to disk since Phase 2, you've
   skipped checkpoints.
-- **Do not skip sub-questions.** They structure Phase 5 synthesis. Without
+- **Do not skip sub-questions.** They structure Phase 6 synthesis. Without
   them, findings will organize by whatever taxonomy emerges from searching.
 - **Do not SIFT "in your head."** Use the SIFT evaluation log in the
   sources table. If there's no visible per-source tier annotation, SIFT
@@ -86,7 +86,7 @@ STOP at each gate. If the condition is not met, complete it before proceeding.
 ## Output Document Format
 
 The final research document is placed at `docs/research/{date}-{slug}.md`
-with simplified YAML frontmatter:
+with frontmatter following the document standards in AGENTS.md:
 
 ```yaml
 ---
@@ -95,23 +95,15 @@ description: "One-sentence summary of findings"
 type: research
 sources:
   - https://example.com/primary-source
-  - https://example.com/another-source
 related:
   - docs/research/2026-01-15-related-topic.md
 ---
 ```
 
-Write the document directly, then run reindex and validate
-(see `references/python-utilities.md`).
-
-## Document Standards
-
-Follow the document standards in AGENTS.md for structure and frontmatter.
-
 ## Examples
 
 <example>
-**Sources table after Phase 3 (Verify & Evaluate):**
+**Sources table after Phase 4 (Evaluate Sources):**
 
 | # | URL | Title | Author/Org | Date | Tier | Status |
 |---|-----|-------|-----------|------|------|--------|
@@ -121,7 +113,7 @@ Follow the document standards in AGENTS.md for structure and frontmatter.
 </example>
 
 <example>
-**Findings excerpt (Phase 5) for sub-question "How does asyncio handle concurrency?":**
+**Findings excerpt (Phase 6) for sub-question "How does asyncio handle concurrency?":**
 
 ### How does asyncio handle concurrency?
 
@@ -137,7 +129,7 @@ loop itself remains single-threaded (HIGH).
 </example>
 
 <example>
-**Claims table (Phase 5.5) with mixed resolution statuses:**
+**Claims table (Phase 7) with mixed resolution statuses:**
 
 | # | Claim | Type | Source | Status |
 |---|-------|------|--------|--------|
@@ -148,25 +140,8 @@ loop itself remains single-threaded (HIGH).
 
 ## Key Rules
 
-- **SIFT every source.** No source enters the document unverified.
-  See `references/sift-framework.md`.
-- **Source hierarchy matters.** Prefer official docs over blog posts.
-  See `references/source-evaluation.md`.
-- **Counter-evidence is required** for deep-dive, options, and technical modes.
-  Actively search for disagreement.
-- **Output is a research document.** Write the final artifact directly with
-  `type: research` frontmatter, then run reindex and validate.
-- **Authority annotations.** Each source in the final document should note
-  its tier in the source hierarchy.
-- **Challenge before synthesis.** Never skip the Challenge phase. Assumptions
-  check and premortem run on every mode. ACH runs on deep-dive, options,
-  competitive, and feasibility. See `references/challenge-phase.md`.
-- **Log search protocol.** Record every search during Phase 2 (Gather).
-  Format as a markdown table and include in the final document.
-  See `references/research-workflow.md` Phase 2.
-- **Confidence levels on every finding.** Annotate each finding as HIGH,
-  MODERATE, or LOW based on source convergence and tier. See
-  `references/research-workflow.md` Phase 5.
-- **Verify claims before finalizing.** Every quote, statistic, attribution,
-  and superlative must be registered and verified. See
-  `references/claim-verification.md`.
+- **SIFT every source** — no source enters the document without tier classification. See `references/source-quality.md`.
+- **Counter-evidence is required** for deep-dive, options, and technical modes. See `references/research-modes.md`.
+- **Log every search** during Phase 2 and include the protocol in the final document.
+- **Confidence levels on every finding** — HIGH, MODERATE, or LOW. See `references/synthesis-guide.md`.
+- **Verify all claims** before finalizing — quotes, statistics, attributions, superlatives. See `references/claim-verification.md`.
