@@ -64,10 +64,3 @@ Upstream search provider experienced degradation. This requires only one assumpt
 Check the provider's status page for Tuesday incidents. If clean, run `curl` directly against the provider API to measure current latency. If provider is fast, re-examine the search index.
 </example>
 
-<success_criteria>
-- All known facts explicitly listed before generating explanations
-- At least 3 candidate explanations with different complexity levels
-- Assumption count is specific, not vague
-- Simplest explanation genuinely accounts for all listed facts
-- Distinguishing evidence is concrete and obtainable
-</success_criteria>

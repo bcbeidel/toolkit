@@ -72,10 +72,3 @@ Start with pilot teams, solve their top 3 pain points, ship fast bug fixes, let 
 We haven't considered what happens if pilot teams' pain points diverge significantly — the platform might fragment into team-specific solutions rather than a shared one.
 </example>
 
-<success_criteria>
-- At least 5 specific failure modes identified (not generic)
-- Failure modes ranked by both likelihood and severity
-- Each avoidance strategy is concrete and actionable
-- Positive plan follows logically from the avoidance strategies
-- Blind spots section demonstrates intellectual honesty
-</success_criteria>

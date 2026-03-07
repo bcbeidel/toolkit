@@ -1,11 +1,12 @@
 ---
 name: report-issue
 description: >
-  Use when the user wants to "report a bug", "submit feedback",
-  "request a feature", "file an issue", or when you discover
-  a problem, limitation, or missing capability in WOS during
-  normal work. Proactively suggest filing when you encounter
-  WOS issues the maintainer should know about.
+  Files bug reports, feature requests, and feedback as GitHub Issues
+  against the WOS repository. Use when the user wants to "report a bug",
+  "submit feedback", "request a feature", "file an issue", or when you
+  discover a problem, limitation, or missing capability in WOS during
+  normal work. Proactively suggest filing when you encounter WOS issues
+  the maintainer should know about.
 argument-hint: "[describe the issue or feedback]"
 user-invocable: true
 references:

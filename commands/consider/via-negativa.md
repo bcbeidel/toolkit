@@ -68,10 +68,3 @@ Deployment pipeline has 12 steps: lint, unit test, integration test, build Docke
 The 30-minute canary monitor looks like wasted time but caught a memory leak last month that smoke tests missed. It's load-bearing.
 </example>
 
-<success_criteria>
-- Current state inventoried before proposing removals
-- At least 5 elements evaluated for removal
-- Each removal candidate assessed for both upside and downside
-- At least one "looks removable but isn't" identified
-- Simplified version explicitly checked against core purpose
-</success_criteria>

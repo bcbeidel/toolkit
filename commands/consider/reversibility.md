@@ -64,10 +64,3 @@ Use PostgreSQL vs DynamoDB for a new event-sourcing service.
 - **Recommendation:** Analyze thoroughly. Default to PostgreSQL (known quantity, team expertise, adequate for projected scale). Revisit DynamoDB only if event volume exceeds 50K/sec — a threshold we're unlikely to hit in year one.
 </example>
 
-<success_criteria>
-- Classification is justified with specific reasoning, not gut feel
-- Cost, time, and blast radius of reversal are all assessed
-- Two-way doors get a bias toward action (not over-analysis)
-- One-way doors get suggestions for reducing irreversibility
-- Recommendation matches the classification (fast for 2-way, careful for 1-way)
-</success_criteria>

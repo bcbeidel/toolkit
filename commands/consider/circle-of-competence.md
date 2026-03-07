@@ -71,10 +71,3 @@ Building the mobile app requires deep knowledge in all three zones. API integrat
 Bring in outside expertise. Hire or contract a mobile developer for the app shell and platform integration. Our team owns the API layer and backend (inside our circle). The mobile specialist handles what we'd spend months learning poorly. Review architecture decisions together so knowledge transfers over time.
 </example>
 
-<success_criteria>
-- Honest self-assessment (not inflating what's "inside")
-- At least 2 items in each zone (inside, edge, outside)
-- Decision requirements clearly mapped to knowledge zones
-- Strategy acknowledges gaps rather than hand-waving them away
-- Specific people, resources, or experts identified for outside zones
-</success_criteria>

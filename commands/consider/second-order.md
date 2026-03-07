@@ -68,10 +68,3 @@ Require two approvals on every pull request before merge.
 Keep mandatory review but with one approval, not two. Add a "trivial" label for changes under 20 lines that need only one reviewer. This preserves the learning and bug-catching benefits while avoiding the bottleneck spiral.
 </example>
 
-<success_criteria>
-- At least 3 first-order effects traced to second-order
-- At least 1 third-order consequence identified
-- Feedback loops explicitly identified (positive or negative)
-- Unintended consequences are non-obvious (not restating first-order effects)
-- Revised assessment shows the analysis changed or deepened the evaluation
-</success_criteria>

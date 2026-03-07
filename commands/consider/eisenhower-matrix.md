@@ -70,10 +70,3 @@ from crowding out what actually matters.
 PR reviews feel urgent because notifications pile up, but they're not important enough to displace the architecture proposal. Batching reviews to end-of-day prevents them from fragmenting deep work on Q2 items.
 </example>
 
-<success_criteria>
-- All items explicitly placed in exactly one quadrant
-- Urgency and importance assessments are justified, not arbitrary
-- Q2 items identified (these are most commonly neglected)
-- At least one "urgency trap" identified (feels urgent, isn't important)
-- Next actions are specific and time-bound for Q1 and Q2
-</success_criteria>

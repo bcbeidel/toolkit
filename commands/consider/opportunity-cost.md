@@ -67,10 +67,3 @@ If we build custom, we forgo 3 engineer-months of product work. At our current p
 Auth0 justified. The opportunity cost of building (delayed notifications = revenue risk) exceeds Auth0's dollar cost by roughly 10x. Revisit only if we outgrow Auth0's pricing tier or need auth behavior they can't support.
 </example>
 
-<success_criteria>
-- At least 3 alternatives listed (including "do nothing")
-- Value estimates are specific, not vague hand-waving
-- Opportunity cost is explicitly named as the best foregone alternative
-- Hidden costs go beyond the obvious direct comparison
-- Verdict directly addresses whether opportunity cost is justified
-</success_criteria>

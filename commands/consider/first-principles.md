@@ -64,10 +64,3 @@ A modular monolith with clear internal boundaries gives us deploy isolation (via
 The assumption "scaling = microservices" skipped the question "what are we actually scaling?" Our bottleneck is deploy speed, not request throughput — a problem microservices make worse, not better.
 </example>
 
-<success_criteria>
-- At least 3 assumptions identified and explicitly challenged
-- Each assumption classified as fundamental, convention, or unverified
-- Rebuilt solution differs meaningfully from conventional approach
-- Key insight is specific and actionable, not generic
-- Analysis grounded in the specific topic, not abstract principles
-</success_criteria>

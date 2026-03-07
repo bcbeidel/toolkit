@@ -70,10 +70,3 @@ defending weaknesses against threats.
 Ship the IDE adapter integration — it leverages the core strength (simple CLI) to reach a new audience (IDE users) at exactly the moment visibility is growing (conference).
 </example>
 
-<success_criteria>
-- At least 3 items in each quadrant (S, W, O, T)
-- Strengths and weaknesses are internal (within control)
-- Opportunities and threats are external (outside direct control)
-- Cross-references produce specific strategic options, not vague platitudes
-- Priority action is concrete and justified by the analysis
-</success_criteria>

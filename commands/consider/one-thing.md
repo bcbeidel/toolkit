@@ -67,10 +67,3 @@ A new hire can run `make setup` on a fresh laptop and have all services running 
 Pause the architecture video project and the onboarding doc rewrite until setup works. Both are wasted effort if people can't run the code.
 </example>
 
-<success_criteria>
-- At least 4 candidate actions evaluated before selecting one
-- Domino effects are specific (not "it helps everything")
-- The one thing has clear causal connection to the broader goal
-- Definition of done is concrete and verifiable
-- "Say no to" list identifies real temptations, not straw men
-</success_criteria>

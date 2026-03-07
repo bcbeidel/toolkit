@@ -68,10 +68,3 @@ PR size + competing priorities. A 400-line PR requires 30-60 minutes of focused 
 Break the PR into 2-3 smaller PRs if possible. Message the reviewer offering to walk through the changes in 15 minutes to reduce their review burden. If still no response after the offer, reassign to a different reviewer without resentment.
 </example>
 
-<success_criteria>
-- Uncharitable interpretation is stated explicitly (not dodged)
-- At least 3 charitable alternatives generated
-- Alternatives are genuinely plausible, not straw men
-- Distinguishing evidence is concrete and obtainable
-- Response is calibrated to the most likely explanation, not the worst case
-</success_criteria>

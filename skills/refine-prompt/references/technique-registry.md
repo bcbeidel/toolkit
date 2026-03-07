@@ -61,8 +61,6 @@ When the target model is not specified, default to Markdown headers for
 broadest compatibility. Note the format choice and rationale in the change
 log.
 
-**Research:** [LLM Format Preferences](../../../docs/research/2026-03-05-llm-format-preferences.md)
-
 ---
 
 ## 3. Completeness Fill

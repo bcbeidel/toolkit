@@ -72,10 +72,3 @@ Reduce monthly support tickets from 500 to under 200.
 Two changes (self-service password reset + billing page redesign) would eliminate ~60% of tickets. Everything else combined is less impactful than either of these alone. Start with password reset — it's a weekend project with the highest single-category impact.
 </example>
 
-<success_criteria>
-- Inputs are specific and enumerable, not vague categories
-- Contribution estimates are grounded in evidence or reasoning
-- Clear separation between vital few and trivial many
-- Amplification strategies are concrete and actionable
-- Focus shift recommendation is specific to the situation
-</success_criteria>

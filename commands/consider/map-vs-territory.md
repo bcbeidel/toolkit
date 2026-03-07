@@ -70,10 +70,3 @@ The external API dependency. Our velocity model assumes all work is within our c
 Ask the external team for their delivery date and confidence level. If they can't commit, re-sequence the epic to pull forward work that doesn't depend on their API. Adjust the estimate to 4-5 sprints to account for the dependency and PTO gaps.
 </example>
 
-<success_criteria>
-- The model/abstraction is stated explicitly (not vague)
-- Simplifications are specific, not just "it's simplified"
-- At least 2 items in each category (matches, simplifies, blank)
-- Risk assessments distinguish between dangerous and benign gaps
-- Reality check proposes a concrete, executable verification step
-</success_criteria>
