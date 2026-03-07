@@ -14,6 +14,16 @@ uv run <plugin-scripts-dir>/check_url.py URL1 URL2 ...
 - **403 or 5xx:** Keep source, note access issue.
 - **All sources removed:** Stop and gather new sources before proceeding.
 
+**Example — Phase 3→4 progression:**
+
+| # | URL | Title | Status | Tier |
+|---|-----|-------|--------|------|
+| 1 | https://docs.python.org/... | asyncio docs | verified → | T1 |
+| 2 | https://blog.example.com/... | My Tips | removed (404) → | — |
+| 3 | https://realpython.com/... | Async Guide | verified (403) → | T3 |
+
+Phase 3 updates the Status column. Phase 4 adds the Tier column.
+
 ## SIFT Steps (Phase 4)
 
 Apply SIFT (Stop, Investigate, Find better, Trace) to each source:

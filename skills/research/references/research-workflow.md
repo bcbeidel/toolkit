@@ -8,7 +8,8 @@ resets.
 If `docs/research/{date}-{slug}.md` exists with `<!-- DRAFT -->`, read
 it to determine the current phase:
 
-- Has `sources:` in frontmatter but no tier annotations → resume at Phase 3
+- Has `sources:` in frontmatter with `unverified` statuses → resume at Phase 3
+- Has sources with updated statuses (verified/removed) but no tier annotations → resume at Phase 4
 - Has tier annotations but no `## Challenge` section → resume at Phase 5
 - Has `## Challenge` but no `## Findings` → resume at Phase 6
 - Has `## Findings` but no `## Claims` → resume at Phase 7
@@ -120,4 +121,14 @@ uv run <plugin-scripts-dir>/audit.py <file> --root . --no-urls
 
 ## Quality Check
 
-Before removing `<!-- DRAFT -->`, verify each phase gate was met (see SKILL.md phase gates table). Run the audit to catch any remaining issues.
+Before removing `<!-- DRAFT -->`, verify each gate:
+
+- [ ] Phase 1: Sub-questions confirmed by user
+- [ ] Phase 2: DRAFT file on disk
+- [ ] Phase 3: URLs verified, unreachable removed
+- [ ] Phase 4: Tiers assigned to all sources
+- [ ] Phase 5: Challenge section written
+- [ ] Phase 6: Findings section written
+- [ ] Phase 7: Claims extracted, CoVe complete
+- [ ] Phase 8: No unverified claims remain
+- [ ] Phase 9: DRAFT removed, audit passes

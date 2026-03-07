@@ -51,6 +51,16 @@ Chain-of-Verification catches fabrication from parametric knowledge.
 3. Search fetched content for the specific fact asserted.
 4. Assign status: source confirms → `verified`. Source differs → `corrected`. Source doesn't mention → `removed`. Source unfetchable → `unverifiable`. Source ambiguous → `human-review`.
 
+**Example — Phase 7→8 flow:**
+
+| # | Claim | Type | Source | Status |
+|---|-------|------|--------|--------|
+| 1 | "added in Python 3.4" | attribution | [1] | unverified → verified |
+| 2 | "3x faster than threading" | statistic | [2] | unverified → corrected ("up to 2x") |
+| 3 | "Guido designed asyncio" | attribution | — | unverified → human-review |
+
+Phase 7 (CoVe) populates the table and flags contradictions. Phase 8 re-fetches sources to assign final statuses.
+
 ## Contradiction Resolution
 
 When CoVe contradicts a claim: if the claim has a cited source, escalate to Phase 8 — the source is the tiebreaker between draft and CoVe. If no source, assign `human-review`.

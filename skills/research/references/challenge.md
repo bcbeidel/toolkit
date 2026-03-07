@@ -1,7 +1,12 @@
 # Challenge Reference
 
 Used during Phase 5 (Challenge). Three sub-steps applied based on
-research mode (see research-modes.md for which apply per mode).
+research mode:
+
+| Mode | Assumptions | ACH | Premortem |
+|------|-------------|-----|----------|
+| deep-dive, feasibility, competitive, options | Yes | Yes | Yes |
+| landscape, technical, historical, open-source | Yes | No | Yes |
 
 ## Assumptions Check (All Modes)
 
