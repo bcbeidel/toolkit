@@ -85,7 +85,7 @@ instructions, areas table, metadata format, and communication preferences.
 
 ### Skills
 
-Prefix: `/wos:` (e.g., `/wos:init`, `/wos:audit`). 7 skills:
+Prefix: `/wos:` (e.g., `/wos:init`, `/wos:audit`). 8 skills:
 
 | Skill | Purpose |
 |-------|---------|
@@ -96,6 +96,7 @@ Prefix: `/wos:` (e.g., `/wos:init`, `/wos:audit`). 7 skills:
 | `/wos:refine-prompt` | Assess and refine prompts using evidence-backed techniques |
 | `/wos:report-issue` | File GitHub issues against WOS repo |
 | `/wos:retrospective` | Session review and feedback submission |
+| `/wos:principles` | Capture and maintain project principles |
 
 ### Commands
 
