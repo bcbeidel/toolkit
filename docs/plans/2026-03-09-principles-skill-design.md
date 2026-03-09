@@ -2,7 +2,7 @@
 
 **Issue:** #134 — Add skill to capture and structure project principles
 **Branch:** `feat/principles-skill`
-**PR:** TBD (will be created after implementation)
+**PR:** #145
 
 ## Summary
 

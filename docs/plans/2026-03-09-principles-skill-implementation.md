@@ -11,7 +11,7 @@
 **Design doc:** `docs/plans/2026-03-09-principles-skill-design.md`
 **Issue:** #134
 **Branch:** `feat/principles-skill`
-**PR:** TBD
+**PR:** #145
 
 ---
 
