@@ -118,3 +118,48 @@ unapproved principles. Run:
 `uv run <plugin-scripts-dir>/audit.py --root . --no-urls`
 
 Report what changed and what remained unchanged.
+
+## Examples
+
+<example>
+**Extraction table (step 3):**
+
+| # | Candidate | Source | Classification | Confidence |
+|---|-----------|--------|----------------|------------|
+| 1 | Convention over configuration | CLAUDE.md:L32 + 8 commits | principle | HIGH |
+| 2 | Use ValueError only | CLAUDE.md:L78 | rule | HIGH |
+| 3 | Prefer composition over inheritance | 12 commits | principle | MODERATE |
+| 4 | Use single quotes | .editorconfig | preference | LOW |
+</example>
+
+<example>
+**Articulated principle (step 4):**
+
+## Depend on nothing
+Stdlib-only core; scripts isolate their own dependencies.
+
+**Rationale:** Eliminates version conflicts and supply-chain risk. Users
+install one tool, not a dependency tree.
+**Boundary:** Dev dependencies (pytest, ruff) are acceptable. Scripts may
+use PEP 723 inline metadata for their own isolated deps.
+**Verification:** `wos/` imports nothing outside stdlib. `scripts/` use
+only PEP 723 `[tool.uv]` dependencies.
+</example>
+
+<example>
+**Drift report (step 10):**
+
+## Drift Report
+
+### New candidates (not yet captured)
+| # | Candidate | Source | Confidence |
+|---|-----------|--------|------------|
+| 1 | Bottom line up front | 6 recent PRs lead with summary | HIGH |
+
+### Potentially stale
+| # | Principle | Evidence | Confidence |
+|---|-----------|----------|------------|
+| 1 | "No frameworks" | Added FastAPI in PR #87 | MODERATE |
+
+No changes needed: 8 of 9 principles remain current.
+</example>
