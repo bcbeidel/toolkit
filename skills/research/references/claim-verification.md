@@ -1,6 +1,6 @@
 # Claim Verification Reference
 
-Used during Phase 7 (Self-Verify Claims) and Phase 8 (Citation Re-Verify).
+Used during Phase 8 (Self-Verify Claims) and Phase 9 (Citation Re-Verify).
 
 ## Claim Types
 
@@ -17,7 +17,7 @@ General observations and methodology notes do not need registration.
 
 ## Claims Table Format
 
-Add a `## Claims` section during Phase 7:
+Add a `## Claims` section during Phase 8:
 
 | # | Claim | Type | Source | Status |
 |---|-------|------|--------|--------|
@@ -35,23 +35,23 @@ Source references map to the numbered Sources table. All claims start as `unveri
 | unverifiable | Source couldn't be fetched (403/timeout); flagged in document |
 | human-review | Ambiguous result, or uncited claim that CoVe couldn't confirm |
 
-## CoVe Procedure (Phase 7)
+## CoVe Procedure (Phase 8)
 
 Chain-of-Verification catches fabrication from parametric knowledge.
 
 1. Extract all quotes, statistics, attributions, and superlatives from Findings into the Claims Table.
 2. For each claim, generate a verification question (e.g., "What exact words did [person] say about [topic]?").
-3. Answer each question in a **separate context without the draft document**. This prevents confirmation bias — it is the reason Phase 7 is a distinct phase.
-4. Compare: CoVe agrees → advance to Phase 8. CoVe contradicts → route through contradiction resolution. CoVe uncertain → advance to Phase 8.
+3. Answer each question in a **separate context without the draft document**. This prevents confirmation bias — it is the reason Phase 8 is a distinct phase.
+4. Compare: CoVe agrees → advance to Phase 9. CoVe contradicts → route through contradiction resolution. CoVe uncertain → advance to Phase 9.
 
-## Citation Re-Verification (Phase 8)
+## Citation Re-Verification (Phase 9)
 
 1. Group remaining `unverified` claims by source URL.
 2. Re-fetch each source via WebFetch.
 3. Search fetched content for the specific fact asserted.
 4. Assign status: source confirms → `verified`. Source differs → `corrected`. Source doesn't mention → `removed`. Source unfetchable → `unverifiable`. Source ambiguous → `human-review`.
 
-**Example — Phase 7→8 flow:**
+**Example — Phase 8→9 flow:**
 
 | # | Claim | Type | Source | Status |
 |---|-------|------|--------|--------|
@@ -59,11 +59,11 @@ Chain-of-Verification catches fabrication from parametric knowledge.
 | 2 | "3x faster than threading" | statistic | [2] | unverified → corrected ("up to 2x") |
 | 3 | "Guido designed asyncio" | attribution | — | unverified → human-review |
 
-Phase 7 (CoVe) populates the table and flags contradictions. Phase 8 re-fetches sources to assign final statuses.
+Phase 8 (CoVe) populates the table and flags contradictions. Phase 9 re-fetches sources to assign final statuses.
 
 ## Contradiction Resolution
 
-When CoVe contradicts a claim: if the claim has a cited source, escalate to Phase 8 — the source is the tiebreaker between draft and CoVe. If no source, assign `human-review`.
+When CoVe contradicts a claim: if the claim has a cited source, escalate to Phase 9 — the source is the tiebreaker between draft and CoVe. If no source, assign `human-review`.
 
 ## human-review Triggers
 
