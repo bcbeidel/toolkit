@@ -18,6 +18,7 @@ references:
   - references/claim-verification.md
   - references/research-modes.md
   - references/python-utilities.md
+  - ../_shared/references/preflight.md
 ---
 
 # Research Skill
@@ -45,6 +46,30 @@ Detect the research mode from the question framing:
 If ambiguous, ask: "What kind of investigation would be most useful?
 A **deep dive** (comprehensive), **options comparison**, or
 **feasibility study**?"
+
+## Resumption Assessment
+
+When resuming work on an existing research document, run the assessment
+script before proceeding. This reports structural facts (word count, draft
+marker, section presence, source count) so you can determine the current
+state without re-reading the entire document.
+
+Before running any `uv run` command below, follow the preflight check in
+the [preflight reference](../_shared/references/preflight.md).
+
+**Single document (known file):**
+```bash
+uv run <plugin-skills-dir>/research/scripts/research_assess.py --file <path>
+```
+
+**Discovery (what's in progress?):**
+```bash
+uv run <plugin-skills-dir>/research/scripts/research_assess.py --scan --root .
+```
+
+Use the JSON output to determine which phase the document is in and what
+actions to take next. Do not re-read the entire document if the assessment
+provides sufficient context.
 
 ## Workflow
 
