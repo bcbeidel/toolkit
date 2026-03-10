@@ -150,7 +150,16 @@ Prefix: `/wos:` (e.g., `/wos:init`, `/wos:audit`). 8 skills:
   (uv availability → canary → actual script). No bare `python3 scripts/...`
   invocations in skill docs.
 - CLI scripts default to CWD as root; accept `--root` for override
-- Scripts use `sys.path` self-insertion for plugin cache compatibility
+- **Plugin root discovery (all scripts):** Scripts use a hybrid pattern to
+  find the plugin root for `sys.path` insertion. Prefer `CLAUDE_PLUGIN_ROOT`
+  env var (forward-compatible with Claude Code), fall back to `__file__`
+  parent chain. Shared scripts in `scripts/` use `.parent.parent` (2 levels);
+  per-skill scripts in `skills/<name>/scripts/` use `.parent` × depth to root.
+  Each fallback line must include a comment documenting the path chain (e.g.,
+  `# skills/research/scripts/ → skills/research/ → skills/ → plugin root`).
+  Do NOT use marker-based walk-up (`pyproject.toml` search) — it finds the
+  user's project root instead of the plugin root. See
+  `docs/research/2026-03-10-plugin-root-discovery.md` for full rationale.
 - Validators return `list[dict]` with keys: `file`, `issue`, `severity`
 - Skills use free-text intake — users describe intent, Claude routes
 - `ValueError` + stdlib exceptions only (no custom exception hierarchy)
