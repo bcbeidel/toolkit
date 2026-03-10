@@ -168,7 +168,10 @@ class TestAssessFile:
 class TestScanDirectory:
     """Tests for scan_directory() — research directory discovery."""
 
-    def _make_research_doc(self, path, name, draft=False, sources_count=0, word_count_target=100):
+    def _make_research_doc(
+        self, path, name, draft=False,
+        sources_count=0, word_count_target=100,
+    ):
         """Helper to create a research doc with controlled properties."""
         sources = "".join(
             f"  - https://example.com/source-{i}\n"
@@ -200,7 +203,8 @@ class TestScanDirectory:
             research_dir / "2026-03-01-topic-a.md", "Topic A", sources_count=3
         )
         self._make_research_doc(
-            research_dir / "2026-03-02-topic-b.md", "Topic B", draft=True, sources_count=7
+            research_dir / "2026-03-02-topic-b.md", "Topic B",
+            draft=True, sources_count=7,
         )
 
         result = scan_directory(str(tmp_path))

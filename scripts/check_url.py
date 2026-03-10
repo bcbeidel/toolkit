@@ -21,7 +21,10 @@ from pathlib import Path
 # fall back to navigating from __file__ (required for skill-invoked scripts).
 _env_root = os.environ.get("CLAUDE_PLUGIN_ROOT", "")
 # scripts/ → plugin root
-_plugin_root = Path(_env_root) if _env_root and os.path.isdir(_env_root) else Path(__file__).resolve().parent.parent
+_plugin_root = (
+    Path(_env_root) if _env_root and os.path.isdir(_env_root)
+    else Path(__file__).resolve().parent.parent
+)
 if str(_plugin_root) not in sys.path:
     sys.path.insert(0, str(_plugin_root))
 
