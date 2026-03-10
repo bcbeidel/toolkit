@@ -62,7 +62,8 @@ tests/
     "has_sections": {
       "claims": true,
       "synthesis": false,
-      "sources": true
+      "sources": true,
+      "findings": true
     }
   },
   "sources": {

@@ -8,7 +8,7 @@ next actions from these facts.
 from __future__ import annotations
 
 import os
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 from wos.document import parse_document
 
@@ -113,7 +113,7 @@ def _read_file(path: str) -> str:
         return f.read()
 
 
-def _classify_sources(sources: List[str]) -> tuple:
+def _classify_sources(sources: List[str]) -> Tuple[List[str], int]:
     """Split sources into URLs and non-URLs.
 
     Returns:
@@ -129,12 +129,7 @@ def _classify_sources(sources: List[str]) -> tuple:
     return urls, non_url_count
 
 
-_SECTION_KEYWORDS = {
-    "claims": "claims",
-    "synthesis": "synthesis",
-    "sources": "sources",
-    "findings": "findings",
-}
+_SECTION_KEYWORDS = frozenset({"claims", "synthesis", "sources", "findings"})
 
 
 def _detect_sections(content: str) -> Dict[str, bool]:
@@ -142,13 +137,13 @@ def _detect_sections(content: str) -> Dict[str, bool]:
 
     Looks for markdown headings containing known keywords.
     """
-    found = {key: False for key in _SECTION_KEYWORDS}
+    found = {kw: False for kw in _SECTION_KEYWORDS}
     for line in content.split("\n"):
         stripped = line.strip()
         if not stripped.startswith("#"):
             continue
         heading_text = stripped.lstrip("#").strip().lower()
-        for key, keyword in _SECTION_KEYWORDS.items():
-            if keyword in heading_text:
-                found[key] = True
+        for kw in _SECTION_KEYWORDS:
+            if kw in heading_text:
+                found[kw] = True
     return found
