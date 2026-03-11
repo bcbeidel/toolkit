@@ -69,6 +69,9 @@ def parse_document(path: str, text: str) -> Document:
         doc_type = str(doc_type)
     sources: List[str] = fm.get("sources") or []
     related: List[str] = fm.get("related") or []
+    status: Optional[str] = fm.get("status")
+    if not isinstance(status, str) and status is not None:
+        status = str(status)
 
     return Document(
         path=path,
@@ -78,4 +81,5 @@ def parse_document(path: str, text: str) -> Document:
         type=doc_type,
         sources=sources,
         related=related,
+        status=status,
     )

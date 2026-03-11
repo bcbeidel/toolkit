@@ -117,6 +117,22 @@ class TestParseDocument:
             "https://github.com/org/repo/issues/42",
         ]
 
+    def test_plan_with_status(self) -> None:
+        from wos.document import parse_document
+
+        text = (
+            "---\n"
+            "name: My Plan\n"
+            "description: A plan with status\n"
+            "type: plan\n"
+            "status: draft\n"
+            "---\n"
+            "# My Plan\n"
+        )
+        doc = parse_document("docs/plans/test.md", text)
+        assert doc.status == "draft"
+        assert doc.type == "plan"
+
     def test_unknown_fields_ignored(self) -> None:
         from wos.document import parse_document
 
