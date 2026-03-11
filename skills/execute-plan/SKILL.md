@@ -85,9 +85,10 @@ For each pending task:
    - **Automated:** Run the command, confirm expected output
    - **Structural:** Read files, confirm observable facts
    - **Reasoning:** Trace implementation against the plan's Goal/Approach
-3. **Update checkbox** `- [ ]` → `- [x]` in the plan file
-4. **Append commit SHA** to checkbox: `- [x] Task N: title <!-- sha:abc1234 -->`
-5. **Git commit** with message: `feat(plan): task N — title`
+3. **Git commit** the implementation: `feat(plan): task N — title`
+4. **Update checkbox** `- [ ]` → `- [x]` with the SHA from step 3:
+   `- [x] Task N: title <!-- sha:abc1234 -->`
+5. **Commit plan update** (or fold into the next task's implementation commit)
 
 On failure, consult [recovery patterns](references/recovery-patterns.md).
 

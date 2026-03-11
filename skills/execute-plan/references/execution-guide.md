@@ -13,12 +13,14 @@ For each task, follow this sequence:
 
 1. **Implement** — build what the task describes
 2. **Verify** — confirm the task is done correctly (see verification model)
-3. **Update checkbox** — `- [ ]` → `- [x]` in the plan file
-4. **Append SHA** — `- [x] Task N: title <!-- sha:abc1234 -->`
-5. **Commit** — `git commit` with message `feat(plan): task N — title`
+3. **Commit** — `git commit` with message `feat(plan): task N — title`
+4. **Update checkbox** — `- [ ]` → `- [x]` with the SHA from step 3:
+   `- [x] Task N: title <!-- sha:abc1234 -->`
+5. **Commit plan update** — fold into the next task's commit, or commit
+   separately if this is the last task
 
-Never reorder these steps. The SHA annotation must reference the commit
-that contains the task's work.
+The implementation commit (step 3) must happen before the SHA annotation
+(step 4) — you can't reference a commit that doesn't exist yet.
 
 ## Commit Discipline
 
