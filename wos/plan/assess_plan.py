@@ -7,8 +7,11 @@ state and next actions from these facts.
 
 from __future__ import annotations
 
+import os
 import re
 from typing import Dict, List, Optional
+
+from wos.document import parse_document
 
 _TASK_RE = re.compile(
     r"^- \[([ xX])\] "          # checkbox at line start (not indented)
@@ -20,17 +23,38 @@ _TASK_RE = re.compile(
 
 
 def _parse_tasks(content: str) -> List[dict]:
-    """Extract top-level checkbox items from plan content.
+    """Extract top-level checkbox items from plan task sections.
 
     Parses ``- [ ] Task N: title`` and ``- [x] Task N: title <!-- sha:abc -->``
-    patterns. Indented checkboxes (sub-steps) are ignored.
+    patterns. Indented checkboxes (sub-steps) are ignored. Only parses
+    checkboxes that appear after a Tasks/Task heading and before a
+    Validation heading (to exclude validation checkboxes).
 
     Returns:
         List of dicts with keys: index, title, completed, sha.
     """
+    # Check if content has a Tasks heading — if so, restrict parsing
+    has_tasks_heading = any(
+        "task" in line.lstrip("#").strip().lower()
+        for line in content.split("\n")
+        if line.strip().startswith("#")
+    )
+
     tasks: List[dict] = []
     index = 0
+    in_tasks = not has_tasks_heading  # if no heading, parse everything
     for line in content.split("\n"):
+        stripped = line.strip()
+        if stripped.startswith("#") and has_tasks_heading:
+            heading = stripped.lstrip("#").strip().lower()
+            if "task" in heading:
+                in_tasks = True
+                continue
+            elif "validation" in heading:
+                in_tasks = False
+                continue
+        if not in_tasks:
+            continue
         match = _TASK_RE.match(line)
         if not match:
             continue
@@ -165,3 +189,144 @@ def _find_overlaps(task_file_map: Dict[str, List[str]]) -> List[dict]:
             if shared:
                 overlaps.append({"tasks": [k1, k2], "shared_files": shared})
     return overlaps
+
+
+def _read_file(path: str) -> str:
+    """Read file content as UTF-8 text."""
+    with open(path, encoding="utf-8") as f:
+        return f.read()
+
+
+def assess_file(path: str) -> dict:
+    """Assess structural facts of a single plan document.
+
+    Args:
+        path: Absolute or relative path to a plan markdown file.
+
+    Returns:
+        Dict with keys: file, exists, frontmatter, sections, tasks,
+        file_changes, readiness. If file doesn't exist, all values
+        except file and exists are None.
+    """
+    if not os.path.isfile(path):
+        return {
+            "file": path,
+            "exists": False,
+            "frontmatter": None,
+            "sections": None,
+            "tasks": None,
+            "file_changes": None,
+            "readiness": None,
+        }
+
+    text = _read_file(path)
+    doc = parse_document(path, text)
+
+    sections = _detect_sections(doc.content)
+    tasks = _parse_tasks(doc.content)
+    file_changes = _extract_file_changes(doc.content)
+    task_file_map = _map_task_files(tasks, file_changes, doc.content)
+    overlaps = _find_overlaps(task_file_map)
+
+    completed = sum(1 for t in tasks if t["completed"])
+    pending = len(tasks) - completed
+
+    # Readiness assessment
+    executable_statuses = {"approved", "executing"}
+    status_ok = doc.status in executable_statuses
+    issues: List[str] = []
+    if doc.status and doc.status not in executable_statuses:
+        issues.append(f"Status is '{doc.status}' — not executable")
+    if doc.status is None:
+        issues.append("No status field — legacy plan")
+        status_ok = True  # allow with warning
+    if not sections["all_present"]:
+        missing = [
+            k for k, v in sections.items()
+            if k != "all_present" and not v
+        ]
+        issues.append(f"Missing sections: {', '.join(missing)}")
+
+    parallel_eligible = (
+        pending >= 3
+        and len(overlaps) == 0
+        and status_ok
+    )
+
+    return {
+        "file": path,
+        "exists": True,
+        "frontmatter": {
+            "name": doc.name,
+            "status": doc.status,
+            "type": doc.type,
+        },
+        "sections": sections,
+        "tasks": {
+            "total": len(tasks),
+            "completed": completed,
+            "pending": pending,
+            "items": tasks,
+        },
+        "file_changes": {
+            "files": file_changes,
+            "task_file_map": task_file_map,
+            "overlapping_tasks": overlaps,
+        },
+        "readiness": {
+            "status_ok": status_ok,
+            "sections_complete": sections["all_present"],
+            "has_pending_tasks": pending > 0,
+            "parallel_eligible": parallel_eligible,
+            "issues": issues,
+        },
+    }
+
+
+def scan_plans(root: str, subdir: str = "docs/plans") -> dict:
+    """Find plans with status: executing in a directory.
+
+    Args:
+        root: Project root directory.
+        subdir: Subdirectory to scan (default: docs/plans).
+
+    Returns:
+        Dict with keys: directory, plans. Each plan has: file, name,
+        status, total_tasks, completed_tasks, pending_tasks.
+    """
+    scan_path = os.path.join(root, subdir)
+
+    if not os.path.isdir(scan_path):
+        return {"directory": scan_path, "plans": []}
+
+    plans: list = []
+    for filename in sorted(os.listdir(scan_path)):
+        if not filename.endswith(".md") or filename.startswith("_"):
+            continue
+
+        file_path = os.path.join(scan_path, filename)
+        if not os.path.isfile(file_path):
+            continue
+
+        try:
+            text = _read_file(file_path)
+            doc = parse_document(file_path, text)
+        except ValueError:
+            continue
+
+        if doc.type != "plan" or doc.status != "executing":
+            continue
+
+        tasks = _parse_tasks(doc.content)
+        completed = sum(1 for t in tasks if t["completed"])
+
+        plans.append({
+            "file": file_path,
+            "name": doc.name,
+            "status": doc.status,
+            "total_tasks": len(tasks),
+            "completed_tasks": completed,
+            "pending_tasks": len(tasks) - completed,
+        })
+
+    return {"directory": scan_path, "plans": plans}
