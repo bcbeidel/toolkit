@@ -7,6 +7,8 @@ related:
   - docs/plans/2026-03-11-execute-plan-skill-design.md
   - docs/plans/2026-03-11-plan-document-format-design.md
   - skills/_shared/references/plan-format.md
+branch: feat/161-validate-plan-skill
+pull-request: TBD
 ---
 
 # Validate Plan Skill Design
@@ -18,6 +20,26 @@ the task-pass / plan-fail gap where agents achieve 100% task completion
 but miss cross-task synthesis (13% recall per Akshathala et al., 2025).
 Works standalone — recommended as follow-up after completing all tasks
 in a plan.
+
+## Scope
+
+Must have:
+- `skills/validate-plan/SKILL.md` under 500 lines
+- Three reference files: `automated-validation.md`, `human-validation.md`, `failure-diagnosis.md`
+- Skill triggers on "validate", "verify the plan", "check if done", "are we done"
+- Precondition check via existing `assess_plan.py` (all tasks checked)
+- Automated validation: run commands, check exit codes, capture output
+- Human validation: present criteria, collect confirmation (full list default, one-by-one option)
+- Mixed validation: automated + human in same criterion
+- Task-pass/plan-fail diagnosis with three gap types and recovery
+- Structured output: per-criterion results, diagnosis on failure
+- Update to execute-plan SKILL.md: recommend validate-plan with confirmation gate
+
+Won't have:
+- New Python code or validation scripts (LLM handles criteria classification and execution)
+- Plan-specific audit validators in `wos/validators.py` (separate concern)
+- Code-enforced validation section format (convention, not enforcement)
+- Automatic invocation from execute-plan (user confirms)
 
 ## Skill Directory Structure
 
@@ -31,7 +53,9 @@ skills/validate-plan/
 ```
 
 No new Python code. Uses existing `assess_plan.py` for precondition
-checks via preflight pattern.
+checks via preflight pattern. Validation criteria extraction (parsing
+the Validation section, classifying items, interpreting results) is
+LLM work guided by SKILL.md instructions and reference files.
 
 ## SKILL.md Workflow
 
@@ -43,10 +67,11 @@ name: validate-plan
 description: >
   Verifies a plan succeeded end-to-end by running validation criteria.
   Use when the user wants to "validate the plan", "verify the plan",
-  "check if done", "run validation", or after completing all tasks in
-  a plan. Handles both automated (command) and human (judgment)
-  validation criteria.
+  "check if done", "run validation", "are we done", "did the plan work",
+  or after completing all tasks in a plan. Handles both automated
+  (command) and human (judgment) validation criteria.
 user-invocable: true
+argument-hint: "[plan file path]"
 references:
   - references/automated-validation.md
   - references/human-validation.md
@@ -67,7 +92,7 @@ preflight pattern. All task checkboxes must be checked. If unchecked tasks
 remain, report them and stop. Do not proceed with partial validation.
 
 **Step 3: Classify criteria** — tag each numbered item in the Validation
-section:
+section. Classification lives in SKILL.md body (straightforward rules):
 - **Automated** — item contains a runnable command in a code block
 - **Human** — item describes an observable condition requiring judgment
 - **Mixed** — item has both an automated command and a judgment component
@@ -97,7 +122,8 @@ human-confirmed items with user notes.
 
 ### `automated-validation.md` (~70-80 lines)
 
-Serves workflow steps 3-4 (classify + run automated checks).
+Serves workflow step 4 (run automated checks). Classification logic is
+inline in SKILL.md; this reference covers execution and interpretation.
 
 **Content:**
 
@@ -129,7 +155,8 @@ semantic tiers).
 
 ### `human-validation.md` (~60-70 lines)
 
-Serves workflow steps 3, 5 (classify + present human criteria).
+Serves workflow step 5 (present human criteria). Classification logic is
+inline in SKILL.md; this reference covers presentation and confirmation.
 
 **Content:**
 
@@ -197,13 +224,19 @@ Feedback Mechanisms (ECR-style structured feedback).
 
 ## Execute-Plan SKILL.md Update
 
-Change Step 5 from auto-invoking validate-plan to recommending it:
+Change Step 5 from auto-invoking validate-plan to a confirmation gate:
 
 > After all tasks are checked, recommend running `wos:validate-plan` to
-> verify the plan succeeded end-to-end. Ask the user for confirmation
-> before proceeding.
+> verify the plan succeeded end-to-end. Ask the user for confirmation.
+>
+> - **User confirms** → invoke `wos:validate-plan`, which runs validation
+>   and handles the `status: completed` transition on success.
+> - **User declines** → execute-plan updates `status: completed` directly.
+>   The user accepts responsibility for skipping plan-level validation.
 
-This keeps validate-plan standalone. Execute-plan recommends; user decides.
+This preserves the lifecycle gate as a recommended step while giving the
+user control. The `executing → completed` transition always happens — the
+question is whether it goes through validation first.
 
 ## Structured Output
 
