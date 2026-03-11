@@ -7,6 +7,7 @@ description: >
   wants to "brainstorm", "explore", "design", "figure out what to build",
   or needs to think through a problem before planning.
 user-invocable: true
+argument-hint: "[topic or problem to explore]"
 references:
   - references/spec-format-guide.md
   - references/exploration-patterns.md
@@ -108,6 +109,9 @@ than modifying the approved original.
    involving design decisions.
 4. **Scope blindness** — not flagging projects that need decomposition
    before deep-diving into details.
+5. **False confidence from spec compliance** — a confident-sounding but
+   incorrect specification is worse than no specification. The spec must
+   be verified by the user (Step 5), not just by the agent that produced it.
 
 ## Output Format
 

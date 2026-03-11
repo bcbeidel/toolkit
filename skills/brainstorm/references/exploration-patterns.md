@@ -67,3 +67,4 @@ Before moving from Converge to Write the Spec, confirm:
 - [ ] Scope boundaries confirmed (must have / won't have)
 - [ ] No open ambiguities about user intent
 - [ ] Acceptance criteria are articulable (even if not yet written)
+- [ ] User explicitly approves the design before proceeding
