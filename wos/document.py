@@ -73,6 +73,13 @@ def parse_document(path: str, text: str) -> Document:
     if not isinstance(status, str) and status is not None:
         status = str(status)
 
+    _VALID_STATUSES = {"draft", "approved", "executing", "completed", "abandoned"}
+    if status is not None and status not in _VALID_STATUSES:
+        raise ValueError(
+            f"{path}: invalid status '{status}', "
+            f"must be one of: {', '.join(sorted(_VALID_STATUSES))}"
+        )
+
     return Document(
         path=path,
         name=name,

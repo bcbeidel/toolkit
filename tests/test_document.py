@@ -133,6 +133,37 @@ class TestParseDocument:
         assert doc.status == "draft"
         assert doc.type == "plan"
 
+    def test_raises_on_invalid_status(self) -> None:
+        from wos.document import parse_document
+
+        text = (
+            "---\n"
+            "name: Bad Plan\n"
+            "description: A plan with invalid status\n"
+            "type: plan\n"
+            "status: done\n"
+            "---\n"
+            "# Bad Plan\n"
+        )
+        with pytest.raises(ValueError, match="status"):
+            parse_document("docs/plans/bad.md", text)
+
+    def test_all_valid_statuses(self) -> None:
+        from wos.document import parse_document
+
+        for status in ("draft", "approved", "executing", "completed", "abandoned"):
+            text = (
+                "---\n"
+                f"name: Plan {status}\n"
+                f"description: A plan with status {status}\n"
+                "type: plan\n"
+                f"status: {status}\n"
+                "---\n"
+                "# Plan\n"
+            )
+            doc = parse_document("docs/plans/test.md", text)
+            assert doc.status == status
+
     def test_unknown_fields_ignored(self) -> None:
         from wos.document import parse_document
 
