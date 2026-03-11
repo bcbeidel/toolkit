@@ -82,15 +82,16 @@ Each phase ends with a checkpoint. Do not proceed until the gate is met.
 
 | Phase | Gate | How to Verify |
 |-------|------|---------------|
-| 1. Frame → 2. Gather | User confirmed sub-questions | User said "yes" or equivalent |
-| 2. Gather → 3. Verify Sources | DRAFT file exists on disk with `<!-- DRAFT -->` marker | Read the file |
-| 3. Verify Sources → 4. Evaluate Sources | URLs checked, unreachable removed from frontmatter | Read the file |
-| 4. Evaluate Sources → 5. Challenge | Sources table has Tier + Status columns | Read the file |
-| 5. Challenge → 6. Synthesize | `## Challenge` section exists on disk | Read the file |
-| 6. Synthesize → 7. Self-Verify Claims | `## Findings` section exists on disk | Read the file |
-| 7. Self-Verify Claims → 8. Citation Re-Verify | `## Claims` table populated, CoVe complete | Read the file |
-| 8. Citation Re-Verify → 9. Finalize | No `unverified` claims in Claims Table | Read the file |
-| 9. Finalize → Done | `<!-- DRAFT -->` removed, audit passes | Run audit |
+| 1. Frame → 2. Gather | User confirmed sub-questions, research brief written | User said "yes" or equivalent |
+| 2. Gather → 3. Extract | DRAFT file exists on disk with `<!-- DRAFT -->` marker | Read the file |
+| 3. Extract → 4. Verify Sources | Source content extracted, boilerplate discarded | Read the file |
+| 4. Verify Sources → 5. Evaluate Sources | URLs checked, unreachable removed from frontmatter | Read the file |
+| 5. Evaluate Sources → 6. Challenge | Sources table has Tier + Status columns | Read the file |
+| 6. Challenge → 7. Synthesize | `## Challenge` section exists on disk | Read the file |
+| 7. Synthesize → 8. Self-Verify Claims | `## Findings` section exists on disk | Read the file |
+| 8. Self-Verify Claims → 9. Citation Re-Verify | `## Claims` table populated, CoVe complete | Read the file |
+| 9. Citation Re-Verify → 10. Finalize | No `unverified` claims in Claims Table | Read the file |
+| 10. Finalize → Done | `<!-- DRAFT -->` removed, audit passes | Run audit |
 
 STOP at each gate. If the condition is not met, complete it before proceeding.
 
@@ -99,7 +100,7 @@ STOP at each gate. If the condition is not met, complete it before proceeding.
 - **Do not write the entire document in one pass at the end.** Each phase
   writes to disk. If you haven't written to disk since Phase 2, you've
   skipped checkpoints.
-- **Do not skip sub-questions.** They structure Phase 6 synthesis. Without
+- **Do not skip sub-questions.** They structure Phase 7 synthesis. Without
   them, findings will organize by whatever taxonomy emerges from searching.
 - **Do not SIFT "in your head."** Use the SIFT evaluation log in the
   sources table. If there's no visible per-source tier annotation, SIFT
@@ -128,7 +129,7 @@ related:
 ## Examples
 
 <example>
-**Sources table after Phase 4 (Evaluate Sources):**
+**Sources table after Phase 5 (Evaluate Sources):**
 
 | # | URL | Title | Author/Org | Date | Tier | Status |
 |---|-----|-------|-----------|------|------|--------|
@@ -138,7 +139,7 @@ related:
 </example>
 
 <example>
-**Findings excerpt (Phase 6) for sub-question "How does asyncio handle concurrency?":**
+**Findings excerpt (Phase 7) for sub-question "How does asyncio handle concurrency?":**
 
 ### How does asyncio handle concurrency?
 
@@ -154,7 +155,7 @@ loop itself remains single-threaded (HIGH).
 </example>
 
 <example>
-**Claims table (Phase 7) with mixed resolution statuses:**
+**Claims table (Phase 8) with mixed resolution statuses:**
 
 | # | Claim | Type | Source | Status |
 |---|-------|------|--------|--------|

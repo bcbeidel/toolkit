@@ -1,6 +1,6 @@
 # Synthesis Guide
 
-Used during Phase 6 (Synthesize). Organize verified evidence into
+Used during Phase 7 (Synthesize). Organize verified evidence into
 findings by sub-question.
 
 ## Confidence Levels

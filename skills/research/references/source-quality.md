@@ -1,8 +1,8 @@
 # Source Quality Reference
 
-Used during Phase 3 (Verify Sources) and Phase 4 (Evaluate Sources).
+Used during Phase 4 (Verify Sources) and Phase 5 (Evaluate Sources).
 
-## URL Verification (Phase 3)
+## URL Verification (Phase 4)
 
 Verify all source URLs are reachable before evaluation:
 
@@ -14,7 +14,7 @@ uv run <plugin-scripts-dir>/check_url.py URL1 URL2 ...
 - **403 or 5xx:** Keep source, note access issue.
 - **All sources removed:** Stop and gather new sources before proceeding.
 
-**Example — Phase 3→4 progression:**
+**Example — Phase 4→5 progression:**
 
 | # | URL | Title | Status | Tier |
 |---|-----|-------|--------|------|
@@ -22,9 +22,9 @@ uv run <plugin-scripts-dir>/check_url.py URL1 URL2 ...
 | 2 | https://blog.example.com/... | My Tips | removed (404) → | — |
 | 3 | https://realpython.com/... | Async Guide | verified (403) → | T3 |
 
-Phase 3 updates the Status column. Phase 4 adds the Tier column.
+Phase 4 updates the Status column. Phase 5 adds the Tier column.
 
-## SIFT Steps (Phase 4)
+## SIFT Steps (Phase 5)
 
 Apply SIFT (Stop, Investigate, Find better, Trace) to each source:
 

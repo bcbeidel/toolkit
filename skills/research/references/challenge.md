@@ -1,6 +1,6 @@
 # Challenge Reference
 
-Used during Phase 5 (Challenge). Three sub-steps applied based on
+Used during Phase 6 (Challenge). Three sub-steps applied based on
 research mode:
 
 | Mode | Assumptions | ACH | Premortem |
