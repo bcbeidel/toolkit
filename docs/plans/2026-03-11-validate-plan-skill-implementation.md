@@ -7,7 +7,7 @@ related:
   - docs/plans/2026-03-11-validate-plan-skill-design.md
   - skills/_shared/references/plan-format.md
 branch: feat/161-validate-plan-skill
-pull-request: TBD
+pull-request: https://github.com/bcbeidel/wos/pull/169
 ---
 
 # Validate Plan Skill Implementation
