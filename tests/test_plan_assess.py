@@ -222,3 +222,106 @@ class TestExtractFileChanges:
         )
         files = _extract_file_changes(content)
         assert files == ["wos/document.py"]
+
+
+class TestMapTaskFiles:
+    """Tests for _map_task_files() — task-to-file mapping."""
+
+    def test_maps_files_under_task_headings(self) -> None:
+        """Files listed under task headings mapped to those tasks."""
+        from wos.plan.assess_plan import _map_task_files
+
+        tasks = [
+            {"index": 1, "title": "Create package", "completed": False, "sha": None},
+            {"index": 2, "title": "Write tests", "completed": False, "sha": None},
+        ]
+        file_changes = [
+            "wos/plan/__init__.py",
+            "wos/plan/assess_plan.py",
+            "tests/test_plan_assess.py",
+        ]
+        content = (
+            "### Task 1: Create package\n"
+            "\n"
+            "**Files:**\n"
+            "- Create: `wos/plan/__init__.py`\n"
+            "- Create: `wos/plan/assess_plan.py`\n"
+            "\n"
+            "### Task 2: Write tests\n"
+            "\n"
+            "**Files:**\n"
+            "- Create: `tests/test_plan_assess.py`\n"
+        )
+        result = _map_task_files(tasks, file_changes, content)
+        assert result["1"] == ["wos/plan/__init__.py", "wos/plan/assess_plan.py"]
+        assert result["2"] == ["tests/test_plan_assess.py"]
+
+    def test_flat_file_list_assigns_all(self) -> None:
+        """Without per-task grouping, all files assigned to all tasks."""
+        from wos.plan.assess_plan import _map_task_files
+
+        tasks = [
+            {"index": 1, "title": "Task A", "completed": False, "sha": None},
+            {"index": 2, "title": "Task B", "completed": False, "sha": None},
+        ]
+        file_changes = ["foo.py", "bar.py"]
+        content = (
+            "## File Changes\n"
+            "- Create: `foo.py`\n"
+            "- Create: `bar.py`\n"
+            "\n"
+            "## Tasks\n"
+            "- [ ] Task A\n"
+            "- [ ] Task B\n"
+        )
+        result = _map_task_files(tasks, file_changes, content)
+        assert result["1"] == ["foo.py", "bar.py"]
+        assert result["2"] == ["foo.py", "bar.py"]
+
+    def test_empty_tasks(self) -> None:
+        """No tasks returns empty map."""
+        from wos.plan.assess_plan import _map_task_files
+
+        assert _map_task_files([], ["foo.py"], "content") == {}
+
+
+class TestFindOverlaps:
+    """Tests for _find_overlaps() — file overlap detection."""
+
+    def test_no_overlaps(self) -> None:
+        """Tasks with disjoint files return empty overlap list."""
+        from wos.plan.assess_plan import _find_overlaps
+
+        task_file_map = {"1": ["foo.py"], "2": ["bar.py"], "3": ["baz.py"]}
+        assert _find_overlaps(task_file_map) == []
+
+    def test_overlapping_tasks(self) -> None:
+        """Tasks sharing files detected as overlapping pairs."""
+        from wos.plan.assess_plan import _find_overlaps
+
+        task_file_map = {
+            "1": ["foo.py", "bar.py"],
+            "2": ["bar.py"],
+            "3": ["baz.py"],
+        }
+        overlaps = _find_overlaps(task_file_map)
+        assert len(overlaps) == 1
+        assert overlaps[0] == {"tasks": ["1", "2"], "shared_files": ["bar.py"]}
+
+    def test_multiple_overlaps(self) -> None:
+        """Multiple overlap pairs all reported."""
+        from wos.plan.assess_plan import _find_overlaps
+
+        task_file_map = {
+            "1": ["a.py"],
+            "2": ["a.py", "b.py"],
+            "3": ["b.py"],
+        }
+        overlaps = _find_overlaps(task_file_map)
+        assert len(overlaps) == 2
+
+    def test_empty_map(self) -> None:
+        """Empty map returns empty list."""
+        from wos.plan.assess_plan import _find_overlaps
+
+        assert _find_overlaps({}) == []

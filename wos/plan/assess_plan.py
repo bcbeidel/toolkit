@@ -8,7 +8,7 @@ state and next actions from these facts.
 from __future__ import annotations
 
 import re
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 _TASK_RE = re.compile(
     r"^- \[([ xX])\] "          # checkbox at line start (not indented)
@@ -108,3 +108,60 @@ def _extract_file_changes(content: str) -> List[str]:
         if match:
             files.append(match.group(1))
     return files
+
+
+_TASK_HEADING_RE = re.compile(r"^#{2,4}\s+Task\s+(\d+)", re.IGNORECASE)
+
+
+def _map_task_files(
+    tasks: List[dict], file_changes: List[str], content: str,
+) -> Dict[str, List[str]]:
+    """Map tasks to files they modify.
+
+    If the plan has per-task headings with file listings, uses those.
+    Otherwise falls back to assigning all file_changes to all tasks
+    (conservative — forces sequential execution).
+
+    Returns:
+        Dict mapping task index (str) to list of file paths.
+    """
+    if not tasks:
+        return {}
+
+    # Try to find per-task file listings under task headings
+    task_files: Dict[str, List[str]] = {}
+    current_task: Optional[str] = None
+    for line in content.split("\n"):
+        stripped = line.strip()
+        heading_match = _TASK_HEADING_RE.match(stripped)
+        if heading_match:
+            current_task = heading_match.group(1)
+            task_files[current_task] = []
+            continue
+        if current_task is not None:
+            file_match = _FILE_CHANGE_RE.match(stripped)
+            if file_match:
+                task_files[current_task].append(file_match.group(1))
+
+    # If we found per-task mappings, use them
+    if task_files and any(task_files.values()):
+        return task_files
+
+    # Fallback: assign all files to all tasks
+    return {str(t["index"]): list(file_changes) for t in tasks}
+
+
+def _find_overlaps(task_file_map: Dict[str, List[str]]) -> List[dict]:
+    """Find task pairs that modify the same files.
+
+    Returns:
+        List of dicts with keys: tasks (pair of indices), shared_files.
+    """
+    overlaps: List[dict] = []
+    keys = sorted(task_file_map.keys())
+    for i, k1 in enumerate(keys):
+        for k2 in keys[i + 1:]:
+            shared = sorted(set(task_file_map[k1]) & set(task_file_map[k2]))
+            if shared:
+                overlaps.append({"tasks": [k1, k2], "shared_files": shared})
+    return overlaps
