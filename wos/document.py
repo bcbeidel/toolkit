@@ -13,7 +13,7 @@ from typing import List, Optional
 from wos.frontmatter import parse_frontmatter
 
 # Known frontmatter fields extracted into Document attributes.
-_KNOWN_FIELDS = {"name", "description", "type", "sources", "related"}
+_KNOWN_FIELDS = {"name", "description", "type", "sources", "related", "status"}
 
 
 @dataclass
@@ -27,6 +27,7 @@ class Document:
     type: Optional[str] = None
     sources: List[str] = field(default_factory=list)
     related: List[str] = field(default_factory=list)
+    status: Optional[str] = None
 
 
 def parse_document(path: str, text: str) -> Document:
@@ -68,6 +69,16 @@ def parse_document(path: str, text: str) -> Document:
         doc_type = str(doc_type)
     sources: List[str] = fm.get("sources") or []
     related: List[str] = fm.get("related") or []
+    status: Optional[str] = fm.get("status")
+    if not isinstance(status, str) and status is not None:
+        status = str(status)
+
+    _VALID_STATUSES = {"draft", "approved", "executing", "completed", "abandoned"}
+    if status is not None and status not in _VALID_STATUSES:
+        raise ValueError(
+            f"{path}: invalid status '{status}', "
+            f"must be one of: {', '.join(sorted(_VALID_STATUSES))}"
+        )
 
     return Document(
         path=path,
@@ -77,4 +88,5 @@ def parse_document(path: str, text: str) -> Document:
         type=doc_type,
         sources=sources,
         related=related,
+        status=status,
     )

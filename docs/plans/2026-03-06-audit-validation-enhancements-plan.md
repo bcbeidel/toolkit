@@ -1,6 +1,8 @@
 ---
-name: "Audit Validation Enhancements Implementation Plan"
-description: "TDD implementation plan for #132 (min word count) and #133 (skill density reporting)"
+name: Audit Validation Enhancements Implementation Plan
+description: TDD implementation plan for #132 (min word count) and #133 (skill density reporting)
+type: plan
+status: completed
 related:
   - docs/plans/2026-03-06-audit-validation-enhancements-design.md
   - docs/research/2026-03-05-skill-density-threshold.md

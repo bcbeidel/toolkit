@@ -24,6 +24,7 @@ class TestDocument:
         assert doc.type is None
         assert doc.sources == []
         assert doc.related == []
+        assert doc.status is None
 
     def test_all_fields(self) -> None:
         from wos.document import Document
@@ -116,6 +117,53 @@ class TestParseDocument:
             "https://github.com/org/repo/issues/42",
         ]
 
+    def test_plan_with_status(self) -> None:
+        from wos.document import parse_document
+
+        text = (
+            "---\n"
+            "name: My Plan\n"
+            "description: A plan with status\n"
+            "type: plan\n"
+            "status: draft\n"
+            "---\n"
+            "# My Plan\n"
+        )
+        doc = parse_document("docs/plans/test.md", text)
+        assert doc.status == "draft"
+        assert doc.type == "plan"
+
+    def test_raises_on_invalid_status(self) -> None:
+        from wos.document import parse_document
+
+        text = (
+            "---\n"
+            "name: Bad Plan\n"
+            "description: A plan with invalid status\n"
+            "type: plan\n"
+            "status: done\n"
+            "---\n"
+            "# Bad Plan\n"
+        )
+        with pytest.raises(ValueError, match="status"):
+            parse_document("docs/plans/bad.md", text)
+
+    def test_all_valid_statuses(self) -> None:
+        from wos.document import parse_document
+
+        for status in ("draft", "approved", "executing", "completed", "abandoned"):
+            text = (
+                "---\n"
+                f"name: Plan {status}\n"
+                f"description: A plan with status {status}\n"
+                "type: plan\n"
+                f"status: {status}\n"
+                "---\n"
+                "# Plan\n"
+            )
+            doc = parse_document("docs/plans/test.md", text)
+            assert doc.status == status
+
     def test_unknown_fields_ignored(self) -> None:
         from wos.document import parse_document
 
@@ -134,8 +182,8 @@ class TestParseDocument:
         doc = parse_document("docs/context/misc/custom.md", text)
         assert doc.name == "Custom Doc"
         assert doc.description == "A document with extra fields"
-        # Unknown fields are not stored — no extra dict
-        assert not hasattr(doc, "status")
+        assert doc.status == "draft"  # status is now a known field
+        # Truly unknown fields are not stored
         assert not hasattr(doc, "priority")
 
     def test_raises_on_no_frontmatter(self) -> None:
