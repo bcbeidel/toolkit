@@ -182,8 +182,8 @@ class TestParseDocument:
         doc = parse_document("docs/context/misc/custom.md", text)
         assert doc.name == "Custom Doc"
         assert doc.description == "A document with extra fields"
-        # Unknown fields are not stored — no extra dict
-        assert not hasattr(doc, "status")
+        assert doc.status == "draft"  # status is now a known field
+        # Truly unknown fields are not stored
         assert not hasattr(doc, "priority")
 
     def test_raises_on_no_frontmatter(self) -> None:
