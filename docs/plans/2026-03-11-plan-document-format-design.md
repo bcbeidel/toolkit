@@ -21,8 +21,8 @@ with this frontmatter:
 
 ```yaml
 ---
-name: "Feature Name"
-description: "One-sentence summary of what this plan achieves"
+name: Feature Name
+description: One-sentence summary of what this plan achieves
 type: plan
 status: draft
 related:
@@ -30,16 +30,21 @@ related:
 ---
 ```
 
+Note: the WOS frontmatter parser does not strip quotes. Use unquoted values.
+
 **Fields:**
 
 - `name` — plan title (required)
 - `description` — one-sentence summary (required)
 - `type: plan` — document type (required, literal)
-- `status` — lifecycle state (required, one of: draft, approved, executing,
-  completed, abandoned)
+- `status` — lifecycle state (required when `type: plan`, one of: draft,
+  approved, executing, completed, abandoned)
 - `related` — links to design docs, context files, other plans (optional)
 
 ### Required Sections
+
+These are format conventions for plan authors. Code-enforced validation of
+section presence is deferred (see "Not In Scope").
 
 | Section | Purpose | Research Basis |
 |---------|---------|----------------|
@@ -56,12 +61,14 @@ related:
 draft → approved → executing → completed
                              → abandoned
 draft → abandoned
+approved → abandoned
 ```
 
 | Transition | Trigger | Gate |
 |------------|---------|------|
 | draft → approved | User explicitly approves | Consensus-based: human says "approved" or equivalent |
 | approved → executing | Execution begins | Evidence-based: execute-plan checks `status: approved` |
+| approved → abandoned | User decides not to proceed | Consensus-based: human decision |
 | executing → completed | All tasks checked, validation passing | Evidence-based: all checkboxes checked + validate-plan passes |
 | executing → abandoned | User decides to stop | Consensus-based: human decision |
 | draft → abandoned | User decides not to proceed | Consensus-based: human decision |
@@ -79,22 +86,31 @@ draft → abandoned
 
 Add `status: Optional[str]` to the `Document` dataclass in `wos/document.py`.
 Default `None`. Parsed from frontmatter like existing optional fields.
+Also add `"status"` to `_KNOWN_FIELDS`.
+
+The existing test `test_unknown_fields_ignored` in `tests/test_document.py`
+asserts that `status` is not stored on `Document`. This test must be updated
+to expect `doc.status == "draft"` when `status: draft` is in frontmatter.
 
 ### Status Enum Validation
 
 When `status` is present in parsed frontmatter, validate it against the
 closed set: `draft`, `approved`, `executing`, `completed`, `abandoned`.
-Raise `ValueError` on invalid values. This is parse-time enforcement in
-`wos/frontmatter.py`, same pattern as existing required-field checks.
+Raise `ValueError` on invalid values. This validation lives in
+`wos/document.py` inside `parse_document()`, alongside existing
+required-field checks. The value is a plain string membership check — no
+Python enum type is introduced.
 
 ### Existing Plan Retrofit
 
-Add `type: plan` and `status` to all existing plan files in `docs/plans/`.
-Infer status from checkbox state:
+Add `type: plan` and `status` to plan files in `docs/plans/` that contain
+task checkboxes. Design docs (no checkboxes) are not plans and do not get
+`type: plan`. Infer status from checkbox state:
 
 - All checkboxes checked → `completed`
 - Some checked → `executing`
 - None checked → `draft`
+- No checkboxes → not a plan, skip
 
 This validates the lifecycle model against real data.
 
@@ -108,7 +124,7 @@ This validates the lifecycle model against real data.
 | Checkbox task format | [Codex PLANS.md](https://developers.openai.com/cookbook/articles/codex_exec_plans/); [Effective Harnesses](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents) (Anthropic, 2025) | Checkbox convergence across all 6 tools studied |
 | "Middle altitude" tasks | [Codex PLANS.md](https://developers.openai.com/cookbook/articles/codex_exec_plans/) | Observable outcomes, not implementation prescriptions |
 | Lifecycle in frontmatter | Comparative analysis across 6 tools | No existing tool tracks plan status as queryable metadata |
-| Parse-time status validation | WOS convention | Same pattern as existing required-field checks; catches typos early |
+| Status validation in document.py | WOS convention | Same module as existing required-field checks; catches typos early |
 
 ## Not In Scope
 
