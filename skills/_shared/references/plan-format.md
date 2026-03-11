@@ -1,3 +1,8 @@
+---
+name: Plan Document Format
+description: Canonical reference for plan document structure, lifecycle states, and task decomposition rules
+---
+
 # Plan Document Format
 
 Plans are Markdown files stored at `docs/plans/YYYY-MM-DD-<feature-name>.md`.

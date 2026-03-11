@@ -2,7 +2,7 @@
 name: Plan Document Format Implementation
 description: Add status field to Document model, create plan-format reference, and retrofit existing plans — issue #157
 type: plan
-status: executing
+status: completed
 related:
   - docs/plans/2026-03-11-plan-document-format-design.md
 ---
