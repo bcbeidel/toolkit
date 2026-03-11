@@ -94,12 +94,13 @@ On failure, consult [recovery patterns](references/recovery-patterns.md).
 
 ### 5. Validate
 
-When all tasks are checked:
+When all tasks are checked, recommend running `wos:validate-plan` to
+verify the plan succeeded end-to-end. Ask the user for confirmation.
 
-1. Invoke `wos:validate-plan`
-2. If validation passes, update frontmatter to `status: completed`
-3. If validation fails, consult recovery patterns — add new tasks to
-   address gaps, do NOT mark the plan as failed
+- **User confirms** — invoke `wos:validate-plan`, which runs validation
+  and handles the `status: completed` transition on success.
+- **User declines** — update frontmatter to `status: completed` directly.
+  The user accepts responsibility for skipping plan-level validation.
 
 ### 6. Finish
 
