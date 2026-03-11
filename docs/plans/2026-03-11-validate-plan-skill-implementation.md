@@ -2,7 +2,7 @@
 name: Validate Plan Skill Implementation
 description: Create wos:validate-plan skill with SKILL.md and three reference files — issue #161
 type: plan
-status: draft
+status: executing
 related:
   - docs/plans/2026-03-11-validate-plan-skill-design.md
   - skills/_shared/references/plan-format.md
@@ -65,13 +65,13 @@ gate.
 **Files:**
 - Create: `skills/validate-plan/SKILL.md`
 
-- [ ] **Step 1: Create skill directory structure**
+- [x] **Step 1: Create skill directory structure**
 
 ```bash
 mkdir -p skills/validate-plan/references
 ```
 
-- [ ] **Step 2: Write SKILL.md**
+- [x] **Step 2: Write SKILL.md**
 
 Write `skills/validate-plan/SKILL.md` with:
 
@@ -111,7 +111,7 @@ Classification rules inline in Step 3:
 
 Target: 150-200 lines. Must stay under 500 non-blank lines.
 
-- [ ] **Step 3: Verify SKILL.md is under 500 lines**
+- [x] **Step 3: Verify SKILL.md is under 500 lines**
 
 ```bash
 wc -l skills/validate-plan/SKILL.md
@@ -119,7 +119,7 @@ wc -l skills/validate-plan/SKILL.md
 
 Expected: under 500 lines.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add skills/validate-plan/SKILL.md
@@ -131,7 +131,7 @@ git commit -m "feat(plan): task 1 — create validate-plan SKILL.md (#161)"
 **Files:**
 - Create: `skills/validate-plan/references/automated-validation.md`
 
-- [ ] **Step 1: Write automated-validation.md**
+- [x] **Step 1: Write automated-validation.md**
 
 Write `skills/validate-plan/references/automated-validation.md` covering:
 
@@ -151,7 +151,7 @@ Write `skills/validate-plan/references/automated-validation.md` covering:
 
 Target: 70-80 lines.
 
-- [ ] **Step 2: Verify line count**
+- [x] **Step 2: Verify line count**
 
 ```bash
 wc -l skills/validate-plan/references/automated-validation.md
@@ -159,7 +159,7 @@ wc -l skills/validate-plan/references/automated-validation.md
 
 Expected: 60-90 lines.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add skills/validate-plan/references/automated-validation.md
@@ -171,7 +171,7 @@ git commit -m "feat(plan): task 2 — create automated-validation reference (#16
 **Files:**
 - Create: `skills/validate-plan/references/human-validation.md`
 
-- [ ] **Step 1: Write human-validation.md**
+- [x] **Step 1: Write human-validation.md**
 
 Write `skills/validate-plan/references/human-validation.md` covering:
 
@@ -190,7 +190,7 @@ Write `skills/validate-plan/references/human-validation.md` covering:
 
 Target: 60-70 lines.
 
-- [ ] **Step 2: Verify line count**
+- [x] **Step 2: Verify line count**
 
 ```bash
 wc -l skills/validate-plan/references/human-validation.md
@@ -198,7 +198,7 @@ wc -l skills/validate-plan/references/human-validation.md
 
 Expected: 50-80 lines.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add skills/validate-plan/references/human-validation.md
@@ -210,7 +210,7 @@ git commit -m "feat(plan): task 3 — create human-validation reference (#161)"
 **Files:**
 - Create: `skills/validate-plan/references/failure-diagnosis.md`
 
-- [ ] **Step 1: Write failure-diagnosis.md**
+- [x] **Step 1: Write failure-diagnosis.md**
 
 Write `skills/validate-plan/references/failure-diagnosis.md` covering:
 
@@ -235,7 +235,7 @@ Write `skills/validate-plan/references/failure-diagnosis.md` covering:
 
 Target: 80-90 lines.
 
-- [ ] **Step 2: Verify line count**
+- [x] **Step 2: Verify line count**
 
 ```bash
 wc -l skills/validate-plan/references/failure-diagnosis.md
@@ -243,7 +243,7 @@ wc -l skills/validate-plan/references/failure-diagnosis.md
 
 Expected: 70-100 lines.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add skills/validate-plan/references/failure-diagnosis.md
@@ -255,7 +255,7 @@ git commit -m "feat(plan): task 4 — create failure-diagnosis reference (#161)"
 **Files:**
 - Modify: `skills/execute-plan/SKILL.md` (lines 95-106)
 
-- [ ] **Step 1: Update Step 5 to confirmation gate**
+- [x] **Step 1: Update Step 5 to confirmation gate**
 
 In `skills/execute-plan/SKILL.md`, replace the current Step 5 (lines 95-102):
 
@@ -284,12 +284,12 @@ verify the plan succeeded end-to-end. Ask the user for confirmation.
   The user accepts responsibility for skipping plan-level validation.
 ```
 
-- [ ] **Step 2: Verify the change reads correctly**
+- [x] **Step 2: Verify the change reads correctly**
 
 Read `skills/execute-plan/SKILL.md` and confirm Step 5 flows naturally
 with Steps 4 and 6.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add skills/execute-plan/SKILL.md
@@ -298,7 +298,7 @@ git commit -m "feat(plan): task 5 — update execute-plan to recommend validate-
 
 ### Task 6: Run validation
 
-- [ ] **Step 1: Run WOS audit**
+- [x] **Step 1: Run WOS audit**
 
 ```bash
 uv run python -m pytest tests/ -v
@@ -309,7 +309,7 @@ Expected: all tests pass, no new audit failures. Check that the new
 SKILL.md passes skill quality checks (name format, description length,
 body under 500 lines).
 
-- [ ] **Step 2: Verify skill discovery**
+- [x] **Step 2: Verify skill discovery**
 
 Confirm the skill directory structure is correct:
 
@@ -326,7 +326,7 @@ skills/validate-plan/references/human-validation.md
 skills/validate-plan/references/failure-diagnosis.md
 ```
 
-- [ ] **Step 3: Verify instruction density**
+- [x] **Step 3: Verify instruction density**
 
 Check that total instruction lines across SKILL.md + all references
 stays under 200:
@@ -337,7 +337,7 @@ uv run scripts/audit.py --root . --no-urls 2>&1 | grep -i "validate-plan"
 
 Expected: no instruction density warnings for validate-plan.
 
-- [ ] **Step 4: Fix any issues found and commit**
+- [x] **Step 4: Fix any issues found and commit**
 
 If audit or tests surface issues, fix them and commit:
 

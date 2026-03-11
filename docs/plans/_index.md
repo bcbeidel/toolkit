@@ -20,4 +20,6 @@
 | [2026-03-11-execute-plan-skill-implementation.md](2026-03-11-execute-plan-skill-implementation.md) | Implementation plan for wos:execute-plan skill — entry script, SKILL.md, and 4 reference files |
 | [2026-03-11-plan-document-format-design.md](2026-03-11-plan-document-format-design.md) | "Design spec for plan document format, lifecycle, and status field — issue #157" |
 | [2026-03-11-plan-document-format-implementation.md](2026-03-11-plan-document-format-implementation.md) | Add status field to Document model, create plan-format reference, and retrofit existing plans — issue #157 |
+| [2026-03-11-validate-plan-skill-design.md](2026-03-11-validate-plan-skill-design.md) | Design spec for wos:validate-plan skill — plan-level validation with automated/human criteria, failure diagnosis, and recovery |
+| [2026-03-11-validate-plan-skill-implementation.md](2026-03-11-validate-plan-skill-implementation.md) | Create wos:validate-plan skill with SKILL.md and three reference files — issue #161 |
 | [2026-03-11-write-plan-skill.md](2026-03-11-write-plan-skill.md) | Create wos:write-plan skill with SKILL.md and reference files — issue #159 |

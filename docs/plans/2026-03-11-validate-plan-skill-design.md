@@ -2,7 +2,7 @@
 name: Validate Plan Skill Design
 description: Design spec for wos:validate-plan skill — plan-level validation with automated/human criteria, failure diagnosis, and recovery
 type: plan
-status: draft
+status: approved
 related:
   - docs/plans/2026-03-11-execute-plan-skill-design.md
   - docs/plans/2026-03-11-plan-document-format-design.md
