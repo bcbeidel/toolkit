@@ -18,6 +18,8 @@
 | [2026-03-11-brainstorm-skill.md](2026-03-11-brainstorm-skill.md) | Create wos:brainstorm skill with SKILL.md and two reference files — issue #158 |
 | [2026-03-11-execute-plan-skill-design.md](2026-03-11-execute-plan-skill-design.md) | Design spec for wos:execute-plan skill — plan execution with lifecycle gates, parallel dispatch, and deterministic assessment |
 | [2026-03-11-execute-plan-skill-implementation.md](2026-03-11-execute-plan-skill-implementation.md) | Implementation plan for wos:execute-plan skill — entry script, SKILL.md, and 4 reference files |
+| [2026-03-11-finish-work-skill-design.md](2026-03-11-finish-work-skill-design.md) | "Design spec for wos:finish-work — structured work termination with 4 integration options, safety gates, and optional retrospective" |
+| [2026-03-11-finish-work-skill-implementation.md](2026-03-11-finish-work-skill-implementation.md) | "Implementation plan for wos:finish-work skill — SKILL.md, 2 reference files, CLAUDE.md registration" |
 | [2026-03-11-plan-document-format-design.md](2026-03-11-plan-document-format-design.md) | "Design spec for plan document format, lifecycle, and status field — issue #157" |
 | [2026-03-11-plan-document-format-implementation.md](2026-03-11-plan-document-format-implementation.md) | Add status field to Document model, create plan-format reference, and retrofit existing plans — issue #157 |
 | [2026-03-11-validate-plan-skill-design.md](2026-03-11-validate-plan-skill-design.md) | Design spec for wos:validate-plan skill — plan-level validation with automated/human criteria, failure diagnosis, and recovery |
