@@ -84,3 +84,70 @@ class TestParseTasks:
         tasks = _parse_tasks(content)
         assert tasks[0]["title"] == "Create package structure"
         assert tasks[1]["title"] == "Write tests"
+
+
+class TestDetectSections:
+    """Tests for _detect_sections() — required section detection."""
+
+    def test_all_sections_present(self) -> None:
+        """All 6 required sections detected."""
+        from wos.plan.assess_plan import _detect_sections
+
+        content = (
+            "## Goal\n\nBuild the thing.\n\n"
+            "## Scope\n\nMust/Won't.\n\n"
+            "## Approach\n\nHow.\n\n"
+            "## File Changes\n\n- Create: foo.py\n\n"
+            "## Tasks\n\n- [ ] Do stuff\n\n"
+            "## Validation\n\n- [ ] pytest passes\n"
+        )
+        result = _detect_sections(content)
+        assert result == {
+            "goal": True,
+            "scope": True,
+            "approach": True,
+            "file_changes": True,
+            "tasks": True,
+            "validation": True,
+            "all_present": True,
+        }
+
+    def test_missing_sections(self) -> None:
+        """Missing sections reported as False, all_present is False."""
+        from wos.plan.assess_plan import _detect_sections
+
+        content = "## Goal\n\nBuild it.\n\n## Tasks\n\n- [ ] Do it\n"
+        result = _detect_sections(content)
+        assert result["goal"] is True
+        assert result["tasks"] is True
+        assert result["scope"] is False
+        assert result["approach"] is False
+        assert result["file_changes"] is False
+        assert result["validation"] is False
+        assert result["all_present"] is False
+
+    def test_heading_level_insensitive(self) -> None:
+        """Detects sections at any heading level."""
+        from wos.plan.assess_plan import _detect_sections
+
+        content = "### Goal\n\n#### Scope\n\n# Approach\n\n"
+        result = _detect_sections(content)
+        assert result["goal"] is True
+        assert result["scope"] is True
+        assert result["approach"] is True
+
+    def test_file_changes_with_spaces(self) -> None:
+        """'File Changes' heading detected (two words)."""
+        from wos.plan.assess_plan import _detect_sections
+
+        content = "## File Changes\n\n- Modify: foo.py\n"
+        result = _detect_sections(content)
+        assert result["file_changes"] is True
+
+    def test_empty_content(self) -> None:
+        """Empty content returns all False."""
+        from wos.plan.assess_plan import _detect_sections
+
+        result = _detect_sections("")
+        assert result["all_present"] is False
+        assert all(v is False for k, v in result.items() if k != "all_present")

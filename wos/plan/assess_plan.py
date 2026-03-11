@@ -8,7 +8,7 @@ state and next actions from these facts.
 from __future__ import annotations
 
 import re
-from typing import List
+from typing import Dict, List
 
 _TASK_RE = re.compile(
     r"^- \[([ xX])\] "          # checkbox at line start (not indented)
@@ -43,3 +43,34 @@ def _parse_tasks(content: str) -> List[dict]:
             "sha": sha,
         })
     return tasks
+
+
+_PLAN_SECTIONS = {
+    "goal": "goal",
+    "scope": "scope",
+    "approach": "approach",
+    "file_changes": "file changes",
+    "tasks": "tasks",
+    "validation": "validation",
+}
+
+
+def _detect_sections(content: str) -> Dict[str, bool]:
+    """Check for presence of 6 required plan sections by heading text.
+
+    Returns:
+        Dict mapping section keys to bool, plus 'all_present' summary.
+    """
+    found: Dict[str, bool] = {key: False for key in _PLAN_SECTIONS}
+    for line in content.split("\n"):
+        stripped = line.strip()
+        if not stripped.startswith("#"):
+            continue
+        heading_text = stripped.lstrip("#").strip().lower()
+        for key, keyword in _PLAN_SECTIONS.items():
+            if keyword in heading_text:
+                found[key] = True
+    found["all_present"] = all(
+        v for k, v in found.items() if k != "all_present"
+    )
+    return found
