@@ -6,8 +6,8 @@ description: >
   thinking. Produces a design document, not code. Use when the user
   wants to "brainstorm", "explore", "design", "figure out what to build",
   or needs to think through a problem before planning.
-user-invocable: true
 argument-hint: "[topic or problem to explore]"
+user-invocable: true
 references:
   - references/spec-format-guide.md
   - references/exploration-patterns.md
