@@ -15,5 +15,6 @@
 | [2026-03-09-per-skill-entry-scripts-plan.md](2026-03-09-per-skill-entry-scripts-plan.md) | *(no description)* |
 | [2026-03-09-principles-skill-design.md](2026-03-09-principles-skill-design.md) | *(no description)* |
 | [2026-03-09-principles-skill-implementation.md](2026-03-09-principles-skill-implementation.md) | *(no description)* |
+| [2026-03-11-brainstorm-skill.md](2026-03-11-brainstorm-skill.md) | Create wos:brainstorm skill with SKILL.md and two reference files — issue #158 |
 | [2026-03-11-plan-document-format-design.md](2026-03-11-plan-document-format-design.md) | "Design spec for plan document format, lifecycle, and status field — issue #157" |
 | [2026-03-11-plan-document-format-implementation.md](2026-03-11-plan-document-format-implementation.md) | Add status field to Document model, create plan-format reference, and retrofit existing plans — issue #157 |
