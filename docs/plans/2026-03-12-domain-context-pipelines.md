@@ -297,10 +297,10 @@ Depends on Chunks 1-2.
 - Create: `docs/research/structured-thinking-decision-frameworks.md`
 - Create: `docs/context/structured-thinking-decision-frameworks.md`
 
-- [ ] Run `/wos:research` (landscape mode): Mental models (first principles, inversion, Eisenhower, Pareto, second-order effects) and how to operationalize them as agent-usable tools rather than reference material. Include research on LLM reasoning with structured frameworks.
-- [ ] Run `/wos:distill` to produce `docs/context/structured-thinking-decision-frameworks.md`
-- [ ] Verify: context file exists, has frontmatter (name, description), 200-800 words
-- [ ] Commit
+- [x] Run `/wos:research` (landscape mode): Mental models (first principles, inversion, Eisenhower, Pareto, second-order effects) and how to operationalize them as agent-usable tools rather than reference material. Include research on LLM reasoning with structured frameworks. <!-- sha:dc1ca86 -->
+- [x] Run `/wos:distill` to produce `docs/context/structured-thinking-decision-frameworks.md` <!-- sha:dc1ca86 -->
+- [x] Verify: context file exists, has frontmatter (name, description), 200-800 words <!-- sha:dc1ca86 -->
+- [x] Commit <!-- sha:dc1ca86 -->
 
 ---
 
@@ -310,10 +310,10 @@ Depends on Chunks 1-2.
 - Create: `docs/research/principle-engineering.md`
 - Create: `docs/context/principle-engineering.md`
 
-- [ ] Run `/wos:research` (technical mode): How to extract, classify, and maintain design principles as living documents — classification criteria, verification requirements, drift detection, density-performance correlation (~150-200 effective instructions per agent session). Include ADR patterns, RFC processes, and constitutional AI approaches.
-- [ ] Run `/wos:distill` to produce `docs/context/principle-engineering.md`
-- [ ] Verify: context file exists, has frontmatter (name, description), 200-800 words
-- [ ] Commit
+- [x] Run `/wos:research` (technical mode): How to extract, classify, and maintain design principles as living documents — classification criteria, verification requirements, drift detection, density-performance correlation (~150-200 effective instructions per agent session). Include ADR patterns, RFC processes, and constitutional AI approaches. <!-- sha:dc1ca86 -->
+- [x] Run `/wos:distill` to produce `docs/context/principle-engineering.md` <!-- sha:dc1ca86 -->
+- [x] Verify: context file exists, has frontmatter (name, description), 200-800 words <!-- sha:dc1ca86 -->
+- [x] Commit <!-- sha:dc1ca86 -->
 
 ---
 
@@ -323,10 +323,10 @@ Depends on Chunks 1-2.
 - Create: `docs/research/abstraction-level-design.md`
 - Create: `docs/context/abstraction-level-design.md`
 
-- [ ] Run `/wos:research` (technical mode): Choosing the right altitude for different artifacts — specs (WHAT/WHY), plans (middle altitude observable outcomes), research (mode intensity), instructions (specificity calibration). How abstraction level affects agent execution reliability.
-- [ ] Run `/wos:distill` to produce `docs/context/abstraction-level-design.md`
-- [ ] Verify: context file exists, has frontmatter (name, description), 200-800 words
-- [ ] Commit
+- [x] Run `/wos:research` (technical mode): Choosing the right altitude for different artifacts — specs (WHAT/WHY), plans (middle altitude observable outcomes), research (mode intensity), instructions (specificity calibration). How abstraction level affects agent execution reliability. <!-- sha:dc1ca86 -->
+- [x] Run `/wos:distill` to produce `docs/context/abstraction-level-design.md` <!-- sha:dc1ca86 -->
+- [x] Verify: context file exists, has frontmatter (name, description), 200-800 words <!-- sha:dc1ca86 -->
+- [x] Commit <!-- sha:dc1ca86 -->
 
 ---
 
