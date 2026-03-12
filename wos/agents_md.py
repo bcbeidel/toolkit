@@ -77,6 +77,7 @@ def render_wos_section(
     )
     lines.append("- `docs/context/_index.md` -- all topic areas")
     lines.append("- `docs/plans/_index.md` -- plans")
+    lines.append("- `docs/designs/_index.md` -- designs")
     lines.append("- `docs/research/_index.md` -- research")
     lines.append("")
     lines.append(
