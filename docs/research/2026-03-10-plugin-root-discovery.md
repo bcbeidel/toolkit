@@ -12,7 +12,6 @@ sources:
   - https://docs.pytest.org/en/stable/reference/customize.html
   - https://docs.python.org/3/library/importlib.resources.html
 related:
-  - docs/plans/2026-03-09-per-skill-entry-scripts-design.md
 ---
 # Plugin Root Discovery Patterns for Python Scripts
 

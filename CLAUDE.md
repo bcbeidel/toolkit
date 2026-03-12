@@ -115,9 +115,7 @@ Full skill ecosystem, lifecycle diagram, and layer descriptions: [OVERVIEW.md](O
 ## Reference
 
 - Skill ecosystem: [WOS Overview](OVERVIEW.md)
-- Architecture: [WOS Architecture Reference](docs/plans/2026-02-27-architecture-reference.md)
 - Design principles: [WOS Design Principles](PRINCIPLES.md)
-- Simplification history: [Simplification Design](docs/plans/2026-02-22-simplification-design.md)
 
 ## Plans
 

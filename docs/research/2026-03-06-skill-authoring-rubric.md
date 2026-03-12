@@ -16,7 +16,6 @@ sources:
   - https://arxiv.org/html/2508.01523v1
   - https://arxiv.org/html/2507.11538v1
 related:
-  - docs/research/2026-03-05-skill-density-threshold.md
   - PRINCIPLES.md
 ---
 
