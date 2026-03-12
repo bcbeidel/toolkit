@@ -36,3 +36,5 @@ Design documents and implementation plans for WOS features and improvements.
 | [2026-03-11-write-plan-skill.md](2026-03-11-write-plan-skill.md) | Create wos:write-plan skill with SKILL.md and reference files — issue #159 |
 | [2026-03-12-research-phase-consolidation-design.md](2026-03-12-research-phase-consolidation-design.md) | Merge Phases 2 and 3 into a per-sub-question gather-and-extract loop to prevent fetched content from accumulating across sub-questions |
 | [2026-03-12-research-phase-consolidation.md](2026-03-12-research-phase-consolidation.md) | Merge research Phases 2+3 into a per-sub-question loop and renumber all subsequent phases |
+| [2026-03-12-validate-work-adhoc-design.md](2026-03-12-validate-work-adhoc-design.md) | "Design for plan-free validation path in validate-work — git diff + project conventions build a hypothesis, user confirms, then execute" |
+| [2026-03-12-validate-work-adhoc.md](2026-03-12-validate-work-adhoc.md) | Add plan-free validation path to validate-work using git diff and project conventions |

@@ -54,7 +54,7 @@ A linear pipeline from idea to merged code:
 1. **Brainstorm** — divergent-then-convergent design dialogue; produces an approved design doc
 2. **Write Plan** — converts the design into a structured implementation plan with tasks, file changes, and validation criteria; includes an infeasibility check that can loop back to brainstorm
 3. **Execute Plan** — implements each task, commits with SHA-tracked checkboxes, supports multi-session resumption
-4. **Validate Work** — verifies completed work meets the plan's criteria end-to-end (automated checks + human criteria); plan stays in `executing` until all criteria pass
+4. **Validate Work** — verifies completed work meets validation criteria, either from a plan's Validation section or ad-hoc (built from git diff, project config, and project docs); in plan mode, plan stays in `executing` until all criteria pass
 5. **Finish Work** — presents integration options (merge, PR, keep, discard) after tests pass
 
 ### Infrastructure Layer
@@ -89,7 +89,7 @@ Skills that operate independently at any point in the lifecycle:
 | `/wos:brainstorm` | Collaborative design dialogue before planning |
 | `/wos:write-plan` | Convert approved designs into implementation plans |
 | `/wos:execute-plan` | Execute plans with lifecycle enforcement |
-| `/wos:validate-work` | Verify completed work meets plan criteria |
+| `/wos:validate-work` | Verify completed work (plan-based or ad-hoc) |
 | `/wos:finish-work` | Structured work integration (merge/PR/keep/discard) |
 | `/wos:principles` | Capture and maintain project principles |
 | `/wos:refine-prompt` | Assess and refine prompts using evidence-backed techniques |

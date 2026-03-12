@@ -7,6 +7,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.21.0] - 2026-03-12
+
+### Added
+
+- **Ad-hoc validation mode in `/wos:validate-work`.** Users can now call
+  validate-work without a plan. The skill builds a validation hypothesis from
+  git diff (branch + working tree), project config files (pyproject.toml,
+  package.json, Cargo.toml, etc.), and project docs (CLAUDE.md, AGENTS.md,
+  README). User confirms or edits proposed checks before execution.
+  ([#187](https://github.com/bcbeidel/wos/pull/187))
+
+### Changed
+
+- **Skill instruction density threshold raised to 500.** Default warn
+  threshold increased from 200 to 500 instruction lines, reflecting that
+  complex skills legitimately need more instruction surface. No fail tier.
+  ([#187](https://github.com/bcbeidel/wos/pull/187))
+
+- **Research phases 2+3 merged into per-sub-question loop.** Research skill
+  now processes source discovery and evaluation together per sub-question,
+  reducing context window pressure and improving source-to-question traceability.
+  ([#150](https://github.com/bcbeidel/wos/issues/150),
+  [#186](https://github.com/bcbeidel/wos/pull/186))
+
+- **Skill workflow explicit handoffs.** Execute-plan now uses explicit
+  confirmation prompts before invoking validate-work and finish-work.
+  Research-to-distill pipeline added with structured handoff.
+  ([#184](https://github.com/bcbeidel/wos/pull/184))
+
+### Fixed
+
+- **Worktree storage location.** Default worktree storage changed from
+  `.claude/worktrees/` to `.worktrees/`, making it model-agnostic.
+  ([#175](https://github.com/bcbeidel/wos/issues/175),
+  [#185](https://github.com/bcbeidel/wos/pull/185))
+
 ## [0.20.0] - 2026-03-12
 
 ### Added

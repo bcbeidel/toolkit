@@ -52,7 +52,7 @@ Full descriptions: [Design Principles](PRINCIPLES.md)
   - `frontmatter.py` — custom YAML subset parser (stdlib-only)
   - `document.py` — `Document` dataclass + `parse_document()`
   - `index.py` — `_index.md` generation + sync checking (preamble-preserving)
-  - `validators.py` — 5 validation checks with warn/fail severity (frontmatter, content length, URLs, related paths, index sync)
+  - `validators.py` — 7 validation checks with warn/fail severity (frontmatter, content length, draft markers, URLs, related paths, index sync, project files)
   - `skill_audit.py` — skill instruction density measurement (line counting, size thresholds)
   - `url_checker.py` — HTTP HEAD/GET URL reachability (urllib)
   - `agents_md.py` — marker-based AGENTS.md section management
