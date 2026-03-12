@@ -89,14 +89,20 @@ conventions and examples.
 
 ## Receiving Feedback from Write-Plan
 
-If receiving structured feedback from `wos:write-plan` indicating design
-infeasibility, consume the feedback artifact and revise affected design
-sections. For major revisions, follow the "supersede, don't edit" pattern:
-create a new design doc that references the original via `related`, rather
-than modifying the approved original.
+When invoked with a plan file path containing a `## Feedback` section:
 
-> Note: The structured feedback format and delivery mechanism are defined
-> in the write-plan skill (#159) and the feedback loop (#163).
+1. Read the feedback artifact (the plan's `## Feedback` section).
+2. Identify which design decisions are affected by the infeasibility.
+3. Present the feedback to the user with your assessment of what needs
+   to change in the design.
+4. Revise the affected sections through the normal brainstorm dialogue
+   (steps 2-5 of the workflow above).
+5. For the revised design, follow the "supersede, don't edit" pattern:
+   create a new design doc with a `related:` link to the original.
+   Do not modify the approved original.
+
+See [Feedback Loop](../_shared/references/feedback-loop.md) for the
+feedback format and revision-vs-supersede decision tree.
 
 ## Anti-Pattern Guards
 
