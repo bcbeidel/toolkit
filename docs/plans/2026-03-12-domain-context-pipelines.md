@@ -500,10 +500,10 @@ Depends on Chunks 1-2.
 - Create: `docs/research/agent-framework-landscape.md`
 - Create: `docs/context/agent-framework-landscape.md`
 
-- [ ] Run `/wos:research` (landscape mode): How agent frameworks (LangChain, CrewAI, AutoGen, Semantic Kernel, DSPy, etc.) handle tool registration, memory, planning, and orchestration. Identify universal patterns vs. framework-specific abstractions. Focus on what WOS can learn or must remain compatible with.
-- [ ] Run `/wos:distill` to produce `docs/context/agent-framework-landscape.md`
-- [ ] Verify: context file exists, has frontmatter (name, description), 200-800 words
-- [ ] Commit
+- [x] Run `/wos:research` (landscape mode): How agent frameworks (LangChain, CrewAI, AutoGen, Semantic Kernel, DSPy, etc.) handle tool registration, memory, planning, and orchestration. Identify universal patterns vs. framework-specific abstractions. Focus on what WOS can learn or must remain compatible with. <!-- sha:c3a3df4 -->
+- [x] Run `/wos:distill` to produce `docs/context/agent-framework-landscape.md` <!-- sha:c3a3df4 --> (split into 3: tool-registration-convergence, agent-memory-tiers, agent-framework-portability)
+- [x] Verify: context file exists, has frontmatter (name, description), 200-800 words <!-- sha:c3a3df4 -->
+- [x] Commit <!-- sha:c3a3df4 -->
 
 ---
 
@@ -513,10 +513,10 @@ Depends on Chunks 1-2.
 - Create: `docs/research/ai-coding-assistant-conventions.md`
 - Create: `docs/context/ai-coding-assistant-conventions.md`
 
-- [ ] Run `/wos:research` (landscape mode): How AI coding tools (Claude Code, GitHub Copilot, Cursor, Windsurf, Codex CLI, Cline, Aider) handle project context, instruction files (CLAUDE.md, .cursorrules, .github/copilot-instructions.md, AGENTS.md), tool invocation, and skill/command systems. Map the common patterns and divergences.
-- [ ] Run `/wos:distill` to produce `docs/context/ai-coding-assistant-conventions.md`
-- [ ] Verify: context file exists, has frontmatter (name, description), 200-800 words
-- [ ] Commit
+- [x] Run `/wos:research` (landscape mode): How AI coding tools (Claude Code, GitHub Copilot, Cursor, Windsurf, Codex CLI, Cline, Aider) handle project context, instruction files (CLAUDE.md, .cursorrules, .github/copilot-instructions.md, AGENTS.md), tool invocation, and skill/command systems. Map the common patterns and divergences. <!-- sha:c3a3df4 -->
+- [x] Run `/wos:distill` to produce `docs/context/ai-coding-assistant-conventions.md` <!-- sha:c3a3df4 --> (split into 5: instruction-file-conventions, agents-md-standard, context-injection-strategies, mcp-extensibility-standard, skill-command-system-landscape)
+- [x] Verify: context file exists, has frontmatter (name, description), 200-800 words <!-- sha:c3a3df4 -->
+- [x] Commit <!-- sha:c3a3df4 -->
 
 ---
 
@@ -526,10 +526,10 @@ Depends on Chunks 1-2.
 - Create: `docs/research/cross-model-prompt-portability.md`
 - Create: `docs/context/cross-model-prompt-portability.md`
 
-- [ ] Run `/wos:research` (technical mode): How instruction styles, formatting preferences, and reasoning patterns differ across model families — Claude (XML tags), GPT/Codex (Markdown, system messages), Gemini (mixed), Llama/open-source (prompt sensitivity). What's universal vs. model-specific. Include benchmarks on format effects.
-- [ ] Run `/wos:distill` to produce `docs/context/cross-model-prompt-portability.md`
-- [ ] Verify: context file exists, has frontmatter (name, description), 200-800 words
-- [ ] Commit
+- [x] Run `/wos:research` (technical mode): How instruction styles, formatting preferences, and reasoning patterns differ across model families — Claude (XML tags), GPT/Codex (Markdown, system messages), Gemini (mixed), Llama/open-source (prompt sensitivity). What's universal vs. model-specific. Include benchmarks on format effects. <!-- sha:c3a3df4 -->
+- [x] Run `/wos:distill` to produce `docs/context/cross-model-prompt-portability.md` <!-- sha:c3a3df4 --> (split into 2: cross-model-prompt-portability, reasoning-mode-divergence)
+- [x] Verify: context file exists, has frontmatter (name, description), 200-800 words <!-- sha:c3a3df4 -->
+- [x] Commit <!-- sha:c3a3df4 -->
 
 ---
 
