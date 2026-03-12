@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.24.0] - 2026-03-12
+
+### Added
+
+- **Prompt persistence in `/wos:refine-prompt`.** After presenting a refined
+  prompt, the skill now offers to save it as a markdown file in `/docs/prompts/`
+  for later reuse.
+
 ## [0.23.0] - 2026-03-12
 
 ### Removed
