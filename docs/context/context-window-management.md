@@ -13,9 +13,11 @@ sources:
 related:
   - docs/research/context-window-management.md
   - docs/research/prompt-engineering.md
+  - docs/context/writing-for-llm-consumption.md
   - docs/context/prompt-engineering.md
   - docs/context/llm-capabilities-limitations.md
   - docs/context/agent-state-persistence.md
+  - docs/context/context-engineering.md
 ---
 
 Context window management determines what enters an LLM's working memory and how it is structured. Performance degrades predictably as context grows — not from capacity limits alone but from attention distribution patterns that favor boundary positions. Three coordinated strategies address this: strategic positioning, compression, and structured formatting.

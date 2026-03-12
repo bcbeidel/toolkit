@@ -10,9 +10,11 @@ sources:
   - https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
 related:
   - docs/research/prompt-engineering.md
+  - docs/context/writing-for-llm-consumption.md
   - docs/context/context-window-management.md
   - docs/context/llm-capabilities-limitations.md
   - docs/context/tool-design-for-llms.md
+  - docs/context/context-engineering.md
 ---
 
 ## Key Insight
