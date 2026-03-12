@@ -34,7 +34,7 @@ Note: the WOS frontmatter parser does not strip quotes. Use unquoted values.
 ## Required Sections
 
 These are format conventions for plan authors. Downstream skills (write-plan,
-execute-plan, validate-plan) enforce these through workflow, not code
+execute-plan, validate-work) enforce these through workflow, not code
 validation.
 
 | Section | Purpose | Research Basis |
@@ -60,7 +60,7 @@ approved → abandoned
 | draft → approved | User explicitly approves | Consensus-based: human says "approved" or equivalent |
 | approved → executing | Execution begins | Evidence-based: execute-plan checks `status: approved` |
 | approved → abandoned | User decides not to proceed | Consensus-based: human decision |
-| executing → completed | All tasks checked, validation passing | Evidence-based: all checkboxes checked + validate-plan passes |
+| executing → completed | All tasks checked, validation passing | Evidence-based: all checkboxes checked + validate-work passes |
 | executing → abandoned | User decides to stop | Consensus-based: human decision |
 | draft → abandoned | User decides not to proceed | Consensus-based: human decision |
 

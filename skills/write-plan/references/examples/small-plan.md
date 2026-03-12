@@ -21,7 +21,7 @@ focused scope, 3 tasks with TDD verification.
     # Status Field Implementation
 
     **Goal:** Add lifecycle status tracking to plan documents so that
-    downstream skills (execute-plan, validate-plan) can query plan state.
+    downstream skills (execute-plan, validate-work) can query plan state.
     Plans currently have no machine-readable status.
 
     **Scope:**
