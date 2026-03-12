@@ -7,6 +7,101 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.19.0] - 2026-03-12
+
+### Changed
+
+- **Renamed `/wos:validate-plan` to `/wos:validate-work`.** The skill validates
+  completed work against plan criteria, not the plan document itself. The new
+  name accurately reflects this purpose. All cross-references updated across
+  skills, shared references, OVERVIEW.md, and examples.
+  ([#177](https://github.com/bcbeidel/wos/issues/177),
+  [#180](https://github.com/bcbeidel/wos/pull/180))
+
+### Added
+
+- **`docs/designs/` directory for design specs.** `/wos:brainstorm` now saves
+  design documents to `docs/designs/` instead of `docs/plans/`, separating
+  exploratory artifacts from committed implementation plans. `/wos:init` creates
+  the directory, and AGENTS.md navigation includes it.
+  ([#173](https://github.com/bcbeidel/wos/issues/173),
+  [#180](https://github.com/bcbeidel/wos/pull/180))
+
+## [0.18.1] - 2026-03-11
+
+### Fixed
+
+- **Worktree cleanup in parallel dispatch.** Merge protocol now includes
+  worktree and branch cleanup steps immediately after merging, preventing
+  orphaned worktrees from accumulating.
+  ([#178](https://github.com/bcbeidel/wos/issues/178),
+  [#179](https://github.com/bcbeidel/wos/pull/179))
+- **Distill skill enforces `docs/context/` output location.** Target area must
+  be under `docs/context/`. If the user requests a different location, the skill
+  writes to `docs/context/` first, then offers to copy files elsewhere.
+  ([#176](https://github.com/bcbeidel/wos/issues/176),
+  [#179](https://github.com/bcbeidel/wos/pull/179))
+
+## [0.18.0] - 2026-03-11
+
+### Added
+
+- **Plan lifecycle skills.** Five new skills forming a complete plan lifecycle:
+  `/wos:brainstorm` (divergent-then-convergent design exploration),
+  `/wos:write-plan` (structured implementation plans with checkboxes and
+  verification criteria), `/wos:execute-plan` (sequential execution with
+  parallel subagent dispatch), `/wos:validate-plan` (automated + human
+  validation of completed work), and `/wos:finish-work` (merge, PR, keep,
+  or discard options with safety verification).
+  ([#157](https://github.com/bcbeidel/wos/issues/157)–[#163](https://github.com/bcbeidel/wos/issues/163))
+- **Plan document format specification.** Plans use a standardized markdown
+  format with metadata header, task checkboxes, verification criteria, and
+  explicit lifecycle states (draft → approved → in-progress → completed/abandoned).
+  ([#157](https://github.com/bcbeidel/wos/issues/157),
+  [#165](https://github.com/bcbeidel/wos/pull/165))
+- **OVERVIEW.md ecosystem documentation.** Documents the full skill ecosystem
+  with Mermaid lifecycle diagram, layer descriptions, and skill table. Cleaned
+  up superpowers references.
+  ([#164](https://github.com/bcbeidel/wos/pull/164))
+- **Research skill improvements.** Added research brief output, reflection
+  checkpoints, and extraction phase for pulling actionable items from research.
+  ([#152](https://github.com/bcbeidel/wos/pull/152))
+- **Per-skill entry scripts.** Research assessment prototype using per-skill
+  script pattern (`skills/<name>/scripts/`).
+  ([#151](https://github.com/bcbeidel/wos/pull/151))
+- **Feedback path from `/wos:write-plan` to `/wos:brainstorm`.** Plans can
+  loop back to brainstorming when requirements need further exploration.
+  ([#163](https://github.com/bcbeidel/wos/issues/163),
+  [#171](https://github.com/bcbeidel/wos/pull/171))
+
+## [0.17.0] - 2026-03-10
+
+### Added
+
+- **`/wos:principles` skill.** Capture and maintain project principles in
+  PRINCIPLES.md. Includes extraction heuristics, principle structure guide,
+  and drift detection references. Supports defining, reviewing, and checking
+  principle drift.
+  ([#145](https://github.com/bcbeidel/wos/pull/145))
+- **Worked examples for all 16 `/wos:consider` models.** Each mental model
+  now includes a concrete worked example demonstrating application.
+  ([#126](https://github.com/bcbeidel/wos/issues/126))
+- **Skill quality criteria from Anthropic skill-creator analysis.** New
+  quality benchmarks derived from Anthropic's own skill authoring patterns.
+  ([#142](https://github.com/bcbeidel/wos/pull/142))
+
+### Changed
+
+- **Research skill instruction density reduced.** Split `research-workflow.md`
+  into gather (phases 1–3) and synthesis (phases 4–6) references. Aligned
+  research skill with authoring guide conventions.
+  ([#124](https://github.com/bcbeidel/wos/issues/124))
+- **Skill quality polish across 5 skills.** Aligned research, distill, init,
+  report-issue, and consider skills with the skill authoring guide.
+  ([#143](https://github.com/bcbeidel/wos/pull/143))
+- **PRINCIPLES.md expanded.** Added rationale, boundary conditions, and
+  verification guidance for each design principle.
+
 ## [0.16.1] - 2026-03-09
 
 ### Added
@@ -852,6 +947,11 @@ implemented with 229 tests passing.
 - Build roadmap with session protocol and dependency graph
 - 18 design principles across four layers
 
+[0.19.0]: https://github.com/bcbeidel/wos/releases/tag/v0.19.0
+[0.18.1]: https://github.com/bcbeidel/wos/releases/tag/v0.18.1
+[0.18.0]: https://github.com/bcbeidel/wos/releases/tag/v0.18.0
+[0.17.0]: https://github.com/bcbeidel/wos/releases/tag/v0.17.0
+[0.16.1]: https://github.com/bcbeidel/wos/releases/tag/v0.16.1
 [0.15.0]: https://github.com/bcbeidel/wos/releases/tag/v0.15.0
 [0.14.0]: https://github.com/bcbeidel/wos/releases/tag/v0.14.0
 [0.13.0]: https://github.com/bcbeidel/wos/releases/tag/v0.13.0
