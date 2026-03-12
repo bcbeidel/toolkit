@@ -14,6 +14,7 @@ references:
   - references/parallel-dispatch.md
   - references/recovery-patterns.md
   - references/multi-session-resumption.md
+  - references/research-distill-pipeline.md
 ---
 
 # Execute Plan
@@ -58,7 +59,27 @@ Enforce status requirements before proceeding:
 | `abandoned` | **Refuse.** "This plan was intentionally stopped." |
 | missing | **Warn.** "No status field — treating as legacy plan." Proceed with caution. |
 
-### 3. Choose Execution Mode
+### 3. Branch Setup
+
+Before executing tasks, ensure work happens on a feature branch.
+
+1. Check if currently on the default branch (`main` or `master`).
+2. If on default branch:
+   - Derive a branch name from the plan filename: strip `docs/plans/` and
+     the date prefix. E.g., `docs/plans/2026-03-11-skill-workflow.md` →
+     `skill-workflow`.
+   - Present to user: "This plan should be implemented on a branch.
+     Suggested: `<name>` — use this, or provide a different name?"
+   - Wait for user confirmation.
+   - Create and checkout the branch: `git checkout -b <name>`
+   - Write the branch name to the plan's `branch:` frontmatter field.
+3. If already on a feature branch:
+   - Present to user: "Currently on branch `<name>` — use this for
+     the plan?"
+   - On confirmation, write the branch name to the plan's `branch:`
+     field if not already set.
+
+### 4. Choose Execution Mode
 
 **Sequential** (default) — execute tasks in order.
 
@@ -75,7 +96,11 @@ If the entry script reports `parallel_eligible: true`, present the option:
 If not eligible, state why and proceed sequentially. Consult
 [parallel dispatch](references/parallel-dispatch.md) for the full protocol.
 
-### 4. Execute Tasks
+If the plan contains research→distill workstreams, consult the
+[research-distill pipeline](references/research-distill-pipeline.md)
+for the phased orchestration pattern.
+
+### 5. Execute Tasks
 
 For each pending task:
 
@@ -92,19 +117,24 @@ For each pending task:
 
 On failure, consult [recovery patterns](references/recovery-patterns.md).
 
-### 5. Validate
+### 6. Validate
 
-When all tasks are checked, recommend running `wos:validate-work` to
-verify the plan succeeded end-to-end. Ask the user for confirmation.
+When all tasks are checked, present to user: "All tasks complete. Ready
+to invoke `/wos:validate-work` to verify the plan succeeded — proceed?"
 
-- **User confirms** — invoke `wos:validate-work`, which runs validation
+Wait for user confirmation before invoking the skill.
+
+- **User confirms** — invoke `/wos:validate-work`, which runs validation
   and handles the `status: completed` transition on success.
 - **User declines** — update frontmatter to `status: completed` directly.
   The user accepts responsibility for skipping plan-level validation.
 
-### 6. Finish
+### 7. Finish
 
-Invoke `wos:finish-work`.
+Present to user: "Validation passed. Ready to invoke `/wos:finish-work`
+to integrate — proceed?"
+
+Wait for user confirmation before invoking the skill.
 
 ## Key Instructions
 

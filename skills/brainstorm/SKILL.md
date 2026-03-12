@@ -68,7 +68,9 @@ conventions and examples.
 
 ### 6. Hand Off
 
-- Offer to invoke `wos:write-plan` with the approved spec.
+- Present to user: "Design approved. Ready to invoke `/wos:write-plan`
+  to turn this into an implementation plan — proceed?"
+- Wait for user confirmation before invoking the skill.
 - The plan should reference this design doc via its `related` field,
   establishing traceability between design and plan.
 
