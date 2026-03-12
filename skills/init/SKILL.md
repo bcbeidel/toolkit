@@ -32,6 +32,12 @@ Check which parts of the WOS structure already exist:
 - `AGENTS.md` with WOS markers (`<!-- wos:begin -->` / `<!-- wos:end -->`)
 - `### Preferences` subsection in the WOS-managed section
 - `CLAUDE.md` with `@AGENTS.md` reference
+- `.gitignore`
+- `README.md`
+
+Also check whether the repo is **empty** — no source files, no `README.md`,
+no `.gitignore` beyond what WOS just created. If the repo is empty, steps
+2.5–2.7 below will activate. If the repo already has content, skip them.
 
 ### 2. Create missing directories
 
@@ -44,6 +50,61 @@ docs/
   plans/
   designs/
 ```
+
+### 2.5. `.gitignore` (empty repos only)
+
+If the repo is empty and no `.gitignore` exists, offer to create one with
+Python defaults:
+
+```
+.venv/
+__pycache__/
+*.pyc
+dist/
+*.egg-info/
+.eggs/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.env
+```
+
+Ask: "Want me to create a `.gitignore` with Python defaults? (yes / modify / skip)"
+
+- **yes** — create the file as shown
+- **modify** — ask what to add or remove, then create
+- **skip** — move on
+
+### 2.6. `README.md` (empty repos only)
+
+If the repo is empty and no `README.md` exists, ask:
+
+> "What is this project? (one sentence is fine)"
+
+From the response, generate a stub `README.md` with:
+
+- `# <Project Name>` heading
+- One-line description
+- Placeholder sections: Overview, Getting Started, Usage
+
+Present the stub and ask: "Look good? (yes / modify / skip)"
+
+### 2.7. Guided first action (empty repos only)
+
+After scaffolding is complete, ask:
+
+> "What problem are you trying to solve with this project?"
+
+Based on the response, suggest a concrete WOS skill sequence:
+
+- **Research-oriented** (exploring a domain, comparing options, investigating):
+  `/wos:brainstorm` → `/wos:research` → `/wos:distill`
+- **Implementation-oriented** (building a feature, fixing something, clear goal):
+  `/wos:brainstorm` → `/wos:write-plan` → `/wos:execute-plan`
+- **Exploratory / unsure**:
+  Start with `/wos:brainstorm` to clarify the problem space
+
+If the user declines or skips, move on without suggesting.
 
 ### 3. Reindex
 
@@ -101,6 +162,8 @@ Report what was done:
 - **Updated:** note if AGENTS.md WOS section was refreshed
 - **Preferences:** note if preferences were set or unchanged
 - **CLAUDE.md:** note if pointer was added or already present
+- **Onboarding:** note if `.gitignore`, `README.md` were created or skipped
+- **Next step:** note the suggested skill sequence, if any
 - **Already present:** note anything that was already in place
 
 If everything was already set up, confirm: "WOS is up to date. No changes needed."
