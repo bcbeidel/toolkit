@@ -1,9 +1,9 @@
 ---
-name: validate-plan
+name: validate-work
 description: >
-  Verifies a plan succeeded end-to-end by running validation criteria.
-  Use when the user wants to "validate the plan", "verify the plan",
-  "check if done", "run validation", "are we done", "did the plan work",
+  Verifies that completed work meets the plan's acceptance criteria.
+  Use when the user wants to "validate the work", "verify the work",
+  "check if done", "run validation", "are we done", "did it work",
   or after completing all tasks in a plan. Handles both automated
   (command) and human (judgment) validation criteria.
 argument-hint: "[plan file path]"
@@ -16,13 +16,13 @@ references:
   - ../_shared/references/plan-format.md
 ---
 
-# Validate Plan
+# Validate Work
 
-Verify that a plan succeeded end-to-end — not just that every task was
-checked off, but that the combined result meets the plan's validation
-criteria.
+Verify that completed work meets the plan's validation criteria — not just
+that every task was checked off, but that the combined result satisfies
+acceptance criteria end-to-end.
 
-**Announce at start:** "I'm using the validate-plan skill to verify this plan."
+**Announce at start:** "I'm using the validate-work skill to verify this work."
 
 ## Workflow
 
