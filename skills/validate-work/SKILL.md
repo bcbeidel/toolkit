@@ -146,6 +146,9 @@ If any criterion failed:
 2. Load [failure-diagnosis](references/failure-diagnosis.md)
 3. Classify the gap type: integration gap, specification drift, or
    missing cross-cutting concern
+
+**Plan mode:**
+
 4. Suggest 1-3 new tasks to close the gap, formatted to match the
    plan's existing task style
 5. Keep plan in `executing` state
@@ -158,10 +161,19 @@ appended after the Validation heading will be invisible to the execution
 tooling. Update the plan file and save. The plan returns to active
 execution.
 
+**Ad-hoc mode:**
+
+4. Present specific, actionable suggestions to fix each failure
+5. Offer to re-run validation after fixes are applied
+
+No plan file to update — suggestions are conversational.
+
 ### 7. On Success
 
 When all criteria pass (automated + human confirmed) and none are
 marked uncertain:
+
+**Plan mode:**
 
 1. Update plan frontmatter: `status: completed`
 2. Output structured summary:
@@ -180,23 +192,39 @@ Results:
 Status updated: executing → completed
 ```
 
+**Ad-hoc mode:**
+
+1. Output results summary:
+
+```
+Validation Complete — ALL PASSED
+
+Criteria: [N] total ([A] automated, [H] human)
+
+Results:
+1. [PASS] criterion description
+2. [PASS] criterion description (human-confirmed)
+...
+```
+
 ## Key Instructions
 
-- **All tasks must be complete before validating.** The precondition
-  check (Step 2) enforces this. Partial validation produces misleading
-  results.
+- **All tasks must be complete before validating (plan mode).** The
+  precondition check (Step 2) enforces this. Partial validation produces
+  misleading results.
 - **Run automated checks before human checks.** Automated results
   inform human judgment. If tests fail, asking the user to judge code
   quality is premature.
 - **Read command output, not just exit codes.** A passing exit code
   with warning output may still indicate problems. A failing exit code
   from a missing environment is "blocked," not "failed."
-- **Plan stays in `executing` on failure.** Never mark a plan as failed
-  or completed when validation criteria fail. Add tasks to address gaps
-  or abandon with a reason.
-- **Validation criteria come from the plan, not from you.** Run the
-  criteria the plan author wrote. Do not invent additional criteria or
-  skip criteria you consider redundant.
+- **Plan stays in `executing` on failure (plan mode).** Never mark a
+  plan as failed or completed when validation criteria fail. Add tasks
+  to address gaps or abandon with a reason.
+- **Run the criteria as given, not your own.** In plan mode, run what
+  the plan author wrote. In ad-hoc mode, run what the user confirmed.
+  Do not invent additional criteria or skip criteria you consider
+  redundant.
 
 ## Anti-Pattern Guards
 
