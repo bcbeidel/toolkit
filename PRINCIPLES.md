@@ -24,10 +24,13 @@ responsibilities creates brittle, unreliable systems.
 line count thresholds), it belongs in code. The test: can you write a unit test
 for it?
 **Verification:** `wos/validators.py` contains no content quality assessments.
+Assessment modules (`research/`, `plan/`) report observable structural facts
+(checkbox state, word count, section presence); models interpret those facts.
 Skills contain no deterministic validation logic.
 
 ### 3. Single source of truth
-Navigation and indexes are derived from disk state, never curated by hand.
+Navigation, indexes, and artifact lifecycle state are derived from disk, never
+curated by hand.
 
 **Rationale:** Hand-maintained indexes drift from actual content. Auto-generation
 from disk state makes navigation correct by construction.
@@ -36,6 +39,8 @@ across regeneration — human curation is appropriate for context that isn't
 derivable from file metadata.
 **Verification:** `scripts/reindex.py` regenerates all `_index.md` from disk
 state. `check_index_sync()` fails when indexes don't match directory contents.
+Plan and design documents track lifecycle via frontmatter `status` fields —
+execution gates check status from the document, not from external state.
 
 ## How WOS is built
 
@@ -48,8 +53,9 @@ makes the codebase navigable without specialized knowledge.
 **Boundary:** Skill workflows may involve multi-phase complexity (e.g., research
 skill's phased structure). Simplicity applies within each phase, not to overall
 workflow design.
-**Verification:** `wos/` uses no class inheritance. No module exceeds ~200
-lines. No abstractions exist that serve only one caller.
+**Verification:** `wos/` uses no class inheritance. Modules are single-purpose —
+larger modules (validators, assessors) remain cohesive tools without abstraction
+indirection. No abstractions exist that serve only one caller.
 
 ### 5. When in doubt, leave it out
 Every field, abstraction, and feature must justify its presence.
@@ -71,7 +77,7 @@ context windows.
 **Boundary:** When cutting text degrades output quality, the words aren't
 needless. Measure by outcome (does the skill still produce good results?), not
 by word count.
-**Verification:** Skill audit warns when instruction lines exceed 200 or
+**Verification:** Skill audit warns when instruction lines exceed 500 or
 SKILL.md body exceeds 500 lines. `_index.md` entries are single-line
 descriptions.
 
@@ -87,16 +93,23 @@ PEP 723 inline metadata for their own isolated deps.
 PEP 723 `[tool.uv]` dependencies.
 
 ### 8. One obvious way to run
-Every script, every skill, same entry point. Consistency eliminates a class of
-failures.
+Every script, every skill, same entry point. Skill-to-skill transitions name
+the target and wait for user consent. Consistency eliminates a class of failures.
 
-**Rationale:** When every script runs the same way, skills don't need
-special-case instructions and users don't need to remember invocation variants.
+**Rationale:** When every script runs the same way and every skill transition
+follows the same pattern, skills don't need special-case instructions and users
+don't need to remember invocation variants. Explicit handoffs preserve user
+awareness of workflow structure.
 **Boundary:** Test invocation (`uv run python -m pytest`) differs from script
 invocation (`uv run scripts/foo.py`) — acceptable because they're different
-tools, not different patterns for the same tool.
+tools, not different patterns for the same tool. Within a single skill's
+internal phases, transitions don't require handoff confirmation — this applies
+to cross-skill boundaries only.
 **Verification:** All scripts in `scripts/` have PEP 723 inline metadata and
 run via `uv run`. No skill documentation uses bare `python3` invocation.
+Delivery pipeline skills (brainstorm → write-plan → execute-plan →
+validate-work → finish-work) end with explicit handoff naming the next skill
+before invocation.
 
 ## How WOS operates
 

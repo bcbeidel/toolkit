@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.21.1] - 2026-03-12
+
+### Changed
+
+- **PRINCIPLES.md drift detection update.** Updated 5 principles (P2, P3, P4,
+  P6, P8) to reflect current practice: P2 clarifies assessment modules, P3
+  covers artifact lifecycle state, P4 replaces line-count limit with
+  single-purpose criterion, P6 reflects 500-line threshold, P8 adds explicit
+  skill-to-skill handoff pattern.
+
 ## [0.21.0] - 2026-03-12
 
 ### Added
