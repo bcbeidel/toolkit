@@ -157,10 +157,10 @@ understanding what agents need and how they consume information.
 - Create: `docs/research/information-architecture.md`
 - Create: `docs/context/information-architecture.md`
 
-- [ ] Run `/wos:research` (landscape mode): How to organize knowledge for retrieval — taxonomy design, flat vs. hierarchical structures, navigation patterns, discoverability. Include both traditional IA and agent-specific patterns (index files, metadata-first navigation).
-- [ ] Run `/wos:distill` to produce `docs/context/information-architecture.md`
-- [ ] Verify: context file exists, has frontmatter (name, description), 200-800 words
-- [ ] Commit
+- [x] Run `/wos:research` (landscape mode): How to organize knowledge for retrieval — taxonomy design, flat vs. hierarchical structures, navigation patterns, discoverability. Include both traditional IA and agent-specific patterns (index files, metadata-first navigation). <!-- sha:0add835 -->
+- [x] Run `/wos:distill` to produce `docs/context/information-architecture.md` <!-- sha:0add835 -->
+- [x] Verify: context file exists, has frontmatter (name, description), 200-800 words <!-- sha:0add835 -->
+- [x] Commit <!-- sha:0add835 -->
 
 ---
 
@@ -170,10 +170,10 @@ understanding what agents need and how they consume information.
 - Create: `docs/research/context-engineering.md`
 - Create: `docs/context/context-engineering.md`
 
-- [ ] Run `/wos:research` (deep-dive mode): How to structure, store, and surface project knowledge so LLMs can consume it effectively — document models, frontmatter conventions, indexing strategies, attention-aware formatting. This is the core problem WOS solves; research thoroughly.
-- [ ] Run `/wos:distill` to produce `docs/context/context-engineering.md`
-- [ ] Verify: context file exists, has frontmatter (name, description), 200-800 words
-- [ ] Commit
+- [x] Run `/wos:research` (deep-dive mode): How to structure, store, and surface project knowledge so LLMs can consume it effectively — document models, frontmatter conventions, indexing strategies, attention-aware formatting. This is the core problem WOS solves; research thoroughly. <!-- sha:0add835 -->
+- [x] Run `/wos:distill` to produce `docs/context/context-engineering.md` <!-- sha:0add835 -->
+- [x] Verify: context file exists, has frontmatter (name, description), 200-800 words <!-- sha:0add835 -->
+- [x] Commit <!-- sha:0add835 -->
 
 ---
 
@@ -183,10 +183,10 @@ understanding what agents need and how they consume information.
 - Create: `docs/research/research-methodology.md`
 - Create: `docs/context/research-methodology.md`
 
-- [ ] Run `/wos:research` (landscape mode): Systematic information gathering — source discovery strategies, evaluation frameworks, cross-referencing techniques, confidence assessment. Include academic and practitioner approaches relevant to agent-driven research.
-- [ ] Run `/wos:distill` to produce `docs/context/research-methodology.md`
-- [ ] Verify: context file exists, has frontmatter (name, description), 200-800 words
-- [ ] Commit
+- [x] Run `/wos:research` (landscape mode): Systematic information gathering — source discovery strategies, evaluation frameworks, cross-referencing techniques, confidence assessment. Include academic and practitioner approaches relevant to agent-driven research. <!-- sha:0add835 -->
+- [x] Run `/wos:distill` to produce `docs/context/research-methodology.md` <!-- sha:0add835 -->
+- [x] Verify: context file exists, has frontmatter (name, description), 200-800 words <!-- sha:0add835 -->
+- [x] Commit <!-- sha:0add835 -->
 
 ---
 
@@ -196,10 +196,10 @@ understanding what agents need and how they consume information.
 - Create: `docs/research/source-evaluation-claim-verification.md`
 - Create: `docs/context/source-evaluation-claim-verification.md`
 
-- [ ] Run `/wos:research` (technical mode): SIFT framework (Stop, Investigate, Find better, Trace), source tier hierarchies, claim verification types (quotes, statistics, attributions), Chain-of-Verification (CoVe) to prevent confirmation bias. Include how these apply specifically to LLM-assisted research.
-- [ ] Run `/wos:distill` to produce `docs/context/source-evaluation-claim-verification.md`
-- [ ] Verify: context file exists, has frontmatter (name, description), 200-800 words
-- [ ] Commit
+- [x] Run `/wos:research` (technical mode): SIFT framework (Stop, Investigate, Find better, Trace), source tier hierarchies, claim verification types (quotes, statistics, attributions), Chain-of-Verification (CoVe) to prevent confirmation bias. Include how these apply specifically to LLM-assisted research. <!-- sha:0add835 -->
+- [x] Run `/wos:distill` to produce `docs/context/source-evaluation-claim-verification.md` <!-- sha:0add835 -->
+- [x] Verify: context file exists, has frontmatter (name, description), 200-800 words <!-- sha:0add835 -->
+- [x] Commit <!-- sha:0add835 -->
 
 ---
 
@@ -209,10 +209,10 @@ understanding what agents need and how they consume information.
 - Create: `docs/research/knowledge-synthesis-distillation.md`
 - Create: `docs/context/knowledge-synthesis-distillation.md`
 
-- [ ] Run `/wos:research` (technical mode): How to compress raw research into focused, actionable context — what to keep, what to discard, preserving provenance while reducing volume. Include information compression theory and practical heuristics for agent-facing documents.
-- [ ] Run `/wos:distill` to produce `docs/context/knowledge-synthesis-distillation.md`
-- [ ] Verify: context file exists, has frontmatter (name, description), 200-800 words
-- [ ] Commit
+- [x] Run `/wos:research` (technical mode): How to compress raw research into focused, actionable context — what to keep, what to discard, preserving provenance while reducing volume. Include information compression theory and practical heuristics for agent-facing documents. <!-- sha:0add835 -->
+- [x] Run `/wos:distill` to produce `docs/context/knowledge-synthesis-distillation.md` <!-- sha:0add835 -->
+- [x] Verify: context file exists, has frontmatter (name, description), 200-800 words <!-- sha:0add835 -->
+- [x] Commit <!-- sha:0add835 -->
 
 ---
 
@@ -222,10 +222,10 @@ understanding what agents need and how they consume information.
 - Create: `docs/research/writing-for-llm-consumption.md`
 - Create: `docs/context/writing-for-llm-consumption.md`
 
-- [ ] Run `/wos:research` (technical mode): How agent-facing documentation differs from human-facing — BLUF structure, explicit over implicit, self-contained sections, navigable metadata. Include research on LLM reading comprehension patterns and document structure effects on output quality.
-- [ ] Run `/wos:distill` to produce `docs/context/writing-for-llm-consumption.md`
-- [ ] Verify: context file exists, has frontmatter (name, description), 200-800 words
-- [ ] Commit
+- [x] Run `/wos:research` (technical mode): How agent-facing documentation differs from human-facing — BLUF structure, explicit over implicit, self-contained sections, navigable metadata. Include research on LLM reading comprehension patterns and document structure effects on output quality. <!-- sha:0add835 -->
+- [x] Run `/wos:distill` to produce `docs/context/writing-for-llm-consumption.md` <!-- sha:0add835 -->
+- [x] Verify: context file exists, has frontmatter (name, description), 200-800 words <!-- sha:0add835 -->
+- [x] Commit <!-- sha:0add835 -->
 
 ---
 
