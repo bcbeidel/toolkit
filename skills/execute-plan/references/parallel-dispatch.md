@@ -80,8 +80,33 @@ After all tasks in a wave complete:
 2. Run verification commands for each completed task
 3. Update checkboxes and append SHAs in the plan file
 4. Commit the plan file update
+5. Clean up worktrees and branches for merged tasks
 
 **If merge conflicts occur** (the file-boundary analysis should prevent
 this, but it's not infallible): escalate to the user. Do not attempt
 automatic conflict resolution — the risk of introducing subtle bugs
 outweighs the convenience.
+
+## Worktree Cleanup
+
+After merging a worktree's changes, remove the worktree and its branch
+immediately. Do not defer cleanup to the end of the plan.
+
+For each merged worktree:
+
+```bash
+git worktree remove <worktree-path>
+git branch -d <worktree-branch>
+```
+
+Example:
+
+```bash
+git worktree remove .claude/worktrees/agent-task-3
+git branch -d worktree-agent-task-3
+```
+
+If `git worktree remove` fails because of untracked files, use
+`--force` only after confirming the merge was successful. If
+`git branch -d` fails because the branch is not fully merged,
+investigate before using `-D` — this usually indicates a merge problem.

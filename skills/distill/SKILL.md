@@ -40,6 +40,10 @@ Present a distillation plan as a table:
 |---|---------|-------------|----------|--------------|
 | 1 | Key finding one | docs/context/area/ | finding-one.md | ~400 |
 
+**Target Area must be under `docs/context/`.** If the user requests a
+different location, write to `docs/context/` first (the canonical
+location), then offer to copy files to the additional location.
+
 User approves, edits, or rejects individual rows.
 
 ### 4. Generate
