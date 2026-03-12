@@ -60,16 +60,21 @@ do not silently modify scope. Instead, produce structured feedback:
     ## Feedback
 
     **Infeasible:** [specific design element that cannot be implemented]
-    **Evidence:** [files checked, APIs tested, dependencies missing]
+    **Why:** [files checked, APIs tested, dependencies missing]
     **Impact:** [which plan tasks are affected and how]
     **Alternatives:** [suggested modifications, if any]
+
+See [Feedback Loop](../../_shared/references/feedback-loop.md) for the
+full format, user options, and revision-vs-supersede decision tree.
 
 Present the user with three options:
 
 1. **Return to brainstorm** — invoke `wos:brainstorm` with this feedback
    to revise the design. Follow the "supersede, don't edit" pattern.
-2. **Proceed with modified scope** — adjust the plan's Must/Won't and
-   continue. Document what changed and why in the Approach section.
+2. **Proceed with modified scope** — revise the plan in-place: update
+   Must/Won't boundaries, adjust or remove affected tasks, and document
+   what changed and why in the Approach section. Appropriate when the
+   design is sound but a specific task or constraint is impractical.
 3. **Abandon** — set `status: abandoned` with a reason in the plan.
 
 ### 5. Review with User
