@@ -11,10 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-- **Removed 37 completed/outdated docs.** Deleted 31 completed plan/design
-  files and all 6 research files that were adding noise to model context.
-  Removed empty `docs/research/` directory. Kept 2 pending plans
-  (init-onboarding).
+- **Removed all completed/outdated docs.** Deleted all 33 plan/design files,
+  all 6 research files, and 1 saved prompt. Removed empty `docs/plans/`,
+  `docs/research/`, and `docs/prompts/` directories.
 
 ### Fixed
 

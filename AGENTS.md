@@ -5,7 +5,6 @@
 
 Each directory has an `_index.md` listing all files with descriptions.
 - `docs/context/_index.md` -- all topic areas
-- `docs/plans/_index.md` -- plans
 
 Each `.md` file starts with YAML metadata (between `---` lines).
 Read the `description` field before reading the full file.
