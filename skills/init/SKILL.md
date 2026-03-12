@@ -28,6 +28,7 @@ Check which parts of the WOS structure already exist:
 - `docs/context/` directory
 - `docs/research/` directory
 - `docs/plans/` directory
+- `docs/designs/` directory
 - `AGENTS.md` with WOS markers (`<!-- wos:begin -->` / `<!-- wos:end -->`)
 - `### Preferences` subsection in the WOS-managed section
 - `CLAUDE.md` with `@AGENTS.md` reference
@@ -41,6 +42,7 @@ docs/
   context/
   research/
   plans/
+  designs/
 ```
 
 ### 3. Reindex
