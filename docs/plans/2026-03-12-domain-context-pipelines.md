@@ -2,7 +2,7 @@
 name: Domain Context Pipelines
 description: Research and distill 36 knowledge domains into context files under docs/context/
 type: plan
-status: approved
+status: executing
 related:
   - docs/designs/2026-03-12-domain-context-inventory-design.md
   - docs/prompts/domain-context-pipeline.md
@@ -56,10 +56,10 @@ Research these first — all later chunks reference these concepts.
 - Create: `docs/research/llm-capabilities-limitations.md`
 - Create: `docs/context/llm-capabilities-limitations.md`
 
-- [ ] Run `/wos:research` (landscape mode): What LLMs can do reliably vs. what they can't — hallucination patterns, attention decay ("lost in the middle"), reasoning failure modes, calibration issues. Focus on findings relevant to agent system design, not general ML.
-- [ ] Run `/wos:distill` to produce `docs/context/llm-capabilities-limitations.md`
-- [ ] Verify: context file exists, has frontmatter (name, description), 200-800 words, `related` links to research doc
-- [ ] Commit
+- [x] Run `/wos:research` (landscape mode): What LLMs can do reliably vs. what they can't — hallucination patterns, attention decay ("lost in the middle"), reasoning failure modes, calibration issues. Focus on findings relevant to agent system design, not general ML. <!-- sha:f0ad314 -->
+- [x] Run `/wos:distill` to produce `docs/context/llm-capabilities-limitations.md` <!-- sha:f0ad314 -->
+- [x] Verify: context file exists, has frontmatter (name, description), 200-800 words, `related` links to research doc <!-- sha:f0ad314 -->
+- [x] Commit <!-- sha:f0ad314 -->
 
 ---
 
@@ -69,10 +69,10 @@ Research these first — all later chunks reference these concepts.
 - Create: `docs/research/prompt-engineering.md`
 - Create: `docs/context/prompt-engineering.md`
 
-- [ ] Run `/wos:research` (landscape mode): Techniques for reliable LLM instruction — constraint specification, output formatting, anti-pattern guards, few-shot examples, chain-of-thought, calibrating specificity vs. flexibility. Focus on system-level prompt design (skill authoring), not conversational prompting.
-- [ ] Run `/wos:distill` to produce `docs/context/prompt-engineering.md`
-- [ ] Verify: context file exists, has frontmatter (name, description), 200-800 words, `related` links to research doc
-- [ ] Commit
+- [x] Run `/wos:research` (landscape mode): Techniques for reliable LLM instruction — constraint specification, output formatting, anti-pattern guards, few-shot examples, chain-of-thought, calibrating specificity vs. flexibility. Focus on system-level prompt design (skill authoring), not conversational prompting. <!-- sha:f0ad314 -->
+- [x] Run `/wos:distill` to produce `docs/context/prompt-engineering.md` <!-- sha:f0ad314 -->
+- [x] Verify: context file exists, has frontmatter (name, description), 200-800 words, `related` links to research doc <!-- sha:f0ad314 -->
+- [x] Commit <!-- sha:f0ad314 -->
 
 ---
 
@@ -82,10 +82,10 @@ Research these first — all later chunks reference these concepts.
 - Create: `docs/research/context-window-management.md`
 - Create: `docs/context/context-window-management.md`
 
-- [ ] Run `/wos:research` (technical mode): Token budgets, inclusion/exclusion strategies, compression approaches, how to structure content so important information survives context limits. Include attention-aware formatting patterns (BLUF, first/last positioning).
-- [ ] Run `/wos:distill` to produce `docs/context/context-window-management.md`
-- [ ] Verify: context file exists, has frontmatter (name, description), 200-800 words, `related` links to research doc
-- [ ] Commit
+- [x] Run `/wos:research` (technical mode): Token budgets, inclusion/exclusion strategies, compression approaches, how to structure content so important information survives context limits. Include attention-aware formatting patterns (BLUF, first/last positioning). <!-- sha:f0ad314 -->
+- [x] Run `/wos:distill` to produce `docs/context/context-window-management.md` <!-- sha:f0ad314 -->
+- [x] Verify: context file exists, has frontmatter (name, description), 200-800 words, `related` links to research doc <!-- sha:f0ad314 -->
+- [x] Commit <!-- sha:f0ad314 -->
 
 ---
 
