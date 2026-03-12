@@ -1,3 +1,8 @@
+---
+name: "Principle Tensions Implementation Plan"
+description: "Create PRINCIPLES.md with full design principle descriptions and tension resolution examples"
+---
+
 # Principle Tensions Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.

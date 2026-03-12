@@ -1,3 +1,8 @@
+---
+name: "Planning Skill Workflow Prompt"
+description: "Prompt for working through issues #157-#164 (WOS planning skills) sequentially"
+---
+
 # Planning Skill Workflow Prompt
 
 Use this prompt to work through issues #157–#164 (WOS planning skills) sequentially.

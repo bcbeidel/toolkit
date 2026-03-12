@@ -1,3 +1,8 @@
+---
+name: "Principles Skill Implementation Plan"
+description: "Implement /wos:principles skill with four files following init/distill patterns — issue #134"
+---
+
 # Principles Skill Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.

@@ -1,3 +1,8 @@
+---
+name: "Per-Skill Entry Scripts Design"
+description: "Design for per-skill scripts directories with thin CLI wrappers delegating to wos subpackages — issue #146"
+---
+
 # Per-Skill Entry Scripts Design
 
 **Issue:** #146 — Establish per-skill entry scripts to reduce model guesswork

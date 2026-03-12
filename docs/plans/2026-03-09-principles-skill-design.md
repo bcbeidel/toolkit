@@ -1,3 +1,8 @@
+---
+name: "Principles Skill Design"
+description: "Design for /wos:principles skill to extract and maintain project principles in PRINCIPLES.md — issue #134"
+---
+
 # Principles Skill Design
 
 **Issue:** #134 — Add skill to capture and structure project principles

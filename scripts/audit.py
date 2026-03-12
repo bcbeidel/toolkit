@@ -92,10 +92,10 @@ def main() -> None:
     parser.add_argument(
         "--skill-max-lines",
         type=int,
-        default=200,
+        default=500,
         help=(
             "Instruction line threshold for skill density warnings"
-            " (default: 200, 0 to disable)"
+            " (default: 500, 0 to disable)"
         ),
     )
     args = parser.parse_args()
