@@ -1,3 +1,8 @@
+---
+name: "Skill Authoring Guide Design"
+description: "Design for extending /wos:audit with skill evaluation rubric and authoring guide — issue #128"
+---
+
 # Extend /wos:audit with Skill Evaluation + Authoring Guide
 
 **Goal:** When audit encounters a skill directory, apply skill-specific rubric

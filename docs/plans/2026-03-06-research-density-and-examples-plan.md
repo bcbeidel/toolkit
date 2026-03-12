@@ -1,3 +1,8 @@
+---
+name: "Research Density and Examples Plan"
+description: "Add worked examples to consider commands and reduce research skill instruction density — issues #124, #126"
+---
+
 # Consider Command Examples & Research Density Reduction — Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.

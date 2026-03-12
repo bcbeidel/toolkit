@@ -1,16 +1,19 @@
 ---
 name: validate-work
 description: >
-  Verifies that completed work meets the plan's acceptance criteria.
+  Verifies completed work against validation criteria. Works in two
+  modes: with a plan (runs the plan's Validation section) or ad-hoc
+  (builds checks from git diff, project config, and project docs).
   Use when the user wants to "validate the work", "verify the work",
-  "check if done", "run validation", "are we done", "did it work",
-  or after completing all tasks in a plan. Handles both automated
-  (command) and human (judgment) validation criteria.
-argument-hint: "[plan file path]"
+  "check my work", "verify my changes", "does this look right",
+  "run checks", "check if done", "are we done", "did it work",
+  or after completing all tasks in a plan.
+argument-hint: "[plan file path (optional)]"
 user-invocable: true
 references:
   - references/automated-validation.md
   - references/human-validation.md
+  - references/adhoc-validation.md
   - references/failure-diagnosis.md
   - ../_shared/references/preflight.md
   - ../_shared/references/plan-format.md
@@ -18,26 +21,67 @@ references:
 
 # Validate Work
 
-Verify that completed work meets the plan's validation criteria — not just
-that every task was checked off, but that the combined result satisfies
-acceptance criteria end-to-end.
+Verify that completed work meets validation criteria — either from a plan's
+Validation section or from a hypothesis built from git diff, project
+conventions, and project docs.
 
 **Announce at start:** "I'm using the validate-work skill to verify this work."
 
 ## Workflow
 
-### 1. Load Plan
+### 1. Determine Mode
 
-Read the plan file. If no path was provided, ask the user which plan to
-validate.
+**Plan mode:** A plan file path was provided, or the user references a
+plan. Read the plan file. Locate the **Validation** section. If it
+contains criteria, proceed to Step 2 (Plan Preconditions).
 
-Locate the **Validation** section. It contains a numbered list of criteria,
-prioritized, with embedded code blocks for runnable commands. If the
-Validation section is missing or empty, stop and report: "This plan has
-no validation criteria. Add concrete criteria to the Validation section
-before running validation."
+If the Validation section is missing or empty, stop and report: "This
+plan has no validation criteria. Add concrete criteria to the Validation
+section before running validation."
 
-### 2. Check Preconditions
+**Ad-hoc mode:** No plan provided or referenced. Proceed to Step 1b
+(Build Hypothesis).
+
+### 1b. Build Hypothesis (ad-hoc mode)
+
+Gather signals from three sources. See
+[adhoc-validation](references/adhoc-validation.md) for the full protocol.
+
+**Git diff:** Run `git diff main...HEAD --stat`, `git diff --stat`, and
+`git diff --cached --stat`. Categorize changed files (source, tests,
+config, docs).
+
+**Config files:** Scan for project config files to discover available
+checks (test runners, linters, type checkers, build tools). Only propose
+checks for tools actually configured.
+
+**Project docs:** Read `CLAUDE.md`, `AGENTS.md`, `README.md`, and
+`CONTRIBUTING.md` for explicit test/lint/build commands and conventions.
+
+### 1c. Present and Confirm (ad-hoc mode)
+
+Present the hypothesis:
+
+```
+Based on your changes and project setup, here's what I'd validate:
+
+Changes detected:
+- [N] source files modified ([list key files])
+- [N] test files modified
+- [N] doc files modified
+
+Proposed checks:
+1. [auto] `command` — description
+2. [auto] `command` — description
+3. [human] Description of qualitative check
+
+Add, remove, or modify any of these? Or confirm to run.
+```
+
+Every proposed check must cite its signal source (git diff, config file,
+or project doc). Wait for user confirmation before executing.
+
+### 2. Plan Preconditions (plan mode only)
 
 Run the preflight check (per `preflight.md`), then the entry script:
 
@@ -104,6 +148,9 @@ If any criterion failed:
 2. Load [failure-diagnosis](references/failure-diagnosis.md)
 3. Classify the gap type: integration gap, specification drift, or
    missing cross-cutting concern
+
+**Plan mode:**
+
 4. Suggest 1-3 new tasks to close the gap, formatted to match the
    plan's existing task style
 5. Keep plan in `executing` state
@@ -116,10 +163,19 @@ appended after the Validation heading will be invisible to the execution
 tooling. Update the plan file and save. The plan returns to active
 execution.
 
+**Ad-hoc mode:**
+
+4. Present specific, actionable suggestions to fix each failure
+5. Offer to re-run validation after fixes are applied
+
+No plan file to update — suggestions are conversational.
+
 ### 7. On Success
 
 When all criteria pass (automated + human confirmed) and none are
 marked uncertain:
+
+**Plan mode:**
 
 1. Update plan frontmatter: `status: completed`
 2. Output structured summary:
@@ -138,23 +194,39 @@ Results:
 Status updated: executing → completed
 ```
 
+**Ad-hoc mode:**
+
+1. Output results summary:
+
+```
+Validation Complete — ALL PASSED
+
+Criteria: [N] total ([A] automated, [H] human)
+
+Results:
+1. [PASS] criterion description
+2. [PASS] criterion description (human-confirmed)
+...
+```
+
 ## Key Instructions
 
-- **All tasks must be complete before validating.** The precondition
-  check (Step 2) enforces this. Partial validation produces misleading
-  results.
+- **All tasks must be complete before validating (plan mode).** The
+  precondition check (Step 2) enforces this. Partial validation produces
+  misleading results.
 - **Run automated checks before human checks.** Automated results
   inform human judgment. If tests fail, asking the user to judge code
   quality is premature.
 - **Read command output, not just exit codes.** A passing exit code
   with warning output may still indicate problems. A failing exit code
   from a missing environment is "blocked," not "failed."
-- **Plan stays in `executing` on failure.** Never mark a plan as failed
-  or completed when validation criteria fail. Add tasks to address gaps
-  or abandon with a reason.
-- **Validation criteria come from the plan, not from you.** Run the
-  criteria the plan author wrote. Do not invent additional criteria or
-  skip criteria you consider redundant.
+- **Plan stays in `executing` on failure (plan mode).** Never mark a
+  plan as failed or completed when validation criteria fail. Add tasks
+  to address gaps or abandon with a reason.
+- **Run the criteria as given, not your own.** In plan mode, run what
+  the plan author wrote. In ad-hoc mode, run what the user confirmed.
+  Do not invent additional criteria or skip criteria you consider
+  redundant.
 
 ## Anti-Pattern Guards
 

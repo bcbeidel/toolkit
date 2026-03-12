@@ -1,3 +1,8 @@
+---
+name: "Per-Skill Entry Scripts Implementation Plan"
+description: "Implement research assessment entry script prototyping the per-skill scripts pattern — issue #146"
+---
+
 # Per-Skill Entry Scripts Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.

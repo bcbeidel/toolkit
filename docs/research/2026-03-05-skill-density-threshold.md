@@ -7,7 +7,6 @@ sources:
   - https://arxiv.org/abs/2510.05381
   - https://code.claude.com/docs/en/memory
 related:
-  - docs/research/2026-03-04-instructional-design.md
   - docs/plans/2026-03-06-audit-validation-enhancements-design.md
 ---
 

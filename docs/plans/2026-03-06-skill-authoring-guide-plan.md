@@ -1,3 +1,8 @@
+---
+name: "Skill Authoring Guide Implementation Plan"
+description: "Implement deterministic skill quality checks and judgment rubric reference for /wos:audit — issue #128"
+---
+
 # Skill Authoring Guide Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.

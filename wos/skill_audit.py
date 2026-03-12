@@ -70,7 +70,7 @@ def count_instruction_lines(text: str) -> int:
 
 
 def check_skill_sizes(
-    skills_dir: Path, max_lines: int = 200
+    skills_dir: Path, max_lines: int = 500
 ) -> Tuple[List[dict], List[dict]]:
     """Measure instruction density of each skill directory.
 

@@ -1,3 +1,5 @@
+@AGENTS.md
+
 # CLAUDE.md
 
 This repo is **wos** — a Claude Code plugin for building and maintaining
@@ -99,7 +101,7 @@ Full skill ecosystem, lifecycle diagram, and layer descriptions: [OVERVIEW.md](O
 5. **Related paths** (fail) — file paths in `related` frontmatter exist on disk
 6. **Index sync** (fail + warn) — `_index.md` matches directory contents, preamble presence
 7. **Project files** (warn) — AGENTS.md/CLAUDE.md existence and configuration
-8. **Skill quality** (fail + warn) — skill name format/reserved words (fail), description length/XML/voice (warn), instruction lines exceeding threshold (warn, default 200, configurable), SKILL.md body exceeding 500 lines (warn), ALL-CAPS directive density (warn, threshold 3)
+8. **Skill quality** (fail + warn) — skill name format/reserved words (fail), description length/XML/voice (warn), instruction lines exceeding threshold (warn, default 500, configurable), SKILL.md body exceeding 500 lines (warn), ALL-CAPS directive density (warn, threshold 3)
 
 ### Key Entry Points
 

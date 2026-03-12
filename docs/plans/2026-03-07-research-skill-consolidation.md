@@ -1,3 +1,8 @@
+---
+name: "Research Skill Consolidation Plan"
+description: "Consolidate research skill from 8 reference files to 7 self-contained files with clean 9-phase workflow"
+---
+
 # Research Skill Consolidation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
