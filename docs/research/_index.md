@@ -4,6 +4,7 @@
 | File | Description |
 | --- | --- |
 | [abstraction-level-design.md](abstraction-level-design.md) | "How calibrating abstraction altitude across specs (WHAT/WHY), plans (observable outcomes), research (mode intensity), and instructions (specificity) affects agent execution reliability — with empirical evidence on the specificity-flexibility tradeoff" |
+| [agent-directory-conventions.md](agent-directory-conventions.md) | "How AI coding tools and agent frameworks define reusable autonomous subagents through directory conventions, file formats, and dispatch patterns — covering Claude Code, Copilot, Gemini CLI, CrewAI, Semantic Kernel, AG2, and emerging standards (A2A, AgentSpec)" |
 | [agent-framework-landscape.md](agent-framework-landscape.md) | "Landscape survey of how nine major agent frameworks handle tool registration, memory, planning, and orchestration — identifying universal patterns vs. framework-specific abstractions and implications for plugin portability" |
 | [agent-state-persistence.md](agent-state-persistence.md) | "Architectural patterns for maintaining agent context across sessions — disk-as-truth, checkpoint-based resumption, memory taxonomies, and persistence substrate tradeoffs" |
 | [agentic-planning-execution.md](agentic-planning-execution.md) | "How LLM agents decompose goals, sequence tasks, track progress via artifacts, handle failures, and resume across sessions — comparing ReAct, plan-and-execute, and tree-of-thought approaches" |
