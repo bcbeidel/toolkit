@@ -73,8 +73,8 @@ Tasks are the plan's core. Each task is a deliverable with verification.
 **Verification patterns:**
 
 Every task ends with a verification step. Types:
-- Test command: `uv run python -m pytest tests/test_foo.py::test_name -v`
-- CLI invocation: `uv run scripts/audit.py --root . | grep "0 failures"`
+- Test command: `python python -m pytest tests/test_foo.py::test_name -v`
+- CLI invocation: `python scripts/audit.py --root . | grep "0 failures"`
 - Manual check: `wc -l skills/foo/SKILL.md` (expected: under 500)
 - Read verification: confirm file exists and contains expected content
 - Human confirmation: present summary to user, confirm scope matches intent
@@ -94,8 +94,8 @@ At least one criterion required. Each must be concrete:
 
 | Quality | Example |
 |---------|---------|
-| Good | "`uv run python -m pytest tests/ -v` — all tests pass" |
-| Good | "`uv run scripts/audit.py --root .` — no failures for new skill" |
+| Good | "`python python -m pytest tests/ -v` — all tests pass" |
+| Good | "`python scripts/audit.py --root .` — no failures for new skill" |
 | Bad | "Verify the feature works correctly" |
 | Bad | "Everything should be tested" |
 

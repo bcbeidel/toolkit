@@ -37,8 +37,8 @@ Include summary line: `N searches across M sources, X found, Y used`.
 5. **Reindex and validate:**
 
 ```bash
-uv run <plugin-scripts-dir>/reindex.py --root .
-uv run <plugin-scripts-dir>/audit.py <file> --root . --no-urls
+python <plugin-scripts-dir>/reindex.py --root .
+python <plugin-scripts-dir>/audit.py <file> --root . --no-urls
 ```
 
 ## Output

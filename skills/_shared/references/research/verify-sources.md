@@ -18,7 +18,7 @@ DRAFT document with sources table containing URLs.
 Collect URLs from frontmatter. Run URL verification:
 
 ```bash
-uv run <plugin-scripts-dir>/check_url.py URL1 URL2 ...
+python <plugin-scripts-dir>/check_url.py URL1 URL2 ...
 ```
 
 Result handling:

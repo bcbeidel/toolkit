@@ -16,17 +16,17 @@ the `scripts/` directory at the root of the WOS plugin.
 ## Validate a Document
 
 ```bash
-uv run <plugin-scripts-dir>/audit.py <file> --root . [--no-urls]
+python <plugin-scripts-dir>/audit.py <file> --root . [--no-urls]
 ```
 
 ## Regenerate Index Files
 
 ```bash
-uv run <plugin-scripts-dir>/reindex.py --root .
+python <plugin-scripts-dir>/reindex.py --root .
 ```
 
 ## Check URL Reachability
 
 ```bash
-uv run <plugin-scripts-dir>/check_url.py URL1 URL2 ...
+python <plugin-scripts-dir>/check_url.py URL1 URL2 ...
 ```

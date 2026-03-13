@@ -78,13 +78,13 @@ it to the user before running:
 
 **Code implementation:**
 ```bash
-uv run python -m pytest tests/ -v
+python python -m pytest tests/ -v
 ```
 Check: exit code 0, output contains "N passed, 0 failed"
 
 **Refactoring (regression check):**
 ```bash
-ruff check src/ && uv run python -m pytest tests/ -v
+ruff check src/ && python python -m pytest tests/ -v
 ```
 Check: both commands exit 0, no new lint errors, no test regressions
 

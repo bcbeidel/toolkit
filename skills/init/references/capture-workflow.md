@@ -42,7 +42,7 @@ Use this workflow to capture communication preferences from the user.
    After confirmation, write the preferences using the Python module:
 
    ```bash
-   uv run <plugin-scripts-dir>/update_preferences.py --root . directness=blunt verbosity=terse
+   python <plugin-scripts-dir>/update_preferences.py --root . directness=blunt verbosity=terse
    ```
 
    This updates the `### Preferences` subsection inside the WOS-managed

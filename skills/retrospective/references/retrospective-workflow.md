@@ -53,7 +53,7 @@ Auto-gather (do not ask the user for these):
 
 ```bash
 # wos version
-uv run <plugin-scripts-dir>/get_version.py
+python <plugin-scripts-dir>/get_version.py
 
 # Python version
 python3 --version

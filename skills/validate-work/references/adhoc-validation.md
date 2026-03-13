@@ -32,7 +32,7 @@ Scan config files to discover available project checks:
 
 | Config file | Signal | Inferred check |
 |------------|--------|----------------|
-| `pyproject.toml` — `[tool.pytest]` or pytest in deps | Test runner | `uv run python -m pytest tests/ -v` |
+| `pyproject.toml` — `[tool.pytest]` or pytest in deps | Test runner | `python python -m pytest tests/ -v` |
 | `pyproject.toml` — `[tool.ruff]` | Linter | `ruff check .` |
 | `pyproject.toml` — `[tool.mypy]` | Type checker | `mypy .` |
 | `package.json` — `scripts.test` | Test runner | `npm test` |
