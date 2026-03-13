@@ -3,10 +3,19 @@ name: Distillation Guidelines
 description: Quality criteria for context files distilled from research — atomic, actionable, traceable, concise
 stage: write
 pipeline: distill
+tools: [Read, Write, Edit, Glob, Grep, Bash]
 ---
 
 ## Purpose
 Quality criteria and constraints for context files distilled from research. Ensures files are atomic, actionable, traceable, and concise while carrying forward confidence levels and source attribution.
+
+## Input
+
+You receive via dispatch prompt:
+- **Assigned findings** — specific findings to distill (from the approved mapping table)
+- **Source research document paths** — where to read the full evidence
+- **Target context file paths + areas** — where to write
+- **Estimated word counts** — target length per file
 
 # Distillation Guidelines
 
@@ -20,6 +29,21 @@ A context file distilled from research should be:
 4. **Concise** — 200-800 words targets optimal RAG retrieval
 5. **Structured** — key insight top, detail middle, takeaway bottom
 6. **Complete** — verified findings preserved without loss or dilution
+
+### Frontmatter Template
+
+```yaml
+---
+name: [Descriptive title]
+description: [One-sentence summary of the concept]
+type: context
+sources:
+  - [URLs carried forward from source research]
+related:
+  - [source research document path]
+  - [sibling context files from this batch]
+---
+```
 
 ## Splitting Heuristics
 
@@ -70,3 +94,33 @@ Specifically:
   finding to unqualified assertion during distillation
 - If word count would exceed 800 words with all findings included,
   split into multiple files rather than cutting content
+
+## Bidirectional Linking
+
+Ensure all `related:` links are bidirectional:
+- New context files link to their source research documents
+- New context files link to sibling context files from the same batch
+- If updating an existing context file, add the new `related:` link
+
+## Reindex and Validate
+
+```bash
+uv run <plugin-scripts-dir>/reindex.py --root .
+uv run <plugin-scripts-dir>/audit.py <file> --root . --no-urls
+```
+
+Run reindex to update `_index.md` files, then audit each written file.
+
+## Output
+
+Each context file must:
+- Have valid frontmatter with `name`, `description`, `sources`, `related`
+- Be 200-800 words (advisory — completeness takes priority)
+- Pass audit validation
+- Have bidirectional `related:` links
+
+## Constraints
+
+- Do not re-analyze the mapping — implement it as approved.
+- Do not search for new sources (no WebSearch or WebFetch).
+- Do not prompt the user for input.

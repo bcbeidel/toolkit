@@ -3,6 +3,7 @@ name: Gather and Extract
 description: Phase 2 — search for sources, extract content verbatim, write to disk per sub-question
 stage: gather
 pipeline: research
+tools: [Read, Write, Edit, Glob, Grep, Bash, WebSearch, WebFetch]
 ---
 
 ## Purpose
@@ -11,7 +12,12 @@ Search for sources across sub-questions, extract content verbatim, and verify UR
 
 ## Input
 
-Approved research brief with sub-questions, research mode, SIFT rigor, search strategy, and output file path.
+- **Research question** (restated, precise)
+- **Sub-questions** (2-4, from the approved brief)
+- **Research mode** (deep-dive, landscape, technical, etc.)
+- **Search strategy** (initial terms, source types)
+- **Output path** (e.g., `docs/research/YYYY-MM-DD-slug.md`)
+- **Constraints** (time period, domain, technology stack)
 
 # Phase 2: Gather and Extract
 
@@ -93,8 +99,19 @@ that sub-question.
 
 ## Output
 
-DRAFT file on disk with structured extracts (blockquotes) for each sub-question, sources table with URL column, and search protocol entries.
+The DRAFT document on disk must have:
+- `type: research` frontmatter with `<!-- DRAFT -->` marker
+- Sources table with `# | URL | Title | Author/Org | Date | Status` columns
+- Structured extracts for every sub-question
+- `<!-- search-protocol ... -->` comment with accumulated search JSON
+- Verified URLs (404s removed, 403s noted)
 
 ### Phase Gate: Phase 2 → Phase 3
 
 DRAFT file exists on disk with structured extracts for all sub-questions.
+
+## Constraints
+
+- Do not evaluate sources (no tier assignment — that's the evaluator's job).
+- Do not synthesize findings — extract verbatim only.
+- Do not prompt the user for input.

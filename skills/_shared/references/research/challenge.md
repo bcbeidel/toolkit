@@ -3,6 +3,7 @@ name: Challenge
 description: Phase 5 — test assumptions, run ACH and premortem based on research mode
 stage: challenge
 pipeline: research
+tools: [Read, Write, Edit, Glob, Grep, Bash, WebSearch, WebFetch]
 ---
 
 ## Purpose
@@ -11,7 +12,7 @@ Test assumptions, find counter-evidence, and run structured critical thinking ex
 
 ## Input
 
-DRAFT document with evaluated sources (Tier + Status columns in sources table).
+- **Path to DRAFT document** with evaluated (tiered) sources
 
 # Challenge Reference
 
@@ -64,10 +65,19 @@ Output format:
 |----------------|-------------|---------------------|
 | [reason] | medium | Qualifies finding #2 |
 
+Write the ## Challenge section to the DRAFT document on disk. You may use WebSearch and WebFetch to find counter-evidence and disconfirming data.
+
 ## Output
 
 `## Challenge` section added to the DRAFT document containing assumptions check, ACH results (if applicable), and premortem.
 
+If no counter-evidence is found, document that explicitly: "No disconfirming evidence found for [claim]." Absence of counter-evidence is a valid finding, not a failure.
+
 ## Gate
 
 Gate: `challenger_exit` — `## Challenge` section exists on disk.
+
+## Constraints
+
+- Do not modify findings or sources — challenge only.
+- Do not prompt the user for input.

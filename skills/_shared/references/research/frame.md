@@ -3,6 +3,10 @@ name: Frame the Question
 description: Phase 1 — restate the question, identify mode, break into sub-questions, write research brief
 stage: frame
 pipeline: research
+tools:
+  - Read
+  - Glob
+  - Grep
 ---
 
 ## Purpose
@@ -11,7 +15,9 @@ Analyze the research question, detect the appropriate mode, and produce a struct
 
 ## Input
 
-Research question from user, project root path, any stated constraints.
+- **Research question/topic** from the user
+- **Stated constraints** (time period, domain, technology stack, etc.)
+- **Project root path** for context exploration
 
 # Phase 1: Frame the Question
 
@@ -41,9 +47,28 @@ Research question from user, project root path, any stated constraints.
    - Specify preferred source types: official docs for technical questions,
      peer-reviewed for scientific, primary sources for historical
 
+8. **Suggest output path.** Suggest `docs/research/YYYY-MM-DD-<slug>.md` based on the topic.
+
 ## Output
 
-Structured brief with restated question, research mode, SIFT rigor level, 2-4 sub-questions, search strategy, and suggested output path.
+Structured brief containing:
+- **Restated question** (precise, answerable)
+- **Research mode** (from the mode table)
+- **SIFT rigor level** (High, Medium, or Low)
+- **Sub-questions** (2-4)
+- **Search strategy** (initial terms, source types)
+- **Constraints** (stated + open dimensions)
+- **Research brief** (1 paragraph)
+- **Suggested output path**
+
+## Constraints
+
+- **Read-only.** Do not write files. Do not use Write or Edit.
+- **No web searches.** Do not use WebSearch or WebFetch.
+- **No user prompts.** Do not ask the user anything. Return the brief
+  to the dispatcher; the dispatcher handles user interaction.
+- **Return the brief.** Your output is the structured brief, not a
+  research document.
 
 ### Phase Gate: Phase 1 → Phase 2
 

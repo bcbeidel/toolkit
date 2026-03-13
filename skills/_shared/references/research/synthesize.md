@@ -3,6 +3,7 @@ name: Synthesize
 description: Phase 6 — organize findings by sub-question with confidence levels and writing constraints
 stage: synthesize
 pipeline: research
+tools: [Read, Write, Edit, Glob, Grep, Bash]
 ---
 
 ## Purpose
@@ -11,7 +12,7 @@ Synthesize research extracts into structured findings organized by sub-question,
 
 ## Input
 
-DRAFT document with challenge section completed.
+- **Path to DRAFT document** with challenge section completed
 
 # Phase 6: Synthesize
 
@@ -39,8 +40,17 @@ Update document on disk with `## Findings` section. Update frontmatter
 
 ## Output
 
-`## Findings` section on disk with findings organized by sub-question. Each finding annotated with confidence level (HIGH, MODERATE, LOW) and source citations.
+`## Findings` section on disk with:
+- Findings organized by sub-question
+- Confidence levels (HIGH/MODERATE/LOW) on every finding
+- Source attribution for all factual claims
 
 ### Phase Gate: Phase 6 → Phase 7
 
 `## Findings` section exists on disk.
+
+## Constraints
+
+- Do not search for new sources (no WebSearch or WebFetch).
+- Do not verify claims — that's the verifier's job.
+- Do not prompt the user for input.

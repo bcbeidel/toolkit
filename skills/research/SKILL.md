@@ -126,27 +126,30 @@ provides sufficient context.
 
 ## Workflow
 
-All modes follow the same workflow. The skill dispatches a chain of
-named agents, running gate checks between each to validate handoffs.
-All dispatch is foreground, sequential (no-nesting constraint).
+All modes follow the same workflow. The skill executes a chain of stages
+(inline or delegated), running gate checks between each to validate
+handoffs. All dispatch is foreground, sequential (no-nesting constraint).
 
 ### Step 1: Accept Research Question
 
 Receive the research question from the user. Detect the research mode
 (see Mode Detection above).
 
-### Step 2: Dispatch Framer
+### Step 2: Compose and Dispatch Framer
 
-Dispatch `research-framer` with the research question, detected mode,
-and project root. The framer returns a structured brief (question,
+Read the framer stage's reference files (per MANIFEST.md: frame.md,
+research-modes.md). Compose the dispatch prompt using the prompt
+composition pattern: role from MANIFEST.md, input (research question,
+detected mode, project root), methodology from reference files, output
+contract and constraints from frame.md. Dispatch with tools: Read, Glob,
+Grep (per MANIFEST.md). The framer returns a structured brief (question,
 mode, SIFT rigor, sub-questions, search strategy, suggested output
 path).
 
 ### Step 3: Brief Approval
 
-Present the brief to the user. If rejected, re-dispatch
-`research-framer` with the user's feedback. Do not proceed without
-approval.
+Present the brief to the user. If rejected, re-compose and dispatch
+the framer with the user's feedback. Do not proceed without approval.
 
 ### Step 4: Execute Research Chain
 
@@ -161,8 +164,11 @@ in both paths.
    table for the detected research mode. Apply override conditions
    (e.g., >15 sources forces evaluator to delegate).
 2. **Execute the stage:**
-   - **Delegate:** Dispatch the named agent (e.g., `research-gatherer`)
-     with the DRAFT path. The agent starts with a fresh context.
+   - **Delegate:** Read the stage's reference files (per MANIFEST.md).
+     Compose the dispatch prompt (role + entry gate + input + methodology
+     + output + constraints from reference files). Dispatch with the
+     tools listed in MANIFEST.md for that stage. The subagent starts
+     with a fresh context.
    - **Inline:** Read the stage's reference files (per MANIFEST.md),
      then execute the methodology directly in-thread. Write results
      to the DRAFT file on disk, same as a delegated agent would.
@@ -170,22 +176,22 @@ in both paths.
 4. **Proceed or retry** (see Step 5 for error handling).
 
 ```
-DELEGATE research-gatherer (brief fields + output path)
+DELEGATE gatherer (brief fields + output path)
   → Gate: research_assess.py --file <path> --gate gatherer_exit
 
-INLINE or DELEGATE research-evaluator (path to DRAFT)
+INLINE or DELEGATE evaluator (path to DRAFT)
   → Gate: research_assess.py --file <path> --gate evaluator_exit
 
-INLINE or DELEGATE research-challenger (path to DRAFT)
+INLINE or DELEGATE challenger (path to DRAFT)
   → Gate: research_assess.py --file <path> --gate challenger_exit
 
-INLINE or DELEGATE research-synthesizer (path to DRAFT)
+INLINE or DELEGATE synthesizer (path to DRAFT)
   → Gate: research_assess.py --file <path> --gate synthesizer_exit
 
-INLINE or DELEGATE research-verifier (path to DRAFT)
+INLINE or DELEGATE verifier (path to DRAFT)
   → Gate: research_assess.py --file <path> --gate verifier_exit
 
-INLINE or DELEGATE research-finalizer (path to DRAFT)
+INLINE or DELEGATE finalizer (path to DRAFT)
   → Gate: research_assess.py --file <path> --gate finalizer_exit
 ```
 
@@ -205,15 +211,15 @@ or background context while other work proceeds.
 
 Announce each execution and gate result as the chain progresses:
 ```
-Executing research-evaluator inline...
+Executing evaluator inline...
   → evaluator_exit gate: PASS (2/2 checks)
-Delegating research-challenger...
+Delegating challenger...
   → challenger_exit gate: PASS (1/1 checks)
 ```
 
 ### Step 5: Error Handling Between Dispatches
 
-After each agent completes, classify the gate check result:
+After each stage completes, classify the gate check result:
 
 | Result | Classification | Action |
 |--------|---------------|--------|

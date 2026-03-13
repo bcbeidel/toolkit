@@ -3,6 +3,7 @@ name: Evaluate Sources (SIFT)
 description: Phase 4 — apply SIFT framework to classify sources by tier, drop low-quality sources
 stage: evaluate
 pipeline: research
+tools: [Read, Write, Edit, Glob, Grep, Bash]
 ---
 
 ## Purpose
@@ -11,7 +12,7 @@ Apply the SIFT framework to every source, assign tier classifications (T1-T5), a
 
 ## Input
 
-DRAFT document with sources table containing URLs and verification status from the gather stage.
+- **Path to DRAFT document** with gathered sources and verified URLs
 
 # Phase 4: Evaluate Sources (SIFT)
 
@@ -68,8 +69,17 @@ Annotate tiers in the document body, not the frontmatter:
 
 ## Output
 
-Sources table updated with Tier (T1-T5) and Status columns for every source.
+The sources table in the DRAFT document must have:
+- `Tier` column with T1-T5 values for every source
+- `Status` column updated (verified, removed, etc.)
+- No untiered sources remaining
 
 ### Phase Gate: Phase 4 → Phase 5
 
 Sources table has Tier + Status columns for all remaining sources.
+
+## Constraints
+
+- Do not search for new sources (no WebSearch or WebFetch).
+- Do not synthesize findings — evaluation only.
+- Do not prompt the user for input.

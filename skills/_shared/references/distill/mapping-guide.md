@@ -3,6 +3,7 @@ name: Distill Mapping Guide
 description: Boundary heuristics for the foreground distill agent that proposes N:M research-to-context-file mappings
 stage: map
 pipeline: distill
+tools: [Read, Glob, Grep]
 ---
 
 # Distill Mapping Guide
@@ -18,6 +19,13 @@ Read all completed research documents from the current batch. Identify
 discrete findings across the full corpus, then propose which findings
 become which context files. Present the mapping as a table for user
 approval.
+
+## Input
+
+You receive via dispatch prompt:
+- **Research document paths** — one or more completed research files
+- **Target area root** — directory under `docs/context/` for output
+- **User constraints** — any specific guidance on splitting, merging, or audience
 
 ## Finding Concept Boundaries
 
@@ -112,3 +120,20 @@ Each proposed context file must have:
 - At least one `related:` link to its source research document
 - At least one `related:` link to a sibling context file from the batch
 - `sources:` URLs carried forward from the source research
+
+## Output
+
+Return the proposal table to the dispatcher. Include for each mapping:
+- Finding summary (one sentence)
+- Source research document path(s)
+- Target context file name
+- Target area path
+- Estimated word count
+- One-concept test result (pass/fail with the one-sentence description)
+- Confidence carry-forward notes
+
+## Constraints
+
+- Do not write files — return the proposal to the dispatcher for user approval.
+- Do not modify research documents.
+- Do not prompt the user for input.

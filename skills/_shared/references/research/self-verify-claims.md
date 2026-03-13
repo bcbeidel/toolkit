@@ -3,6 +3,7 @@ name: Self-Verify Claims (CoVe)
 description: Phase 7 — extract claims from findings, run Chain-of-Verification to catch fabrication
 stage: verify
 pipeline: research
+tools: [Read, Write, Edit, Glob, Grep, Bash, WebFetch]
 ---
 
 ## Purpose
@@ -11,7 +12,15 @@ Extract claims from findings and run Chain-of-Verification (CoVe) to catch fabri
 
 ## Input
 
-DRAFT document with `## Findings` section completed.
+- **Path to DRAFT document** with findings section completed
+
+## Context Model
+
+**Context isolation.** The verifier is the primary beneficiary of the
+per-agent context model. It starts with a fresh context containing only
+this system prompt and the dispatch prompt. The full attention budget is
+available for claim-by-claim verification, with no accumulated search
+results from earlier phases competing for attention.
 
 # Phase 7: Self-Verify Claims (CoVe)
 
@@ -60,8 +69,17 @@ source, assign `human-review`.
 
 ## Output
 
-`## Claims` table with all claims extracted and CoVe verification applied. Each claim categorized by type (quote, statistic, attribution, superlative).
+The DRAFT document must have:
+- `## Claims` table populated with all extracted claims
+- No cells containing `unverified` in the Status column
+- All claims resolved to: verified, corrected, removed, unverifiable, or human-review
 
 ### Phase Gate: Phase 7 → Phase 8
 
 `## Claims` table populated, CoVe complete.
+
+## Constraints
+
+- Use WebFetch only for re-verification of existing citations, not for discovering new sources (no WebSearch).
+- Do not modify findings structure — only update claim statuses and correct factual errors.
+- Do not prompt the user for input.

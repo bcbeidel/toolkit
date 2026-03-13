@@ -3,6 +3,7 @@ name: Finalize
 description: Phase 9 — restructure document, format search protocol, remove DRAFT marker, validate
 stage: finalize
 pipeline: research
+tools: [Read, Write, Edit, Glob, Grep, Bash]
 ---
 
 ## Purpose
@@ -11,7 +12,7 @@ Restructure the document for optimal readability, format the search protocol, re
 
 ## Input
 
-DRAFT document with verified claims table (no unverified entries).
+- **Path to DRAFT document** with all claims verified
 
 # Phase 9: Finalize
 
@@ -42,13 +43,23 @@ uv run <plugin-scripts-dir>/audit.py <file> --root . --no-urls
 
 ## Output
 
-Final research document with DRAFT marker removed, `type: research` in frontmatter, non-empty `sources`, lost-in-the-middle structure (summary top, detail middle, takeaways bottom), and formatted search protocol table.
+The research document must:
+- Have `<!-- DRAFT -->` marker removed
+- Have `type: research` in frontmatter
+- Have non-empty `sources:` in frontmatter
+- Pass audit validation
 
 ### Phase Gate: Phase 9 → Done
 
 `<!-- DRAFT -->` removed, audit passes.
 
 ---
+
+## Constraints
+
+- Do not search for new sources (no WebSearch or WebFetch).
+- Do not modify findings substance — structural changes only.
+- Do not prompt the user for input.
 
 ## Quality Checklist
 

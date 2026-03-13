@@ -42,19 +42,23 @@ delegated agent would.
 
 ## Workflow
 
-The skill dispatches two agents sequentially. All dispatch is foreground
-(no-nesting constraint).
+The skill executes two stages sequentially (inline or delegated). All
+dispatch is foreground (no-nesting constraint).
 
 ### Step 1: Input
 
 Accept a research artifact path from the user. If none provided, scan
 `docs/research/` for the most recently modified `.md` file and confirm.
 
-### Step 2: Dispatch Mapper
+### Step 2: Compose and Dispatch Mapper
 
-Dispatch `distill-mapper` with the research document path(s), target
-area root, and any user constraints. The mapper returns a proposed
-finding-to-context-file mapping table.
+Read the mapper stage's reference files (per MANIFEST.md: mapping-guide.md,
+distillation-guidelines.md). Compose the dispatch prompt: role from
+MANIFEST.md, input (research document paths, target area root, user
+constraints), methodology from reference files, output contract and
+constraints from mapping-guide.md. Dispatch with tools: Read, Glob, Grep
+(per MANIFEST.md). The mapper returns a proposed finding-to-context-file
+mapping table.
 
 ### Step 3: Mapping Approval
 
@@ -65,8 +69,8 @@ individual rows.
 different location, write to `docs/context/` first (the canonical
 location), then offer to copy files to the additional location.
 
-If rejected, re-dispatch `distill-mapper` with the user's feedback.
-Do not proceed without approval.
+If rejected, re-compose and dispatch the mapper with the user's
+feedback. Do not proceed without approval.
 
 ### Step 4: Execute Worker
 
@@ -74,9 +78,12 @@ Consult the Execution Mode section to decide inline vs delegate:
 
 - **Inline** (1-3 context files): Read the distillation-guidelines
   reference, then write context files directly. Run reindex + audit.
-- **Delegate** (>3 context files): Dispatch `distill-worker` with the
-  approved mapping (assigned findings, source research paths, target
-  file paths, estimated word counts).
+- **Delegate** (>3 context files): Read the worker stage's reference
+  files (per MANIFEST.md: distillation-guidelines.md). Compose the
+  dispatch prompt (role + input + methodology + output + constraints).
+  Dispatch with tools from MANIFEST.md. Pass the approved mapping
+  (assigned findings, source research paths, target file paths,
+  estimated word counts).
 
 ### Step 5: Completion
 
