@@ -8,7 +8,8 @@ description: >
 argument-hint: "[path to research artifact]"
 user-invocable: true
 references:
-  - references/distillation-guidelines.md
+  - ../_shared/references/distill/distillation-guidelines.md
+  - ../_shared/references/distill/mapping-guide.md
   - ../_shared/references/preflight.md
 ---
 
