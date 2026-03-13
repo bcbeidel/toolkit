@@ -64,7 +64,7 @@ Full descriptions: [Design Principles](PRINCIPLES.md)
 - `scripts/` — thin CLI entry points with argparse and PEP 723 inline metadata
   - `audit.py` — run validation checks (`--root`, `--no-urls`, `--json`, `--fix`, `--strict`, `--context-min-words`, `--context-max-words`, `--skill-max-lines`)
   - `reindex.py` — regenerate all `_index.md` files (preamble-preserving)
-  - `check_runtime.py` — canary script to validate `uv run` + PEP 723 pipeline
+  - `deploy.py` — export skills to `.agents/` for cross-platform deployment
   - `check_url.py` — URL reachability checking via `wos.url_checker`
   - `update_preferences.py` — write communication preferences to AGENTS.md
   - `get_version.py` — print plugin version from `plugin.json`
@@ -129,12 +129,10 @@ Full skill ecosystem, lifecycle diagram, and layer descriptions: [OVERVIEW.md](O
 
 - Python 3.9 — use `from __future__ import annotations` for type hints,
   `Optional[X]` for runtime expressions
-- **Script invocation: `uv run` is the universal pattern.** All scripts in
-  `scripts/` have PEP 723 inline metadata. Skills invoke them via
-  `uv run <plugin-scripts-dir>/script.py`. The preflight reference at
-  `skills/_shared/references/preflight.md` documents the 3-step check
-  (uv availability → canary → actual script). No bare `python3 scripts/...`
-  invocations in skill docs.
+- **Script invocation: `python` is the universal pattern.** All scripts in
+  `scripts/` have PEP 723 inline metadata and stdlib-only dependencies.
+  Skills invoke them via `python <plugin-scripts-dir>/script.py`. Dev
+  tooling (pytest, ruff) still uses `uv run` but skill instructions do not.
 - CLI scripts default to CWD as root; accept `--root` for override
 - **Plugin root discovery (all scripts):** Scripts use a hybrid pattern to
   find the plugin root for `sys.path` insertion. Prefer `CLAUDE_PLUGIN_ROOT`
