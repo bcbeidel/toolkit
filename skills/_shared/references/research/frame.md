@@ -1,6 +1,8 @@
 ---
 name: Frame the Question
 description: Phase 1 — restate the question, identify mode, break into sub-questions, write research brief
+stage: frame
+pipeline: research
 ---
 
 # Phase 1: Frame the Question

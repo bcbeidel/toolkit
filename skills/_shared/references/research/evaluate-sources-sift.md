@@ -1,6 +1,8 @@
 ---
 name: Evaluate Sources (SIFT)
 description: Phase 4 — apply SIFT framework to classify sources by tier, drop low-quality sources
+stage: evaluate
+pipeline: research
 ---
 
 # Phase 4: Evaluate Sources (SIFT)

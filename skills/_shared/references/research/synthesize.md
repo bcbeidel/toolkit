@@ -1,6 +1,8 @@
 ---
 name: Synthesize
 description: Phase 6 — organize findings by sub-question with confidence levels and writing constraints
+stage: synthesize
+pipeline: research
 ---
 
 # Phase 6: Synthesize

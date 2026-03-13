@@ -1,6 +1,8 @@
 ---
 name: Research Resumption
 description: How to detect the current research phase from disk state after a context reset
+stage: shared
+pipeline: research
 ---
 
 # Resuming After Context Reset

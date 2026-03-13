@@ -1,3 +1,10 @@
+---
+name: Python Utilities Reference
+description: CLI commands for audit, reindex, and URL checking during research sessions
+stage: shared
+pipeline: research
+---
+
 # Python Utilities Reference
 
 CLI commands for research sessions. `<plugin-scripts-dir>` refers to

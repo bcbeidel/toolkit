@@ -1,3 +1,10 @@
+---
+name: Distillation Guidelines
+description: Quality criteria for context files distilled from research — atomic, actionable, traceable, concise
+stage: write
+pipeline: distill
+---
+
 # Distillation Guidelines
 
 ## What Makes a Good Context File

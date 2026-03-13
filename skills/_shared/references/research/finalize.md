@@ -1,6 +1,8 @@
 ---
 name: Finalize
 description: Phase 9 — restructure document, format search protocol, remove DRAFT marker, validate
+stage: finalize
+pipeline: research
 ---
 
 # Phase 9: Finalize

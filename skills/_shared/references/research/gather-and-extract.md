@@ -1,6 +1,8 @@
 ---
 name: Gather and Extract
 description: Phase 2 — search for sources, extract content verbatim, write to disk per sub-question
+stage: gather
+pipeline: research
 ---
 
 # Phase 2: Gather and Extract

@@ -1,6 +1,8 @@
 ---
 name: Citation Re-Verify
 description: Phase 8 — re-fetch cited sources and verify each claim against actual content
+stage: verify
+pipeline: research
 ---
 
 # Phase 8: Citation Re-Verify

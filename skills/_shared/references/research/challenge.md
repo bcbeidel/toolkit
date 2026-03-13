@@ -1,3 +1,10 @@
+---
+name: Challenge
+description: Phase 5 — test assumptions, run ACH and premortem based on research mode
+stage: challenge
+pipeline: research
+---
+
 # Challenge Reference
 
 Used during Phase 5 (Challenge). Three sub-steps applied based on
