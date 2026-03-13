@@ -94,9 +94,9 @@ Present the mapping as a table:
 
 | # | Finding | Source Research Doc | Target Context File | Target Area | Words (est.) |
 |---|---------|-------------------|-------------------|-------------|-------------|
-| 1 | Event loops use cooperative multitasking | 2026-03-12-asyncio.md | event-loop-model.md | docs/context/async/ | ~350 |
-| 2 | CPU-bound work blocks the event loop | 2026-03-12-asyncio.md | cpu-bound-workarounds.md | docs/context/async/ | ~250 |
-| 3 | Task scheduling patterns converge across frameworks | 2026-03-12-asyncio.md, 2026-03-12-trio.md | task-scheduling-patterns.md | docs/context/async/ | ~400 |
+| 1 | Event loops use cooperative multitasking | 2026-03-12-asyncio.md | event-loop-model.context.md | docs/context/async/ | ~350 |
+| 2 | CPU-bound work blocks the event loop | 2026-03-12-asyncio.md | cpu-bound-workarounds.context.md | docs/context/async/ | ~250 |
+| 3 | Task scheduling patterns converge across frameworks | 2026-03-12-asyncio.md, 2026-03-12-trio.md | task-scheduling-patterns.context.md | docs/context/async/ | ~400 |
 
 Note that row 3 shows a **cross-document merge** — findings from two
 research documents combined into one context file.

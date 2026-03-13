@@ -56,7 +56,7 @@ templates and approach comparison format.
   Cover: purpose, behavior, components, constraints, acceptance criteria.
 - Calibrate depth to task complexity — a paragraph for simple tasks, full
   structured spec for multi-system changes.
-- Save to `docs/designs/YYYY-MM-DD-<name>-design.md` with WOS frontmatter.
+- Save to `docs/designs/YYYY-MM-DD-<name>.design.md` with WOS frontmatter.
 
 See [Spec Format Guide](references/spec-format-guide.md) for format
 conventions and examples.
@@ -134,5 +134,5 @@ Design docs use WOS frontmatter:
       - docs/context/relevant-file.md
     ---
 
-Save to `docs/designs/YYYY-MM-DD-<name>-design.md`. The `related` field
+Save to `docs/designs/YYYY-MM-DD-<name>.design.md`. The `related` field
 links to context files, research docs, or other design docs.

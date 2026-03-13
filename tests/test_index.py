@@ -363,3 +363,80 @@ class TestExtractDescription:
         f.write_text("---\nname: Missing Desc\n---\n# Content\n")
 
         assert _extract_description(f) is None
+
+
+# ── Compound suffix support ──────────────────────────────────
+
+
+class TestCompoundSuffixIndex:
+    def test_compound_suffix_files_included_in_index(
+        self, tmp_path: Path
+    ) -> None:
+        """Files with compound suffixes (.research.md) appear in index."""
+        from wos.index import generate_index
+
+        (tmp_path / "2026-03-13-api.research.md").write_text(
+            "---\nname: API Research\ndescription: API investigation\n---\n"
+        )
+        (tmp_path / "plain.md").write_text(
+            "---\nname: Plain\ndescription: A plain doc\n---\n"
+        )
+
+        result = generate_index(tmp_path)
+
+        assert "[2026-03-13-api.research.md]" in result
+        assert "API investigation" in result
+        assert "[plain.md]" in result
+
+    def test_compound_suffix_mixed_with_plain_sorted(
+        self, tmp_path: Path
+    ) -> None:
+        """Compound suffix files sort correctly among plain .md files."""
+        from wos.index import generate_index
+
+        (tmp_path / "beta.plan.md").write_text(
+            "---\nname: Beta Plan\ndescription: A plan\n---\n"
+        )
+        (tmp_path / "alpha.md").write_text(
+            "---\nname: Alpha\ndescription: First\n---\n"
+        )
+
+        result = generate_index(tmp_path)
+        lines = result.splitlines()
+        file_rows = [
+            line for line in lines if line.startswith("| [") and ".md]" in line
+        ]
+        assert len(file_rows) == 2
+        assert file_rows[0].startswith("| [alpha.md]")
+        assert file_rows[1].startswith("| [beta.plan.md]")
+
+    def test_compound_suffix_sync_check(self, tmp_path: Path) -> None:
+        """Index sync works with compound suffix files."""
+        from wos.index import check_index_sync, generate_index
+
+        (tmp_path / "topic.design.md").write_text(
+            "---\nname: Design\ndescription: A design\n---\n"
+        )
+        index_content = generate_index(tmp_path)
+        (tmp_path / "_index.md").write_text(index_content)
+
+        issues = check_index_sync(tmp_path)
+        assert issues == []
+
+    def test_compound_suffix_added_causes_desync(self, tmp_path: Path) -> None:
+        """Adding a compound suffix file after generation causes desync."""
+        from wos.index import check_index_sync, generate_index
+
+        (tmp_path / "existing.md").write_text(
+            "---\nname: Existing\ndescription: Was here\n---\n"
+        )
+        index_content = generate_index(tmp_path)
+        (tmp_path / "_index.md").write_text(index_content)
+
+        (tmp_path / "new-topic.context.md").write_text(
+            "---\nname: New Topic\ndescription: Just arrived\n---\n"
+        )
+
+        issues = check_index_sync(tmp_path)
+        assert len(issues) == 1
+        assert "out of sync" in issues[0]["issue"].lower()

@@ -15,7 +15,7 @@ focused scope, 3 tasks with TDD verification.
     type: plan
     status: draft
     related:
-      - docs/plans/2026-03-11-status-field-design.md
+      - docs/designs/2026-03-11-status-field.design.md
     ---
 
     # Status Field Implementation
@@ -88,5 +88,5 @@ focused scope, 3 tasks with TDD verification.
 
     ## Validation
 
-    - [ ] `uv run python -m pytest tests/test_document.py -v` — all status tests pass
-    - [ ] `uv run python -c "from wos.document import parse_document; ..."` — parses status from real plan file
+    - [ ] `python python -m pytest tests/test_document.py -v` — all status tests pass
+    - [ ] `python python -c "from wos.document import parse_document; ..."` — parses status from real plan file

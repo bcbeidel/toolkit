@@ -10,7 +10,7 @@ Enables research phase detection from disk state alone, allowing work to resume 
 
 # Resuming After Context Reset
 
-If `docs/research/{date}-{slug}.md` exists with `<!-- DRAFT -->`, read
+If `docs/research/{date}-{slug}.research.md` exists with `<!-- DRAFT -->`, read
 it to determine the current phase:
 
 - Has `sources:` in frontmatter but extracts missing for some sub-questions → resume at Phase 2 (pick up at the first sub-question without extracts)

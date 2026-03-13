@@ -721,3 +721,119 @@ class TestValidateProject:
 
         issues = validate_project(tmp_path, verify_urls=False)
         assert issues == []
+
+
+# ── Compound suffix integration ───────────────────────────────
+
+
+class TestCompoundSuffixValidation:
+    def test_validate_file_with_compound_suffix(self, tmp_path: Path) -> None:
+        """validate_file works on compound suffix files."""
+        from wos.validators import validate_file
+
+        md_file = tmp_path / "docs" / "research" / "2026-03-13-api.research.md"
+        md_file.parent.mkdir(parents=True)
+        md_file.write_text(_md(
+            "API Research", "Research on API patterns",
+            type="research",
+            sources=["https://example.com/source"],
+        ))
+
+        issues = validate_file(md_file, tmp_path, verify_urls=False)
+        assert issues == []
+
+    def test_compound_suffix_infers_type_for_research_validation(
+        self, tmp_path: Path
+    ) -> None:
+        """Research file with compound suffix (no frontmatter type) triggers
+        research-specific validation (sources required)."""
+        from wos.validators import validate_file
+
+        md_file = tmp_path / "docs" / "research" / "topic.research.md"
+        md_file.parent.mkdir(parents=True)
+        # No type in frontmatter, no sources — should fail because
+        # suffix infers type=research, and research requires sources
+        md_file.write_text(_md("Topic", "A research topic"))
+
+        issues = validate_file(md_file, tmp_path, verify_urls=False)
+        assert any(
+            "sources" in i["issue"].lower() and i["severity"] == "fail"
+            for i in issues
+        )
+
+    def test_compound_suffix_research_with_sources_passes(
+        self, tmp_path: Path
+    ) -> None:
+        """Research file with compound suffix and sources passes validation."""
+        from wos.validators import validate_file
+
+        md_file = tmp_path / "docs" / "research" / "topic.research.md"
+        md_file.parent.mkdir(parents=True)
+        # No explicit type — inferred from suffix; has sources
+        md_file.write_text(_md(
+            "Topic", "A research topic",
+            sources=["https://example.com/src"],
+        ))
+
+        issues = validate_file(md_file, tmp_path, verify_urls=False)
+        assert not any("sources" in i["issue"].lower() for i in issues)
+
+    def test_compound_suffix_draft_marker_check(self) -> None:
+        """Draft marker check works with suffix-inferred research type."""
+        from wos.document import parse_document
+        from wos.validators import check_draft_markers
+
+        text = (
+            "---\n"
+            "name: Draft Research\n"
+            "description: In-progress research\n"
+            "sources:\n"
+            "  - https://example.com/src\n"
+            "---\n"
+            "# Research\n\n<!-- DRAFT -->\n\nContent.\n"
+        )
+        doc = parse_document("docs/research/topic.research.md", text)
+        assert doc.type == "research"
+        issues = check_draft_markers(doc)
+        assert len(issues) == 1
+        assert "DRAFT" in issues[0]["issue"]
+
+    def test_validate_project_includes_compound_suffix_files(
+        self, tmp_path: Path
+    ) -> None:
+        """validate_project discovers and validates compound suffix files."""
+        from wos.index import generate_index
+        from wos.validators import validate_project
+
+        # Set up research area with a compound suffix file
+        research_dir = tmp_path / "docs" / "research"
+        research_dir.mkdir(parents=True)
+        (research_dir / "2026-03-13-api.research.md").write_text(_md(
+            "API Research", "Research on APIs",
+            type="research",
+            sources=["https://example.com/api"],
+        ))
+        (research_dir / "_index.md").write_text(
+            generate_index(research_dir, preamble="Research area.")
+        )
+        # Create AGENTS.md and CLAUDE.md
+        (tmp_path / "AGENTS.md").write_text(
+            "# Agents\n\n<!-- wos:begin -->\nWOS\n<!-- wos:end -->\n"
+        )
+        (tmp_path / "CLAUDE.md").write_text("# Project\n\n@AGENTS.md\n")
+
+        issues = validate_project(tmp_path, verify_urls=False)
+        assert issues == []
+
+    def test_context_type_accepted_alongside_reference(self) -> None:
+        """type: context works for context files (new convention)."""
+        from wos.validators import check_frontmatter
+
+        doc = _make_doc(
+            path="docs/context/api/auth.context.md",
+            type="context",
+            related=["docs/research/2026-03-13-api.research.md"],
+        )
+        issues = check_frontmatter(doc)
+        # Should not have any type-related failures
+        assert not any(i["severity"] == "fail" for i in issues)

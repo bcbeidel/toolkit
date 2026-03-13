@@ -270,7 +270,7 @@ STOP at each gate. If the condition is not met, complete it before proceeding.
 
 ## Output Document Format
 
-The final research document is placed at `docs/research/{date}-{slug}.md`
+The final research document is placed at `docs/research/{date}-{slug}.research.md`
 with frontmatter following the document standards in AGENTS.md:
 
 ```yaml
@@ -281,7 +281,7 @@ type: research
 sources:
   - https://example.com/primary-source
 related:
-  - docs/research/2026-01-15-related-topic.md
+  - docs/research/2026-01-15-related-topic.research.md
 ---
 ```
 

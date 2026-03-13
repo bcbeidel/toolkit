@@ -94,9 +94,9 @@ created, word counts, and any audit issues.
 
 | # | Finding | Target Area | Filename | Words (est.) |
 |---|---------|-------------|----------|--------------|
-| 1 | Event loops use cooperative multitasking, not preemptive threading | docs/context/async/ | event-loop-model.md | ~350 |
-| 2 | `asyncio.gather()` vs `TaskGroup` tradeoffs for concurrent I/O | docs/context/async/ | concurrency-patterns.md | ~400 |
-| 3 | CPU-bound work blocks the event loop; use `run_in_executor()` | docs/context/async/ | cpu-bound-workarounds.md | ~250 |
+| 1 | Event loops use cooperative multitasking, not preemptive threading | docs/context/async/ | event-loop-model.context.md | ~350 |
+| 2 | `asyncio.gather()` vs `TaskGroup` tradeoffs for concurrent I/O | docs/context/async/ | concurrency-patterns.context.md | ~400 |
+| 3 | CPU-bound work blocks the event loop; use `run_in_executor()` | docs/context/async/ | cpu-bound-workarounds.context.md | ~250 |
 </example>
 
 <example>
@@ -106,12 +106,12 @@ created, word counts, and any audit issues.
 ---
 name: "Event Loop Model"
 description: "How asyncio's single-threaded event loop achieves concurrency through cooperative multitasking"
-type: reference
+type: context
 sources:
   - https://docs.python.org/3/library/asyncio-eventloop.html
 related:
-  - docs/research/2026-02-10-asyncio-deep-dive.md
-  - docs/context/async/concurrency-patterns.md
+  - docs/research/2026-02-10-asyncio-deep-dive.research.md
+  - docs/context/async/concurrency-patterns.context.md
 ---
 ```
 

@@ -47,7 +47,7 @@ Analyze the research question, detect the appropriate mode, and produce a struct
    - Specify preferred source types: official docs for technical questions,
      peer-reviewed for scientific, primary sources for historical
 
-8. **Suggest output path.** Suggest `docs/research/YYYY-MM-DD-<slug>.md` based on the topic.
+8. **Suggest output path.** Suggest `docs/research/YYYY-MM-DD-<slug>.research.md` based on the topic.
 
 ## Output
 

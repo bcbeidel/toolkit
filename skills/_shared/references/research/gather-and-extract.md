@@ -16,7 +16,7 @@ Search for sources across sub-questions, extract content verbatim, and verify UR
 - **Sub-questions** (2-4, from the approved brief)
 - **Research mode** (deep-dive, landscape, technical, etc.)
 - **Search strategy** (initial terms, source types)
-- **Output path** (e.g., `docs/research/YYYY-MM-DD-slug.md`)
+- **Output path** (e.g., `docs/research/YYYY-MM-DD-slug.research.md`)
 - **Constraints** (time period, domain, technology stack)
 
 # Phase 2: Gather and Extract

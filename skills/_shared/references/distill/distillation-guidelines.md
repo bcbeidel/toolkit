@@ -32,6 +32,10 @@ A context file distilled from research should be:
 
 ### Frontmatter Template
 
+New context files use the `.context.md` compound suffix, which allows type
+inference from the filename alone. Explicit `type: context` in frontmatter is
+optional when using the compound suffix.
+
 ```yaml
 ---
 name: [Descriptive title]
@@ -105,8 +109,8 @@ Ensure all `related:` links are bidirectional:
 ## Reindex and Validate
 
 ```bash
-uv run <plugin-scripts-dir>/reindex.py --root .
-uv run <plugin-scripts-dir>/audit.py <file> --root . --no-urls
+python <plugin-scripts-dir>/reindex.py --root .
+python <plugin-scripts-dir>/audit.py <file> --root . --no-urls
 ```
 
 Run reindex to update `_index.md` files, then audit each written file.

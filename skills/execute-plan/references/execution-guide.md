@@ -33,7 +33,7 @@ Commit message format:
 ```
 feat(plan): task N — short task title
 
-Plan: docs/plans/YYYY-MM-DD-feature-name.md
+Plan: docs/plans/YYYY-MM-DD-feature-name.plan.md
 ```
 
 **Chunk boundaries.** For plans with 10+ tasks organized into chunks

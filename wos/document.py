@@ -8,9 +8,11 @@ that extracts YAML frontmatter into structured fields.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import List, Optional
 
 from wos.frontmatter import parse_frontmatter
+from wos.suffix import type_from_path
 
 # Known frontmatter fields extracted into Document attributes.
 _KNOWN_FIELDS = {"name", "description", "type", "sources", "related", "status"}
@@ -67,6 +69,8 @@ def parse_document(path: str, text: str) -> Document:
     doc_type: Optional[str] = fm.get("type")
     if not isinstance(doc_type, str) and doc_type is not None:
         doc_type = str(doc_type)
+    if doc_type is None:
+        doc_type = type_from_path(Path(path))
     sources: List[str] = fm.get("sources") or []
     related: List[str] = fm.get("related") or []
     status: Optional[str] = fm.get("status")

@@ -69,7 +69,7 @@ Before executing tasks, ensure work happens on a feature branch.
 1. Check if currently on the default branch (`main` or `master`).
 2. If on default branch:
    - Derive a branch name from the plan filename: strip `docs/plans/` and
-     the date prefix. E.g., `docs/plans/2026-03-11-skill-workflow.md` →
+     the date prefix. E.g., `docs/plans/2026-03-11-skill-workflow.plan.md` →
      `skill-workflow`.
    - Present to user: "This plan should be implemented on a branch.
      Suggested: `<name>` — use this, or provide a different name?"

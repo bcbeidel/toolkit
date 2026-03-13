@@ -41,7 +41,7 @@ testable software on its own.
 
 ### 3. Write the Plan
 
-Save to `docs/plans/YYYY-MM-DD-<feature-name>.md` using the
+Save to `docs/plans/YYYY-MM-DD-<feature-name>.plan.md` using the
 [Plan Document Format](../_shared/references/plan-format.md).
 
 See [Format Guide](references/format-guide.md) for how to write each section
@@ -156,8 +156,8 @@ Plan documents use WOS frontmatter:
     type: plan
     status: draft
     related:
-      - docs/designs/YYYY-MM-DD-<name>-design.md
+      - docs/designs/YYYY-MM-DD-<name>.design.md
     ---
 
-Save to `docs/plans/YYYY-MM-DD-<feature-name>.md`. The `related` field
+Save to `docs/plans/YYYY-MM-DD-<feature-name>.plan.md`. The `related` field
 links to design docs, context files, or other plans.

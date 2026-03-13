@@ -291,6 +291,66 @@ class TestParseDocument:
         assert doc.sources == []
         assert doc.related == []
 
+    def test_type_inferred_from_compound_suffix(self) -> None:
+        """When frontmatter has no type, infer from .research.md suffix."""
+        from wos.document import parse_document
+
+        text = (
+            "---\n"
+            "name: API Review\n"
+            "description: Research on REST API patterns\n"
+            "sources:\n"
+            "  - https://example.com/rest-guide\n"
+            "---\n"
+            "# API Review\n"
+        )
+        doc = parse_document("docs/research/api-review.research.md", text)
+        assert doc.type == "research"
+
+    def test_type_inferred_from_plan_suffix(self) -> None:
+        """When frontmatter has no type, infer from .plan.md suffix."""
+        from wos.document import parse_document
+
+        text = (
+            "---\n"
+            "name: Deploy Plan\n"
+            "description: Deployment plan\n"
+            "status: draft\n"
+            "---\n"
+            "# Deploy Plan\n"
+        )
+        doc = parse_document("docs/plans/2026-03-13-deploy.plan.md", text)
+        assert doc.type == "plan"
+
+    def test_frontmatter_type_takes_precedence_over_suffix(self) -> None:
+        """Explicit frontmatter type wins over suffix inference."""
+        from wos.document import parse_document
+
+        text = (
+            "---\n"
+            "name: Overridden\n"
+            "description: Frontmatter type should win\n"
+            "type: custom\n"
+            "---\n"
+            "# Content\n"
+        )
+        doc = parse_document("docs/research/overridden.research.md", text)
+        assert doc.type == "custom"
+
+    def test_plain_md_no_type_stays_none(self) -> None:
+        """Plain .md with no frontmatter type remains None."""
+        from wos.document import parse_document
+
+        text = (
+            "---\n"
+            "name: Plain\n"
+            "description: No type anywhere\n"
+            "---\n"
+            "# Content\n"
+        )
+        doc = parse_document("docs/context/plain.md", text)
+        assert doc.type is None
+
     def test_raises_valueerror_on_missing_closing_delimiter(self) -> None:
         """Missing closing delimiter must raise ValueError."""
         from wos.document import parse_document
@@ -319,3 +379,45 @@ class TestParseDocument:
         assert doc.description == "100"
         assert isinstance(doc.name, str)
         assert isinstance(doc.description, str)
+
+    def test_type_inferred_from_design_suffix(self) -> None:
+        """When frontmatter has no type, infer from .design.md suffix."""
+        from wos.document import parse_document
+
+        text = (
+            "---\n"
+            "name: Feature Design\n"
+            "description: Design for feature X\n"
+            "---\n"
+            "# Feature Design\n"
+        )
+        doc = parse_document("docs/designs/2026-03-13-feature.design.md", text)
+        assert doc.type == "design"
+
+    def test_type_inferred_from_context_suffix(self) -> None:
+        """When frontmatter has no type, infer from .context.md suffix."""
+        from wos.document import parse_document
+
+        text = (
+            "---\n"
+            "name: Event Loop Model\n"
+            "description: How asyncio event loop works\n"
+            "---\n"
+            "# Event Loop Model\n"
+        )
+        doc = parse_document("docs/context/async/event-loop.context.md", text)
+        assert doc.type == "context"
+
+    def test_type_inferred_from_prompt_suffix(self) -> None:
+        """When frontmatter has no type, infer from .prompt.md suffix."""
+        from wos.document import parse_document
+
+        text = (
+            "---\n"
+            "name: Code Review Prompt\n"
+            "description: Prompt for reviewing pull requests\n"
+            "---\n"
+            "# Code Review Prompt\n"
+        )
+        doc = parse_document("docs/prompts/code-review.prompt.md", text)
+        assert doc.type == "prompt"
