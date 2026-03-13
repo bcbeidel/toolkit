@@ -15,7 +15,7 @@ using it.
 ## Build & Test
 
 ```bash
-uv run python -m pytest tests/ -v
+python -m pytest tests/ -v
 ```
 
 Lint:
@@ -132,7 +132,7 @@ Full skill ecosystem, lifecycle diagram, and layer descriptions: [OVERVIEW.md](O
 - **Script invocation: `python` is the universal pattern.** All scripts in
   `scripts/` have PEP 723 inline metadata and stdlib-only dependencies.
   Skills invoke them via `python <plugin-scripts-dir>/script.py`. Dev
-  tooling (pytest, ruff) still uses `uv run` but skill instructions do not.
+  Dev dependencies (pytest, ruff) install via `pip install -e ".[dev]"`.
 - CLI scripts default to CWD as root; accept `--root` for override
 - **Plugin root discovery (all scripts):** Scripts use a hybrid pattern to
   find the plugin root for `sys.path` insertion. Prefer `CLAUDE_PLUGIN_ROOT`

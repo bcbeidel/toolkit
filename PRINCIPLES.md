@@ -100,13 +100,13 @@ the target and wait for user consent. Consistency eliminates a class of failures
 follows the same pattern, skills don't need special-case instructions and users
 don't need to remember invocation variants. Explicit handoffs preserve user
 awareness of workflow structure.
-**Boundary:** Test invocation (`uv run python -m pytest`) differs from script
-invocation (`uv run scripts/foo.py`) — acceptable because they're different
+**Boundary:** Test invocation (`python -m pytest`) differs from script
+invocation (`python scripts/foo.py`) — acceptable because they're different
 tools, not different patterns for the same tool. Within a single skill's
 internal phases, transitions don't require handoff confirmation — this applies
 to cross-skill boundaries only.
 **Verification:** All scripts in `scripts/` have PEP 723 inline metadata and
-run via `uv run`. No skill documentation uses bare `python3` invocation.
+run via `python`. No skill documentation requires external runtime dependencies.
 Delivery pipeline skills (brainstorm → write-plan → execute-plan →
 validate-work → finish-work) end with explicit handoff naming the next skill
 before invocation.

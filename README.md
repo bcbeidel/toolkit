@@ -69,7 +69,7 @@ Or add to Claude Code settings for automatic loading.
 
 All scripts use [PEP 723](https://peps.python.org/pep-0723/) inline metadata
 and are invoked via `python`. No external runtime dependencies — stdlib only.
-Dev tooling (pytest, ruff) uses `uv run` but skill instructions do not.
+Dev dependencies (pytest, ruff) install via `pip install -e ".[dev]"`.
 
 ## Dependencies
 
