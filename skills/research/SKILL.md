@@ -24,6 +24,7 @@ references:
   - ../_shared/references/research/research-modes.md
   - ../_shared/references/research/cli-commands.md
   - ../_shared/references/preflight.md
+  - ../_shared/references/MANIFEST.md
 ---
 
 # Research Skill
@@ -51,6 +52,53 @@ Detect the research mode from the question framing:
 If ambiguous, ask: "What kind of investigation would be most useful?
 A **deep dive** (comprehensive), **options comparison**, or
 **feasibility study**?"
+
+## Execution Mode
+
+Each stage in the research chain can run **inline** (orchestrator executes
+the methodology directly) or **delegate** (dispatch the named subagent).
+Gate checks run identically in both paths. The decision is based on research
+mode — effort matches stakes.
+
+### Decision Rules (ordered by priority)
+
+1. **Effort matches stakes.** High-stakes modes justify delegation overhead
+   for accuracy-sensitive stages. Low-stakes modes inline aggressively.
+2. **External I/O → delegate.** Stages using WebSearch/WebFetch benefit
+   from dedicated context (gatherer, full-mode challenger).
+3. **User approval gate → delegate.** Framer output goes to user review.
+4. **Context dependency → inline.** Stages that benefit from prior context
+   (evaluator, synthesizer) should run inline.
+5. **Context pressure >~50% → delegate.** If context feels heavy after
+   inline stages, switch remaining stages to delegate.
+6. **Parallelization opportunity → delegate.** When concurrent execution
+   is available, delegation enables parallel work.
+7. **Methodology weight.** <80 lines → inline candidate. >100 lines → delegate.
+
+### Mode Defaults
+
+| Research Mode | Inline Stages | Delegated Stages |
+|--------------|---------------|------------------|
+| deep-dive | evaluator, synthesizer, finalizer | framer, gatherer, challenger, verifier |
+| landscape | evaluator, challenger, synthesizer, verifier, finalizer | framer, gatherer |
+| technical | evaluator, synthesizer, finalizer | framer, gatherer, challenger, verifier |
+| feasibility | evaluator, synthesizer, finalizer | framer, gatherer, challenger, verifier |
+| competitive | evaluator, synthesizer, finalizer | framer, gatherer, challenger, verifier |
+| options | evaluator, synthesizer, finalizer | framer, gatherer, challenger, verifier |
+| historical | evaluator, challenger, synthesizer, verifier, finalizer | framer, gatherer |
+| open-source | evaluator, challenger, synthesizer, verifier, finalizer | framer, gatherer |
+
+### Per-Stage Override Conditions
+
+| Stage | Default | Override |
+|-------|---------|---------|
+| framer | delegate | — |
+| gatherer | delegate | — |
+| evaluator | inline | delegate if >15 sources |
+| challenger | conditional | inline for partial challenge (landscape, historical, open-source); delegate for full challenge requiring WebSearch |
+| synthesizer | inline | delegate if >8 sub-questions |
+| verifier | conditional | delegate for high-stakes (deep-dive, options, technical, feasibility, competitive); inline for low-stakes (historical, open-source, landscape) |
+| finalizer | inline | delegate if context pressure >~50% |
 
 ## Resumption Assessment
 
@@ -100,38 +148,67 @@ Present the brief to the user. If rejected, re-dispatch
 `research-framer` with the user's feedback. Do not proceed without
 approval.
 
-### Step 4: Dispatch Research Chain
+### Step 4: Execute Research Chain
 
-Dispatch agents sequentially with gate validation between each. After
-each agent completes, run the exit gate check before dispatching the
-next.
+Execute stages sequentially with gate validation between each. For each
+stage, consult the Mode Defaults table (see Execution Mode above) to
+determine whether to run inline or delegate. Gate checks are identical
+in both paths.
+
+**For each stage in the chain:**
+
+1. **Check execution mode** — look up the stage in the Mode Defaults
+   table for the detected research mode. Apply override conditions
+   (e.g., >15 sources forces evaluator to delegate).
+2. **Execute the stage:**
+   - **Delegate:** Dispatch the named agent (e.g., `research-gatherer`)
+     with the DRAFT path. The agent starts with a fresh context.
+   - **Inline:** Read the stage's reference files (per MANIFEST.md),
+     then execute the methodology directly in-thread. Write results
+     to the DRAFT file on disk, same as a delegated agent would.
+3. **Run gate check:** `research_assess.py --file <path> --gate <stage>_exit`
+4. **Proceed or retry** (see Step 5 for error handling).
 
 ```
-Dispatch research-gatherer (brief fields + output path)
+DELEGATE research-gatherer (brief fields + output path)
   → Gate: research_assess.py --file <path> --gate gatherer_exit
 
-Dispatch research-evaluator (path to DRAFT)
+INLINE or DELEGATE research-evaluator (path to DRAFT)
   → Gate: research_assess.py --file <path> --gate evaluator_exit
 
-Dispatch research-challenger (path to DRAFT)
+INLINE or DELEGATE research-challenger (path to DRAFT)
   → Gate: research_assess.py --file <path> --gate challenger_exit
 
-Dispatch research-synthesizer (path to DRAFT)
+INLINE or DELEGATE research-synthesizer (path to DRAFT)
   → Gate: research_assess.py --file <path> --gate synthesizer_exit
 
-Dispatch research-verifier (path to DRAFT)
+INLINE or DELEGATE research-verifier (path to DRAFT)
   → Gate: research_assess.py --file <path> --gate verifier_exit
 
-Dispatch research-finalizer (path to DRAFT)
+INLINE or DELEGATE research-finalizer (path to DRAFT)
   → Gate: research_assess.py --file <path> --gate finalizer_exit
 ```
 
-Announce each dispatch and gate result as the chain progresses:
+**Inline execution:** When running a stage inline, read the reference
+files listed in MANIFEST.md for that stage. Follow the methodology
+exactly as written — the reference file is the instruction set. Write
+all output to the DRAFT file on disk. The gate check verifies the
+result is structurally identical to what a delegated agent would produce.
+
+**Context pressure override:** If context feels heavy after inline
+stages (~50% utilization), switch remaining stages to delegate mode.
+Do not force inline when context pressure risks degrading output quality.
+
+**Parallelization note:** Delegation is also acceptable when parallel
+execution opportunities exist — a delegated stage can run in a worktree
+or background context while other work proceeds.
+
+Announce each execution and gate result as the chain progresses:
 ```
-Dispatching research-gatherer...
-  → gatherer_exit gate: PASS (4/4 checks)
-Dispatching research-evaluator...
+Executing research-evaluator inline...
   → evaluator_exit gate: PASS (2/2 checks)
+Delegating research-challenger...
+  → challenger_exit gate: PASS (1/1 checks)
 ```
 
 ### Step 5: Error Handling Between Dispatches

@@ -11,6 +11,7 @@ references:
   - ../_shared/references/distill/distillation-guidelines.md
   - ../_shared/references/distill/mapping-guide.md
   - ../_shared/references/preflight.md
+  - ../_shared/references/MANIFEST.md
 ---
 
 # Distill
@@ -18,6 +19,26 @@ references:
 Convert research artifacts into focused context files.
 
 **Prerequisite:** Before running any `uv run` command below, follow the preflight check in the [preflight reference](../_shared/references/preflight.md).
+
+## Execution Mode
+
+The mapper always delegates (read-only, output goes to user approval).
+The worker is conditional based on mapping size:
+
+| Stage | Default | Override |
+|-------|---------|---------|
+| distill-mapper | delegate | — (always delegate: read-only, user approval gate) |
+| distill-worker | conditional | inline for small mappings (1-3 context files); delegate for large mappings (>3 files) |
+
+**Rationale:** For small mappings, the mapper's context carries useful
+understanding of the research material that benefits the worker. For large
+mappings, the write volume benefits from a fresh context focused solely on
+the approved mapping.
+
+**Inline worker execution:** Read the distillation-guidelines reference
+file (per MANIFEST.md), then write context files directly in-thread
+following the methodology. Run reindex + audit afterward, same as the
+delegated agent would.
 
 ## Workflow
 
@@ -47,10 +68,15 @@ location), then offer to copy files to the additional location.
 If rejected, re-dispatch `distill-mapper` with the user's feedback.
 Do not proceed without approval.
 
-### Step 4: Dispatch Worker
+### Step 4: Execute Worker
 
-Dispatch `distill-worker` with the approved mapping (assigned findings,
-source research paths, target file paths, estimated word counts).
+Consult the Execution Mode section to decide inline vs delegate:
+
+- **Inline** (1-3 context files): Read the distillation-guidelines
+  reference, then write context files directly. Run reindex + audit.
+- **Delegate** (>3 context files): Dispatch `distill-worker` with the
+  approved mapping (assigned findings, source research paths, target
+  file paths, estimated word counts).
 
 ### Step 5: Completion
 

@@ -1,7 +1,17 @@
 ---
 name: Frame the Question
 description: Phase 1 — restate the question, identify mode, break into sub-questions, write research brief
+stage: frame
+pipeline: research
 ---
+
+## Purpose
+
+Analyze the research question, detect the appropriate mode, and produce a structured brief with sub-questions and search strategy.
+
+## Input
+
+Research question from user, project root path, any stated constraints.
 
 # Phase 1: Frame the Question
 
@@ -30,6 +40,10 @@ description: Phase 1 — restate the question, identify mode, break into sub-que
    - Mark unstated dimensions as explicitly open-ended
    - Specify preferred source types: official docs for technical questions,
      peer-reviewed for scientific, primary sources for historical
+
+## Output
+
+Structured brief with restated question, research mode, SIFT rigor level, 2-4 sub-questions, search strategy, and suggested output path.
 
 ### Phase Gate: Phase 1 → Phase 2
 

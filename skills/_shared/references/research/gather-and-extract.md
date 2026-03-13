@@ -1,7 +1,17 @@
 ---
 name: Gather and Extract
 description: Phase 2 — search for sources, extract content verbatim, write to disk per sub-question
+stage: gather
+pipeline: research
 ---
+
+## Purpose
+
+Search for sources across sub-questions, extract content verbatim, and verify URLs. Produces a DRAFT document with structured extracts and a verified sources table.
+
+## Input
+
+Approved research brief with sub-questions, research mode, SIFT rigor, search strategy, and output file path.
 
 # Phase 2: Gather and Extract
 
@@ -80,6 +90,10 @@ that sub-question.
    (# | URL | Title | Author/Org | Date | Status), structured extracts
    for every sub-question, and a `<!-- search-protocol ... -->` comment
    containing the accumulated JSON.
+
+## Output
+
+DRAFT file on disk with structured extracts (blockquotes) for each sub-question, sources table with URL column, and search protocol entries.
 
 ### Phase Gate: Phase 2 → Phase 3
 

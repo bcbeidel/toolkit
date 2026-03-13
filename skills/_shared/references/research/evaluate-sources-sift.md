@@ -1,7 +1,17 @@
 ---
 name: Evaluate Sources (SIFT)
 description: Phase 4 — apply SIFT framework to classify sources by tier, drop low-quality sources
+stage: evaluate
+pipeline: research
 ---
+
+## Purpose
+
+Apply the SIFT framework to every source, assign tier classifications (T1-T5), and drop sources below quality threshold.
+
+## Input
+
+DRAFT document with sources table containing URLs and verification status from the gather stage.
 
 # Phase 4: Evaluate Sources (SIFT)
 
@@ -55,6 +65,10 @@ Annotate tiers in the document body, not the frontmatter:
 - Outdated information relative to domain currency
 - Conflict of interest — vendor-sponsored research about own product
 - Survivorship bias — only success stories, no failures
+
+## Output
+
+Sources table updated with Tier (T1-T5) and Status columns for every source.
 
 ### Phase Gate: Phase 4 → Phase 5
 

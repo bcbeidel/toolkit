@@ -1,7 +1,17 @@
 ---
 name: Verify Sources
 description: Phase 3 — check URL reachability, drop unreachable sources, update document
+stage: gather
+pipeline: research
 ---
+
+## Purpose
+
+Check URL reachability for all sources in the document and remove unreachable ones from frontmatter.
+
+## Input
+
+DRAFT document with sources table containing URLs.
 
 # Phase 3: Verify Sources
 
@@ -28,6 +38,10 @@ sources table statuses.
 | 3 | https://realpython.com/... | Async Guide | verified (403) → | T3 |
 
 Phase 3 updates the Status column. Phase 4 adds the Tier column.
+
+## Output
+
+Sources table updated with verification status. Unreachable URLs removed from frontmatter sources list.
 
 ### Phase Gate: Phase 3 → Phase 4
 

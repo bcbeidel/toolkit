@@ -1,7 +1,17 @@
 ---
 name: Synthesize
 description: Phase 6 — organize findings by sub-question with confidence levels and writing constraints
+stage: synthesize
+pipeline: research
 ---
+
+## Purpose
+
+Synthesize research extracts into structured findings organized by sub-question, with confidence levels and source attribution.
+
+## Input
+
+DRAFT document with challenge section completed.
 
 # Phase 6: Synthesize
 
@@ -26,6 +36,10 @@ confidence level:
 Connect findings to the user's context, identify gaps, suggest follow-ups.
 Update document on disk with `## Findings` section. Update frontmatter
 `description:` to reflect actual findings.
+
+## Output
+
+`## Findings` section on disk with findings organized by sub-question. Each finding annotated with confidence level (HIGH, MODERATE, LOW) and source citations.
 
 ### Phase Gate: Phase 6 → Phase 7
 

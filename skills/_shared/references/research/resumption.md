@@ -1,7 +1,12 @@
 ---
 name: Research Resumption
 description: How to detect the current research phase from disk state after a context reset
+stage: shared
+pipeline: research
 ---
+
+## Purpose
+Enables research phase detection from disk state alone, allowing work to resume after a context reset without re-reading the entire document.
 
 # Resuming After Context Reset
 

@@ -1,7 +1,17 @@
 ---
 name: Citation Re-Verify
 description: Phase 8 — re-fetch cited sources and verify each claim against actual content
+stage: verify
+pipeline: research
 ---
+
+## Purpose
+
+Re-fetch cited sources and verify each remaining unverified claim against actual source content.
+
+## Input
+
+DRAFT document with claims table from CoVe (Phase 7). Some claims may still be `unverified`.
 
 # Phase 8: Citation Re-Verify
 
@@ -39,6 +49,10 @@ Always assign `human-review` regardless of other results:
 | 3 | "Guido designed asyncio" | attribution | — | unverified → human-review |
 
 Update document on disk — no `unverified` claims remain.
+
+## Output
+
+Claims table fully resolved — every claim has status: verified, corrected, removed, unverifiable, or human-review. No `unverified` entries remain.
 
 ### Phase Gate: Phase 8 → Phase 9
 
