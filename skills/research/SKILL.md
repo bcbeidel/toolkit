@@ -11,13 +11,18 @@ argument-hint: "[topic or question to investigate]"
 user-invocable: true
 compatibility: "Requires Python 3 (stdlib only), WOS plugin (audit, reindex), WebSearch, WebFetch"
 references:
-  - references/research-workflow.md
-  - references/source-quality.md
-  - references/challenge.md
-  - references/synthesis-guide.md
-  - references/claim-verification.md
-  - references/research-modes.md
-  - references/python-utilities.md
+  - ../_shared/references/research/frame.md
+  - ../_shared/references/research/resumption.md
+  - ../_shared/references/research/gather-and-extract.md
+  - ../_shared/references/research/verify-sources.md
+  - ../_shared/references/research/evaluate-sources-sift.md
+  - ../_shared/references/research/challenge.md
+  - ../_shared/references/research/synthesize.md
+  - ../_shared/references/research/self-verify-claims.md
+  - ../_shared/references/research/citation-reverify.md
+  - ../_shared/references/research/finalize.md
+  - ../_shared/references/research/research-modes.md
+  - ../_shared/references/research/cli-commands.md
   - ../_shared/references/preflight.md
 ---
 
@@ -74,7 +79,7 @@ provides sufficient context.
 ## Workflow
 
 All modes follow the same 9-phase workflow with varying intensity.
-See `references/research-workflow.md` for the full process.
+See the shared research references for the full process.
 
 ## Phase Gates (Mandatory)
 
@@ -165,8 +170,8 @@ loop itself remains single-threaded (HIGH).
 
 ## Key Rules
 
-- **SIFT every source** — no source enters the document without tier classification. See `references/source-quality.md`.
-- **Counter-evidence is required** for deep-dive, options, and technical modes. See `references/research-modes.md`.
+- **SIFT every source** — no source enters the document without tier classification. See `evaluate-sources-sift.md`.
+- **Counter-evidence is required** for deep-dive, options, and technical modes. See `research-modes.md`.
 - **Log every search** during Phase 2 and include the protocol in the final document.
-- **Confidence levels on every finding** — HIGH, MODERATE, or LOW. See `references/synthesis-guide.md`.
-- **Verify all claims** before finalizing — quotes, statistics, attributions, superlatives. See `references/claim-verification.md`.
+- **Confidence levels on every finding** — HIGH, MODERATE, or LOW. See `synthesize.md`.
+- **Verify all claims** before finalizing — quotes, statistics, attributions, superlatives. See `self-verify-claims.md` and `citation-reverify.md`.
