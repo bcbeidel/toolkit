@@ -11,6 +11,7 @@ references:
   - ../_shared/references/distill/distillation-guidelines.md
   - ../_shared/references/distill/mapping-guide.md
   - ../_shared/references/preflight.md
+  - ../_shared/references/MANIFEST.md
 ---
 
 # Distill

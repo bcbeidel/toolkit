@@ -24,6 +24,7 @@ references:
   - ../_shared/references/research/research-modes.md
   - ../_shared/references/research/cli-commands.md
   - ../_shared/references/preflight.md
+  - ../_shared/references/MANIFEST.md
 ---
 
 # Research Skill
