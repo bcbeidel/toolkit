@@ -3,6 +3,7 @@
 
 | File | Description |
 | --- | --- |
+| [2026-03-13-agent-orchestration-terminology.md](2026-03-13-agent-orchestration-terminology.md) | No LLM agent framework names the inline-vs-delegate meta-decision, but edge computing (computation offloading), serverless (task inlining), and BPMN (embedded subprocess vs call activity) have established terms. Recommends "inline vs. delegate" as primary terminology for the pattern where an orchestrator decides at runtime whether to execute a pipeline stage in its own context or spawn a subagent. |
 | [abstraction-level-design.md](abstraction-level-design.md) | "How calibrating abstraction altitude across specs (WHAT/WHY), plans (observable outcomes), research (mode intensity), and instructions (specificity) affects agent execution reliability — with empirical evidence on the specificity-flexibility tradeoff" |
 | [agent-directory-conventions.md](agent-directory-conventions.md) | "How AI coding tools and agent frameworks define reusable autonomous subagents through directory conventions, file formats, and dispatch patterns — covering Claude Code, Copilot, Gemini CLI, CrewAI, Semantic Kernel, AG2, and emerging standards (A2A, AgentSpec)" |
 | [agent-framework-landscape.md](agent-framework-landscape.md) | "Landscape survey of how nine major agent frameworks handle tool registration, memory, planning, and orchestration — identifying universal patterns vs. framework-specific abstractions and implications for plugin portability" |
