@@ -53,6 +53,53 @@ If ambiguous, ask: "What kind of investigation would be most useful?
 A **deep dive** (comprehensive), **options comparison**, or
 **feasibility study**?"
 
+## Execution Mode
+
+Each stage in the research chain can run **inline** (orchestrator executes
+the methodology directly) or **delegate** (dispatch the named subagent).
+Gate checks run identically in both paths. The decision is based on research
+mode — effort matches stakes.
+
+### Decision Rules (ordered by priority)
+
+1. **Effort matches stakes.** High-stakes modes justify delegation overhead
+   for accuracy-sensitive stages. Low-stakes modes inline aggressively.
+2. **External I/O → delegate.** Stages using WebSearch/WebFetch benefit
+   from dedicated context (gatherer, full-mode challenger).
+3. **User approval gate → delegate.** Framer output goes to user review.
+4. **Context dependency → inline.** Stages that benefit from prior context
+   (evaluator, synthesizer) should run inline.
+5. **Context pressure >~50% → delegate.** If context feels heavy after
+   inline stages, switch remaining stages to delegate.
+6. **Parallelization opportunity → delegate.** When concurrent execution
+   is available, delegation enables parallel work.
+7. **Methodology weight.** <80 lines → inline candidate. >100 lines → delegate.
+
+### Mode Defaults
+
+| Research Mode | Inline Stages | Delegated Stages |
+|--------------|---------------|------------------|
+| deep-dive | evaluator, synthesizer, finalizer | framer, gatherer, challenger, verifier |
+| landscape | evaluator, challenger, synthesizer, verifier, finalizer | framer, gatherer |
+| technical | evaluator, synthesizer, finalizer | framer, gatherer, challenger, verifier |
+| feasibility | evaluator, synthesizer, finalizer | framer, gatherer, challenger, verifier |
+| competitive | evaluator, synthesizer, finalizer | framer, gatherer, challenger, verifier |
+| options | evaluator, synthesizer, finalizer | framer, gatherer, challenger, verifier |
+| historical | evaluator, challenger, synthesizer, verifier, finalizer | framer, gatherer |
+| open-source | evaluator, challenger, synthesizer, verifier, finalizer | framer, gatherer |
+
+### Per-Stage Override Conditions
+
+| Stage | Default | Override |
+|-------|---------|---------|
+| framer | delegate | — |
+| gatherer | delegate | — |
+| evaluator | inline | delegate if >15 sources |
+| challenger | conditional | inline for partial challenge (landscape, historical, open-source); delegate for full challenge requiring WebSearch |
+| synthesizer | inline | delegate if >8 sub-questions |
+| verifier | conditional | delegate for high-stakes (deep-dive, options, technical, feasibility, competitive); inline for low-stakes (historical, open-source, landscape) |
+| finalizer | inline | delegate if context pressure >~50% |
+
 ## Resumption Assessment
 
 When resuming work on an existing research document, run the assessment
