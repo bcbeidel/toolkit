@@ -21,64 +21,41 @@ Convert research artifacts into focused context files.
 
 ## Workflow
 
-### 1. Input
+The skill dispatches two agents sequentially. All dispatch is foreground
+(no-nesting constraint).
+
+### Step 1: Input
 
 Accept a research artifact path from the user. If none provided, scan
 `docs/research/` for the most recently modified `.md` file and confirm.
 
-### 2. Analyze
+### Step 2: Dispatch Mapper
 
-Read the research document and identify discrete findings:
-- Each finding should be a self-contained insight
-- Note confidence level (HIGH, MODERATE, LOW) based on evidence strength
-- Note evidence type (empirical, expert consensus, case study, theoretical)
+Dispatch `distill-mapper` with the research document path(s), target
+area root, and any user constraints. The mapper returns a proposed
+finding-to-context-file mapping table.
 
-### 3. Propose
+### Step 3: Mapping Approval
 
-Present a distillation plan as a table:
-
-| # | Finding | Target Area | Filename | Words (est.) |
-|---|---------|-------------|----------|--------------|
-| 1 | Key finding one | docs/context/area/ | finding-one.md | ~400 |
+Present the mapping table to the user. User approves, edits, or rejects
+individual rows.
 
 **Target Area must be under `docs/context/`.** If the user requests a
 different location, write to `docs/context/` first (the canonical
 location), then offer to copy files to the additional location.
 
-User approves, edits, or rejects individual rows.
+If rejected, re-dispatch `distill-mapper` with the user's feedback.
+Do not proceed without approval.
 
-### 4. Generate
+### Step 4: Dispatch Worker
 
-For each approved finding:
+Dispatch `distill-worker` with the approved mapping (assigned findings,
+source research paths, target file paths, estimated word counts).
 
-1. Write a 200-800 word context file with frontmatter:
-   ```yaml
-   ---
-   name: [Concise title]
-   description: [One-sentence summary]
-   type: reference
-   sources:
-     - [Carry forward relevant URLs from research]
-   related:
-     - [Path to source research artifact]
-     - [Path to other context file from this batch]
-     - [Path to existing context file in the same area]
-   ---
-   ```
+### Step 5: Completion
 
-   Every distilled file should link to at least one sibling context file in
-   `related:`, not just the source research document. When distilling a batch,
-   include cross-references between thematically adjacent files.
-
-2. Follow the document standards in AGENTS.md for structure, frontmatter,
-   and word count guidance.
-
-### 5. Integrate
-
-1. Run `uv run <plugin-scripts-dir>/reindex.py --root .`
-2. Update the source research artifact's `related:` field to link
-   forward to the new context files
-3. Run `uv run <plugin-scripts-dir>/audit.py --root . --no-urls` to verify
+Present completion status to the user. Show which context files were
+created, word counts, and any audit issues.
 
 ## Examples
 

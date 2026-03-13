@@ -3,12 +3,17 @@
 Reports observable facts about research documents — word count, draft
 markers, section presence, source listing. The model infers phase and
 next actions from these facts.
+
+Gate checks validate phase handoff conditions with deterministic
+structural checks (no LLM judgment). Each gate corresponds to an
+agent's exit condition in the research pipeline.
 """
 
 from __future__ import annotations
 
 import os
-from typing import Dict, List, Tuple
+import re
+from typing import Dict, List, Optional, Tuple
 
 from wos.document import parse_document
 
@@ -129,7 +134,9 @@ def _classify_sources(sources: List[str]) -> Tuple[List[str], int]:
     return urls, non_url_count
 
 
-_SECTION_KEYWORDS = frozenset({"claims", "synthesis", "sources", "findings"})
+_SECTION_KEYWORDS = frozenset({
+    "claims", "synthesis", "sources", "findings", "challenge",
+})
 
 
 def _detect_sections(content: str) -> Dict[str, bool]:
@@ -147,3 +154,267 @@ def _detect_sections(content: str) -> Dict[str, bool]:
             if kw in heading_text:
                 found[kw] = True
     return found
+
+
+# ---------------------------------------------------------------------------
+# Gate checks — deterministic phase handoff validation
+# ---------------------------------------------------------------------------
+
+# Ordered list of gate names for current_phase derivation.
+_GATE_ORDER = [
+    "gatherer_exit",
+    "evaluator_exit",
+    "challenger_exit",
+    "synthesizer_exit",
+    "verifier_exit",
+    "finalizer_exit",
+]
+
+# Phase name that follows each gate (used for current_phase).
+_PHASE_AFTER_GATE = {
+    "gatherer_exit": "evaluator",
+    "evaluator_exit": "challenger",
+    "challenger_exit": "synthesizer",
+    "synthesizer_exit": "verifier",
+    "verifier_exit": "finalizer",
+    "finalizer_exit": "done",
+}
+
+
+def check_gates(path: str) -> dict:
+    """Check all research phase gates for a document.
+
+    Returns a dict with ``file``, ``gates`` (per-gate results), and
+    ``current_phase`` (the phase after the highest passing gate, or
+    ``"gatherer"`` if none pass).
+    """
+    if not os.path.isfile(path):
+        empty_checks: Dict[str, dict] = {}
+        for gate in _GATE_ORDER:
+            empty_checks[gate] = {"pass": False, "checks": {}}
+        return {
+            "file": path,
+            "gates": empty_checks,
+            "current_phase": "gatherer",
+        }
+
+    text = _read_file(path)
+    doc = parse_document(path, text)
+    content = doc.content
+    sections = _detect_sections(content)
+
+    gates: Dict[str, dict] = {
+        "gatherer_exit": _check_gatherer_exit(content, doc, sections),
+        "evaluator_exit": _check_evaluator_exit(content),
+        "challenger_exit": _check_challenger_exit(sections),
+        "synthesizer_exit": _check_synthesizer_exit(sections),
+        "verifier_exit": _check_verifier_exit(content, sections),
+        "finalizer_exit": _check_finalizer_exit(content, doc),
+    }
+
+    # Derive current_phase: phase after highest passing gate.
+    current_phase = "gatherer"
+    for gate_name in _GATE_ORDER:
+        if gates[gate_name]["pass"]:
+            current_phase = _PHASE_AFTER_GATE[gate_name]
+        else:
+            break
+
+    return {
+        "file": path,
+        "gates": gates,
+        "current_phase": current_phase,
+    }
+
+
+def check_single_gate(path: str, gate_name: str) -> dict:
+    """Check a single named gate and return its result."""
+    result = check_gates(path)
+    if gate_name == "all":
+        return result
+    if gate_name not in result["gates"]:
+        return {"error": f"Unknown gate: {gate_name}",
+                "valid_gates": _GATE_ORDER + ["all"]}
+    return {
+        "file": path,
+        "gate": gate_name,
+        **result["gates"][gate_name],
+        "current_phase": result["current_phase"],
+    }
+
+
+# --- Individual gate checks -----------------------------------------------
+
+def _check_gatherer_exit(content: str, doc: object, sections: Dict[str, bool]) -> dict:
+    """Gatherer exit: DRAFT exists, sources table present, URLs present."""
+    sources_table = _find_table_under_heading(content, "sources")
+    has_urls = False
+    if sources_table is not None:
+        columns = _table_columns(sources_table)
+        has_urls = any("url" in c.lower() for c in columns)
+
+    checks = {
+        "draft_exists": True,  # file exists (checked before calling)
+        "sources_table_present": sources_table is not None,
+        "sources_have_urls": has_urls,
+        "extracts_present": _has_extracts(content),
+    }
+    return {"pass": all(checks.values()), "checks": checks}
+
+
+def _check_evaluator_exit(content: str) -> dict:
+    """Evaluator exit: sources table has Tier column with values."""
+    sources_table = _find_table_under_heading(content, "sources")
+    has_tier = False
+    has_status = False
+    if sources_table is not None:
+        columns = _table_columns(sources_table)
+        has_tier = any("tier" in c.lower() for c in columns)
+        has_status = any("status" in c.lower() for c in columns)
+
+    checks = {
+        "sources_have_tier": has_tier,
+        "sources_have_status": has_status,
+    }
+    return {"pass": all(checks.values()), "checks": checks}
+
+
+def _check_challenger_exit(sections: Dict[str, bool]) -> dict:
+    """Challenger exit: ## Challenge section exists."""
+    checks = {"challenge_section_exists": sections.get("challenge", False)}
+    return {"pass": all(checks.values()), "checks": checks}
+
+
+def _check_synthesizer_exit(sections: Dict[str, bool]) -> dict:
+    """Synthesizer exit: ## Findings section exists."""
+    checks = {"findings_section_exists": sections.get("findings", False)}
+    return {"pass": all(checks.values()), "checks": checks}
+
+
+def _check_verifier_exit(content: str, sections: Dict[str, bool]) -> dict:
+    """Verifier exit: Claims section with rows, no 'unverified' cells."""
+    has_claims = sections.get("claims", False)
+    claims_table = _find_table_under_heading(content, "claims")
+    has_rows = False
+    no_unverified = True
+    if claims_table is not None:
+        rows = _table_data_rows(claims_table)
+        has_rows = len(rows) > 0
+        for row in rows:
+            for cell in row:
+                if "unverified" in cell.lower():
+                    no_unverified = False
+                    break
+
+    checks = {
+        "claims_section_exists": has_claims,
+        "claims_table_has_rows": has_rows,
+        "no_unverified_claims": no_unverified,
+    }
+    return {"pass": all(checks.values()), "checks": checks}
+
+
+def _check_finalizer_exit(content: str, doc: object) -> dict:
+    """Finalizer exit: no DRAFT marker, type is research, sources non-empty."""
+    checks = {
+        "draft_marker_absent": "<!-- DRAFT -->" not in content,
+        "type_is_research": getattr(doc, "type", None) == "research",
+        "sources_non_empty": len(getattr(doc, "sources", [])) > 0,
+    }
+    return {"pass": all(checks.values()), "checks": checks}
+
+
+# --- Table parsing helpers -------------------------------------------------
+
+def _find_table_under_heading(content: str, keyword: str) -> Optional[str]:
+    """Find the first markdown table under a heading containing keyword.
+
+    Returns the full table text (header + separator + data rows), or
+    None if not found.
+    """
+    lines = content.split("\n")
+    in_section = False
+    table_lines: List[str] = []
+    collecting = False
+
+    for line in lines:
+        stripped = line.strip()
+
+        # Detect headings.
+        if stripped.startswith("#"):
+            heading_text = stripped.lstrip("#").strip().lower()
+            if keyword in heading_text:
+                in_section = True
+                collecting = False
+                table_lines = []
+                continue
+            elif in_section:
+                # New heading ends the section.
+                if collecting and table_lines:
+                    return "\n".join(table_lines)
+                in_section = False
+                collecting = False
+                table_lines = []
+                continue
+
+        if not in_section:
+            continue
+
+        # Collect table rows (lines starting with |).
+        if stripped.startswith("|"):
+            collecting = True
+            table_lines.append(stripped)
+        elif collecting:
+            # Non-table line ends the table.
+            if table_lines:
+                return "\n".join(table_lines)
+            collecting = False
+
+    # End of file while collecting.
+    if collecting and table_lines:
+        return "\n".join(table_lines)
+    return None
+
+
+def _table_columns(table_text: str) -> List[str]:
+    """Extract column names from a markdown table header row."""
+    lines = table_text.split("\n")
+    if not lines:
+        return []
+    header = lines[0]
+    cells = [c.strip() for c in header.split("|")]
+    # Split on | gives empty strings at start/end.
+    return [c for c in cells if c]
+
+
+def _table_data_rows(table_text: str) -> List[List[str]]:
+    """Extract data rows from a markdown table (skip header + separator)."""
+    lines = table_text.split("\n")
+    rows: List[List[str]] = []
+    for line in lines[2:]:  # Skip header and separator.
+        stripped = line.strip()
+        if not stripped.startswith("|"):
+            continue
+        cells = [c.strip() for c in stripped.split("|")]
+        cells = [c for c in cells if c]
+        if cells:
+            rows.append(cells)
+    return rows
+
+
+def _has_extracts(content: str) -> bool:
+    """Check if the document has structured extracts.
+
+    Looks for blockquote lines (common extract format) or multiple
+    sub-question headings (### level) which structure Phase 2 output.
+    """
+    blockquote_count = 0
+    subheading_count = 0
+    for line in content.split("\n"):
+        stripped = line.strip()
+        if stripped.startswith(">") and len(stripped) > 2:
+            blockquote_count += 1
+        if stripped.startswith("###"):
+            subheading_count += 1
+    # Extracts present if there are multiple blockquotes or sub-headings.
+    return blockquote_count >= 2 or subheading_count >= 2

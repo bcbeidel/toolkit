@@ -7,6 +7,8 @@
 
 Usage:
     uv run skills/research/scripts/research_assess.py --file PATH
+    uv run skills/research/scripts/research_assess.py --file PATH --gate all
+    uv run skills/research/scripts/research_assess.py --file PATH --gate evaluator_exit
     uv run skills/research/scripts/research_assess.py --scan [--root DIR] [--subdir PATH]
 """
 from __future__ import annotations
@@ -54,11 +56,24 @@ def main() -> None:
         default="docs/research",
         help="Subdirectory to scan (default: docs/research)",
     )
+    parser.add_argument(
+        "--gate",
+        help="Check phase gate(s). Use with --file. "
+             "Values: all, gatherer_exit, evaluator_exit, "
+             "challenger_exit, synthesizer_exit, verifier_exit, "
+             "finalizer_exit",
+    )
     args = parser.parse_args()
 
     from wos.research.assess_research import assess_file, scan_directory
 
-    if args.file:
+    if args.gate and not args.file:
+        parser.error("--gate requires --file")
+
+    if args.file and args.gate:
+        from wos.research.assess_research import check_single_gate
+        result = check_single_gate(args.file, args.gate)
+    elif args.file:
         result = assess_file(args.file)
     else:
         root = str(Path(args.root).resolve())

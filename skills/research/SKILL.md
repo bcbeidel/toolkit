@@ -78,8 +78,84 @@ provides sufficient context.
 
 ## Workflow
 
-All modes follow the same 9-phase workflow with varying intensity.
-See the shared research references for the full process.
+All modes follow the same workflow. The skill dispatches a chain of
+named agents, running gate checks between each to validate handoffs.
+All dispatch is foreground, sequential (no-nesting constraint).
+
+### Step 1: Accept Research Question
+
+Receive the research question from the user. Detect the research mode
+(see Mode Detection above).
+
+### Step 2: Dispatch Framer
+
+Dispatch `research-framer` with the research question, detected mode,
+and project root. The framer returns a structured brief (question,
+mode, SIFT rigor, sub-questions, search strategy, suggested output
+path).
+
+### Step 3: Brief Approval
+
+Present the brief to the user. If rejected, re-dispatch
+`research-framer` with the user's feedback. Do not proceed without
+approval.
+
+### Step 4: Dispatch Research Chain
+
+Dispatch agents sequentially with gate validation between each. After
+each agent completes, run the exit gate check before dispatching the
+next.
+
+```
+Dispatch research-gatherer (brief fields + output path)
+  → Gate: research_assess.py --file <path> --gate gatherer_exit
+
+Dispatch research-evaluator (path to DRAFT)
+  → Gate: research_assess.py --file <path> --gate evaluator_exit
+
+Dispatch research-challenger (path to DRAFT)
+  → Gate: research_assess.py --file <path> --gate challenger_exit
+
+Dispatch research-synthesizer (path to DRAFT)
+  → Gate: research_assess.py --file <path> --gate synthesizer_exit
+
+Dispatch research-verifier (path to DRAFT)
+  → Gate: research_assess.py --file <path> --gate verifier_exit
+
+Dispatch research-finalizer (path to DRAFT)
+  → Gate: research_assess.py --file <path> --gate finalizer_exit
+```
+
+Announce each dispatch and gate result as the chain progresses:
+```
+Dispatching research-gatherer...
+  → gatherer_exit gate: PASS (4/4 checks)
+Dispatching research-evaluator...
+  → evaluator_exit gate: PASS (2/2 checks)
+```
+
+### Step 5: Error Handling Between Dispatches
+
+After each agent completes, classify the gate check result:
+
+| Result | Classification | Action |
+|--------|---------------|--------|
+| Gate PASS | Success | Dispatch next agent |
+| Gate FAIL | Correctable | Re-dispatch with gate check JSON as context (max 2 retries, 3 total) |
+| File unmodified | Structural | Escalate to user immediately |
+| Agent returned error | Transient then correctable | Retry once without mutation, then with error context, then escalate |
+
+On exhaustion (3 attempts), present to user:
+- Agent name and phase
+- Gate check output (which checks failed)
+- Attempt history (what was tried)
+- Suggested action: "Re-dispatch with guidance" or "skip and complete
+  manually"
+
+### Step 6: Completion
+
+Present completion status to the user. The research document is at the
+path selected during framing.
 
 ## Phase Gates (Mandatory)
 
