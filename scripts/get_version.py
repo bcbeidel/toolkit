@@ -6,7 +6,7 @@
 """Print the WOS plugin version.
 
 Usage:
-    uv run scripts/get_version.py
+    python scripts/get_version.py
 """
 from __future__ import annotations
 

@@ -6,7 +6,7 @@
 """Run WOS validation checks on a project.
 
 Usage:
-    uv run scripts/audit.py [FILE] [--root DIR] [--no-urls] [--json]
+    python scripts/audit.py [FILE] [--root DIR] [--no-urls] [--json]
                             [--fix] [--strict] [--context-max-words N]
                             [--context-min-words N] [--skill-max-lines N]
 """

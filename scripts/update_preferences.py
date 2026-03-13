@@ -6,10 +6,10 @@
 """Update communication preferences in AGENTS.md.
 
 Usage:
-    uv run scripts/update_preferences.py --root . key=value [key=value ...]
+    python scripts/update_preferences.py --root . key=value [key=value ...]
 
 Example:
-    uv run scripts/update_preferences.py --root . directness=blunt verbosity=terse
+    python scripts/update_preferences.py --root . directness=blunt verbosity=terse
 """
 from __future__ import annotations
 

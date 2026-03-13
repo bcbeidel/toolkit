@@ -6,7 +6,7 @@
 """Regenerate all _index.md files and update AGENTS.md areas in a WOS project.
 
 Usage:
-    uv run scripts/reindex.py [--root DIR]
+    python scripts/reindex.py [--root DIR]
 """
 from __future__ import annotations
 

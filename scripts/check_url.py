@@ -6,7 +6,7 @@
 """Check URL reachability using wos.url_checker.
 
 Usage:
-    uv run scripts/check_url.py URL [URL ...]
+    python scripts/check_url.py URL [URL ...]
 """
 from __future__ import annotations
 
