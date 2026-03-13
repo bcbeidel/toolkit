@@ -1,119 +1,58 @@
 ---
 name: Research-Distill Pipeline
-description: Seven-phase orchestration pattern for plans with parallel research and distillation workstreams
+description: Five-phase orchestration pattern for plans with research and distillation workstreams, dispatching via skills
 ---
 
 # Research-Distill Pipeline
 
 Orchestration pattern for executing plans that contain research and
-distillation workstreams. All user-facing gates run in execute-plan's
-foreground conversation. Subagents are autonomous workers that receive
-approved inputs and inlined instructions.
+distillation workstreams. The pipeline invokes skills; skills dispatch
+agents. All execution is sequential (no-nesting constraint — subagents
+cannot dispatch other subagents).
 
 ## When to Apply
 
 Use this pattern when a plan includes tasks that:
 - Investigate multiple topics via research
 - Follow research with distillation to convert findings into context files
-- Can benefit from parallel execution within each phase
 
-## Seven-Phase Pipeline
+## Five-Phase Pipeline
 
-| Phase | Location | Mode | Gate |
-|-------|----------|------|------|
-| 1. Frame | execute-plan | Foreground | User approves all research briefs |
-| 2. Research | subagents | Background (parallel) | All subagents complete |
-| 3. Validate Research | execute-plan | Foreground | All research docs pass audit |
-| 4. Review | execute-plan | Foreground | User approves research batch |
-| 5. Map | distill agent | Foreground | User approves N:M mapping |
-| 6. Distill | subagents | Background (parallel) | All subagents complete |
-| 7. Validate Distill | execute-plan | Foreground | Audit + index sync pass |
+| Phase | Action | Gate |
+|-------|--------|------|
+| 1. Research | Invoke `/wos:research` per task | All research docs pass audit |
+| 2. Validate Research | Run audit on research outputs | No structural failures |
+| 3. Review | Present research summaries to user | User approves research batch |
+| 4. Distill | Invoke `/wos:distill` per batch | All context files pass audit |
+| 5. Validate Distill | Run audit + verify links + index sync | All validation passes |
 
 ---
 
-### Phase 1: Frame
+### Phase 1: Research
 
-Generate research briefs and get user approval before any dispatch.
+For each research task in the plan, invoke `/wos:research` with the
+research question. The skill handles the full chain internally:
 
-**Entry:** Plan has research tasks pending. Execute-plan is in
-research-distill execution mode.
+1. Dispatches `research-framer` → returns structured brief
+2. Presents brief to user → approval gate
+3. Dispatches 6-agent research chain with gate validation between each:
+   gatherer → evaluator → challenger → synthesizer → verifier → finalizer
+4. Runs exit gate check after each agent
 
-**Actions:**
+The skill manages error handling and retries per its own protocol
+(see research skill for details). Execute-plan treats the skill
+invocation as atomic — it either succeeds or reports failure.
 
-For each research task in the current chunk, follow the framing process
-from `frame.md` (loaded as a shared reference):
-
-1. Extract the research question from the plan task description.
-2. Identify the research mode (see `research-modes.md`).
-3. Break into 2-4 sub-questions that structure the investigation.
-4. Declare search strategy: initial search terms and source types.
-5. Write a 1-paragraph research brief per `frame.md`.
-
-Present all briefs to the user as a batch. For each brief, the user
-can **approve** or **reject with feedback**. Rejected briefs are revised
-based on feedback and re-presented.
-
-**Gate:** All briefs approved. Do not dispatch any research subagent
-until every brief in the batch is approved.
+Execute research tasks sequentially. Each `/wos:research` invocation
+completes before the next begins.
 
 ---
 
-### Phase 2: Research
-
-Dispatch research tasks as parallel background subagents.
-
-**Entry:** All research briefs approved in Phase 1.
-
-**Actions:**
-
-Dispatch one subagent per approved brief. Each subagent receives its
-instructions **inlined in the prompt** — subagents do NOT invoke
-`/wos:research` or read plugin cache files.
-
-**Subagent prompt template:**
-
-> You are executing a research investigation autonomously.
->
-> **Research question:** [question from approved brief]
-> **Sub-questions:** [sub-questions from approved brief]
-> **Research mode:** [mode]
-> **Search strategy:** [search terms and source types]
-> **Output path:** docs/research/[target filename]
->
-> **Research brief:**
-> [full brief paragraph from Phase 1]
->
-> Execute the research following the instructions below. Save the
-> completed research document to the output path.
->
-> ---
->
-> [Read and inline the content of these shared reference files:]
-> - `../_shared/references/research/gather-and-extract.md`
-> - `../_shared/references/research/verify-sources.md`
-> - `../_shared/references/research/evaluate-sources-sift.md`
-> - `../_shared/references/research/challenge.md`
-> - `../_shared/references/research/synthesize.md`
-> - `../_shared/references/research/self-verify-claims.md`
-> - `../_shared/references/research/citation-reverify.md`
-> - `../_shared/references/research/finalize.md`
-> - `../_shared/references/research/research-modes.md`
-> - `../_shared/references/research/cli-commands.md`
-
-All research subagents must complete before proceeding to Phase 3.
-Failed agents are re-dispatched with the same inlined references. After
-3 total failures for the same task, escalate to user.
-
-**Gate:** All research subagents returned (DONE, NEEDS_HELP, or BLOCKED).
-All NEEDS_HELP and BLOCKED resolved.
-
----
-
-### Phase 3: Validate Research
+### Phase 2: Validate Research
 
 Verify research outputs are well-formed before user review.
 
-**Entry:** All research subagents completed successfully.
+**Entry:** All research skill invocations completed.
 
 **Actions:**
 
@@ -128,15 +67,16 @@ Verify research outputs are well-formed before user review.
 3. Report any failures to the user with the specific document and issue.
 
 **Gate:** All research documents pass validation. Failures are fixed
-(by re-dispatch or manual intervention) before proceeding.
+(by re-invoking the research skill or manual intervention) before
+proceeding.
 
 ---
 
-### Phase 4: Review
+### Phase 3: Review
 
 Present research results for user review.
 
-**Entry:** All research documents validated in Phase 3.
+**Entry:** All research documents validated in Phase 2.
 
 **Actions:**
 
@@ -150,109 +90,30 @@ Present research results for user review.
    corrections before proceeding.
 
 **Gate:** User explicitly approves the research batch. This is a hard
-gate — do not begin mapping or distillation without explicit approval.
+gate — do not begin distillation without explicit approval.
 
 ---
 
-### Phase 5: Map
+### Phase 4: Distill
 
-Propose how research findings map to context files.
+For each research batch, invoke `/wos:distill` with the research
+document paths. The skill handles the full process internally:
 
-**Entry:** Research batch approved by user in Phase 4.
+1. Dispatches `distill-mapper` → returns proposed mapping
+2. Presents mapping to user → approval gate
+3. Dispatches `distill-worker` with approved mapping
+4. Worker writes context files, runs reindex and audit
 
-**Actions:**
-
-Dispatch a **foreground** distill agent that reads all completed
-research documents from the batch. The agent:
-
-1. Identifies discrete findings across the full research corpus
-2. Applies boundary heuristics from
-   `mapping-guide.md` (loaded as a shared reference) to determine
-   concept boundaries
-3. Proposes an N:M mapping as a table:
-
-| # | Finding | Source Research Doc | Target Context File | Target Area | Words (est.) |
-|---|---------|-------------------|-------------------|-------------|-------------|
-| 1 | [finding] | [research doc] | [filename] | docs/context/[area]/ | ~[N] |
-
-4. Notes confidence level for each finding (carried from research)
-5. Identifies cross-document merges where findings from multiple
-   research docs should combine into one context file
-
-Present the mapping to the user. The user can approve, edit, or reject
-individual rows.
-
-**Gate:** User approves the mapping. Rejected rows are revised based on
-feedback. Approved mapping becomes the dispatch plan for Phase 6.
+Execute distillation tasks sequentially. Each `/wos:distill` invocation
+completes before the next begins.
 
 ---
 
-### Phase 6: Distill
-
-Dispatch distillation tasks as parallel background subagents.
-
-**Entry:** Mapping approved by user in Phase 5.
-
-**Actions:**
-
-Dispatch one subagent per target context file (or small group of related
-files). Each subagent receives its instructions **inlined in the prompt**
-— subagents do NOT invoke `/wos:distill` or read plugin cache files.
-
-**Subagent prompt template:**
-
-> You are writing context files from research findings.
->
-> **Assigned findings:**
-> [list of findings from approved mapping, with source research doc paths]
->
-> **Target files:**
-> [list of target context file paths and areas from approved mapping]
->
-> **Instructions:**
->
-> [Read and inline the content of this shared reference file:]
-> - `../_shared/references/distill/distillation-guidelines.md`
->
-> For each target file, write a 200-800 word context file with this
-> frontmatter:
->
-> ```yaml
-> ---
-> name: [Concise title]
-> description: [One-sentence summary]
-> type: reference
-> sources:
->   - [Carry forward relevant URLs from source research]
-> related:
->   - [Path to source research artifact]
->   - [Path to sibling context files from this batch]
->   - [Path to existing context files in the same area]
-> ---
-> ```
->
-> **Bidirectional linking:** Every context file must link to its source
-> research doc via `related:`. Include cross-references to sibling
-> context files from this batch.
->
-> After writing all files, run:
-> ```bash
-> uv run <plugin-scripts-dir>/reindex.py --root .
-> uv run <plugin-scripts-dir>/audit.py --root . --no-urls
-> ```
-
-All distill subagents must complete before proceeding to Phase 7.
-Failed agents are re-dispatched. After 3 total failures, escalate.
-
-**Gate:** All distill subagents returned successfully.
-
----
-
-### Phase 7: Validate Distill
+### Phase 5: Validate Distill
 
 Verify distillation outputs are well-formed and properly linked.
 
-**Entry:** All distill subagents completed successfully.
+**Entry:** All distill skill invocations completed.
 
 **Actions:**
 
@@ -271,21 +132,50 @@ to the next chunk or plan completion.
 
 ---
 
+## Checkpoint Annotations
+
+When marking plan task checkboxes after skill invocation, include
+agent execution metadata:
+
+```markdown
+- [x] Task N: Research topic X <!-- sha:abc1234 agents:7/7 retries:1 -->
+```
+
+The `agents:N/M` count shows how many agents completed out of the
+chain. The `retries:N` count shows total re-dispatches across all
+agents. This gives resumption context about execution quality.
+
+## Error Escalation from Skills
+
+If a skill invocation fails (agent exhausts retry budget), the
+pipeline records partial progress:
+
+```markdown
+- [ ] Task N: Research topic X <!-- blocked:research-evaluator attempt:3/3 -->
+```
+
+The pipeline presents the failure to the user with the skill's
+error report (agent name, gate check output, attempt history) and
+offers: retry the task, skip it, or abort the pipeline.
+
 ## Key Rules
 
-- **All user-facing gates run in the foreground.** Subagents are
-  autonomous workers — they do not prompt the user for input.
-- **Subagents receive inlined instructions.** Never have subagents
-  invoke `/wos:research` or `/wos:distill` as skills. Never have
-  subagents read from the plugin cache. Inline all instructions in
-  the subagent prompt.
-- **Never chain research and distill in a single subagent.** Multiple
-  hard gates separate the phases. Each phase is a separate wave.
-- **Feedback before progression.** At every user-facing gate (Phases 1,
-  4, 5), corrections are applied before moving to the next phase.
+- **Pipeline invokes skills; skills dispatch agents.** No inline
+  prompt templates or reference file assembly at the pipeline level.
+- **Agents are self-contained.** Each agent has its methodology inlined
+  in its definition. No reference file reading at dispatch time.
+- **One way to run.** The same skills and agents execute whether invoked
+  directly by the user or via this pipeline.
+- **Sequential execution.** No-nesting constraint means all agent
+  dispatch is foreground, sequential. Parallelism is not available.
+- **Never chain research and distill in a single invocation.** Multiple
+  hard gates separate the phases.
+- **Feedback before progression.** At every user-facing gate (brief
+  approval, research review, mapping approval), corrections are applied
+  before moving to the next phase.
 - **Partial execution is acceptable.** If some research tasks fail or
   produce insufficient findings, the user may approve continuing with
   only the successful documents. Do not block the entire pipeline on
   a single failure.
-- **Distill subagents are independent.** Each works from its assigned
-  findings. They do not need to coordinate with each other.
+- **Checkpoint annotations include agent execution metadata.** This
+  persists execution quality across sessions.
