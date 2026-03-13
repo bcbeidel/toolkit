@@ -6,8 +6,7 @@
 """Deploy WOS skills to a target project's .agents/ directory.
 
 Copies skills, scripts, and the wos package into <target>/.agents/ for use
-with GitHub Copilot and other Agent Skills-compatible copilots. Rewrites
-uv run → python and strips preflight references during copy.
+with GitHub Copilot and other Agent Skills-compatible copilots.
 
 Usage:
     python scripts/deploy.py --target /path/to/project [--dry-run]
@@ -16,7 +15,6 @@ from __future__ import annotations
 
 import argparse
 import os
-import re
 import shutil
 import sys
 from pathlib import Path
@@ -36,54 +34,19 @@ if str(_plugin_root) not in sys.path:
 # Directories to copy from plugin root into <target>/.agents/
 SOURCE_DIRS = ["skills", "scripts", "wos"]
 
-# Files and directories to exclude from the deployed output
-EXCLUDE_FILES = {"check_runtime.py", "preflight.md"}
+# Directories and extensions to exclude from the deployed output
 EXCLUDE_DIRS = {"__pycache__"}
 EXCLUDE_EXTENSIONS = {".pyc"}
 
 
 def should_exclude(path: Path) -> bool:
     """Return True if the path should be excluded from deployment."""
-    if path.name in EXCLUDE_FILES:
-        return True
     if path.suffix in EXCLUDE_EXTENSIONS:
         return True
     for part in path.parts:
         if part in EXCLUDE_DIRS:
             return True
     return False
-
-
-def transform_markdown(content: str) -> str:
-    """Apply deployment transforms to markdown content.
-
-    1. Replace ``uv run`` with ``python`` in script invocations.
-    2. Strip preflight.md from references: frontmatter lists.
-    3. Remove preflight instruction lines from body text.
-    """
-    # 1. uv run → python
-    content = re.sub(r'\buv run\b', 'python', content)
-
-    # 2. Strip preflight reference lines from YAML frontmatter
-    #    Matches lines like: "  - ../_shared/references/preflight.md"
-    content = re.sub(
-        r'^[ \t]*-\s+\.\./\_shared/references/preflight\.md\s*\n',
-        '',
-        content,
-        flags=re.MULTILINE,
-    )
-
-    # 3. Remove body lines referencing preflight checks
-    #    e.g. "Run the preflight check (per `preflight.md`), then the entry script:"
-    #    or "Before running any `uv run` command, follow the preflight check..."
-    content = re.sub(
-        r'^.*(?:preflight check|preflight\.md|follow the preflight).*\n',
-        '',
-        content,
-        flags=re.MULTILINE | re.IGNORECASE,
-    )
-
-    return content
 
 
 def discover_files(plugin_root: Path) -> list[Path]:
@@ -114,25 +77,15 @@ def deploy(plugin_root: Path, target: Path, dry_run: bool = False) -> list[str]:
     for rel_path in files:
         src = plugin_root / rel_path
         dst = agents_dir / rel_path
-        is_markdown = rel_path.suffix == ".md"
 
-        if is_markdown:
-            action = f"copy+transform {rel_path} → {dst.relative_to(target)}"
-        else:
-            action = f"copy {rel_path} → {dst.relative_to(target)}"
+        action = f"copy {rel_path} → {dst.relative_to(target)}"
         actions.append(action)
 
         if dry_run:
             continue
 
         dst.parent.mkdir(parents=True, exist_ok=True)
-
-        if is_markdown:
-            content = src.read_text(encoding="utf-8")
-            transformed = transform_markdown(content)
-            dst.write_text(transformed, encoding="utf-8")
-        else:
-            shutil.copy2(str(src), str(dst))
+        shutil.copy2(str(src), str(dst))
 
     return actions
 
