@@ -15,7 +15,10 @@ from wos.frontmatter import parse_frontmatter
 from wos.suffix import type_from_path
 
 # Known frontmatter fields extracted into Document attributes.
-_KNOWN_FIELDS = {"name", "description", "type", "sources", "related", "status"}
+_KNOWN_FIELDS = {
+    "name", "description", "type", "sources", "related", "status",
+    "created_at", "updated_at",
+}
 
 
 @dataclass
@@ -30,6 +33,8 @@ class Document:
     sources: List[str] = field(default_factory=list)
     related: List[str] = field(default_factory=list)
     status: Optional[str] = None
+    created_at: Optional[str] = None
+    updated_at: Optional[str] = None
 
 
 def parse_document(path: str, text: str) -> Document:
@@ -84,6 +89,13 @@ def parse_document(path: str, text: str) -> Document:
             f"must be one of: {', '.join(sorted(_VALID_STATUSES))}"
         )
 
+    created_at: Optional[str] = fm.get("created_at")
+    if not isinstance(created_at, str) and created_at is not None:
+        created_at = str(created_at)
+    updated_at: Optional[str] = fm.get("updated_at")
+    if not isinstance(updated_at, str) and updated_at is not None:
+        updated_at = str(updated_at)
+
     return Document(
         path=path,
         name=name,
@@ -93,4 +105,6 @@ def parse_document(path: str, text: str) -> Document:
         sources=sources,
         related=related,
         status=status,
+        created_at=created_at,
+        updated_at=updated_at,
     )

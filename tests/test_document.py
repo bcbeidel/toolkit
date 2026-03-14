@@ -25,6 +25,8 @@ class TestDocument:
         assert doc.sources == []
         assert doc.related == []
         assert doc.status is None
+        assert doc.created_at is None
+        assert doc.updated_at is None
 
     def test_all_fields(self) -> None:
         from wos.document import Document
@@ -421,3 +423,51 @@ class TestParseDocument:
         )
         doc = parse_document("docs/prompts/code-review.prompt.md", text)
         assert doc.type == "prompt"
+
+    def test_timestamps_parsed(self) -> None:
+        """created_at and updated_at are extracted from frontmatter."""
+        from wos.document import parse_document
+
+        text = (
+            "---\n"
+            "name: Timestamped\n"
+            "description: Has timestamps\n"
+            "created_at: 2026-03-13\n"
+            "updated_at: 2026-03-14\n"
+            "---\n"
+            "# Content\n"
+        )
+        doc = parse_document("test.md", text)
+        assert doc.created_at == "2026-03-13"
+        assert doc.updated_at == "2026-03-14"
+
+    def test_timestamps_optional(self) -> None:
+        """Documents without timestamps default to None."""
+        from wos.document import parse_document
+
+        text = (
+            "---\n"
+            "name: No Timestamps\n"
+            "description: No timestamp fields\n"
+            "---\n"
+            "# Content\n"
+        )
+        doc = parse_document("test.md", text)
+        assert doc.created_at is None
+        assert doc.updated_at is None
+
+    def test_created_at_only(self) -> None:
+        """Only created_at without updated_at works."""
+        from wos.document import parse_document
+
+        text = (
+            "---\n"
+            "name: Created Only\n"
+            "description: Has only created_at\n"
+            "created_at: 2026-01-15\n"
+            "---\n"
+            "# Content\n"
+        )
+        doc = parse_document("test.md", text)
+        assert doc.created_at == "2026-01-15"
+        assert doc.updated_at is None
