@@ -375,7 +375,7 @@ class TestCompoundSuffixIndex:
         """Files with compound suffixes (.research.md) appear in index."""
         from wos.index import generate_index
 
-        (tmp_path / "2026-03-13-api.research.md").write_text(
+        (tmp_path / "api.research.md").write_text(
             "---\nname: API Research\ndescription: API investigation\n---\n"
         )
         (tmp_path / "plain.md").write_text(
@@ -384,7 +384,7 @@ class TestCompoundSuffixIndex:
 
         result = generate_index(tmp_path)
 
-        assert "[2026-03-13-api.research.md]" in result
+        assert "[api.research.md]" in result
         assert "API investigation" in result
         assert "[plain.md]" in result
 

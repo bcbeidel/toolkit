@@ -790,7 +790,7 @@ class TestCompoundSuffixValidation:
         """validate_file works on compound suffix files."""
         from wos.validators import validate_file
 
-        md_file = tmp_path / "docs" / "research" / "2026-03-13-api.research.md"
+        md_file = tmp_path / "docs" / "research" / "api.research.md"
         md_file.parent.mkdir(parents=True)
         md_file.write_text(_md(
             "API Research", "Research on API patterns",
@@ -867,7 +867,7 @@ class TestCompoundSuffixValidation:
         # Set up research area with a compound suffix file
         research_dir = tmp_path / "docs" / "research"
         research_dir.mkdir(parents=True)
-        (research_dir / "2026-03-13-api.research.md").write_text(_md(
+        (research_dir / "api.research.md").write_text(_md(
             "API Research", "Research on APIs",
             type="research",
             sources=["https://example.com/api"],
@@ -891,7 +891,7 @@ class TestCompoundSuffixValidation:
         doc = _make_doc(
             path="docs/context/api/auth.context.md",
             type="context",
-            related=["docs/research/2026-03-13-api.research.md"],
+            related=["docs/research/api.research.md"],
         )
         issues = check_frontmatter(doc)
         # Should not have any type-related failures

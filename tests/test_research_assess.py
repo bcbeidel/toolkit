@@ -349,10 +349,10 @@ class TestScanDirectory:
         research_dir = tmp_path / "docs" / "research"
         research_dir.mkdir(parents=True)
         self._make_research_doc(
-            research_dir / "2026-03-01-topic-a.md", "Topic A", sources_count=3
+            research_dir / "topic-a.md", "Topic A", sources_count=3
         )
         self._make_research_doc(
-            research_dir / "2026-03-02-topic-b.md", "Topic B",
+            research_dir / "topic-b.md", "Topic B",
             draft=True, sources_count=7,
         )
 
@@ -370,7 +370,7 @@ class TestScanDirectory:
         research_dir = tmp_path / "docs" / "research"
         research_dir.mkdir(parents=True)
         self._make_research_doc(
-            research_dir / "2026-03-01-topic.md", "Topic", sources_count=1
+            research_dir / "topic.md", "Topic", sources_count=1
         )
         # Non-research doc
         (research_dir / "not-research.md").write_text(
@@ -393,7 +393,7 @@ class TestScanDirectory:
         research_dir = tmp_path / "docs" / "research"
         research_dir.mkdir(parents=True)
         self._make_research_doc(
-            research_dir / "2026-03-01-topic.md", "Topic", sources_count=1
+            research_dir / "topic.md", "Topic", sources_count=1
         )
         (research_dir / "_index.md").write_text(
             "# Research Index\n\nAuto-generated.\n"
@@ -426,7 +426,7 @@ class TestScanDirectory:
         custom_dir = tmp_path / "custom" / "path"
         custom_dir.mkdir(parents=True)
         self._make_research_doc(
-            custom_dir / "2026-03-01-topic.md", "Custom Topic", sources_count=2
+            custom_dir / "topic.md", "Custom Topic", sources_count=2
         )
 
         result = scan_directory(str(tmp_path), subdir="custom/path")
@@ -440,7 +440,7 @@ class TestScanDirectory:
         research_dir = tmp_path / "docs" / "research"
         research_dir.mkdir(parents=True)
         self._make_research_doc(
-            research_dir / "2026-03-01-topic.md",
+            research_dir / "topic.md",
             "Topic",
             draft=True,
             sources_count=5,

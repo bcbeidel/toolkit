@@ -12,7 +12,7 @@ class TestTypeFromPath:
         assert type_from_path(Path("api-latency.research.md")) == "research"
 
     def test_plan_suffix(self):
-        assert type_from_path(Path("2026-03-13-deploy.plan.md")) == "plan"
+        assert type_from_path(Path("deploy.plan.md")) == "plan"
 
     def test_design_suffix(self):
         assert type_from_path(Path("composable-pipeline.design.md")) == "design"
@@ -65,11 +65,11 @@ class TestStemName:
         assert stem_name(Path("api-latency.research.md")) == "api-latency"
 
     def test_plan_suffix(self):
-        assert stem_name(Path("2026-03-13-deploy.plan.md")) == "2026-03-13-deploy"
+        assert stem_name(Path("deploy.plan.md")) == "deploy"
 
     def test_unknown_compound_keeps_middle(self):
         assert stem_name(Path("data.csv.md")) == "data.csv"
 
-    def test_date_prefixed(self):
-        path = Path("2026-03-13-cross-platform.design.md")
-        assert stem_name(path) == "2026-03-13-cross-platform"
+    def test_hyphenated_name(self):
+        path = Path("cross-platform.design.md")
+        assert stem_name(path) == "cross-platform"

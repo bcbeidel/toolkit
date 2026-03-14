@@ -32,7 +32,7 @@ class TestDocument:
         from wos.document import Document
 
         doc = Document(
-            path="docs/research/2026-02-20-api-review.md",
+            path="docs/research/api-review.md",
             name="API Review",
             description="Research on REST API patterns",
             content="# API Review\n\nFindings.\n",
@@ -93,7 +93,7 @@ class TestParseDocument:
             "\n"
             "Research findings.\n"
         )
-        doc = parse_document("docs/research/2026-02-20-api-review.md", text)
+        doc = parse_document("docs/research/api-review.md", text)
         assert doc.type == "research"
         assert doc.sources == [
             "https://example.com/rest-guide",
@@ -321,7 +321,7 @@ class TestParseDocument:
             "---\n"
             "# Deploy Plan\n"
         )
-        doc = parse_document("docs/plans/2026-03-13-deploy.plan.md", text)
+        doc = parse_document("docs/plans/deploy.plan.md", text)
         assert doc.type == "plan"
 
     def test_frontmatter_type_takes_precedence_over_suffix(self) -> None:
@@ -393,7 +393,7 @@ class TestParseDocument:
             "---\n"
             "# Feature Design\n"
         )
-        doc = parse_document("docs/designs/2026-03-13-feature.design.md", text)
+        doc = parse_document("docs/designs/feature.design.md", text)
         assert doc.type == "design"
 
     def test_type_inferred_from_context_suffix(self) -> None:
