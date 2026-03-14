@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.31.0] - 2026-03-13
 
+### Added
+
+- **Index exclusion for tooling directories.** `_index.md` generation and sync
+  checks now skip `.agents`, `scripts`, `skills`, and `tests` by default. Use
+  `--all-dirs` flag on `reindex.py` or `audit.py` to override. AGENTS.md areas
+  table trimmed accordingly.
+
 ### Changed
 
 - **Renamed `/wos:audit` to `/wos:audit-wos`.** Skill directory renamed from
