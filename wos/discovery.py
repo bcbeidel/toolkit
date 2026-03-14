@@ -197,10 +197,10 @@ def discover_document_dirs(root: Path) -> List[Path]:
         root: Project root directory.
 
     Returns:
-        Sorted list of directory Paths containing managed documents.
+        Sorted list of absolute directory Paths containing managed documents.
     """
     docs = discover_documents(root)
-    dirs = sorted({Path(doc.path).parent for doc in docs})
+    dirs = sorted({(root / doc.path).parent for doc in docs})
     return dirs
 
 
