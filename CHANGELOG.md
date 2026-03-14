@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.31.0] - 2026-03-13
+
+### Changed
+
+- **Renamed `/wos:audit` to `/wos:audit-wos`.** Skill directory renamed from
+  `skills/audit/` to `skills/audit-wos/` for consistency with `init-wos` naming
+  convention. All references updated across documentation, designs, and tests.
+
 ## [0.30.0] - 2026-03-13
 
 ### Added

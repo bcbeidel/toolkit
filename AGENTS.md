@@ -11,7 +11,7 @@ Each directory has an `_index.md` listing all files with descriptions.
 - `skills/_shared/references/_index.md` -- references
 - `skills/_shared/references/distill/_index.md` -- distill
 - `skills/_shared/references/research/_index.md` -- research
-- `skills/audit/_index.md` -- audit
+- `skills/audit-wos/_index.md` -- audit-wos
 - `skills/brainstorm/_index.md` -- brainstorm
 - `skills/brainstorm/references/_index.md` -- references
 - `skills/distill/_index.md` -- distill
@@ -44,7 +44,7 @@ Documents put key insights first and last; supplemental detail in the middle.
 | references | skills/_shared/references |
 | distill | skills/_shared/references/distill |
 | research | skills/_shared/references/research |
-| audit | skills/audit |
+| audit-wos | skills/audit-wos |
 | brainstorm | skills/brainstorm |
 | references | skills/brainstorm/references |
 | distill | skills/distill |

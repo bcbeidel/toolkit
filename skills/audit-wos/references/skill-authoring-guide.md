@@ -2,7 +2,7 @@
 
 How to write effective skills for Claude Code. This guide covers
 structure, conventions, and quality criteria. It also serves as the
-rubric when `/wos:audit` evaluates skill quality.
+rubric when `/wos:audit-wos` evaluates skill quality.
 
 ## The Loading Model
 
@@ -40,7 +40,7 @@ references:
 - Lowercase letters, numbers, and hyphens only
 - Maximum 64 characters
 - Cannot contain "anthropic" or "claude"
-- Should describe the action, not the target: `audit` not `audit-documents`
+- Should describe the action, not the target: `audit-wos` not `audit-documents`
 
 ### `description` (required)
 

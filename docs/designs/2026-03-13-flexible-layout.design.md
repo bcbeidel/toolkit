@@ -133,7 +133,7 @@ structure organically as they go.
    gets research validation (sources required, draft marker check).
 3. `/wos:init-wos` presents four layout patterns, creates initial structure
    matching the selection, and records the choice in AGENTS.md.
-4. `/wos:audit` finds and validates all managed documents regardless of
+4. `/wos:audit-wos` finds and validates all managed documents regardless of
    location.
 5. `scripts/reindex.py` generates `_index.md` for directories containing
    managed documents, wherever they are.

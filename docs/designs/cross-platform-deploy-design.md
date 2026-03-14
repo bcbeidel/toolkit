@@ -40,7 +40,7 @@ Symlinks into `<target>/.agents/`:
     wos/              → <plugin-root>/wos/         # Python package
     scripts/          → <plugin-root>/scripts/      # CLI scripts
     skills/
-      audit/          → <plugin-root>/skills/audit/
+      audit-wos/      → <plugin-root>/skills/audit-wos/
       research/       → <plugin-root>/skills/research/
       ...             # One symlink per skill directory
 ```

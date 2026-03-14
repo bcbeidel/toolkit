@@ -1,5 +1,5 @@
 ---
-name: audit
+name: audit-wos
 description: >
   Validates project content quality and reports frontmatter, URL, index,
   and skill issues. Use when the user asks to "check health", "validate

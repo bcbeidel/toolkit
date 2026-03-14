@@ -91,7 +91,7 @@ instructions, areas table, metadata format, and communication preferences.
 
 ### Skills
 
-Prefix: `/wos:` (e.g., `/wos:init-wos`, `/wos:audit`). 13 skills + 1 command.
+Prefix: `/wos:` (e.g., `/wos:init-wos`, `/wos:audit-wos`). 13 skills + 1 command.
 Full skill ecosystem, lifecycle diagram, and layer descriptions: [OVERVIEW.md](OVERVIEW.md)
 
 ### Validation (8 checks, warn/fail severity)

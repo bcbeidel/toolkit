@@ -16,7 +16,7 @@ class TestDiscoverSkills:
     def test_finds_skill_directories(self) -> None:
         plugin_root = Path(__file__).resolve().parent.parent
         skills = discover_skills(plugin_root)
-        assert "audit" in skills
+        assert "audit-wos" in skills
         assert "research" in skills
 
     def test_excludes_hidden_dirs(self, tmp_path: Path) -> None:
@@ -44,9 +44,9 @@ class TestDeploy:
 
         skills_dir = tmp_path / "skills"
         assert skills_dir.is_dir()
-        audit_link = skills_dir / "audit"
+        audit_link = skills_dir / "audit-wos"
         assert audit_link.is_symlink()
-        assert audit_link.resolve() == (plugin_root / "skills" / "audit").resolve()
+        assert audit_link.resolve() == (plugin_root / "skills" / "audit-wos").resolve()
         assert (audit_link / "SKILL.md").exists()
 
     def test_creates_support_dir_symlinks(self, tmp_path: Path) -> None:
