@@ -98,6 +98,11 @@ def main() -> None:
             " (default: 500, 0 to disable)"
         ),
     )
+    parser.add_argument(
+        "--all-dirs",
+        action="store_true",
+        help="Index-check all directories (skip default exclusions)",
+    )
     args = parser.parse_args()
 
     # Deferred imports — keeps --help fast
@@ -116,11 +121,13 @@ def main() -> None:
             context_min_words=args.context_min_words,
         )
     else:
+        exclude = frozenset() if args.all_dirs else None
         issues = validate_project(
             root,
             verify_urls=not args.no_urls,
             context_max_words=args.context_max_words,
             context_min_words=args.context_min_words,
+            exclude_dirs=exclude,
         )
 
     # --fix: regenerate _index.md files that are out of sync or missing

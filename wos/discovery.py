@@ -14,6 +14,11 @@ from typing import List, Optional
 
 from wos.document import Document, parse_document
 
+# Directories excluded from _index.md generation by default.
+# These contain plugin/tooling files, not user content.
+# Pass exclude_dirs=set() to discover_document_dirs() to include all.
+INDEX_EXCLUDED_DIRS = frozenset({".agents", "scripts", "skills", "tests"})
+
 # ── Gitignore parsing ─────────────────────────────────────────
 
 
@@ -188,20 +193,40 @@ def discover_documents(root: Path) -> List[Document]:
     return documents
 
 
-def discover_document_dirs(root: Path) -> List[Path]:
+def discover_document_dirs(
+    root: Path,
+    exclude_dirs: Optional[frozenset] = None,
+) -> List[Path]:
     """Find directories containing at least one managed document.
 
-    Useful for determining where to generate ``_index.md`` files.
+    Directories whose top-level component matches an excluded name
+    are filtered out by default. Pass ``exclude_dirs=frozenset()``
+    to include all directories.
 
     Args:
         root: Project root directory.
+        exclude_dirs: Top-level directory names to exclude.
+            Defaults to INDEX_EXCLUDED_DIRS.
 
     Returns:
         Sorted list of absolute directory Paths containing managed documents.
     """
+    if exclude_dirs is None:
+        exclude_dirs = INDEX_EXCLUDED_DIRS
+
     docs = discover_documents(root)
-    dirs = sorted({(root / doc.path).parent for doc in docs})
-    return dirs
+    dirs: set[Path] = set()
+    for doc in docs:
+        d = (root / doc.path).parent
+        try:
+            rel = d.relative_to(root)
+        except ValueError:
+            dirs.add(d)
+            continue
+        if rel.parts and rel.parts[0] in exclude_dirs:
+            continue
+        dirs.add(d)
+    return sorted(dirs)
 
 
 def _try_parse(file_path: Path, root: Path) -> Optional[Document]:

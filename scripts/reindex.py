@@ -37,27 +37,43 @@ def main() -> None:
         default=".",
         help="Project root directory (default: current directory)",
     )
+    parser.add_argument(
+        "--all-dirs",
+        action="store_true",
+        help="Include all directories (skip default exclusions)",
+    )
     args = parser.parse_args()
 
     # Deferred imports — keeps --help fast
-    from wos.discovery import discover_document_dirs
+    from wos.discovery import (
+        INDEX_EXCLUDED_DIRS,
+        discover_document_dirs,
+    )
     from wos.index import extract_preamble, generate_index
 
     root = Path(args.root).resolve()
 
     # Discover directories containing managed documents
-    doc_dirs = discover_document_dirs(root)
+    exclude = frozenset() if args.all_dirs else None
+    doc_dirs = discover_document_dirs(root, exclude_dirs=exclude)
 
     if not doc_dirs:
         print("No managed documents found.", file=sys.stderr)
 
     count = 0
+    active_excludes = frozenset() if args.all_dirs else INDEX_EXCLUDED_DIRS
 
     # Also collect parent directories that contain doc_dirs as subdirs
     all_dirs = set(doc_dirs)
     for d in doc_dirs:
         parent = d.parent
         while parent != root and parent != parent.parent:
+            try:
+                rel = parent.relative_to(root)
+            except ValueError:
+                break
+            if rel.parts and rel.parts[0] in active_excludes:
+                break
             all_dirs.add(parent)
             parent = parent.parent
 

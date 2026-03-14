@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from wos.document import Document, parse_document
 from wos.index import check_index_sync, extract_preamble
@@ -416,6 +416,7 @@ def validate_project(
     verify_urls: bool = True,
     context_max_words: int = 800,
     context_min_words: int = 100,
+    exclude_dirs: Optional[frozenset] = None,
 ) -> List[dict]:
     """Validate all managed documents in a project.
 
@@ -427,6 +428,9 @@ def validate_project(
     Args:
         root: Project root directory.
         verify_urls: If False, skip source URL reachability checks.
+        exclude_dirs: Top-level directory names to exclude from index
+            checks. Defaults to INDEX_EXCLUDED_DIRS. Pass frozenset()
+            to include all.
 
     Returns:
         List of all issue dicts found.
@@ -452,7 +456,7 @@ def validate_project(
         issues.extend(check_related_paths(doc, root))
 
     # Index sync checks on directories containing managed documents
-    doc_dirs = discover_document_dirs(root)
+    doc_dirs = discover_document_dirs(root, exclude_dirs=exclude_dirs)
     for directory in doc_dirs:
         issues.extend(check_all_indexes(directory))
 
