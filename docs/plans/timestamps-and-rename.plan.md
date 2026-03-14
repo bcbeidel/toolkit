@@ -2,7 +2,7 @@
 name: Timestamps and Date Prefix Removal
 description: Add created_at/updated_at frontmatter fields and remove date prefixes from filenames
 type: plan
-status: executing
+status: completed
 related:
   - https://github.com/bcbeidel/wos/issues/199
   - https://github.com/bcbeidel/wos/issues/200
@@ -95,12 +95,12 @@ backfill `created_at` during the rename step.
 - Rename: `docs/plans/2026-03-13-cross-platform-deploy.md`
 - Modify: renamed files' `related` frontmatter
 
-- [ ] **Step 1:** Rename `docs/designs/2026-03-13-cross-platform-deploy-design.md` → `docs/designs/cross-platform-deploy-design.md`
-- [ ] **Step 2:** Rename `docs/plans/2026-03-13-cross-platform-deploy.md` → `docs/plans/cross-platform-deploy.plan.md`
-- [ ] **Step 3:** Add `created_at: 2026-03-13` to both renamed files' frontmatter
-- [ ] **Step 4:** Update `related` fields in both files — remove `2026-03-13-` prefix from all cross-references. Remove references to missing research files if they no longer exist.
-- [ ] **Step 5:** Verify: `ls docs/designs/ docs/plans/` — no date-prefixed files remain
-- [ ] **Step 6:** Commit
+- [x] **Step 1:** Rename `docs/designs/2026-03-13-cross-platform-deploy-design.md` → `docs/designs/cross-platform-deploy-design.md` <!-- sha:35ee18d -->
+- [x] **Step 2:** Rename `docs/plans/2026-03-13-cross-platform-deploy.md` → `docs/plans/cross-platform-deploy.plan.md` <!-- sha:35ee18d -->
+- [x] **Step 3:** Add `created_at: 2026-03-13` to both renamed files' frontmatter <!-- sha:35ee18d -->
+- [x] **Step 4:** Update `related` fields in both files — remove `2026-03-13-` prefix from all cross-references. Remove references to missing research files if they no longer exist. <!-- sha:35ee18d -->
+- [x] **Step 5:** Verify: `ls docs/designs/ docs/plans/` — no date-prefixed files remain <!-- sha:35ee18d -->
+- [x] **Step 6:** Commit <!-- sha:35ee18d -->
 
 ---
 
@@ -113,13 +113,13 @@ backfill `created_at` during the rename step.
 - Modify: `tests/test_validators.py`
 - Modify: `tests/test_research_assess.py`
 
-- [ ] **Step 1:** In `test_suffix.py`: change `2026-03-13-deploy.plan.md` → `deploy.plan.md`, `2026-03-13-cross-platform.design.md` → `cross-platform.design.md`, update expected stem_name outputs accordingly
-- [ ] **Step 2:** In `test_document.py`: change `2026-02-20-api-review.md` → `api-review.md`, `2026-03-13-deploy.plan.md` → `deploy.plan.md`, `2026-03-13-feature.design.md` → `feature.design.md`
-- [ ] **Step 3:** In `test_index.py`: change `2026-03-13-api.research.md` → `api.research.md`
-- [ ] **Step 4:** In `test_validators.py`: change `2026-03-13-api.research.md` → `api.research.md` in compound suffix tests
-- [ ] **Step 5:** In `test_research_assess.py`: change any `2026-03-` prefixed filenames to unprefixed versions
-- [ ] **Step 6:** Verify: `python -m pytest tests/ -v` — all tests pass
-- [ ] **Step 7:** Commit
+- [x] **Step 1:** In `test_suffix.py`: change `2026-03-13-deploy.plan.md` → `deploy.plan.md`, `2026-03-13-cross-platform.design.md` → `cross-platform.design.md`, update expected stem_name outputs accordingly <!-- sha:72d4f46 -->
+- [x] **Step 2:** In `test_document.py`: change `2026-02-20-api-review.md` → `api-review.md`, `2026-03-13-deploy.plan.md` → `deploy.plan.md`, `2026-03-13-feature.design.md` → `feature.design.md` <!-- sha:72d4f46 -->
+- [x] **Step 3:** In `test_index.py`: change `2026-03-13-api.research.md` → `api.research.md` <!-- sha:72d4f46 -->
+- [x] **Step 4:** In `test_validators.py`: change `2026-03-13-api.research.md` → `api.research.md` in compound suffix tests <!-- sha:72d4f46 -->
+- [x] **Step 5:** In `test_research_assess.py`: change any `2026-03-` prefixed filenames to unprefixed versions <!-- sha:72d4f46 -->
+- [x] **Step 6:** Verify: `python -m pytest tests/ -v` — all tests pass <!-- sha:72d4f46 -->
+- [x] **Step 7:** Commit <!-- sha:72d4f46 -->
 
 ---
 
@@ -128,15 +128,15 @@ backfill `created_at` during the rename step.
 **Files:**
 - Regenerate: `docs/plans/_index.md`, `docs/designs/_index.md`, `docs/research/_index.md`
 
-- [ ] **Step 1:** Run `python scripts/reindex.py` to regenerate all `_index.md` files
-- [ ] **Step 2:** Verify: `python scripts/audit.py --no-urls` — no index sync failures
-- [ ] **Step 3:** Commit
+- [x] **Step 1:** Run `python scripts/reindex.py` to regenerate all `_index.md` files <!-- sha:8aec4dd -->
+- [x] **Step 2:** Verify: `python scripts/audit.py --no-urls` — no index sync failures <!-- sha:8aec4dd -->
+- [x] **Step 3:** Commit <!-- sha:8aec4dd -->
 
 ---
 
 ## Validation
 
-- [ ] `python -m pytest tests/ -v` — all tests pass
-- [ ] `python scripts/audit.py --no-urls` — no fail-severity issues related to timestamps or index sync
-- [ ] `git diff --name-only main` — no files with `YYYY-MM-DD-` prefix pattern remain in docs/
-- [ ] `grep -r "2026-03-13-" tests/` — no date-prefixed references remain in test files
+- [x] `python -m pytest tests/ -v` — 370 passed
+- [x] `python scripts/audit.py --no-urls` — no fail-severity issues from our changes (pre-existing prompts index desync only)
+- [x] `git diff --name-only main` — no files with `YYYY-MM-DD-` prefix pattern remain in docs/
+- [x] `grep -r "2026-03-13-" tests/` — zero matches
