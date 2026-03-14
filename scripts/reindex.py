@@ -39,37 +39,31 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    # Deferred import — keeps --help fast
+    # Deferred imports — keeps --help fast
+    from wos.discovery import discover_document_dirs
     from wos.index import extract_preamble, generate_index
 
     root = Path(args.root).resolve()
 
-    # Check that the docs/ directory exists with content subdirectories
-    docs_dir = root / "docs"
+    # Discover directories containing managed documents
+    doc_dirs = discover_document_dirs(root)
 
-    if not docs_dir.is_dir():
-        print(
-            f"No docs/ directory found under {root}",
-            file=sys.stderr,
-        )
-        sys.exit(1)
+    if not doc_dirs:
+        print("No managed documents found.", file=sys.stderr)
 
     count = 0
 
-    for subdir in sorted(docs_dir.iterdir()):
-        if not subdir.is_dir():
-            continue
+    # Also collect parent directories that contain doc_dirs as subdirs
+    all_dirs = set(doc_dirs)
+    for d in doc_dirs:
+        parent = d.parent
+        while parent != root and parent != parent.parent:
+            all_dirs.add(parent)
+            parent = parent.parent
 
-        # Also index the top-level subdir itself
-        if _reindex_directory(subdir, generate_index, extract_preamble):
+    for directory in sorted(all_dirs):
+        if _reindex_directory(directory, generate_index, extract_preamble):
             count += 1
-
-        # Walk all subdirectories
-        for dirpath in sorted(subdir.rglob("*")):
-            if not dirpath.is_dir():
-                continue
-            if _reindex_directory(dirpath, generate_index, extract_preamble):
-                count += 1
 
     print(f"Wrote {count} _index.md files.")
 
