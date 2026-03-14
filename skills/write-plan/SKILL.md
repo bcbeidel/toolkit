@@ -41,8 +41,15 @@ testable software on its own.
 
 ### 3. Write the Plan
 
-Save to `docs/plans/YYYY-MM-DD-<feature-name>.plan.md` using the
-[Plan Document Format](../_shared/references/plan-format.md).
+Save location depends on the project's layout hint (read from AGENTS.md
+`<!-- wos:layout: ... -->` comment):
+- **separated**: `docs/plans/YYYY-MM-DD-<feature-name>.plan.md`
+- **co-located**: same directory as the related design doc
+- **flat**: `docs/YYYY-MM-DD-<feature-name>.plan.md`
+- **none** or missing: ask the user where to save
+- User can always override the suggested location.
+
+Use the [Plan Document Format](../_shared/references/plan-format.md).
 
 See [Format Guide](references/format-guide.md) for how to write each section
 effectively. Use the [Plan Template](references/plan-template.md) as a
@@ -159,5 +166,5 @@ Plan documents use WOS frontmatter:
       - docs/designs/YYYY-MM-DD-<name>.design.md
     ---
 
-Save to `docs/plans/YYYY-MM-DD-<feature-name>.plan.md`. The `related` field
-links to design docs, context files, or other plans.
+Save location follows the project's layout hint (see step 3 above).
+The `related` field links to design docs, context files, or other plans.

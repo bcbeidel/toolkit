@@ -62,9 +62,13 @@ mapping table.
 Present the mapping table to the user. User approves, edits, or rejects
 individual rows.
 
-**Target Area must be under `docs/context/`.** If the user requests a
-different location, write to `docs/context/` first (the canonical
-location), then offer to copy files to the additional location.
+**Target location** depends on the project's layout hint (read from
+AGENTS.md `<!-- wos:layout: ... -->` comment):
+- **separated**: `docs/context/<area>/`
+- **co-located**: same directory as the source research document
+- **flat**: `docs/`
+- **none** or missing: ask the user where to save
+- User can always override the suggested location.
 
 If rejected, re-compose and dispatch the mapper with the user's
 feedback. Do not proceed without approval.

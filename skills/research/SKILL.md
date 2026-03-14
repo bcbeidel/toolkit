@@ -30,8 +30,8 @@ references:
 
 Conduct structured investigations using the SIFT framework (Stop,
 Investigate the source, Find better coverage, Trace claims). Produces
-research documents in `/docs/research/` with verified sources
-and structured findings.
+research documents with verified sources and structured findings.
+Save location follows the project's layout hint in AGENTS.md.
 
 ## Mode Detection
 
@@ -270,8 +270,16 @@ STOP at each gate. If the condition is not met, complete it before proceeding.
 
 ## Output Document Format
 
-The final research document is placed at `docs/research/{date}-{slug}.research.md`
-with frontmatter following the document standards in AGENTS.md:
+The final research document is saved with a `{date}-{slug}.research.md`
+filename. Save location depends on the project's layout hint (read from
+AGENTS.md `<!-- wos:layout: ... -->` comment):
+- **separated**: `docs/research/`
+- **co-located**: same directory as related documents
+- **flat**: `docs/`
+- **none** or missing: ask the user where to save
+- User can always override the suggested location.
+
+Frontmatter follows the document standards in AGENTS.md:
 
 ```yaml
 ---
