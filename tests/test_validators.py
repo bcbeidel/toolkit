@@ -134,6 +134,65 @@ class TestCheckFrontmatter:
         assert not any("related" in i["issue"].lower() for i in issues)
 
 
+# ── check_timestamps ──────────────────────────────────────────
+
+
+class TestCheckTimestamps:
+    def test_valid_dates_no_issues(self) -> None:
+        from wos.validators import check_timestamps
+
+        doc = _make_doc(created_at="2026-03-13", updated_at="2026-03-14")
+        issues = check_timestamps(doc)
+        assert issues == []
+
+    def test_missing_dates_no_issues(self) -> None:
+        from wos.validators import check_timestamps
+
+        doc = _make_doc()
+        issues = check_timestamps(doc)
+        assert issues == []
+
+    def test_invalid_created_at_warns(self) -> None:
+        from wos.validators import check_timestamps
+
+        doc = _make_doc(created_at="March 13, 2026")
+        issues = check_timestamps(doc)
+        assert len(issues) == 1
+        assert issues[0]["severity"] == "warn"
+        assert "created_at" in issues[0]["issue"]
+
+    def test_invalid_updated_at_warns(self) -> None:
+        from wos.validators import check_timestamps
+
+        doc = _make_doc(updated_at="2026/03/14")
+        issues = check_timestamps(doc)
+        assert len(issues) == 1
+        assert issues[0]["severity"] == "warn"
+        assert "updated_at" in issues[0]["issue"]
+
+    def test_updated_before_created_warns(self) -> None:
+        from wos.validators import check_timestamps
+
+        doc = _make_doc(created_at="2026-03-14", updated_at="2026-03-13")
+        issues = check_timestamps(doc)
+        assert len(issues) == 1
+        assert "before" in issues[0]["issue"]
+
+    def test_same_dates_no_warning(self) -> None:
+        from wos.validators import check_timestamps
+
+        doc = _make_doc(created_at="2026-03-13", updated_at="2026-03-13")
+        issues = check_timestamps(doc)
+        assert issues == []
+
+    def test_created_at_only_valid(self) -> None:
+        from wos.validators import check_timestamps
+
+        doc = _make_doc(created_at="2026-01-15")
+        issues = check_timestamps(doc)
+        assert issues == []
+
+
 # ── check_content ─────────────────────────────────────────────
 
 
