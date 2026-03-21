@@ -50,11 +50,13 @@ Full descriptions: [Design Principles](PRINCIPLES.md)
 
 ### Package Structure
 
-- `wos/` — importable Python package (10 modules + 2 subpackages)
+- `wos/` — importable Python package (12 modules + 2 subpackages)
   - `frontmatter.py` — custom YAML subset parser (stdlib-only)
   - `document.py` — `Document` dataclass + `parse_document()`
+  - `discovery.py` — document discovery via project tree walking (.gitignore-aware)
+  - `suffix.py` — typed file suffix utilities (compound suffix extraction, markdown discovery)
   - `index.py` — `_index.md` generation + sync checking (preamble-preserving)
-  - `validators.py` — 7 validation checks with warn/fail severity (frontmatter, content length, draft markers, URLs, related paths, index sync, project files)
+  - `validators.py` — 8 validation checks with warn/fail severity (frontmatter, timestamps, content length, draft markers, URLs, related paths, index sync, project files)
   - `skill_audit.py` — skill instruction density measurement (line counting, size thresholds)
   - `url_checker.py` — HTTP HEAD/GET URL reachability (urllib)
   - `agents_md.py` — marker-based AGENTS.md section management

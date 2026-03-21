@@ -2,7 +2,7 @@
 name: Flexible Document Layout
 description: Decouple WOS document management from fixed directory hierarchies — discover documents by frontmatter, type by suffix/metadata, let users organize freely
 type: design
-status: draft
+status: completed
 related:
   - docs/designs/cross-platform-deploy-design.md
 ---

@@ -1,7 +1,7 @@
 """Per-file and project-wide validation checks.
 
-Provides seven individual checks (frontmatter, content length, draft
-markers, source URLs, related paths, index sync, project files) and two
+Provides eight individual checks (frontmatter, timestamps, content length,
+draft markers, source URLs, related paths, index sync, project files) and two
 composite functions (validate_file, validate_project) that orchestrate
 them.
 

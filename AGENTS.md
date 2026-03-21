@@ -5,8 +5,8 @@
 
 Each directory has an `_index.md` listing all files with descriptions.
 - `docs/context/_index.md` -- Project context documents covering domain knowledge, patterns, and conventions.
-- `docs/designs/_index.md` -- No active designs.
-- `docs/plans/_index.md` -- No active plans.
+- `docs/designs/_index.md` -- Design documents for WOS features.
+- `docs/plans/_index.md` -- Implementation plans for WOS features.
 - `docs/research/_index.md` -- research
 
 Each `.md` file starts with YAML metadata (between `---` lines).
@@ -17,8 +17,8 @@ Documents put key insights first and last; supplemental detail in the middle.
 | Area | Path |
 |------|------|
 | Project context documents covering domain knowledge, patterns, and conventions. | docs/context |
-| No active designs. | docs/designs |
-| No active plans. | docs/plans |
+| Design documents for WOS features. | docs/designs |
+| Implementation plans for WOS features. | docs/plans |
 | research | docs/research |
 
 ### File Metadata Format

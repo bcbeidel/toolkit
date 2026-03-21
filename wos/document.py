@@ -14,12 +14,6 @@ from typing import List, Optional
 from wos.frontmatter import parse_frontmatter
 from wos.suffix import type_from_path
 
-# Known frontmatter fields extracted into Document attributes.
-_KNOWN_FIELDS = {
-    "name", "description", "type", "sources", "related", "status",
-    "created_at", "updated_at",
-}
-
 
 @dataclass
 class Document:

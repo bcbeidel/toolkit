@@ -35,7 +35,7 @@ wos/
   document.py          # Document dataclass + parse_document()
   frontmatter.py       # Custom YAML subset parser (stdlib-only)
   index.py             # _index.md generation + sync checking
-  validators.py        # 5 validation checks
+  validators.py        # 8 validation checks
   url_checker.py       # HTTP HEAD/GET URL reachability
   agents_md.py         # Marker-based AGENTS.md section management
   markers.py           # Shared marker-based section replacement
