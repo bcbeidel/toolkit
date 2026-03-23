@@ -7,7 +7,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-
 _CONTEXT_DOC = """\
 ---
 name: Auth Patterns

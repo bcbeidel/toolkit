@@ -3,8 +3,8 @@ name: challenge
 description: >
   Surfaces and sanity-checks assumptions behind an output or recent
   conversation against project context and research documents. Use when
-  the user asks to "check your assumptions", "challenge this", "what are
-  you assuming", "sanity check", "ground check", "challenge reasoning",
+  the user asks to "check assumptions", "challenge this", "what am I
+  assuming", "sanity check", "ground check", "challenge reasoning",
   "what assumptions", or "verify reasoning".
 argument-hint: "[file path or quoted output]"
 user-invocable: true

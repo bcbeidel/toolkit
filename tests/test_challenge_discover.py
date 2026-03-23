@@ -2,9 +2,6 @@
 
 from __future__ import annotations
 
-import os
-
-
 _ARTIFACT_WITH_RELATED = """\
 ---
 name: Test Artifact
@@ -80,7 +77,9 @@ def test_keyword_score_partial_match():
     """Partial overlap scores between 0 and 1."""
     from wos.challenge.discover import keyword_score
 
-    score = keyword_score("OAuth authentication", "Database connection pooling patterns")
+    score = keyword_score(
+        "OAuth authentication", "Database connection pooling patterns"
+    )
     assert score == 0.0
 
 

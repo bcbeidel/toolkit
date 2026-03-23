@@ -6,8 +6,8 @@ import os
 from pathlib import Path
 from typing import Callable, Dict, List
 
-from wos.document import Document, parse_document
 from wos.discovery import discover_documents
+from wos.document import Document, parse_document
 
 
 def discover_related(artifact_path: str, project_root: str) -> List[Document]:
@@ -44,7 +44,8 @@ def discover_related(artifact_path: str, project_root: str) -> List[Document]:
         if not full.is_file():
             continue
         try:
-            related_doc = parse_document(str(rel_path), full.read_text(encoding="utf-8"))
+            content = full.read_text(encoding="utf-8")
+            related_doc = parse_document(str(rel_path), content)
             results.append(related_doc)
         except ValueError:
             continue
