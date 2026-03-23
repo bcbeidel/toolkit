@@ -1,0 +1,223 @@
+---
+name: Challenge Skill
+description: Design for /wos:challenge — a skill that enumerates assumptions behind an output, sanity-checks them against project context and research, and proposes corrections for gaps
+type: design
+status: draft
+related:
+  - docs/context/validation-architecture.md
+---
+
+## Purpose
+
+Create `/wos:challenge`, a skill that surfaces implicit assumptions and
+reasoning behind a specific output or recent conversation, then checks those
+assumptions against the project's context and research documents. Where
+assumptions conflict with evidence or lack coverage, it proposes specific
+corrections for user approval.
+
+The skill sits in the feedback layer — independent of the delivery pipeline but
+recommended at key checkpoints (post-design, post-plan).
+
+## Trigger
+
+**Skill name:** `challenge`
+**Prefix:** `/wos:challenge`
+**User-invocable:** yes
+
+**Trigger phrases:** "check your assumptions", "challenge this", "what are you
+assuming", "sanity check", "ground check", "challenge reasoning", "what
+assumptions", "verify reasoning"
+
+## Input Modes
+
+**Conversation mode:** No argument. The skill introspects on the most recent
+substantive output in the current session and extracts assumptions from it.
+
+**Artifact mode:** User provides a file path or quotes specific output. The
+skill operates on that artifact.
+
+## Lifecycle Position
+
+Independent (feedback layer). Not gated by upstream status. Recommended at:
+
+- After `/wos:brainstorm` produces a design, before `/wos:write-plan`
+- After `/wos:write-plan` produces a plan, before `/wos:execute-plan`
+- Any time the user wants to pressure-test reasoning
+
+Other skills may suggest running `/wos:challenge` at these points but never
+invoke it automatically. Always user-triggered.
+
+## Workflow
+
+Four sequential phases with user gates between Phase 1→2 and Phase 3→4.
+
+### Phase 1 — Extract Assumptions
+
+The LLM enumerates assumptions and reasoning from the input. Each assumption
+is stated as a testable claim — specific, non-trivial, and falsifiable.
+
+Output: numbered markdown list shared with the user.
+
+**User gate:** "Here are the assumptions I identified. Want to add, remove, or
+rephrase any before I check them?"
+
+The user may modify the list. Numbering stabilizes after this gate and persists
+through all subsequent phases.
+
+### Phase 2 — Layered Search
+
+For each assumption, find relevant context and research documents using two
+layers:
+
+1. **Explicit layer:** If the input is an artifact with `related` frontmatter,
+   parse those paths and read the linked documents first.
+2. **Broad layer:** Run `scripts/discover_context.py` to scan all `.md` files
+   under `docs/context/` and `docs/research/`, matching each assumption
+   against frontmatter `name` and `description` fields via keyword overlap
+   scoring. Returns ranked candidate documents per assumption.
+
+The LLM then reads matched documents and evaluates which assumptions each
+document supports, contradicts, or is silent on.
+
+No user-facing output in this phase — discovery happens behind the scenes.
+
+### Phase 3 — Gap Analysis
+
+Present a summary table:
+
+| # | Assumption | Status | Evidence | Source |
+|---|-----------|--------|----------|--------|
+| 1 | Users authenticate via OAuth | Aligned | Context confirms OAuth pattern | `docs/context/auth.md` |
+| 2 | Rate limits are 1000 req/min | Gap | Research shows 500 req/min | `docs/research/api-limits.md` |
+| 3 | Cache invalidation is eventual | No coverage | No docs address this | — |
+
+**Statuses:**
+
+- **Aligned** — A context or research document supports the assumption.
+- **Gap** — A document contradicts or conflicts with the assumption.
+- **No coverage** — No documents address the assumption.
+
+Below the table, a brief narrative: "X assumptions aligned, Y gaps found, Z
+with no coverage."
+
+### Phase 4 — Propose Corrections
+
+For each Gap item, draft a specific correction:
+
+- **Proposed correction:** Revised assumption text or concrete change to the
+  artifact
+- **Rationale:** Why, citing the source document
+- **Action:** `accept` / `adjust` / `skip`
+
+For each No Coverage item, recommend whether:
+
+- Research is needed (suggest `/wos:research`)
+- The assumption is safe to hold given current evidence
+
+**User gate:** "Here are my proposed corrections. Approve, adjust, or skip
+each one."
+
+After the user responds, the skill applies accepted corrections to the artifact
+(artifact mode) or summarizes the revised assumption set (conversation mode).
+No automatic handoff to another skill.
+
+## Architecture
+
+### Approach: Hybrid (Skill + Python Module)
+
+Follows "structure in code, quality in skills." Python handles deterministic
+document discovery. The LLM handles judgment: extracting assumptions, evaluating
+alignment, and proposing corrections.
+
+### New Python Module: `wos/challenge/`
+
+**`wos/challenge/__init__.py`** — Empty.
+
+**`wos/challenge/discover.py`** — Document discovery:
+
+- `discover_related(artifact_path: str) -> list[Document]` — Parses the
+  artifact's frontmatter, resolves `related` paths, returns parsed documents.
+- `discover_by_relevance(assumptions: list[str], docs_root: str) -> dict[str, list[Document]]`
+  — Scans all `.md` files under `docs/context/` and `docs/research/`, matches
+  each assumption against frontmatter `name` and `description` using keyword
+  overlap scoring (basic tokenization + set intersection). Returns mapping of
+  assumption text → ranked candidate documents.
+
+Reuses `parse_document()` from `wos/document.py`. No new dependencies (stdlib
+only).
+
+### New Script: `scripts/discover_context.py`
+
+CLI entry point for the discovery module:
+
+```
+python scripts/discover_context.py --assumptions "claim 1" "claim 2" --root .
+```
+
+Optional `--artifact path/to/file.md` to include the explicit layer.
+
+Output: JSON mapping each assumption to ranked matches:
+
+```json
+[
+  {
+    "assumption": "Users authenticate via OAuth",
+    "matches": [
+      {"path": "docs/context/auth.md", "name": "Auth Patterns", "description": "...", "score": 0.82}
+    ]
+  }
+]
+```
+
+The script narrows the search space. The LLM reads matched docs and applies
+judgment — the script does not evaluate alignment.
+
+### Skill Directory
+
+```
+skills/challenge/
+  SKILL.md
+  references/
+    assumption-quality.md    # What makes a well-stated assumption
+    gap-analysis-guide.md    # How to evaluate alignment/gap/no-coverage
+```
+
+## Key Rules
+
+1. **Read-only until approved.** No file edits or artifact modifications until
+   the user explicitly approves corrections in Phase 4.
+2. **Assumptions are numbered and stable.** Once shared in Phase 1, numbering
+   persists through all phases. User references corrections by number.
+3. **Show your sources.** Every alignment or gap claim cites a specific
+   document path. "No coverage" is explicit, not a missing cell.
+4. **Don't manufacture evidence.** If no doc addresses an assumption, report
+   "No coverage." Don't stretch tangential docs to claim alignment.
+5. **Artifact mode inherits context.** When pointed at a file with `related`
+   frontmatter, those links are the starting point, not a ceiling.
+6. **Conversation mode scopes to the recent exchange.** Focus on the most
+   recent substantive output unless the user specifies otherwise.
+7. **Corrections are proposals, not commands.** Frame as "Consider revising X
+   to Y because Z." The user has final say.
+
+## Edge Cases
+
+- **No context/research docs exist:** Report clearly, skip Phases 2–3. Suggest
+  `/wos:research` to build the knowledge base.
+- **All assumptions aligned:** Present the table, done. No corrections phase.
+- **Artifact has no frontmatter or no `related` field:** Skip the explicit
+  layer, go straight to broad discovery. Not an error.
+- **Too many assumptions (>15):** Ask the user to prioritize before proceeding.
+- **User adds assumptions in Phase 1 gate:** Merge into the numbered list and
+  proceed.
+
+## Integration Points
+
+Documented in skill references, not enforced in code. Other skills may suggest
+`/wos:challenge` at natural checkpoints:
+
+- `/wos:brainstorm`: "Design approved. Want to `/wos:challenge` the
+  assumptions before planning?"
+- `/wos:write-plan`: "Plan ready. Want to `/wos:challenge` the reasoning
+  before execution?"
+
+Invocation is always user-triggered.
