@@ -2,7 +2,53 @@
 
 from __future__ import annotations
 
-from typing import Callable
+import os
+from pathlib import Path
+from typing import Callable, List
+
+from wos.document import Document, parse_document
+
+
+def discover_related(artifact_path: str, project_root: str) -> List[Document]:
+    """Parse an artifact's related frontmatter and return linked documents.
+
+    Resolves each path in the ``related`` field relative to project_root.
+    Skips paths that don't exist or fail to parse.
+
+    Args:
+        artifact_path: Path to the artifact file.
+        project_root: Project root for resolving relative paths.
+
+    Returns:
+        List of parsed Document instances for valid related paths.
+    """
+    if not os.path.isfile(artifact_path):
+        return []
+
+    with open(artifact_path, encoding="utf-8") as f:
+        text = f.read()
+
+    try:
+        doc = parse_document(artifact_path, text)
+    except ValueError:
+        return []
+
+    if not doc.related:
+        return []
+
+    results: List[Document] = []
+    root = Path(project_root)
+    for rel_path in doc.related:
+        full = root / rel_path
+        if not full.is_file():
+            continue
+        try:
+            related_doc = parse_document(str(rel_path), full.read_text(encoding="utf-8"))
+            results.append(related_doc)
+        except ValueError:
+            continue
+
+    return results
 
 
 def keyword_score(assumption: str, text: str) -> float:
