@@ -131,20 +131,25 @@ alignment, and proposing corrections.
 
 ### New Python Module: `wos/challenge/`
 
+Builds on the existing `wos/discovery.py` module, which already handles
+tree-walking and frontmatter parsing via `discover_documents(root)`. The
+challenge module adds keyword-scoring on top — it does not duplicate discovery.
+
 **`wos/challenge/__init__.py`** — Empty.
 
-**`wos/challenge/discover.py`** — Document discovery:
+**`wos/challenge/discover.py`** — Assumption-to-document matching:
 
 - `discover_related(artifact_path: str) -> list[Document]` — Parses the
   artifact's frontmatter, resolves `related` paths, returns parsed documents.
+  Uses `parse_document()` from `wos/document.py`.
 - `discover_by_relevance(assumptions: list[str], docs_root: str) -> dict[str, list[Document]]`
-  — Scans all `.md` files under `docs/context/` and `docs/research/`, matches
-  each assumption against frontmatter `name` and `description` using keyword
-  overlap scoring (basic tokenization + set intersection). Returns mapping of
-  assumption text → ranked candidate documents.
+  — Calls `wos.discovery.discover_documents(docs_root)` to get all managed
+  documents, then scores each against each assumption using keyword overlap
+  (basic tokenization + set intersection on `name` and `description` fields).
+  Returns mapping of assumption text → ranked candidate documents.
 
-Reuses `parse_document()` from `wos/document.py`. No new dependencies (stdlib
-only).
+Reuses `discover_documents()` from `wos/discovery.py` and `parse_document()`
+from `wos/document.py`. No new dependencies (stdlib only).
 
 ### New Script: `scripts/discover_context.py`
 
@@ -171,6 +176,20 @@ Output: JSON mapping each assumption to ranked matches:
 
 The script narrows the search space. The LLM reads matched docs and applies
 judgment — the script does not evaluate alignment.
+
+### Script Invocation from SKILL.md
+
+The SKILL.md instructs the LLM to run the script via Bash during Phase 2:
+
+1. LLM extracts the assumption list from Phase 1 as quoted strings.
+2. LLM runs: `python <plugin-scripts-dir>/discover_context.py --assumptions "claim 1" "claim 2" --root <project-root>`
+   (with `--artifact <path>` if in artifact mode).
+3. LLM parses the JSON output to get ranked document matches per assumption.
+4. LLM reads the top-scoring documents using the Read tool.
+5. LLM evaluates alignment/gap/no-coverage using judgment.
+
+This follows the same pattern as `/wos:audit-wos`, which runs
+`python <plugin-scripts-dir>/audit.py` and interprets the output.
 
 ### Skill Directory
 
@@ -209,6 +228,9 @@ skills/challenge/
 - **Too many assumptions (>15):** Ask the user to prioritize before proceeding.
 - **User adds assumptions in Phase 1 gate:** Merge into the numbered list and
   proceed.
+- **Zero assumptions extracted:** Report that no testable assumptions were
+  identified. Ask the user if they want to supply assumptions manually or
+  point to a different output.
 
 ## Integration Points
 
