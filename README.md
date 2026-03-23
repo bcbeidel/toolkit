@@ -1,5 +1,7 @@
 # wos
 
+> **Experimental** — This project is under active development. APIs, skill interfaces, and document conventions may change without notice.
+
 A Claude Code plugin for building and maintaining structured project context
 with AI-assisted research, source verification, and quality validation.
 

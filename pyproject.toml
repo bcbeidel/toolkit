@@ -8,6 +8,9 @@ version = "0.31.0"
 description = "Claude Code plugin for building and maintaining structured project context"
 requires-python = ">=3.9"
 dependencies = []
+classifiers = [
+    "Development Status :: 3 - Alpha",
+]
 
 [project.optional-dependencies]
 dev = [
