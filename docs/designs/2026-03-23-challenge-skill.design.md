@@ -5,6 +5,11 @@ type: design
 status: draft
 related:
   - docs/context/validation-architecture.md
+  - docs/context/reads-writes-separation.md
+  - docs/context/human-in-the-loop-design.md
+  - docs/context/preview-before-execute.md
+  - docs/context/show-your-work-patterns.md
+  - docs/research/source-evaluation-claim-verification.md
 ---
 
 ## Purpose
@@ -81,15 +86,21 @@ document supports, contradicts, or is silent on.
 
 No user-facing output in this phase — discovery happens behind the scenes.
 
+The skill logs its search activity using the `SearchProtocol` pattern from
+`wos/research_protocol.py`: which assumptions were searched, which documents
+matched, which were read, and which produced evidence. This log is appended
+as a collapsed details block below the gap analysis table in Phase 3, giving
+the user an auditable record of the search process.
+
 ### Phase 3 — Gap Analysis
 
 Present a summary table:
 
-| # | Assumption | Status | Evidence | Source |
-|---|-----------|--------|----------|--------|
-| 1 | Users authenticate via OAuth | Aligned | Context confirms OAuth pattern | `docs/context/auth.md` |
-| 2 | Rate limits are 1000 req/min | Gap | Research shows 500 req/min | `docs/research/api-limits.md` |
-| 3 | Cache invalidation is eventual | No coverage | No docs address this | — |
+| # | Assumption | Status | Confidence | Evidence | Source |
+|---|-----------|--------|------------|----------|--------|
+| 1 | Users authenticate via OAuth | Aligned | High | Context confirms OAuth pattern | `docs/context/auth.md` |
+| 2 | Rate limits are 1000 req/min | Gap | High | Research shows 500 req/min | `docs/research/api-limits.md` |
+| 3 | Cache invalidation is eventual | No coverage | — | No docs address this | — |
 
 **Statuses:**
 
@@ -97,8 +108,25 @@ Present a summary table:
 - **Gap** — A document contradicts or conflicts with the assumption.
 - **No coverage** — No documents address the assumption.
 
+**Confidence levels** (for Aligned and Gap statuses):
+
+- **High** — Direct, specific evidence addressing the assumption. The source
+  document explicitly discusses the same concept with a clear position.
+- **Moderate** — Related evidence that bears on the assumption but doesn't
+  address it directly. Requires inference to connect source to claim.
+- **Low** — Tangential evidence. The connection is plausible but weak. The
+  user should weigh carefully before acting on this classification.
+
+No Coverage items have no confidence level (evidence is absent, not weak).
+
 Below the table, a brief narrative: "X assumptions aligned, Y gaps found, Z
 with no coverage."
+
+Below the narrative, a collapsed `<details>` block containing the search
+protocol log: which documents were searched, which matched each assumption,
+and which were read in full. This supports auditability — users can verify
+that the search was thorough and that classifications are grounded in actual
+document reads, not hallucinated evidence.
 
 ### Phase 4 — Propose Corrections
 
@@ -146,7 +174,10 @@ challenge module adds keyword-scoring on top — it does not duplicate discovery
   — Calls `wos.discovery.discover_documents(docs_root)` to get all managed
   documents, then scores each against each assumption using keyword overlap
   (basic tokenization + set intersection on `name` and `description` fields).
-  Returns mapping of assumption text → ranked candidate documents.
+  Returns mapping of assumption text → ranked candidate documents. The scoring
+  interface is a callable `(assumption, document) -> float`, making it
+  swappable for more sophisticated matching (e.g., TF-IDF, semantic) later
+  without changing the module's API.
 
 Reuses `discover_documents()` from `wos/discovery.py` and `parse_document()`
 from `wos/document.py`. No new dependencies (stdlib only).
