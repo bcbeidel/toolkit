@@ -106,3 +106,99 @@ def test_keyword_score_filters_short_tokens():
     # "is" and "a" should be filtered, only "oauth" matters
     score = keyword_score("is a oauth", "OAuth Patterns")
     assert score > 0.0
+
+
+_CONTEXT_AUTH = """\
+---
+name: Auth Patterns
+description: OAuth authentication patterns for the project
+---
+
+## OAuth
+
+We use OAuth 2.0 for all authentication.
+"""
+
+_CONTEXT_DB = """\
+---
+name: Database Design
+description: PostgreSQL schema conventions and migration patterns
+---
+
+## Schema
+
+All tables use UUID primary keys.
+"""
+
+_RESEARCH_RATE = """\
+---
+name: API Rate Limiting
+description: Research on rate limiting strategies and thresholds
+type: research
+sources:
+  - https://example.com/rate-limits
+---
+
+## Findings
+
+Rate limits should be 500 req/min.
+"""
+
+
+def test_discover_by_relevance_matches_keywords(tmp_path):
+    """Assumptions match documents with overlapping keywords."""
+    from wos.challenge.discover import discover_by_relevance
+
+    # Create docs directory structure
+    ctx = tmp_path / "docs" / "context"
+    ctx.mkdir(parents=True)
+    (ctx / "auth.md").write_text(_CONTEXT_AUTH)
+    (ctx / "db.md").write_text(_CONTEXT_DB)
+
+    res = tmp_path / "docs" / "research"
+    res.mkdir(parents=True)
+    (res / "rate.md").write_text(_RESEARCH_RATE)
+
+    results = discover_by_relevance(
+        ["OAuth authentication is required"],
+        str(tmp_path),
+    )
+    assert "OAuth authentication is required" in results
+    matches = results["OAuth authentication is required"]
+    # Auth doc should rank highest (has "OAuth" and "authentication")
+    assert len(matches) > 0
+    assert matches[0].name == "Auth Patterns"
+
+
+def test_discover_by_relevance_no_matches(tmp_path):
+    """Assumption with no keyword overlap returns empty list."""
+    from wos.challenge.discover import discover_by_relevance
+
+    ctx = tmp_path / "docs" / "context"
+    ctx.mkdir(parents=True)
+    (ctx / "db.md").write_text(_CONTEXT_DB)
+
+    results = discover_by_relevance(
+        ["Quantum entanglement drives the cache layer"],
+        str(tmp_path),
+    )
+    matches = results["Quantum entanglement drives the cache layer"]
+    assert matches == []
+
+
+def test_discover_by_relevance_multiple_assumptions(tmp_path):
+    """Each assumption gets its own match list."""
+    from wos.challenge.discover import discover_by_relevance
+
+    ctx = tmp_path / "docs" / "context"
+    ctx.mkdir(parents=True)
+    (ctx / "auth.md").write_text(_CONTEXT_AUTH)
+    (ctx / "db.md").write_text(_CONTEXT_DB)
+
+    results = discover_by_relevance(
+        ["OAuth authentication", "PostgreSQL schema design"],
+        str(tmp_path),
+    )
+    assert len(results) == 2
+    assert "OAuth authentication" in results
+    assert "PostgreSQL schema design" in results

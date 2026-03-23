@@ -4,9 +4,10 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import Callable, List
+from typing import Callable, Dict, List
 
 from wos.document import Document, parse_document
+from wos.discovery import discover_documents
 
 
 def discover_related(artifact_path: str, project_root: str) -> List[Document]:
@@ -76,3 +77,42 @@ def keyword_score(assumption: str, text: str) -> float:
     text_lower = text.lower()
     matched = sum(1 for t in assumption_tokens if t in text_lower)
     return matched / len(assumption_tokens)
+
+
+def discover_by_relevance(
+    assumptions: List[str],
+    docs_root: str,
+    scorer: Callable[[str, str], float] = keyword_score,
+) -> Dict[str, List[Document]]:
+    """Match assumptions to project documents by relevance scoring.
+
+    Calls ``discover_documents()`` to find all managed documents, then
+    scores each document's name + description against each assumption
+    using the provided scorer. Returns only documents with score > 0,
+    sorted by descending score.
+
+    Args:
+        assumptions: List of assumption claim strings.
+        docs_root: Project root directory to scan.
+        scorer: Callable (assumption, text) -> float. Defaults to
+            keyword_score.
+
+    Returns:
+        Dict mapping each assumption string to a list of Documents,
+        sorted by relevance score (highest first). Documents with
+        score 0 are excluded.
+    """
+    all_docs = discover_documents(Path(docs_root))
+
+    results: Dict[str, List[Document]] = {}
+    for assumption in assumptions:
+        scored = []
+        for doc in all_docs:
+            text = f"{doc.name} {doc.description}"
+            score = scorer(assumption, text)
+            if score > 0:
+                scored.append((score, doc))
+        scored.sort(key=lambda x: x[0], reverse=True)
+        results[assumption] = [doc for _, doc in scored]
+
+    return results
