@@ -91,7 +91,9 @@ Cases are YAML files with minimal required fields:
 - **`id` is required and stable** — the diff key for run-to-run comparison.
   Without stable IDs, per-case regression tracking is impossible.
 - **`expect` is optional shorthand** — for simple structural checks, no custom
-  scorer needed. Built-in checks run deterministically from case data alone.
+  scorer needed. `expect` entries expand into structural-layer `Check` objects
+  before scorers run. If a scorer also checks the same property, both execute
+  independently (duplicate checks are acceptable).
 - **`golden` is optional** — enables regression comparison and similarity
   scoring but is not required. Evals work without expected outputs.
 - **`skip_when`** — lets expensive or slow cases run only in scheduled mode.
@@ -128,13 +130,17 @@ def quality(output, case):
 ### Check Dataclass
 
 ```python
+from __future__ import annotations
+from dataclasses import dataclass
+from typing import Optional
+
 @dataclass
 class Check:
     name: str
     passed: bool
-    layer: str          # structural | behavioral | quality
-    score: float | None  # 0.0-1.0 for graded checks, None for binary
-    detail: str | None   # explanation for failures or judge reasoning
+    layer: str                  # structural | behavioral | quality
+    score: Optional[float]      # 0.0-1.0 for graded checks, None for binary
+    detail: Optional[str]       # explanation for failures or judge reasoning
 ```
 
 ### Design Decisions
@@ -147,9 +153,10 @@ class Check:
   knows which scorers cost money. CI mode can skip `requires="anthropic"`
   scorers entirely.
 - **Built-in check library** — `check.contains`, `check.regex`,
-  `check.max_words`, `check.has_table`, `check.json_schema`,
-  `check.not_contains`, `check.similarity`. All stdlib-only. `check.judge`
-  is the only one requiring the anthropic SDK.
+  `check.max_words`, `check.has_table`, `check.not_contains`,
+  `check.similarity` (uses `difflib.SequenceMatcher` ratio — stdlib-only).
+  All deterministic, no external dependencies. `check.judge` is the only
+  check requiring the anthropic SDK.
 - **Custom checks are just Python** — for domain-specific logic, write a regular
   function and yield `Check` objects. No DSL to learn.
 - **Scorers are composable** — a suite can use multiple scorers. They run in
@@ -199,7 +206,10 @@ eval/
       suite.yaml
 ```
 
-One directory per suite. pytest discovers suites by finding `suite.yaml` files.
+One directory per suite. A `conftest.py` in the `eval/` directory imports the
+pytest plugin from `wos.eval.runner`, which discovers suites by finding
+`suite.yaml` files. No `pyproject.toml` entry point needed — auto-discovered
+by pytest's conftest mechanism when running from the project root.
 
 ### Trigger Modes
 
@@ -220,6 +230,65 @@ Mode overrides in `suite.yaml` control which layers and scorers run per mode.
 
 This is where "generic but richer with WOS" lives: WOS skills get automatic
 structural assertion extraction, generic prompts work via command templates.
+
+## Execution
+
+How the runner invokes prompts and captures output.
+
+### Command Mode (default)
+
+When `command` is specified in `suite.yaml`, the runner executes it via
+`subprocess.run` with `{input}` substituted from the case. Output is captured
+from stdout. Non-zero exit codes produce a failed run with the stderr in
+`detail`.
+
+```yaml
+command: "claude -p '{input}'"
+```
+
+The runner calls: `subprocess.run(["claude", "-p", case.input], capture_output=True)`
+
+### Prompt Mode
+
+When `prompt` is specified (path to a file), the runner reads the file content
+and calls the anthropic SDK directly using the `config.model` and
+`config.max_tokens` from `suite.yaml`. This requires the `ANTHROPIC_API_KEY`
+environment variable.
+
+```python
+# Simplified execution flow
+prompt_text = Path(suite.prompt).read_text()
+client = anthropic.Anthropic()
+response = client.messages.create(
+    model=suite.config["model"],
+    max_tokens=suite.config["max_tokens"],
+    messages=[{"role": "user", "content": f"{prompt_text}\n\n{case.input}"}],
+)
+output = response.content[0].text
+```
+
+### Dependency Boundary
+
+- **`command` mode** — stdlib only (`subprocess`). No API key needed. Works
+  with any CLI tool.
+- **`prompt` mode** — requires `anthropic` SDK (same optional dependency as
+  `judge.py`). Imported lazily, only when a suite uses `prompt` instead of
+  `command`.
+
+If neither `command` nor `prompt` is specified, the suite fails at load time
+with `ValueError`.
+
+## Error Handling
+
+- **Loader errors** (malformed YAML, missing `id`, invalid `suite.yaml`) raise
+  `ValueError` at collection time. pytest reports them as collection errors.
+- **Scorer exceptions** are caught and recorded as failed checks with the
+  traceback in `detail`. The run continues — one broken scorer does not abort
+  the suite.
+- **Non-zero exit codes** from `command` templates produce a failed case result
+  with stderr in `detail`.
+- **Missing `ANTHROPIC_API_KEY`** when using `prompt` mode or `check.judge`
+  raises `ValueError` with a clear message at the point of use, not at import.
 
 ## Result Storage and Diffing
 
@@ -269,7 +338,7 @@ Each run produces two files:
 Compare two runs by matching on `case_id`:
 
 ```
-$ python -m wos.eval diff results/run-A.jsonl results/run-B.jsonl
+$ python scripts/eval_diff.py results/run-A.jsonl results/run-B.jsonl
 
 refine-prompt  |  Run A (Mar 20) → Run B (Mar 23)
                |  Model: sonnet-4-6 → sonnet-4-6
@@ -298,15 +367,16 @@ The framework guides users from zero to a working eval:
 
 **Step 1: Record golden runs.**
 ```bash
-python -m wos.eval record --prompt prompts/summarize.md \
+python scripts/eval_record.py --prompt prompts/summarize.md \
     --inputs "article1.txt" "article2.txt" "article3.txt"
 ```
-Runs the prompt, shows outputs, asks "Save as golden? [y/n]". Writes
-`eval/suites/summarize/cases.yaml`.
+Runs the prompt and writes all outputs to a staging file. The user reviews
+and curates cases manually (non-interactive, consistent with WOS script
+conventions). Writes `eval/suites/summarize/cases.yaml`.
 
 **Step 2: Generate starter suite.**
 ```bash
-python -m wos.eval init --suite eval/suites/summarize/
+python scripts/eval_init.py --suite eval/suites/summarize/
 ```
 Reads `cases.yaml`, analyzes golden outputs, generates `suite.yaml` and
 `scorers.py` with structural checks inferred from output patterns.
@@ -349,12 +419,10 @@ wos/
   eval/
     __init__.py          # public API: @scorer, check, Check, Case, Suite
     case.py              # Case dataclass, YAML/JSON loader
-    check.py             # Check dataclass, built-in check library
+    check.py             # Check dataclass, built-in check library, judge wrapper
     scorer.py            # @scorer decorator, layer ordering, short-circuit
-    suite.py             # Suite loader, case-scorer wiring
-    runner.py            # pytest plugin: discovery, parametrization, execution
-    result.py            # JSONL writer, run manifest, diff engine
-    judge.py             # LLM-as-judge via anthropic SDK (optional import)
+    runner.py            # Suite loader, pytest plugin, execution, result storage
+    result.py            # JSONL reader, run manifest, diff engine
 
 scripts/
   eval_record.py         # CLI: record golden runs
@@ -362,13 +430,18 @@ scripts/
   eval_diff.py           # CLI: compare two result files
 ```
 
+Note: `judge` functionality (anthropic SDK calls) lives in `check.py` behind
+a lazy import guard — `check.judge()` imports `anthropic` only when called.
+No separate `judge.py` module needed at v1. Suite loading merges into
+`runner.py` since suites only exist in the context of running them.
+
 ### Dependency Boundaries
 
 | Module | Dependencies |
 |--------|-------------|
-| case.py, check.py, scorer.py, suite.py, result.py | stdlib only |
+| case.py, check.py (built-ins), scorer.py, result.py | stdlib only |
 | runner.py | pytest (dev dependency) |
-| judge.py | anthropic SDK (optional, lazy import) |
+| check.py (`check.judge` only) | anthropic SDK (optional, lazy import) |
 
 Scripts follow existing WOS patterns: PEP 723 inline metadata, argparse CLI.
 
