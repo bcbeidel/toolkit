@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.32.0] - 2026-03-23
+
+### Added
+
+- **`/wos:challenge` skill.** New feedback-layer skill that surfaces
+  implicit assumptions behind an output or conversation, sanity-checks
+  them against project context and research documents, and proposes
+  corrections for gaps. Four-phase workflow: extract assumptions, layered
+  document search, gap analysis with confidence levels, and user-gated
+  correction proposals.
+- **`wos/challenge/` subpackage.** Assumption-to-document matching via
+  keyword-overlap scoring (`keyword_score`), explicit-layer search
+  (`discover_related`), and broad discovery (`discover_by_relevance`)
+  building on `wos.discovery`.
+- **`scripts/discover_context.py`.** CLI script for the challenge skill's
+  layered document search, outputting JSON assumption-to-match mappings.
+
 ## [0.31.0] - 2026-03-13
 
 ### Added
