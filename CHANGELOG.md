@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.33.0] - 2026-03-27
+
 ### Removed
 
 - **`wos/challenge/` subpackage and `scripts/discover_context.py`.**
