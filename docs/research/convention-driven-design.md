@@ -1,22 +1,23 @@
 ---
 name: "Convention-Driven Design"
 description: "How implicit contracts — naming, file layout, metadata formats — enable agents to discover and follow patterns without configuration, and the 'derive from disk, never hand-curate' philosophy"
-type: research
-sources:
-  - https://rubyonrails.org/doctrine
-  - https://en.wikipedia.org/wiki/Convention_over_configuration
-  - https://go.dev/doc/modules/layout
-  - https://maven.apache.org/guides/introduction/introduction-to-the-standard-directory-layout.html
-  - https://nextjs.org/docs/app/getting-started/project-structure
-  - https://guides.emberjs.com/v1.11.0/concepts/naming-conventions/
-  - https://peps.python.org/pep-0020/
-  - https://medium.com/data-science-collective/the-complete-guide-to-ai-agent-memory-files-claude-md-agents-md-and-beyond-49ea0df5c5a9
-  - https://pnote.eu/notes/agents-md/
-  - https://github.com/golang-standards/project-layout
-related:
-  - docs/context/convention-driven-design.md
-  - docs/context/information-architecture.md
-  - docs/context/tool-design-for-llms.md
+metadata:
+  type: research
+  sources:
+    - https://rubyonrails.org/doctrine
+    - https://en.wikipedia.org/wiki/Convention_over_configuration
+    - https://go.dev/doc/modules/layout
+    - https://maven.apache.org/guides/introduction/introduction-to-the-standard-directory-layout.html
+    - https://nextjs.org/docs/app/getting-started/project-structure
+    - https://guides.emberjs.com/v1.11.0/concepts/naming-conventions/
+    - https://peps.python.org/pep-0020/
+    - https://medium.com/data-science-collective/the-complete-guide-to-ai-agent-memory-files-claude-md-agents-md-and-beyond-49ea0df5c5a9
+    - https://pnote.eu/notes/agents-md/
+    - https://github.com/golang-standards/project-layout
+  related:
+    - docs/context/convention-driven-design.md
+    - docs/context/information-architecture.md
+    - docs/context/tool-design-for-llms.md
 ---
 
 Convention-driven design is the practice of encoding behavioral contracts in naming, file layout, and metadata formats so that consumers — human developers, build tools, or LLM agents — can discover and follow patterns without explicit configuration. The principle traces from Maven and Rails through Go and Next.js to the emerging convention of AGENTS.md and CLAUDE.md files that LLM agents read to orient themselves in a codebase. The central insight: when structure is predictable, configuration becomes unnecessary, and tooling can derive behavior from disk state alone.

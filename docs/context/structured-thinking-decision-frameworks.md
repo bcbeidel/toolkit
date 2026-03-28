@@ -1,18 +1,19 @@
 ---
 name: "Structured Thinking and Decision Frameworks"
 description: "How to convert classical mental models into executable agent procedures — trigger conditions, structured steps, verification criteria, and the reasoning substrate that makes them work"
-type: reference
-sources:
-  - https://arxiv.org/abs/2201.11903
-  - https://arxiv.org/abs/2305.10601
-  - https://arxiv.org/abs/2210.03629
-  - https://arxiv.org/html/2602.16512
-  - https://fs.blog/mental-models/
-related:
-  - docs/research/structured-thinking-decision-frameworks.md
-  - docs/context/agentic-planning-execution.md
-  - docs/context/prompt-engineering.md
-  - docs/context/tool-design-for-llms.md
+metadata:
+  type: reference
+  sources:
+    - https://arxiv.org/abs/2201.11903
+    - https://arxiv.org/abs/2305.10601
+    - https://arxiv.org/abs/2210.03629
+    - https://arxiv.org/html/2602.16512
+    - https://fs.blog/mental-models/
+  related:
+    - docs/research/structured-thinking-decision-frameworks.md
+    - docs/context/agentic-planning-execution.md
+    - docs/context/prompt-engineering.md
+    - docs/context/tool-design-for-llms.md
 ---
 
 # Structured Thinking and Decision Frameworks

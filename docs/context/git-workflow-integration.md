@@ -1,18 +1,19 @@
 ---
 name: "Git Workflow Integration for Agent-Driven Development"
 description: "Branch naming, atomic commits, PR automation, worktree isolation, and CI/CD parity patterns for integrating agent-produced code into team git workflows"
-type: reference
-sources:
-  - https://nx.dev/blog/git-worktrees-ai-agents
-  - https://github.blog/ai-and-ml/automate-repository-tasks-with-github-agentic-workflows/
-  - https://www.conventionalcommits.org/en/v1.0.0/
-  - https://github.com/semantic-release/semantic-release
-  - https://git-scm.com/docs/git-revert
-related:
-  - docs/research/git-workflow-integration.md
-  - docs/context/multi-agent-coordination.md
-  - docs/context/human-in-the-loop-design.md
-  - docs/context/workflow-orchestration.md
+metadata:
+  type: reference
+  sources:
+    - https://nx.dev/blog/git-worktrees-ai-agents
+    - https://github.blog/ai-and-ml/automate-repository-tasks-with-github-agentic-workflows/
+    - https://www.conventionalcommits.org/en/v1.0.0/
+    - https://github.com/semantic-release/semantic-release
+    - https://git-scm.com/docs/git-revert
+  related:
+    - docs/research/git-workflow-integration.md
+    - docs/context/multi-agent-coordination.md
+    - docs/context/human-in-the-loop-design.md
+    - docs/context/workflow-orchestration.md
 ---
 
 Agent-driven development introduces new demands on git workflows. Agents produce commits at machine speed, operate in parallel, and lack the social awareness that makes team conventions self-enforcing. Six practices address this, and they work together as a unified integration pattern applicable to trunk-based, GitHub Flow, and GitFlow workflows alike.

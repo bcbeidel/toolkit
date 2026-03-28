@@ -1,25 +1,26 @@
 ---
 name: "Agentic Planning and Execution Patterns"
 description: "How LLM agents decompose goals, sequence tasks, track progress via artifacts, handle failures, and resume across sessions — comparing ReAct, plan-and-execute, and tree-of-thought approaches"
-type: research
-sources:
-  - https://arxiv.org/abs/2210.03629
-  - https://arxiv.org/abs/2305.04091
-  - https://arxiv.org/abs/2305.10601
-  - https://arxiv.org/abs/2402.02716
-  - https://arxiv.org/abs/2305.16291
-  - https://arxiv.org/abs/2308.00352
-  - https://arxiv.org/abs/2303.11366
-  - https://arxiv.org/abs/2312.04511
-  - https://arxiv.org/abs/2304.09842
-  - https://arxiv.org/abs/2308.08155
-  - https://arxiv.org/abs/2310.04406
-  - https://arxiv.org/abs/2402.01030
-  - https://arxiv.org/abs/2303.17580
-related:
-  - docs/research/llm-capabilities-limitations.md
-  - docs/research/prompt-engineering.md
-  - docs/context/agentic-planning-execution.md
+metadata:
+  type: research
+  sources:
+    - https://arxiv.org/abs/2210.03629
+    - https://arxiv.org/abs/2305.04091
+    - https://arxiv.org/abs/2305.10601
+    - https://arxiv.org/abs/2402.02716
+    - https://arxiv.org/abs/2305.16291
+    - https://arxiv.org/abs/2308.00352
+    - https://arxiv.org/abs/2303.11366
+    - https://arxiv.org/abs/2312.04511
+    - https://arxiv.org/abs/2304.09842
+    - https://arxiv.org/abs/2308.08155
+    - https://arxiv.org/abs/2310.04406
+    - https://arxiv.org/abs/2402.01030
+    - https://arxiv.org/abs/2303.17580
+  related:
+    - docs/research/llm-capabilities-limitations.md
+    - docs/research/prompt-engineering.md
+    - docs/context/agentic-planning-execution.md
 ---
 
 Agentic planning and execution is the set of patterns by which LLM-based agents break goals into tasks, order and execute them, track progress through persistent artifacts, recover from failures, and resume interrupted work. This document surveys the landscape across academic research and practical frameworks.

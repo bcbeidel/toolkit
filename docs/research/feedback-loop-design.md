@@ -1,25 +1,26 @@
 ---
 name: "Feedback Loop Design for Iterative Systems"
 description: "Structured feedback formats, retrospective patterns, and the supersede-don't-edit pattern for immutable artifacts — closing the loop between execution and design so systems improve through use"
-type: research
-sources:
-  - https://en.wikipedia.org/wiki/PDCA
-  - https://en.wikipedia.org/wiki/OODA_loop
-  - https://en.wikipedia.org/wiki/Architectural_decision
-  - https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
-  - https://github.com/kubernetes/enhancements/tree/master/keps/sig-architecture/0000-kep-process
-  - https://docs.aws.amazon.com/prescriptive-guidance/latest/architectural-decision-records/adr-process.html
-  - https://www.atlassian.com/team-playbook/plays/retrospective
-  - https://retromat.org/en/
-  - https://martinfowler.com/articles/patterns-of-distributed-systems/write-ahead-log.html
-  - https://www.agilealliance.org/glossary/heartbeat-retrospective/
-  - https://arxiv.org/abs/2303.11366
-  - https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
-related:
-  - docs/research/agentic-planning-execution.md
-  - docs/research/knowledge-synthesis-distillation.md
-  - docs/research/research-methodology.md
-  - docs/context/feedback-loop-design.md
+metadata:
+  type: research
+  sources:
+    - https://en.wikipedia.org/wiki/PDCA
+    - https://en.wikipedia.org/wiki/OODA_loop
+    - https://en.wikipedia.org/wiki/Architectural_decision
+    - https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
+    - https://github.com/kubernetes/enhancements/tree/master/keps/sig-architecture/0000-kep-process
+    - https://docs.aws.amazon.com/prescriptive-guidance/latest/architectural-decision-records/adr-process.html
+    - https://www.atlassian.com/team-playbook/plays/retrospective
+    - https://retromat.org/en/
+    - https://martinfowler.com/articles/patterns-of-distributed-systems/write-ahead-log.html
+    - https://www.agilealliance.org/glossary/heartbeat-retrospective/
+    - https://arxiv.org/abs/2303.11366
+    - https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
+  related:
+    - docs/research/agentic-planning-execution.md
+    - docs/research/knowledge-synthesis-distillation.md
+    - docs/research/research-methodology.md
+    - docs/context/feedback-loop-design.md
 ---
 
 ## Summary

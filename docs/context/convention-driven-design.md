@@ -1,17 +1,18 @@
 ---
 name: "Convention-Driven Design"
 description: "How implicit contracts in naming, file layout, and metadata enable agents and tools to discover behavior from disk structure without configuration"
-type: reference
-sources:
-  - https://rubyonrails.org/doctrine
-  - https://en.wikipedia.org/wiki/Convention_over_configuration
-  - https://go.dev/doc/modules/layout
-  - https://maven.apache.org/guides/introduction/introduction-to-the-standard-directory-layout.html
-  - https://nextjs.org/docs/app/getting-started/project-structure
-related:
-  - docs/research/convention-driven-design.md
-  - docs/context/information-architecture.md
-  - docs/context/tool-design-for-llms.md
+metadata:
+  type: reference
+  sources:
+    - https://rubyonrails.org/doctrine
+    - https://en.wikipedia.org/wiki/Convention_over_configuration
+    - https://go.dev/doc/modules/layout
+    - https://maven.apache.org/guides/introduction/introduction-to-the-standard-directory-layout.html
+    - https://nextjs.org/docs/app/getting-started/project-structure
+  related:
+    - docs/research/convention-driven-design.md
+    - docs/context/information-architecture.md
+    - docs/context/tool-design-for-llms.md
 ---
 
 Convention-driven design encodes behavioral contracts in naming, file layout, and metadata formats so that consumers -- developers, build tools, or LLM agents -- discover and follow patterns without explicit configuration. The central insight: when structure is predictable, configuration becomes unnecessary, and tooling can derive behavior from disk state alone.

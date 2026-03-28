@@ -1,8 +1,9 @@
 ---
 name: Python Utilities Reference
 description: CLI commands for audit, reindex, and URL checking during research sessions
-stage: shared
-pipeline: research
+metadata:
+  stage: shared
+  pipeline: research
 ---
 
 ## Purpose

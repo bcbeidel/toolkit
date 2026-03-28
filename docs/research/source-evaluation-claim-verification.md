@@ -1,22 +1,23 @@
 ---
 name: "Source Evaluation and Claim Verification Frameworks"
 description: "SIFT framework, source tier hierarchies, claim verification types, and Chain-of-Verification (CoVe) applied to LLM-assisted research"
-type: research
-sources:
-  - https://hapgood.us/2019/06/19/sift-the-four-moves/
-  - https://pressbooks.pub/webliteracy/chapter/four-strategies/
-  - https://arxiv.org/abs/2309.11495
-  - https://aclanthology.org/2024.findings-acl.212/
-  - https://open.oregonstate.education/goodargument/chapter/four-tiers-of-sources/
-  - https://libraryguides.csuniv.edu/tutorial_evaluating/hierarchy_of_credibility
-  - https://datajournalism.com/read/handbook/verification-1/additional-materials/verification-and-fact-checking
-  - https://researchguides.journalism.cuny.edu/factchecking-verification/fact-check-your-work
-  - https://www.nature.com/articles/s41586-024-07421-0
-  - https://www.coreprose.com/kb-incidents/why-llms-invent-academic-citations-and-how-to-stop-ghost-references
-related:
-  - docs/research/prompt-engineering.md
-  - docs/research/llm-capabilities-limitations.md
-  - docs/context/source-evaluation-claim-verification.md
+metadata:
+  type: research
+  sources:
+    - https://hapgood.us/2019/06/19/sift-the-four-moves/
+    - https://pressbooks.pub/webliteracy/chapter/four-strategies/
+    - https://arxiv.org/abs/2309.11495
+    - https://aclanthology.org/2024.findings-acl.212/
+    - https://open.oregonstate.education/goodargument/chapter/four-tiers-of-sources/
+    - https://libraryguides.csuniv.edu/tutorial_evaluating/hierarchy_of_credibility
+    - https://datajournalism.com/read/handbook/verification-1/additional-materials/verification-and-fact-checking
+    - https://researchguides.journalism.cuny.edu/factchecking-verification/fact-check-your-work
+    - https://www.nature.com/articles/s41586-024-07421-0
+    - https://www.coreprose.com/kb-incidents/why-llms-invent-academic-citations-and-how-to-stop-ghost-references
+  related:
+    - docs/research/prompt-engineering.md
+    - docs/research/llm-capabilities-limitations.md
+    - docs/context/source-evaluation-claim-verification.md
 ---
 
 Source evaluation and claim verification are the difference between research that informs decisions and research that misleads them. When LLMs assist the research process, traditional verification becomes both more important and more difficult: models fabricate citations at rates of 14-95% depending on the model and task, generate plausible-sounding claims without epistemic grounding, and exhibit confirmation bias in their own outputs. Three frameworks address these challenges at different levels: SIFT for rapid source triage, source tier hierarchies for systematic credibility classification, and Chain-of-Verification for structured claim checking.

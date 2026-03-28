@@ -1,27 +1,28 @@
 ---
 name: "Writing for LLM Consumption"
 description: "How agent-facing documentation differs from human-facing writing — BLUF structure, explicit conventions, self-contained sections, and navigable metadata for optimal LLM comprehension"
-type: research
-sources:
-  - https://arxiv.org/abs/2307.03172
-  - https://arxiv.org/abs/2406.16008
-  - https://arxiv.org/abs/2411.10541
-  - https://arxiv.org/abs/2602.20478
-  - https://biel.ai/blog/optimizing-docs-for-ai-agents-complete-guide
-  - https://docs.kapa.ai/improving/writing-best-practices
-  - https://code.claude.com/docs/en/best-practices
-  - https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
-  - https://llmstxt.org/
-  - https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
-  - https://github.blog/ai-and-ml/github-copilot/how-to-write-a-great-agents-md-lessons-from-over-2500-repositories/
-  - https://www.promptwire.co/articles/how-to-structure-content-for-llm-citations
-related:
-  - docs/context/writing-for-llm-consumption.md
-  - docs/context/context-window-management.md
-  - docs/context/prompt-engineering.md
-  - docs/research/context-window-management.md
-  - docs/research/information-architecture.md
-  - docs/research/prompt-engineering.md
+metadata:
+  type: research
+  sources:
+    - https://arxiv.org/abs/2307.03172
+    - https://arxiv.org/abs/2406.16008
+    - https://arxiv.org/abs/2411.10541
+    - https://arxiv.org/abs/2602.20478
+    - https://biel.ai/blog/optimizing-docs-for-ai-agents-complete-guide
+    - https://docs.kapa.ai/improving/writing-best-practices
+    - https://code.claude.com/docs/en/best-practices
+    - https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
+    - https://llmstxt.org/
+    - https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
+    - https://github.blog/ai-and-ml/github-copilot/how-to-write-a-great-agents-md-lessons-from-over-2500-repositories/
+    - https://www.promptwire.co/articles/how-to-structure-content-for-llm-citations
+  related:
+    - docs/context/writing-for-llm-consumption.md
+    - docs/context/context-window-management.md
+    - docs/context/prompt-engineering.md
+    - docs/research/context-window-management.md
+    - docs/research/information-architecture.md
+    - docs/research/prompt-engineering.md
 ---
 
 Agent-facing documentation operates under fundamentally different constraints than human-facing writing. Humans browse, scan headings, build spatial memory, and infer unstated context from experience. LLMs process documents as linear token sequences within a fixed-size context window, exhibit measurable positional attention biases, and cannot infer information that is not explicitly stated. These differences demand specific structural patterns: BLUF (Bottom Line Up Front) positioning, explicit over implicit conventions, self-contained sections, and machine-navigable metadata. The research converges on a clear finding: how documentation is structured affects LLM output quality as much as what the documentation contains.

@@ -1,22 +1,23 @@
 ---
 name: "Multi-Agent Coordination Patterns"
 description: "Landscape survey of parallel dispatch, context sharing, conflict detection, and work scoping patterns across six major LLM agent frameworks and low-level execution models"
-type: research
-sources:
-  - https://developers.googleblog.com/developers-guide-to-multi-agent-patterns-in-adk/
-  - https://deepwiki.com/langchain-ai/langchain-academy/7.3-parallelization-techniques
-  - https://arxiv.org/html/2503.03505v1
-  - https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/agent-orchestration/concurrent
-  - https://docs.crewai.com/en/learn/sequential-process
-  - https://github.com/rinadelph/Agent-MCP
-  - https://code.claude.com/docs/en/sub-agents
-  - https://openai.github.io/openai-agents-python/
-  - https://google.github.io/adk-docs/agents/multi-agents/
-  - https://langchain-ai.github.io/langgraphjs/how-tos/map-reduce/
-  - https://dev.to/ggondim/how-i-built-a-deterministic-multi-agent-dev-pipeline-inside-openclaw-and-contributed-a-missing-4ool
-  - https://www.augmentcode.com/guides/why-multi-agent-llm-systems-fail-and-how-to-fix-them
-related:
-  - docs/context/multi-agent-coordination.md
+metadata:
+  type: research
+  sources:
+    - https://developers.googleblog.com/developers-guide-to-multi-agent-patterns-in-adk/
+    - https://deepwiki.com/langchain-ai/langchain-academy/7.3-parallelization-techniques
+    - https://arxiv.org/html/2503.03505v1
+    - https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/agent-orchestration/concurrent
+    - https://docs.crewai.com/en/learn/sequential-process
+    - https://github.com/rinadelph/Agent-MCP
+    - https://code.claude.com/docs/en/sub-agents
+    - https://openai.github.io/openai-agents-python/
+    - https://google.github.io/adk-docs/agents/multi-agents/
+    - https://langchain-ai.github.io/langgraphjs/how-tos/map-reduce/
+    - https://dev.to/ggondim/how-i-built-a-deterministic-multi-agent-dev-pipeline-inside-openclaw-and-contributed-a-missing-4ool
+    - https://www.augmentcode.com/guides/why-multi-agent-llm-systems-fail-and-how-to-fix-them
+  related:
+    - docs/context/multi-agent-coordination.md
 ---
 
 ## Summary

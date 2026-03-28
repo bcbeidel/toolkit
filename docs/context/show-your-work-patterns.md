@@ -1,19 +1,20 @@
 ---
 name: "Show Your Work Patterns for Agent Systems"
 description: "Four patterns that make agent reasoning inspectable: search protocol recording, checkpoint annotations, flight recorders, and ReAct reasoning traces"
-type: reference
-sources:
-  - https://github.com/agentkitai/agentlens
-  - https://blog.langchain.com/debugging-deep-agents-with-langsmith/
-  - https://langfuse.com/docs/observability/overview
-  - https://arxiv.org/html/2508.02866v2
-  - https://allen.hutchison.org/2026/02/17/the-observability-gap/
-related:
-  - docs/research/observability-audit-trails.md
-  - docs/context/agent-observability-tracing.md
-  - docs/context/observability-trust-debuggability.md
-  - docs/context/feedback-loop-design.md
-  - docs/context/research-methodology.md
+metadata:
+  type: reference
+  sources:
+    - https://github.com/agentkitai/agentlens
+    - https://blog.langchain.com/debugging-deep-agents-with-langsmith/
+    - https://langfuse.com/docs/observability/overview
+    - https://arxiv.org/html/2508.02866v2
+    - https://allen.hutchison.org/2026/02/17/the-observability-gap/
+  related:
+    - docs/research/observability-audit-trails.md
+    - docs/context/agent-observability-tracing.md
+    - docs/context/observability-trust-debuggability.md
+    - docs/context/feedback-loop-design.md
+    - docs/context/research-methodology.md
 ---
 
 Agent systems need more than metrics and traces. They need inspectable records of reasoning -- what the agent searched for, what it decided, and why. Four patterns address this, each at a different granularity.

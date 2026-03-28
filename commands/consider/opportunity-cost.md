@@ -1,6 +1,7 @@
 ---
 description: Evaluate what you give up by choosing one option over alternatives
-argument-hint: "[decision with multiple options to compare]"
+metadata:
+  argument-hint: "[decision with multiple options to compare]"
 ---
 
 <objective>

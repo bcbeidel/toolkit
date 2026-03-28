@@ -1,28 +1,29 @@
 ---
 name: "Information Architecture for Knowledge Retrieval"
 description: "Taxonomy design, flat vs. hierarchical structures, navigation patterns, and discoverability — including agent-specific patterns like index files and metadata-first navigation"
-type: research
-sources:
-  - https://www.nngroup.com/articles/taxonomy-101/
-  - https://www.nngroup.com/articles/ia-vs-navigation/
-  - https://www.nngroup.com/articles/information-scent/
-  - https://en.wikipedia.org/wiki/Faceted_classification
-  - https://fortelabs.com/blog/para/
-  - https://thenewstack.io/agentic-knowledge-base-patterns/
-  - https://www.infoworld.com/article/4091400/anatomy-of-an-ai-agent-knowledge-base.html
-  - https://en.wikipedia.org/wiki/Richard_Saul_Wurman
-  - https://www.hedden-information.com/faceted-classification-and-faceted-taxonomies/
-  - https://fortelabs.com/blog/a-complete-guide-to-tagging-for-personal-knowledge-management/
-  - https://bloomfire.com/blog/folders-complex-knowledge/
-  - https://www.matrixflows.com/blog/knowledge-base-taxonomy-best-practices
-  - https://understandinggroup.com/ia-theory/understanding-information-architecture
-  - https://www.microsoft.com/en-us/research/blog/from-raw-interaction-to-reusable-knowledge-rethinking-memory-for-ai-agents/
-  - https://claude.com/blog/using-claude-md-files
-related:
-  - docs/research/context-window-management.md
-  - docs/research/agent-state-persistence.md
-  - docs/research/tool-design-for-llms.md
-  - docs/context/information-architecture.md
+metadata:
+  type: research
+  sources:
+    - https://www.nngroup.com/articles/taxonomy-101/
+    - https://www.nngroup.com/articles/ia-vs-navigation/
+    - https://www.nngroup.com/articles/information-scent/
+    - https://en.wikipedia.org/wiki/Faceted_classification
+    - https://fortelabs.com/blog/para/
+    - https://thenewstack.io/agentic-knowledge-base-patterns/
+    - https://www.infoworld.com/article/4091400/anatomy-of-an-ai-agent-knowledge-base.html
+    - https://en.wikipedia.org/wiki/Richard_Saul_Wurman
+    - https://www.hedden-information.com/faceted-classification-and-faceted-taxonomies/
+    - https://fortelabs.com/blog/a-complete-guide-to-tagging-for-personal-knowledge-management/
+    - https://bloomfire.com/blog/folders-complex-knowledge/
+    - https://www.matrixflows.com/blog/knowledge-base-taxonomy-best-practices
+    - https://understandinggroup.com/ia-theory/understanding-information-architecture
+    - https://www.microsoft.com/en-us/research/blog/from-raw-interaction-to-reusable-knowledge-rethinking-memory-for-ai-agents/
+    - https://claude.com/blog/using-claude-md-files
+  related:
+    - docs/research/context-window-management.md
+    - docs/research/agent-state-persistence.md
+    - docs/research/tool-design-for-llms.md
+    - docs/context/information-architecture.md
 ---
 
 Organizing knowledge for retrieval is the central problem of information architecture (IA). For agent-based systems, the challenge intensifies: agents cannot browse, scan headings, or build spatial memory the way humans do. They need explicit structural cues — metadata, index files, and conventions — to navigate efficiently. This research covers foundational IA principles, structural trade-offs, and the emerging patterns specific to LLM agent navigation.

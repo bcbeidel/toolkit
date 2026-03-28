@@ -1,20 +1,21 @@
 ---
 name: "Context Engineering for LLM-Consumable Project Knowledge"
 description: "How to structure, store, and surface project knowledge so LLMs can consume it effectively — document models, frontmatter conventions, indexing strategies, attention-aware formatting"
-type: research
-sources:
-  - https://platform.claude.com/docs/en/docs/build-with-claude/prompt-engineering/claude-prompting-best-practices
-  - https://arxiv.org/abs/2307.03172
-  - https://arxiv.org/abs/2404.16811
-  - https://arxiv.org/abs/2312.06648
-  - https://arxiv.org/abs/2401.18059
-  - https://platform.claude.com/docs/en/docs/build-with-claude/context-windows
-  - https://platform.claude.com/docs/en/docs/build-with-claude/prompt-caching
-  - https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
-related:
-  - docs/research/context-window-management.md
-  - docs/research/prompt-engineering.md
-  - docs/context/context-engineering.md
+metadata:
+  type: research
+  sources:
+    - https://platform.claude.com/docs/en/docs/build-with-claude/prompt-engineering/claude-prompting-best-practices
+    - https://arxiv.org/abs/2307.03172
+    - https://arxiv.org/abs/2404.16811
+    - https://arxiv.org/abs/2312.06648
+    - https://arxiv.org/abs/2401.18059
+    - https://platform.claude.com/docs/en/docs/build-with-claude/context-windows
+    - https://platform.claude.com/docs/en/docs/build-with-claude/prompt-caching
+    - https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
+  related:
+    - docs/research/context-window-management.md
+    - docs/research/prompt-engineering.md
+    - docs/context/context-engineering.md
 ---
 
 ## Summary

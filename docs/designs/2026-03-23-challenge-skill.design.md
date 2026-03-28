@@ -1,15 +1,16 @@
 ---
 name: Challenge Skill
 description: Design for /wos:challenge — a skill that enumerates assumptions behind an output, sanity-checks them against project context and research, and proposes corrections for gaps
-type: design
-status: draft
-related:
-  - docs/context/validation-architecture.md
-  - docs/context/reads-writes-separation.md
-  - docs/context/human-in-the-loop-design.md
-  - docs/context/preview-before-execute.md
-  - docs/context/show-your-work-patterns.md
-  - docs/research/source-evaluation-claim-verification.md
+metadata:
+  type: design
+  status: draft
+  related:
+    - docs/context/validation-architecture.md
+    - docs/context/reads-writes-separation.md
+    - docs/context/human-in-the-loop-design.md
+    - docs/context/preview-before-execute.md
+    - docs/context/show-your-work-patterns.md
+    - docs/research/source-evaluation-claim-verification.md
 ---
 
 ## Purpose

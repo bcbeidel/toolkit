@@ -1,28 +1,29 @@
 ---
 name: "Error Handling in Agent Systems"
 description: "How LLM-based agents should handle failures: taxonomy of retryable vs. design-level errors, escalation thresholds, circuit breaker patterns, graceful degradation, and structured failure reporting"
-type: research
-sources:
-  - https://www.sitepoint.com/error-handling-strategies-for-probabilistic-code-execution/
-  - https://medium.com/@michael.hannecke/resilience-circuit-breakers-for-agentic-ai-cc7075101486
-  - https://portkey.ai/blog/retries-fallbacks-and-circuit-breakers-in-llm-apps/
-  - https://arxiv.org/abs/2508.07935
-  - https://arxiv.org/abs/2503.13657
-  - https://www.gocodeo.com/post/error-recovery-and-fallback-strategies-in-ai-agent-development
-  - https://galileo.ai/blog/agent-failure-modes-guide
-  - https://stackoverflow.blog/2025/06/30/reliability-for-unreliable-llms/
-  - https://www.augmentcode.com/guides/why-multi-agent-llm-systems-fail-and-how-to-fix-them
-  - https://neuraltrust.ai/blog/circuit-breakers
-  - https://markaicode.com/implement-graceful-degradation-llm-frameworks/
-related:
-  - docs/research/multi-agent-coordination.md
-  - docs/research/validation-architecture.md
-  - docs/research/workflow-orchestration.md
-  - docs/research/human-in-the-loop-design.md
-  - docs/research/llm-capabilities-limitations.md
-  - docs/context/error-classification-agent-systems.md
-  - docs/context/escalation-circuit-breakers.md
-  - docs/context/llm-error-handling-fundamentals.md
+metadata:
+  type: research
+  sources:
+    - https://www.sitepoint.com/error-handling-strategies-for-probabilistic-code-execution/
+    - https://medium.com/@michael.hannecke/resilience-circuit-breakers-for-agentic-ai-cc7075101486
+    - https://portkey.ai/blog/retries-fallbacks-and-circuit-breakers-in-llm-apps/
+    - https://arxiv.org/abs/2508.07935
+    - https://arxiv.org/abs/2503.13657
+    - https://www.gocodeo.com/post/error-recovery-and-fallback-strategies-in-ai-agent-development
+    - https://galileo.ai/blog/agent-failure-modes-guide
+    - https://stackoverflow.blog/2025/06/30/reliability-for-unreliable-llms/
+    - https://www.augmentcode.com/guides/why-multi-agent-llm-systems-fail-and-how-to-fix-them
+    - https://neuraltrust.ai/blog/circuit-breakers
+    - https://markaicode.com/implement-graceful-degradation-llm-frameworks/
+  related:
+    - docs/research/multi-agent-coordination.md
+    - docs/research/validation-architecture.md
+    - docs/research/workflow-orchestration.md
+    - docs/research/human-in-the-loop-design.md
+    - docs/research/llm-capabilities-limitations.md
+    - docs/context/error-classification-agent-systems.md
+    - docs/context/escalation-circuit-breakers.md
+    - docs/context/llm-error-handling-fundamentals.md
 ---
 
 Error handling in LLM-agent systems differs fundamentally from traditional software. The failing component is non-deterministic, failures often look like successes (a hallucinated answer returns HTTP 200), and the same input can produce different failure modes across runs. This document investigates failure taxonomies, escalation strategies, circuit breaker patterns, and structured reporting for agent systems where the "code" is an LLM.

@@ -1,10 +1,11 @@
 ---
 name: Test Research — Gatherer Exit
 description: Fixture representing state after gatherer completes
-type: research
-sources:
-  - https://docs.python.org/3/library/asyncio.html
-  - https://realpython.com/async-io-python/
+metadata:
+  type: research
+  sources:
+    - https://docs.python.org/3/library/asyncio.html
+    - https://realpython.com/async-io-python/
 ---
 
 <!-- DRAFT -->

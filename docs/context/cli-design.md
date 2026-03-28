@@ -1,17 +1,18 @@
 ---
 name: "CLI Design for Humans and Agents"
 description: "Patterns for CLI argument conventions, output formatting, exit codes, and agent-readiness that make scripts usable by both humans and AI agents from the same codebase"
-type: reference
-sources:
-  - https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html
-  - https://clig.dev/
-  - https://medium.com/@jdxcode/12-factor-cli-apps-dd3c227a0e46
-  - https://www.anthropic.com/engineering/writing-tools-for-agents
-related:
-  - docs/research/cli-design.md
-  - docs/context/tool-design-for-llms.md
-  - docs/context/convention-driven-design.md
-  - docs/context/idempotency-convergent-operations.md
+metadata:
+  type: reference
+  sources:
+    - https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html
+    - https://clig.dev/
+    - https://medium.com/@jdxcode/12-factor-cli-apps-dd3c227a0e46
+    - https://www.anthropic.com/engineering/writing-tools-for-agents
+  related:
+    - docs/research/cli-design.md
+    - docs/context/tool-design-for-llms.md
+    - docs/context/convention-driven-design.md
+    - docs/context/idempotency-convergent-operations.md
 ---
 
 A well-designed CLI serves both humans and agents from the same codebase. The principles are complementary: POSIX argument conventions for predictability, stream separation for composability, `--json` for machine readability, simple exit codes for programmatic handling, and TTY detection for automatic adaptation. The agent-specific layer (schema introspection, idempotent operations, context-window-conscious output) extends these fundamentals rather than replacing them.

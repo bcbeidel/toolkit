@@ -1,25 +1,26 @@
 ---
 name: "Principle Engineering: Extracting, Classifying, and Maintaining Design Principles as Living Documents"
 description: "Technical investigation of methods for codifying design principles with classification taxonomies, verification mechanisms, drift detection, instruction density thresholds, ADR/RFC governance patterns, and constitutional AI approaches"
-type: research
-sources:
-  - https://arxiv.org/html/2507.11538v1
-  - https://www.anthropic.com/news/claudes-constitution
-  - https://newsletter.pragmaticengineer.com/p/rfcs-and-design-docs
-  - https://aws.amazon.com/blogs/architecture/master-architecture-decision-records-adrs-best-practices-for-effective-decision-making/
-  - https://adr.github.io/
-  - https://continuous-architecture.org/practices/fitness-functions/
-  - https://www.archunit.org/
-  - https://www.sonarsource.com/blog/the-architecture-gap-why-your-code-becomes-hard-to-change/
-  - https://www.sciencedirect.com/science/article/pii/S0920548923000557
-  - https://mlops.community/the-impact-of-prompt-bloat-on-llm-output-quality/
-  - https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
-  - https://www.anthropic.com/research/constitutional-ai-harmlessness-from-ai-feedback
-related:
-  - docs/research/prompt-engineering.md
-  - docs/research/context-engineering.md
-  - docs/research/context-window-management.md
-  - docs/context/principle-engineering.md
+metadata:
+  type: research
+  sources:
+    - https://arxiv.org/html/2507.11538v1
+    - https://www.anthropic.com/news/claudes-constitution
+    - https://newsletter.pragmaticengineer.com/p/rfcs-and-design-docs
+    - https://aws.amazon.com/blogs/architecture/master-architecture-decision-records-adrs-best-practices-for-effective-decision-making/
+    - https://adr.github.io/
+    - https://continuous-architecture.org/practices/fitness-functions/
+    - https://www.archunit.org/
+    - https://www.sonarsource.com/blog/the-architecture-gap-why-your-code-becomes-hard-to-change/
+    - https://www.sciencedirect.com/science/article/pii/S0920548923000557
+    - https://mlops.community/the-impact-of-prompt-bloat-on-llm-output-quality/
+    - https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
+    - https://www.anthropic.com/research/constitutional-ai-harmlessness-from-ai-feedback
+  related:
+    - docs/research/prompt-engineering.md
+    - docs/research/context-engineering.md
+    - docs/research/context-window-management.md
+    - docs/context/principle-engineering.md
 ---
 
 ## Summary

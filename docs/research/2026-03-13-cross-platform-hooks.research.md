@@ -1,38 +1,39 @@
 ---
 name: "Cross-Platform Hook Mechanisms in AI Coding Agents"
 description: "Landscape analysis of hook types, enforcement models, and portability across 15 AI coding agent platforms"
-type: research
-sources:
-  - https://code.claude.com/docs/en/hooks
-  - https://code.claude.com/docs/en/hooks-guide
-  - https://claude.com/blog/how-to-configure-hooks
-  - https://cursor.com/docs/hooks
-  - https://cursor.com/docs/rules
-  - https://cursor.com/docs/cloud-agent/automations
-  - https://cursor.com/docs/reference/third-party-hooks
-  - https://docs.github.com/en/copilot/customizing-copilot/adding-custom-instructions-for-github-copilot
-  - https://docs.github.com/en/copilot/customizing-copilot/customizing-the-development-environment-for-copilot-coding-agent
-  - https://docs.github.com/en/copilot/using-github-copilot/code-review/using-copilot-code-review
-  - https://docs.windsurf.com/windsurf/cascade/hooks
-  - https://docs.windsurf.com/windsurf/cascade/skills
-  - https://aider.chat/docs/usage/lint-test.html
-  - https://aider.chat/docs/config/options.html
-  - https://aider.chat/docs/usage/conventions.html
-  - https://docs.continue.dev/customize/deep-dives/rules
-  - https://docs.cline.bot/customization/hooks
-  - https://docs.cline.bot/customization/cline-rules
-  - https://developers.openai.com/codex/rules/
-  - https://developers.openai.com/codex/guides/agents-md/
-  - https://docs.devin.ai/product-guides/using-playbooks
-  - https://docs.augmentcode.com/cli/hooks
-  - https://docs.augmentcode.com/cli/rules
-  - https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/context-project-rules.html
-  - https://www.jetbrains.com/help/ai-assistant/configure-project-rules.html
-  - https://sourcegraph.com/docs/cody/enterprise/features
-  - https://docs.replit.com/replitai/replit-dot-md
-related:
-  - docs/research/ai-coding-assistant-conventions.md
-  - docs/research/plugin-extension-architecture.md
+metadata:
+  type: research
+  sources:
+    - https://code.claude.com/docs/en/hooks
+    - https://code.claude.com/docs/en/hooks-guide
+    - https://claude.com/blog/how-to-configure-hooks
+    - https://cursor.com/docs/hooks
+    - https://cursor.com/docs/rules
+    - https://cursor.com/docs/cloud-agent/automations
+    - https://cursor.com/docs/reference/third-party-hooks
+    - https://docs.github.com/en/copilot/customizing-copilot/adding-custom-instructions-for-github-copilot
+    - https://docs.github.com/en/copilot/customizing-copilot/customizing-the-development-environment-for-copilot-coding-agent
+    - https://docs.github.com/en/copilot/using-github-copilot/code-review/using-copilot-code-review
+    - https://docs.windsurf.com/windsurf/cascade/hooks
+    - https://docs.windsurf.com/windsurf/cascade/skills
+    - https://aider.chat/docs/usage/lint-test.html
+    - https://aider.chat/docs/config/options.html
+    - https://aider.chat/docs/usage/conventions.html
+    - https://docs.continue.dev/customize/deep-dives/rules
+    - https://docs.cline.bot/customization/hooks
+    - https://docs.cline.bot/customization/cline-rules
+    - https://developers.openai.com/codex/rules/
+    - https://developers.openai.com/codex/guides/agents-md/
+    - https://docs.devin.ai/product-guides/using-playbooks
+    - https://docs.augmentcode.com/cli/hooks
+    - https://docs.augmentcode.com/cli/rules
+    - https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/context-project-rules.html
+    - https://www.jetbrains.com/help/ai-assistant/configure-project-rules.html
+    - https://sourcegraph.com/docs/cody/enterprise/features
+    - https://docs.replit.com/replitai/replit-dot-md
+  related:
+    - docs/research/ai-coding-assistant-conventions.md
+    - docs/research/plugin-extension-architecture.md
 ---
 
 ## Key Findings

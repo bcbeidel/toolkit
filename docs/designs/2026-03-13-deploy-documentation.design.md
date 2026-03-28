@@ -1,11 +1,12 @@
 ---
 name: Deploy Documentation Updates
 description: Update stale deploy design doc and create user-facing DEPLOYING.md guide
-type: design
-status: completed
-related:
-  - docs/designs/cross-platform-deploy-design.md
-  - docs/research/2026-03-13-cross-platform-hooks.research.md
+metadata:
+  type: design
+  status: completed
+  related:
+    - docs/designs/cross-platform-deploy-design.md
+    - docs/research/2026-03-13-cross-platform-hooks.research.md
 ---
 
 ## Purpose

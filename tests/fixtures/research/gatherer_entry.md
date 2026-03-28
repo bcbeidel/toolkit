@@ -1,8 +1,9 @@
 ---
 name: Test Research — Gatherer Entry
 description: Fixture representing state before gatherer runs
-type: research
-sources: []
+metadata:
+  type: research
+  sources: []
 ---
 
 <!-- DRAFT -->

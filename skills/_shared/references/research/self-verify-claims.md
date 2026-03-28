@@ -1,9 +1,10 @@
 ---
 name: Self-Verify Claims (CoVe)
 description: Phase 7 — extract claims from findings, run Chain-of-Verification to catch fabrication
-stage: verify
-pipeline: research
-tools: [Read, Write, Edit, Glob, Grep, Bash, WebFetch]
+metadata:
+  stage: verify
+  pipeline: research
+  tools: [Read, Write, Edit, Glob, Grep, Bash, WebFetch]
 ---
 
 ## Purpose

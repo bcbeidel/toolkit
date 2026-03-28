@@ -1,25 +1,26 @@
 ---
 name: "Git Workflow Integration for Agent-Driven Development"
 description: "Technical investigation of commits as rollback boundaries, branch naming conventions, PR automation, git worktree patterns, conventional commits, and CI/CD interaction with agent-produced code"
-type: research
-sources:
-  - https://nx.dev/blog/git-worktrees-ai-agents
-  - https://github.blog/ai-and-ml/automate-repository-tasks-with-github-agentic-workflows/
-  - https://github.blog/changelog/2026-02-13-github-agentic-workflows-are-now-in-technical-preview/
-  - https://github.blog/changelog/2025-10-16-copilot-coding-agent-uses-better-branch-names-and-pull-request-titles/
-  - https://www.conventionalcommits.org/en/v1.0.0/
-  - https://github.com/semantic-release/semantic-release
-  - https://worktrunk.dev/
-  - https://github.com/nwiizo/ccswarm
-  - https://gist.github.com/SilenNaihin/d4b3870178667475b08e1f48d6cdbc30
-  - https://mike.bailey.net.au/notes/software/git/aidock/ai-branch-naming-conventions/
-  - https://github.com/qodo-ai/pr-agent
-  - https://git-scm.com/docs/git-revert
-related:
-  - docs/research/multi-agent-coordination.md
-  - docs/research/workflow-orchestration.md
-  - docs/research/human-in-the-loop-design.md
-  - docs/context/git-workflow-integration.md
+metadata:
+  type: research
+  sources:
+    - https://nx.dev/blog/git-worktrees-ai-agents
+    - https://github.blog/ai-and-ml/automate-repository-tasks-with-github-agentic-workflows/
+    - https://github.blog/changelog/2026-02-13-github-agentic-workflows-are-now-in-technical-preview/
+    - https://github.blog/changelog/2025-10-16-copilot-coding-agent-uses-better-branch-names-and-pull-request-titles/
+    - https://www.conventionalcommits.org/en/v1.0.0/
+    - https://github.com/semantic-release/semantic-release
+    - https://worktrunk.dev/
+    - https://github.com/nwiizo/ccswarm
+    - https://gist.github.com/SilenNaihin/d4b3870178667475b08e1f48d6cdbc30
+    - https://mike.bailey.net.au/notes/software/git/aidock/ai-branch-naming-conventions/
+    - https://github.com/qodo-ai/pr-agent
+    - https://git-scm.com/docs/git-revert
+  related:
+    - docs/research/multi-agent-coordination.md
+    - docs/research/workflow-orchestration.md
+    - docs/research/human-in-the-loop-design.md
+    - docs/context/git-workflow-integration.md
 ---
 
 ## Summary

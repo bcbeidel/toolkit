@@ -1,6 +1,7 @@
 ---
 description: Interpret behavior charitably — attribute to mistakes before malice
-argument-hint: "[situation where someone's behavior seems problematic]"
+metadata:
+  argument-hint: "[situation where someone's behavior seems problematic]"
 ---
 
 <objective>

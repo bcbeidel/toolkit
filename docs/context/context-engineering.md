@@ -1,18 +1,19 @@
 ---
 name: "Context Engineering"
 description: "The discipline of structuring, storing, and surfacing project knowledge so LLMs consume it effectively — document models, indexing strategies, and the curation hierarchy"
-type: reference
-sources:
-  - https://arxiv.org/abs/2307.03172
-  - https://arxiv.org/abs/2404.16811
-  - https://arxiv.org/abs/2312.06648
-  - https://platform.claude.com/docs/en/docs/build-with-claude/context-windows
-  - https://platform.claude.com/docs/en/docs/build-with-claude/prompt-caching
-  - https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
-related:
-  - docs/research/context-engineering.md
-  - docs/context/context-window-management.md
-  - docs/context/prompt-engineering.md
+metadata:
+  type: reference
+  sources:
+    - https://arxiv.org/abs/2307.03172
+    - https://arxiv.org/abs/2404.16811
+    - https://arxiv.org/abs/2312.06648
+    - https://platform.claude.com/docs/en/docs/build-with-claude/context-windows
+    - https://platform.claude.com/docs/en/docs/build-with-claude/prompt-caching
+    - https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
+  related:
+    - docs/research/context-engineering.md
+    - docs/context/context-window-management.md
+    - docs/context/prompt-engineering.md
 ---
 
 ## Key Insight

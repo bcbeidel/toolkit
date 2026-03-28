@@ -1,9 +1,10 @@
 ---
 name: Distillation Guidelines
 description: Quality criteria for context files distilled from research — atomic, actionable, traceable, concise
-stage: write
-pipeline: distill
-tools: [Read, Write, Edit, Glob, Grep, Bash]
+metadata:
+  stage: write
+  pipeline: distill
+  tools: [Read, Write, Edit, Glob, Grep, Bash]
 ---
 
 ## Purpose
@@ -40,12 +41,13 @@ optional when using the compound suffix.
 ---
 name: [Descriptive title]
 description: [One-sentence summary of the concept]
-type: context
-sources:
-  - [URLs carried forward from source research]
-related:
-  - [source research document path]
-  - [sibling context files from this batch]
+metadata:
+  type: context
+  sources:
+    - [URLs carried forward from source research]
+  related:
+    - [source research document path]
+    - [sibling context files from this batch]
 ---
 ```
 

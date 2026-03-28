@@ -1,18 +1,19 @@
 ---
 name: "Multi-Agent Coordination Patterns"
 description: "Dispatch, context sharing, conflict prevention, and isolation patterns that have converged across major LLM agent frameworks (2024-2026)"
-type: reference
-sources:
-  - https://developers.googleblog.com/developers-guide-to-multi-agent-patterns-in-adk/
-  - https://arxiv.org/html/2503.03505v1
-  - https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/agent-orchestration/concurrent
-  - https://docs.crewai.com/en/learn/sequential-process
-  - https://code.claude.com/docs/en/sub-agents
-  - https://openai.github.io/openai-agents-python/
-  - https://www.augmentcode.com/guides/why-multi-agent-llm-systems-fail-and-how-to-fix-them
-related:
-  - docs/research/multi-agent-coordination.md
-  - docs/context/llm-capabilities-limitations.md
+metadata:
+  type: reference
+  sources:
+    - https://developers.googleblog.com/developers-guide-to-multi-agent-patterns-in-adk/
+    - https://arxiv.org/html/2503.03505v1
+    - https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/agent-orchestration/concurrent
+    - https://docs.crewai.com/en/learn/sequential-process
+    - https://code.claude.com/docs/en/sub-agents
+    - https://openai.github.io/openai-agents-python/
+    - https://www.augmentcode.com/guides/why-multi-agent-llm-systems-fail-and-how-to-fix-them
+  related:
+    - docs/research/multi-agent-coordination.md
+    - docs/context/llm-capabilities-limitations.md
 ---
 
 Multi-agent coordination has converged on a small set of patterns across all

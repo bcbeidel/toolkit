@@ -1,19 +1,20 @@
 ---
 name: "Plugin and Extension Architecture Patterns"
 description: "Universal patterns in plugin systems — manifest-driven discovery, lazy activation, sandboxing spectrums — and how Claude Code's LLM-mediated, prompt-based model diverges from traditional programmatic extension APIs"
-type: reference
-sources:
-  - https://code.claude.com/docs/en/plugins
-  - https://code.claude.com/docs/en/plugins-reference
-  - https://code.visualstudio.com/api/references/activation-events
-  - https://code.visualstudio.com/api/advanced-topics/extension-host
-  - https://www.figma.com/blog/how-we-built-the-figma-plugin-system/
-  - https://developer.chrome.com/docs/extensions/develop/migrate/what-is-mv3
-  - https://plugins.jetbrains.com/docs/intellij/plugin-extensions.html
-related:
-  - docs/research/plugin-extension-architecture.md
-  - docs/context/tool-design-for-llms.md
-  - docs/context/context-window-management.md
+metadata:
+  type: reference
+  sources:
+    - https://code.claude.com/docs/en/plugins
+    - https://code.claude.com/docs/en/plugins-reference
+    - https://code.visualstudio.com/api/references/activation-events
+    - https://code.visualstudio.com/api/advanced-topics/extension-host
+    - https://www.figma.com/blog/how-we-built-the-figma-plugin-system/
+    - https://developer.chrome.com/docs/extensions/develop/migrate/what-is-mv3
+    - https://plugins.jetbrains.com/docs/intellij/plugin-extensions.html
+  related:
+    - docs/research/plugin-extension-architecture.md
+    - docs/context/tool-design-for-llms.md
+    - docs/context/context-window-management.md
 ---
 
 Plugin systems across six ecosystems (Claude Code, VS Code, JetBrains, Vim/Neovim, Chrome, Figma) converge on three universal patterns but diverge sharply on execution models. Claude Code's architecture is fundamentally distinct from all others surveyed.

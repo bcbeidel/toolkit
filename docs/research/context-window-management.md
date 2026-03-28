@@ -1,23 +1,24 @@
 ---
 name: "Context Window Management"
 description: "Token budgets, inclusion/exclusion strategies, compression approaches, and attention-aware formatting patterns for structuring content to survive context limits"
-type: research
-sources:
-  - https://arxiv.org/abs/2307.03172
-  - https://arxiv.org/abs/2310.06839
-  - https://arxiv.org/abs/2404.02060
-  - https://arxiv.org/abs/2309.17453
-  - https://arxiv.org/abs/2310.04408
-  - https://arxiv.org/abs/2305.14788
-  - https://arxiv.org/abs/2404.16811
-  - https://arxiv.org/abs/2312.06648
-  - https://arxiv.org/abs/2404.06654
-  - https://platform.claude.com/docs/en/docs/build-with-claude/context-windows
-  - https://platform.claude.com/docs/en/docs/build-with-claude/prompt-engineering/long-context-tips
-related:
-  - docs/research/prompt-engineering.md
-  - docs/research/agent-state-persistence.md
-  - docs/context/context-window-management.md
+metadata:
+  type: research
+  sources:
+    - https://arxiv.org/abs/2307.03172
+    - https://arxiv.org/abs/2310.06839
+    - https://arxiv.org/abs/2404.02060
+    - https://arxiv.org/abs/2309.17453
+    - https://arxiv.org/abs/2310.04408
+    - https://arxiv.org/abs/2305.14788
+    - https://arxiv.org/abs/2404.16811
+    - https://arxiv.org/abs/2312.06648
+    - https://arxiv.org/abs/2404.06654
+    - https://platform.claude.com/docs/en/docs/build-with-claude/context-windows
+    - https://platform.claude.com/docs/en/docs/build-with-claude/prompt-engineering/long-context-tips
+  related:
+    - docs/research/prompt-engineering.md
+    - docs/research/agent-state-persistence.md
+    - docs/context/context-window-management.md
 ---
 
 ## Key Findings

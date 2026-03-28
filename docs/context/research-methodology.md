@@ -1,18 +1,19 @@
 ---
 name: "Research Methodology for Agent-Driven Workflows"
 description: "Layered evaluation, breadth-before-depth discovery, disagreement-as-signal, and three-layer confidence — convergent principles from academic, intelligence, and agent-driven research traditions"
-type: reference
-sources:
-  - https://www.prisma-statement.org/
-  - https://pressbooks.pub/introtocollegeresearch/chapter/the-sift-method/
-  - https://www.cdc.gov/acip-grade-handbook/hcp/chapter-7-grade-criteria-determining-certainty-of-evidence/index.html
-  - https://arxiv.org/html/2508.12752v1
-  - https://arxiv.org/abs/2309.11495
-  - https://en.wikipedia.org/wiki/Analysis_of_competing_hypotheses
-related:
-  - docs/research/research-methodology.md
-  - docs/context/llm-capabilities-limitations.md
-  - docs/context/tool-design-for-llms.md
+metadata:
+  type: reference
+  sources:
+    - https://www.prisma-statement.org/
+    - https://pressbooks.pub/introtocollegeresearch/chapter/the-sift-method/
+    - https://www.cdc.gov/acip-grade-handbook/hcp/chapter-7-grade-criteria-determining-certainty-of-evidence/index.html
+    - https://arxiv.org/html/2508.12752v1
+    - https://arxiv.org/abs/2309.11495
+    - https://en.wikipedia.org/wiki/Analysis_of_competing_hypotheses
+  related:
+    - docs/research/research-methodology.md
+    - docs/context/llm-capabilities-limitations.md
+    - docs/context/tool-design-for-llms.md
 ---
 
 Three traditions — academic systematic review, intelligence analysis, and agent-driven AI research — developed independently but converge on the same core principles for systematic information gathering. These principles apply directly to agent workflows that gather, evaluate, and synthesize information.

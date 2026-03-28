@@ -1,18 +1,19 @@
 ---
 name: "Agent Memory Tiers"
 description: "The universal three-tier memory architecture (short-term, long-term, semantic) found in every major agent framework, why the tiers are conceptually portable but practically incompatible, and implications for plugin state management"
-type: reference
-sources:
-  - https://langfuse.com/blog/2025-03-19-ai-agent-comparison
-  - https://developers.llamaindex.ai/python/framework/module_guides/deploying/agents/memory/
-  - https://docs.crewai.com/
-  - https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/agent-architecture
-related:
-  - docs/research/agent-framework-landscape.md
-  - docs/context/agent-state-persistence.md
-  - docs/context/context-window-management.md
-  - docs/context/tool-registration-convergence.md
-  - docs/context/agent-framework-portability.md
+metadata:
+  type: reference
+  sources:
+    - https://langfuse.com/blog/2025-03-19-ai-agent-comparison
+    - https://developers.llamaindex.ai/python/framework/module_guides/deploying/agents/memory/
+    - https://docs.crewai.com/
+    - https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/agent-architecture
+  related:
+    - docs/research/agent-framework-landscape.md
+    - docs/context/agent-state-persistence.md
+    - docs/context/context-window-management.md
+    - docs/context/tool-registration-convergence.md
+    - docs/context/agent-framework-portability.md
 ---
 
 ## The Three Tiers

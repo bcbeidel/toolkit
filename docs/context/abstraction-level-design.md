@@ -1,19 +1,20 @@
 ---
 name: "Abstraction Level Design for Agent-Facing Artifacts"
 description: "How calibrating abstraction altitude — WHAT/WHY vs. HOW — across specifications, plans, and instructions affects agent execution reliability, with empirical thresholds for the specificity-flexibility tradeoff"
-type: reference
-sources:
-  - https://arxiv.org/html/2512.02246v1
-  - https://arxiv.org/html/2505.13360v1
-  - https://arxiv.org/html/2510.23564v1
-  - https://arxiv.org/html/2601.22290
-  - https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
-  - https://openreview.net/pdf?id=sY5N0zY5Od
-related:
-  - docs/research/abstraction-level-design.md
-  - docs/context/prompt-engineering.md
-  - docs/context/agentic-planning-execution.md
-  - docs/context/writing-for-llm-consumption.md
+metadata:
+  type: reference
+  sources:
+    - https://arxiv.org/html/2512.02246v1
+    - https://arxiv.org/html/2505.13360v1
+    - https://arxiv.org/html/2510.23564v1
+    - https://arxiv.org/html/2601.22290
+    - https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
+    - https://openreview.net/pdf?id=sY5N0zY5Od
+  related:
+    - docs/research/abstraction-level-design.md
+    - docs/context/prompt-engineering.md
+    - docs/context/agentic-planning-execution.md
+    - docs/context/writing-for-llm-consumption.md
 ---
 
 Abstraction altitude — how much implementation detail an artifact exposes — is not a style choice but an engineering variable. Higher altitude means more WHAT/WHY; lower altitude means more HOW. Each artifact type has a natural altitude range, and deviating from it in either direction degrades agent execution quality.

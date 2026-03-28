@@ -1,18 +1,19 @@
 ---
 name: "Prompt Engineering for Reliable LLM Instruction"
 description: "Landscape survey of system-level prompt design: constraint specification, output formatting, few-shot examples, CoT, and the specificity-flexibility paradox"
-type: research
-sources:
-  - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices
-  - https://developers.openai.com/api/docs/guides/prompt-engineering/
-  - https://developers.openai.com/cookbook/examples/gpt4-1_prompting_guide/
-  - https://arxiv.org/html/2505.13360v1
-  - https://arxiv.org/pdf/2509.14404
-  - https://www.promptingguide.ai/techniques/cot
-  - https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
-  - https://codeconductor.ai/blog/structured-prompting-techniques-xml-json/
-related:
-  - docs/context/prompt-engineering.md
+metadata:
+  type: research
+  sources:
+    - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices
+    - https://developers.openai.com/api/docs/guides/prompt-engineering/
+    - https://developers.openai.com/cookbook/examples/gpt4-1_prompting_guide/
+    - https://arxiv.org/html/2505.13360v1
+    - https://arxiv.org/pdf/2509.14404
+    - https://www.promptingguide.ai/techniques/cot
+    - https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
+    - https://codeconductor.ai/blog/structured-prompting-techniques-xml-json/
+  related:
+    - docs/context/prompt-engineering.md
 ---
 
 ## Summary

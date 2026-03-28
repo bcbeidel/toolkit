@@ -1,21 +1,22 @@
 ---
 name: "Information Architecture for Agent Navigation"
 description: "Structural patterns for organizing knowledge that LLM agents can navigate efficiently: shallow hierarchy, metadata-first discovery, index files, and faceted classification through frontmatter"
-type: reference
-sources:
-  - https://www.nngroup.com/articles/taxonomy-101/
-  - https://www.nngroup.com/articles/ia-vs-navigation/
-  - https://www.nngroup.com/articles/information-scent/
-  - https://en.wikipedia.org/wiki/Faceted_classification
-  - https://fortelabs.com/blog/para/
-  - https://thenewstack.io/agentic-knowledge-base-patterns/
-  - https://www.microsoft.com/en-us/research/blog/from-raw-interaction-to-reusable-knowledge-rethinking-memory-for-ai-agents/
-  - https://claude.com/blog/using-claude-md-files
-related:
-  - docs/research/information-architecture.md
-  - docs/context/context-window-management.md
-  - docs/context/agent-state-persistence.md
-  - docs/context/tool-design-for-llms.md
+metadata:
+  type: reference
+  sources:
+    - https://www.nngroup.com/articles/taxonomy-101/
+    - https://www.nngroup.com/articles/ia-vs-navigation/
+    - https://www.nngroup.com/articles/information-scent/
+    - https://en.wikipedia.org/wiki/Faceted_classification
+    - https://fortelabs.com/blog/para/
+    - https://thenewstack.io/agentic-knowledge-base-patterns/
+    - https://www.microsoft.com/en-us/research/blog/from-raw-interaction-to-reusable-knowledge-rethinking-memory-for-ai-agents/
+    - https://claude.com/blog/using-claude-md-files
+  related:
+    - docs/research/information-architecture.md
+    - docs/context/context-window-management.md
+    - docs/context/agent-state-persistence.md
+    - docs/context/tool-design-for-llms.md
 ---
 
 Information architecture (IA) determines how agents find and navigate knowledge. Traditional IA focuses on humans who browse, scan, and build spatial memory. Agent-oriented IA must account for different constraints: no spatial memory, token cost for every file read, no visual scanning, and session boundaries that reset navigational context. Six principles emerge from foundational IA research adapted for agent consumption.

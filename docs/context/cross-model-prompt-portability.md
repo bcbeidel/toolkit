@@ -1,20 +1,21 @@
 ---
 name: "Cross-Model Prompt Portability"
 description: "What transfers across LLM families (XML structure, clear instructions) vs. what requires per-model adaptation (API parameters, reasoning modes, token templates), with measured transfer costs"
-type: reference
-sources:
-  - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/use-xml-tags
-  - https://developers.openai.com/cookbook/examples/gpt-5/gpt-5_prompting_guide
-  - https://ai.google.dev/gemini-api/docs/prompting-strategies
-  - https://www.llama.com/docs/model-cards-and-prompt-formats/llama3_1/
-  - https://arxiv.org/abs/2411.10541
-  - https://arxiv.org/html/2512.01420v1
-related:
-  - docs/research/cross-model-prompt-portability.md
-  - docs/context/prompt-engineering.md
-  - docs/context/reasoning-mode-divergence.md
-  - docs/context/writing-for-llm-consumption.md
-  - docs/context/llm-capabilities-limitations.md
+metadata:
+  type: reference
+  sources:
+    - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/use-xml-tags
+    - https://developers.openai.com/cookbook/examples/gpt-5/gpt-5_prompting_guide
+    - https://ai.google.dev/gemini-api/docs/prompting-strategies
+    - https://www.llama.com/docs/model-cards-and-prompt-formats/llama3_1/
+    - https://arxiv.org/abs/2411.10541
+    - https://arxiv.org/html/2512.01420v1
+  related:
+    - docs/research/cross-model-prompt-portability.md
+    - docs/context/prompt-engineering.md
+    - docs/context/reasoning-mode-divergence.md
+    - docs/context/writing-for-llm-consumption.md
+    - docs/context/llm-capabilities-limitations.md
 ---
 
 ## Key Insight

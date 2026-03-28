@@ -13,10 +13,11 @@ works internally. Architecture decisions belong in the plan.
     ---
     name: Feature Name
     description: One-sentence summary
-    type: design
-    status: draft
-    related:
-      - docs/context/relevant-file.md
+    metadata:
+      type: design
+      status: draft
+      related:
+        - docs/context/relevant-file.md
     ---
 
 Use unquoted values. The WOS frontmatter parser does not strip quotes.

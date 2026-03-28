@@ -1,19 +1,20 @@
 ---
 name: "Eval Framework Landscape"
 description: "Three categories of LLM evaluation tools — code-first (DeepEval), config-driven (promptfoo), and observability-integrated (Langfuse) — with selection criteria and Anthropic's methodology-first approach"
-type: reference
-sources:
-  - https://github.com/confident-ai/deepeval
-  - https://www.promptfoo.dev/docs/configuration/expected-outputs/
-  - https://langfuse.com/blog/2025-10-21-testing-llm-applications
-  - https://langfuse.com/blog/2025-11-12-evals
-  - https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents
-  - https://www.traceloop.com/blog/automated-prompt-regression-testing-with-llm-as-a-judge-and-ci-cd
-related:
-  - docs/research/testing-non-deterministic-systems.md
-  - docs/context/agent-testing-pyramid.md
-  - docs/context/llm-as-judge-evaluation.md
-  - docs/context/validation-architecture.md
+metadata:
+  type: reference
+  sources:
+    - https://github.com/confident-ai/deepeval
+    - https://www.promptfoo.dev/docs/configuration/expected-outputs/
+    - https://langfuse.com/blog/2025-10-21-testing-llm-applications
+    - https://langfuse.com/blog/2025-11-12-evals
+    - https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents
+    - https://www.traceloop.com/blog/automated-prompt-regression-testing-with-llm-as-a-judge-and-ci-cd
+  related:
+    - docs/research/testing-non-deterministic-systems.md
+    - docs/context/agent-testing-pyramid.md
+    - docs/context/llm-as-judge-evaluation.md
+    - docs/context/validation-architecture.md
 ---
 
 Three categories of eval tooling have emerged for LLM systems, each optimized for different team workflows. The choice depends less on technical capability (they overlap significantly) and more on how a team wants to work.

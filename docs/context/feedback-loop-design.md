@@ -1,18 +1,19 @@
 ---
 name: "Feedback Loop Design for Iterative Systems"
 description: "Structured feedback formats, the supersede-don't-edit pattern, and operationalization mechanisms that close the loop between execution and design so systems improve through use"
-type: reference
-sources:
-  - https://en.wikipedia.org/wiki/PDCA
-  - https://en.wikipedia.org/wiki/OODA_loop
-  - https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
-  - https://arxiv.org/abs/2303.11366
-  - https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
-related:
-  - docs/research/feedback-loop-design.md
-  - docs/context/agentic-planning-execution.md
-  - docs/context/knowledge-synthesis-distillation.md
-  - docs/context/agent-state-persistence.md
+metadata:
+  type: reference
+  sources:
+    - https://en.wikipedia.org/wiki/PDCA
+    - https://en.wikipedia.org/wiki/OODA_loop
+    - https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
+    - https://arxiv.org/abs/2303.11366
+    - https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
+  related:
+    - docs/research/feedback-loop-design.md
+    - docs/context/agentic-planning-execution.md
+    - docs/context/knowledge-synthesis-distillation.md
+    - docs/context/agent-state-persistence.md
 ---
 
 Feedback loops are the mechanism by which iterative systems learn from their own execution. Without them, every session starts from zero and mistakes repeat. Three traditions — continuous improvement (PDCA/OODA), software retrospectives, and architectural decision records — converge on the same core pattern: observe outcomes, capture structured observations, and feed them back into the process that produced them.

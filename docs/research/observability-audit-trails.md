@@ -1,32 +1,33 @@
 ---
 name: "Observability and Audit Trails for Agent Systems"
 description: "How to make agent activity inspectable through structured logging, OpenTelemetry tracing, search protocol recording, checkpoint annotations, and provenance tracking — covering standards, trace formats, and show-your-work patterns that enable debugging and trust"
-type: research
-sources:
-  - https://opentelemetry.io/blog/2025/ai-agent-observability/
-  - https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-agent-spans/
-  - https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-spans/
-  - https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-events/
-  - https://github.com/open-telemetry/semantic-conventions/issues/2664
-  - https://opentelemetry.io/blog/2024/llm-observability/
-  - https://github.com/traceloop/openllmetry
-  - https://arize-ai.github.io/openinference/spec/
-  - https://github.com/Arize-ai/openinference
-  - https://github.com/agentkitai/agentlens
-  - https://arxiv.org/html/2508.02866v2
-  - https://www.w3.org/TR/trace-context/
-  - https://langfuse.com/docs/observability/overview
-  - https://develop.sentry.dev/sdk/telemetry/traces/modules/ai-agents/
-  - https://blog.langchain.com/debugging-deep-agents-with-langsmith/
-  - https://allen.hutchison.org/2026/02/17/the-observability-gap/
-related:
-  - docs/research/workflow-orchestration.md
-  - docs/research/tool-design-for-llms.md
-  - docs/research/validation-architecture.md
-  - docs/research/multi-agent-coordination.md
-  - docs/context/agent-observability-tracing.md
-  - docs/context/show-your-work-patterns.md
-  - docs/context/observability-trust-debuggability.md
+metadata:
+  type: research
+  sources:
+    - https://opentelemetry.io/blog/2025/ai-agent-observability/
+    - https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-agent-spans/
+    - https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-spans/
+    - https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-events/
+    - https://github.com/open-telemetry/semantic-conventions/issues/2664
+    - https://opentelemetry.io/blog/2024/llm-observability/
+    - https://github.com/traceloop/openllmetry
+    - https://arize-ai.github.io/openinference/spec/
+    - https://github.com/Arize-ai/openinference
+    - https://github.com/agentkitai/agentlens
+    - https://arxiv.org/html/2508.02866v2
+    - https://www.w3.org/TR/trace-context/
+    - https://langfuse.com/docs/observability/overview
+    - https://develop.sentry.dev/sdk/telemetry/traces/modules/ai-agents/
+    - https://blog.langchain.com/debugging-deep-agents-with-langsmith/
+    - https://allen.hutchison.org/2026/02/17/the-observability-gap/
+  related:
+    - docs/research/workflow-orchestration.md
+    - docs/research/tool-design-for-llms.md
+    - docs/research/validation-architecture.md
+    - docs/research/multi-agent-coordination.md
+    - docs/context/agent-observability-tracing.md
+    - docs/context/show-your-work-patterns.md
+    - docs/context/observability-trust-debuggability.md
 ---
 
 ## Summary

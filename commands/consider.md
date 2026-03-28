@@ -1,6 +1,7 @@
 ---
 description: Apply structured mental models to think through problems. Use when the user wants to "analyze", "evaluate", "think through", "decide between", "weigh tradeoffs", or needs a framework for a decision.
-argument-hint: "{model-name} [topic to analyze]"
+metadata:
+  argument-hint: "{model-name} [topic to analyze]"
 ---
 
 Apply structured mental models to problems. If a specific model was requested,

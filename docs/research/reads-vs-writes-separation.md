@@ -1,27 +1,28 @@
 ---
 name: "Reads vs. Writes Separation: Observation Before Mutation"
 description: "CQRS/CQS parallels in agent systems, why agents that silently fix things are dangerous, and safety architecture for automated systems — with examples from infrastructure automation, database design, and Kubernetes admission control"
-type: research
-sources:
-  - https://martinfowler.com/bliki/CQRS.html
-  - https://martinfowler.com/bliki/CommandQuerySeparation.html
-  - https://learn.microsoft.com/en-us/azure/architecture/patterns/cqrs
-  - https://developer.hashicorp.com/terraform/cli/commands/plan
-  - https://developer.hashicorp.com/terraform/tutorials/automation/automate-terraform
-  - https://docs.ansible.com/projects/ansible/2.9/user_guide/playbooks_checkmode.html
-  - https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/
-  - https://sre.google/sre-book/automation-at-google/
-  - https://cleanlab.ai/blog/ai-agent-safety/
-  - https://noma.security/blog/the-risk-of-destructive-capabilities-in-agentic-ai/
-  - https://en.wikipedia.org/wiki/Command%E2%80%93query_separation
-  - https://textbook.cs161.org/principles/principles.html
-  - https://air-governance-framework.finos.org/mitigations/mi-18_agent-authority-least-privilege-framework.html
-related:
-  - docs/research/validation-architecture.md
-  - docs/research/human-in-the-loop-design.md
-  - docs/research/idempotency-convergent-operations.md
-  - docs/context/reads-writes-separation.md
-  - docs/context/preview-before-execute.md
+metadata:
+  type: research
+  sources:
+    - https://martinfowler.com/bliki/CQRS.html
+    - https://martinfowler.com/bliki/CommandQuerySeparation.html
+    - https://learn.microsoft.com/en-us/azure/architecture/patterns/cqrs
+    - https://developer.hashicorp.com/terraform/cli/commands/plan
+    - https://developer.hashicorp.com/terraform/tutorials/automation/automate-terraform
+    - https://docs.ansible.com/projects/ansible/2.9/user_guide/playbooks_checkmode.html
+    - https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/
+    - https://sre.google/sre-book/automation-at-google/
+    - https://cleanlab.ai/blog/ai-agent-safety/
+    - https://noma.security/blog/the-risk-of-destructive-capabilities-in-agentic-ai/
+    - https://en.wikipedia.org/wiki/Command%E2%80%93query_separation
+    - https://textbook.cs161.org/principles/principles.html
+    - https://air-governance-framework.finos.org/mitigations/mi-18_agent-authority-least-privilege-framework.html
+  related:
+    - docs/research/validation-architecture.md
+    - docs/research/human-in-the-loop-design.md
+    - docs/research/idempotency-convergent-operations.md
+    - docs/context/reads-writes-separation.md
+    - docs/context/preview-before-execute.md
 ---
 
 ## Summary

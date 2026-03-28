@@ -1,17 +1,18 @@
 ---
 name: "Agent Framework Portability"
 description: "Five rules for building agent tools and plugins that work across frameworks: target the tool layer, use MCP, stay out of orchestration, manage own state, and plan for churn"
-type: reference
-sources:
-  - https://langfuse.com/blog/2025-03-19-ai-agent-comparison
-  - https://modelcontextprotocol.io/specification/2025-11-25
-  - https://arxiv.org/html/2510.04173v1
-related:
-  - docs/research/agent-framework-landscape.md
-  - docs/context/plugin-extension-architecture.md
-  - docs/context/tool-design-for-llms.md
-  - docs/context/tool-registration-convergence.md
-  - docs/context/agent-memory-tiers.md
+metadata:
+  type: reference
+  sources:
+    - https://langfuse.com/blog/2025-03-19-ai-agent-comparison
+    - https://modelcontextprotocol.io/specification/2025-11-25
+    - https://arxiv.org/html/2510.04173v1
+  related:
+    - docs/research/agent-framework-landscape.md
+    - docs/context/plugin-extension-architecture.md
+    - docs/context/tool-design-for-llms.md
+    - docs/context/tool-registration-convergence.md
+    - docs/context/agent-memory-tiers.md
 ---
 
 ## The Portability Problem

@@ -1,18 +1,19 @@
 ---
 name: "Context Injection Strategies in AI Coding Tools"
 description: "Four fundamentally different approaches to automated context assembly — AST repo maps, flow tracking, indexed retrieval, and on-demand reading — representing the primary axis of competitive differentiation"
-type: reference
-sources:
-  - https://aider.chat/docs/usage/conventions.html
-  - https://docs.windsurf.com/windsurf/cascade/memories
-  - https://docs.cursor.com/context/rules
-  - https://code.claude.com/docs/en/overview
-  - https://code.claude.com/docs/en/skills
-related:
-  - docs/research/ai-coding-assistant-conventions.md
-  - docs/context/context-engineering.md
-  - docs/context/context-window-management.md
-  - docs/context/instruction-file-conventions.md
+metadata:
+  type: reference
+  sources:
+    - https://aider.chat/docs/usage/conventions.html
+    - https://docs.windsurf.com/windsurf/cascade/memories
+    - https://docs.cursor.com/context/rules
+    - https://code.claude.com/docs/en/overview
+    - https://code.claude.com/docs/en/skills
+  related:
+    - docs/research/ai-coding-assistant-conventions.md
+    - docs/context/context-engineering.md
+    - docs/context/context-window-management.md
+    - docs/context/instruction-file-conventions.md
 ---
 
 Instruction files are table stakes — every AI coding tool has them. The competitive differentiation is in how tools automatically discover and inject relevant context beyond those static files. Four fundamentally different strategies have emerged, each reflecting a distinct architectural philosophy.

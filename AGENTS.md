@@ -28,9 +28,10 @@ Documents put key insights first and last; supplemental detail in the middle.
 ---
 name: Title
 description: What this covers
-type: research       # optional
-sources: []          # required if type is research
-related: []          # optional, file paths from project root
+metadata:
+  type: research       # optional
+  sources: []          # required if type is research
+  related: []          # optional, file paths from project root
 ---
 ```
 

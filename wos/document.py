@@ -14,6 +14,11 @@ from typing import List, Optional
 from wos.frontmatter import parse_frontmatter
 from wos.suffix import type_from_path
 
+# Fields that can live under ``metadata`` or at top level.
+_METADATA_FIELDS = frozenset({
+    "type", "sources", "related", "status", "created_at", "updated_at",
+})
+
 
 @dataclass
 class Document:
@@ -31,12 +36,33 @@ class Document:
     updated_at: Optional[str] = None
 
 
+def _resolve(fm: dict, key: str, default: object = None) -> object:
+    """Resolve a field from metadata (preferred) or top-level (fallback).
+
+    Checks ``fm["metadata"][key]`` first, then ``fm[key]``.  Returns
+    *default* if neither location has a non-None value.
+    """
+    meta = fm.get("metadata")
+    if isinstance(meta, dict):
+        val = meta.get(key)
+        if val is not None:
+            return val
+    val = fm.get(key)
+    if val is not None:
+        return val
+    return default
+
+
 def parse_document(path: str, text: str) -> Document:
     """Parse a markdown document with YAML frontmatter.
 
     Extracts frontmatter between ``---`` delimiters. Known fields
     (name, description, type, sources, related) become Document
     attributes; unknown fields are ignored.
+
+    Fields may appear at top level (flat format) or nested under a
+    ``metadata`` map (Agent Skills superset format).  ``metadata``
+    takes precedence when both are present.
 
     Args:
         path: File path for the document.
@@ -54,7 +80,7 @@ def parse_document(path: str, text: str) -> Document:
     except ValueError as exc:
         raise ValueError(f"{path}: {exc}") from exc
 
-    # ── Validate required fields ───────────────────────────────
+    # ── Validate required fields (always top-level) ───────────
     if "name" not in fm:
         raise ValueError(f"{path}: frontmatter missing required field 'name'")
     if "description" not in fm:
@@ -65,14 +91,14 @@ def parse_document(path: str, text: str) -> Document:
     # ── Extract known fields ───────────────────────────────────
     name: str = str(fm["name"]) if fm["name"] is not None else ""
     description: str = str(fm["description"]) if fm["description"] is not None else ""
-    doc_type: Optional[str] = fm.get("type")
+    doc_type: Optional[str] = _resolve(fm, "type")
     if not isinstance(doc_type, str) and doc_type is not None:
         doc_type = str(doc_type)
     if doc_type is None:
         doc_type = type_from_path(Path(path))
-    sources: List[str] = fm.get("sources") or []
-    related: List[str] = fm.get("related") or []
-    status: Optional[str] = fm.get("status")
+    sources: List[str] = _resolve(fm, "sources") or []
+    related: List[str] = _resolve(fm, "related") or []
+    status: Optional[str] = _resolve(fm, "status")
     if not isinstance(status, str) and status is not None:
         status = str(status)
 
@@ -83,10 +109,10 @@ def parse_document(path: str, text: str) -> Document:
             f"must be one of: {', '.join(sorted(_VALID_STATUSES))}"
         )
 
-    created_at: Optional[str] = fm.get("created_at")
+    created_at: Optional[str] = _resolve(fm, "created_at")
     if not isinstance(created_at, str) and created_at is not None:
         created_at = str(created_at)
-    updated_at: Optional[str] = fm.get("updated_at")
+    updated_at: Optional[str] = _resolve(fm, "updated_at")
     if not isinstance(updated_at, str) and updated_at is not None:
         updated_at = str(updated_at)
 

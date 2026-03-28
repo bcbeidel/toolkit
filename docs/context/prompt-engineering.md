@@ -1,22 +1,23 @@
 ---
 name: "Prompt Engineering for Skill Authors"
 description: "Practical patterns for writing reliable system-level LLM instructions: layered structure, selective specification, few-shot examples, and anti-pattern avoidance"
-type: reference
-sources:
-  - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices
-  - https://developers.openai.com/api/docs/guides/prompt-engineering/
-  - https://developers.openai.com/cookbook/examples/gpt4-1_prompting_guide/
-  - https://arxiv.org/html/2505.13360v1
-  - https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
-related:
-  - docs/research/prompt-engineering.md
-  - docs/context/writing-for-llm-consumption.md
-  - docs/context/context-window-management.md
-  - docs/context/llm-capabilities-limitations.md
-  - docs/context/tool-design-for-llms.md
-  - docs/context/context-engineering.md
-  - docs/context/cross-model-prompt-portability.md
-  - docs/context/reasoning-mode-divergence.md
+metadata:
+  type: reference
+  sources:
+    - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices
+    - https://developers.openai.com/api/docs/guides/prompt-engineering/
+    - https://developers.openai.com/cookbook/examples/gpt4-1_prompting_guide/
+    - https://arxiv.org/html/2505.13360v1
+    - https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
+  related:
+    - docs/research/prompt-engineering.md
+    - docs/context/writing-for-llm-consumption.md
+    - docs/context/context-window-management.md
+    - docs/context/llm-capabilities-limitations.md
+    - docs/context/tool-design-for-llms.md
+    - docs/context/context-engineering.md
+    - docs/context/cross-model-prompt-portability.md
+    - docs/context/reasoning-mode-divergence.md
 ---
 
 ## Key Insight

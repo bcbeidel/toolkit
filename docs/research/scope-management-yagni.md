@@ -1,27 +1,28 @@
 ---
 name: "Scope Management and YAGNI in Agent Tooling"
 description: "How to resist feature creep in agent tooling — the four costs of presumptive features, complexity budgets, the tool-vs-framework spectrum, XP/lean simplicity principles, and why YAGNI applies differently when the consumer is an LLM"
-type: research
-sources:
-  - https://martinfowler.com/bliki/Yagni.html
-  - https://www.anthropic.com/research/building-effective-agents
-  - https://arxiv.org/abs/2407.01489
-  - https://en.wikipedia.org/wiki/You_aren't_gonna_need_it
-  - https://martinfowler.com/bliki/BeckDesignRules.html
-  - https://en.wikipedia.org/wiki/Unix_philosophy
-  - https://www.infoq.com/presentations/Simple-Made-Easy/
-  - https://openai.com/business/guides-and-resources/a-practical-guide-to-building-ai-agents/
-  - https://arxiv.org/html/2601.06112v1
-  - https://blog.codinghorror.com/the-last-responsible-moment/
-  - https://arxiv.org/html/2511.22729v1
-  - https://en.wikipedia.org/wiki/Feature_creep
-related:
-  - docs/research/abstraction-level-design.md
-  - docs/research/principle-engineering.md
-  - docs/research/convention-driven-design.md
-  - docs/context/yagni-agent-tooling.md
-  - docs/context/complexity-budgets.md
-  - docs/context/tool-vs-framework-spectrum.md
+metadata:
+  type: research
+  sources:
+    - https://martinfowler.com/bliki/Yagni.html
+    - https://www.anthropic.com/research/building-effective-agents
+    - https://arxiv.org/abs/2407.01489
+    - https://en.wikipedia.org/wiki/You_aren't_gonna_need_it
+    - https://martinfowler.com/bliki/BeckDesignRules.html
+    - https://en.wikipedia.org/wiki/Unix_philosophy
+    - https://www.infoq.com/presentations/Simple-Made-Easy/
+    - https://openai.com/business/guides-and-resources/a-practical-guide-to-building-ai-agents/
+    - https://arxiv.org/html/2601.06112v1
+    - https://blog.codinghorror.com/the-last-responsible-moment/
+    - https://arxiv.org/html/2511.22729v1
+    - https://en.wikipedia.org/wiki/Feature_creep
+  related:
+    - docs/research/abstraction-level-design.md
+    - docs/research/principle-engineering.md
+    - docs/research/convention-driven-design.md
+    - docs/context/yagni-agent-tooling.md
+    - docs/context/complexity-budgets.md
+    - docs/context/tool-vs-framework-spectrum.md
 ---
 
 ## Summary

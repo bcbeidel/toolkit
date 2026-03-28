@@ -1,28 +1,29 @@
 ---
 name: "Abstraction Level Design for Agent-Facing Artifacts"
 description: "How calibrating abstraction altitude across specs (WHAT/WHY), plans (observable outcomes), research (mode intensity), and instructions (specificity) affects agent execution reliability — with empirical evidence on the specificity-flexibility tradeoff"
-type: research
-sources:
-  - https://arxiv.org/html/2512.02246v1
-  - https://arxiv.org/html/2505.13360v1
-  - https://arxiv.org/html/2510.23564v1
-  - https://arxiv.org/html/2601.22290
-  - https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
-  - https://code.claude.com/docs/en/best-practices
-  - https://openreview.net/pdf?id=sY5N0zY5Od
-  - https://githubnext.com/projects/copilot-workspace/
-  - https://arxiv.org/abs/2311.07599
-  - https://blog.wispera.ai/developing-artfully-vague-prompts/
-  - https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills
-  - https://glazkov.com/2024/01/16/declarative-vs-imperative/
-related:
-  - docs/research/prompt-engineering.md
-  - docs/research/agentic-planning-execution.md
-  - docs/research/writing-for-llm-consumption.md
-  - docs/research/information-architecture.md
-  - docs/research/context-engineering.md
-  - docs/research/knowledge-synthesis-distillation.md
-  - docs/context/abstraction-level-design.md
+metadata:
+  type: research
+  sources:
+    - https://arxiv.org/html/2512.02246v1
+    - https://arxiv.org/html/2505.13360v1
+    - https://arxiv.org/html/2510.23564v1
+    - https://arxiv.org/html/2601.22290
+    - https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
+    - https://code.claude.com/docs/en/best-practices
+    - https://openreview.net/pdf?id=sY5N0zY5Od
+    - https://githubnext.com/projects/copilot-workspace/
+    - https://arxiv.org/abs/2311.07599
+    - https://blog.wispera.ai/developing-artfully-vague-prompts/
+    - https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills
+    - https://glazkov.com/2024/01/16/declarative-vs-imperative/
+  related:
+    - docs/research/prompt-engineering.md
+    - docs/research/agentic-planning-execution.md
+    - docs/research/writing-for-llm-consumption.md
+    - docs/research/information-architecture.md
+    - docs/research/context-engineering.md
+    - docs/research/knowledge-synthesis-distillation.md
+    - docs/context/abstraction-level-design.md
 ---
 
 Different artifact types in agent-facing systems require different abstraction altitudes. Specifications that prescribe HOW instead of WHAT constrain agents into suboptimal implementations. Plans with vague aspirations instead of observable outcomes give agents no way to self-verify progress. Instructions that are too rigid break on novel inputs; instructions that are too vague regress 2x more across model updates. The core insight: abstraction altitude is not a style choice but an engineering variable with measurable effects on agent execution reliability.

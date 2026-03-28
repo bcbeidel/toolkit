@@ -1,13 +1,14 @@
 ---
 name: Cross-Platform Skill Deployment
 description: Deploy script that symlinks WOS skills to project or platform directories for cross-platform agent discovery
-type: design
-status: approved
-created_at: 2026-03-13
-updated_at: 2026-03-13
-related:
-  - docs/plans/cross-platform-deploy.plan.md
-  - docs/designs/2026-03-13-deploy-documentation.design.md
+metadata:
+  type: design
+  status: approved
+  created_at: 2026-03-13
+  updated_at: 2026-03-13
+  related:
+    - docs/plans/cross-platform-deploy.plan.md
+    - docs/designs/2026-03-13-deploy-documentation.design.md
 ---
 
 ## Purpose

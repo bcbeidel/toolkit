@@ -1,8 +1,9 @@
 ---
 name: Verify Sources
 description: Phase 3 — check URL reachability, drop unreachable sources, update document
-stage: gather
-pipeline: research
+metadata:
+  stage: gather
+  pipeline: research
 ---
 
 ## Purpose

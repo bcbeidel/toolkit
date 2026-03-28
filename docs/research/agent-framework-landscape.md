@@ -1,27 +1,28 @@
 ---
 name: "Agent Framework Landscape"
 description: "Landscape survey of how nine major agent frameworks handle tool registration, memory, planning, and orchestration — identifying universal patterns vs. framework-specific abstractions and implications for plugin portability"
-type: research
-sources:
-  - https://langfuse.com/blog/2025-03-19-ai-agent-comparison
-  - https://dspy.ai/learn/programming/tools/
-  - https://docs.haystack.deepset.ai/docs/agents
-  - https://docs.crewai.com/
-  - https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/agent-architecture
-  - https://openai.github.io/openai-agents-python/tools/
-  - https://platform.claude.com/docs/en/agent-sdk/overview
-  - https://github.com/ag2ai/ag2
-  - https://modelcontextprotocol.io/specification/2025-11-25
-  - https://developers.llamaindex.ai/python/framework/module_guides/deploying/agents/memory/
-  - https://blog.langchain.com/langchain-langgraph-1dot0/
-  - https://arxiv.org/html/2510.04173v1
-related:
-  - docs/research/multi-agent-coordination.md
-  - docs/research/agentic-planning-execution.md
-  - docs/research/tool-design-for-llms.md
-  - docs/context/tool-registration-convergence.md
-  - docs/context/agent-memory-tiers.md
-  - docs/context/agent-framework-portability.md
+metadata:
+  type: research
+  sources:
+    - https://langfuse.com/blog/2025-03-19-ai-agent-comparison
+    - https://dspy.ai/learn/programming/tools/
+    - https://docs.haystack.deepset.ai/docs/agents
+    - https://docs.crewai.com/
+    - https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/agent-architecture
+    - https://openai.github.io/openai-agents-python/tools/
+    - https://platform.claude.com/docs/en/agent-sdk/overview
+    - https://github.com/ag2ai/ag2
+    - https://modelcontextprotocol.io/specification/2025-11-25
+    - https://developers.llamaindex.ai/python/framework/module_guides/deploying/agents/memory/
+    - https://blog.langchain.com/langchain-langgraph-1dot0/
+    - https://arxiv.org/html/2510.04173v1
+  related:
+    - docs/research/multi-agent-coordination.md
+    - docs/research/agentic-planning-execution.md
+    - docs/research/tool-design-for-llms.md
+    - docs/context/tool-registration-convergence.md
+    - docs/context/agent-memory-tiers.md
+    - docs/context/agent-framework-portability.md
 ---
 
 ## Summary

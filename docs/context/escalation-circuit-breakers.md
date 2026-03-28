@@ -1,19 +1,20 @@
 ---
 name: "Escalation Strategies and Circuit Breakers for LLM Agents"
 description: "Five-layer escalation model with budget-aware thresholds and a four-state circuit breaker pattern adapted for systems where failures look like successes"
-type: reference
-sources:
-  - https://www.sitepoint.com/error-handling-strategies-for-probabilistic-code-execution/
-  - https://portkey.ai/blog/retries-fallbacks-and-circuit-breakers-in-llm-apps/
-  - https://medium.com/@michael.hannecke/resilience-circuit-breakers-for-agentic-ai-cc7075101486
-  - https://www.gocodeo.com/post/error-recovery-and-fallback-strategies-in-ai-agent-development
-  - https://www.augmentcode.com/guides/why-multi-agent-llm-systems-fail-and-how-to-fix-them
-related:
-  - docs/research/error-handling-agent-systems.md
-  - docs/context/error-classification-agent-systems.md
-  - docs/context/llm-error-handling-fundamentals.md
-  - docs/context/human-in-the-loop-design.md
-  - docs/context/workflow-orchestration.md
+metadata:
+  type: reference
+  sources:
+    - https://www.sitepoint.com/error-handling-strategies-for-probabilistic-code-execution/
+    - https://portkey.ai/blog/retries-fallbacks-and-circuit-breakers-in-llm-apps/
+    - https://medium.com/@michael.hannecke/resilience-circuit-breakers-for-agentic-ai-cc7075101486
+    - https://www.gocodeo.com/post/error-recovery-and-fallback-strategies-in-ai-agent-development
+    - https://www.augmentcode.com/guides/why-multi-agent-llm-systems-fail-and-how-to-fix-them
+  related:
+    - docs/research/error-handling-agent-systems.md
+    - docs/context/error-classification-agent-systems.md
+    - docs/context/llm-error-handling-fundamentals.md
+    - docs/context/human-in-the-loop-design.md
+    - docs/context/workflow-orchestration.md
 ---
 
 When an LLM agent fails, the response should be proportional to the failure type. A transient API error does not warrant human escalation. A structural specification gap does not benefit from retries. This document describes a five-layer escalation model and an adapted circuit breaker pattern for agent systems.

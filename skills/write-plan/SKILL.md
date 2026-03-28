@@ -160,11 +160,12 @@ Plan documents use WOS frontmatter:
     ---
     name: Feature Name
     description: One-sentence summary
-    type: plan
-    status: draft
-    related:
-      - docs/designs/YYYY-MM-DD-<name>.design.md
+    metadata:
+      type: plan
+      status: draft
+      related:
+        - docs/designs/YYYY-MM-DD-<name>.design.md
     ---
 
 Save location follows the project's layout hint (see step 3 above).
-The `related` field links to design docs, context files, or other plans.
+The `metadata.related` field links to design docs, context files, or other plans.

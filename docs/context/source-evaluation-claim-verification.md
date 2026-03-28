@@ -1,17 +1,18 @@
 ---
 name: "Source Evaluation and Claim Verification"
 description: "SIFT framework, source tier hierarchies, claim verification types, and Chain-of-Verification composed into a verification pipeline for LLM-assisted research"
-type: reference
-sources:
-  - https://hapgood.us/2019/06/19/sift-the-four-moves/
-  - https://pressbooks.pub/webliteracy/chapter/four-strategies/
-  - https://arxiv.org/abs/2309.11495
-  - https://aclanthology.org/2024.findings-acl.212/
-  - https://open.oregonstate.education/goodargument/chapter/four-tiers-of-sources/
-related:
-  - docs/research/source-evaluation-claim-verification.md
-  - docs/context/llm-capabilities-limitations.md
-  - docs/context/prompt-engineering.md
+metadata:
+  type: reference
+  sources:
+    - https://hapgood.us/2019/06/19/sift-the-four-moves/
+    - https://pressbooks.pub/webliteracy/chapter/four-strategies/
+    - https://arxiv.org/abs/2309.11495
+    - https://aclanthology.org/2024.findings-acl.212/
+    - https://open.oregonstate.education/goodargument/chapter/four-tiers-of-sources/
+  related:
+    - docs/research/source-evaluation-claim-verification.md
+    - docs/context/llm-capabilities-limitations.md
+    - docs/context/prompt-engineering.md
 ---
 
 Four frameworks compose into a practical verification pipeline for LLM-assisted research: SIFT for rapid source triage, source tier hierarchies for credibility classification, claim typing for targeted verification, and Chain-of-Verification (CoVe) for bias-resistant fact-checking. LLM outputs are unvetted by default and require external verification at every layer.

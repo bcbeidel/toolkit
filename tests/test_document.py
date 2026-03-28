@@ -471,3 +471,148 @@ class TestParseDocument:
         doc = parse_document("test.md", text)
         assert doc.created_at == "2026-01-15"
         assert doc.updated_at is None
+
+
+# ── Metadata-format documents ─────────────────────────────────
+
+
+class TestMetadataFormat:
+    def test_all_fields_in_metadata(self) -> None:
+        """Fields under metadata are resolved into Document attributes."""
+        from wos.document import parse_document
+
+        text = (
+            "---\n"
+            "name: Context Engineering\n"
+            "description: The discipline of structuring project knowledge\n"
+            "metadata:\n"
+            "  type: reference\n"
+            "  sources:\n"
+            "    - https://example.com/a\n"
+            "    - https://example.com/b\n"
+            "  related:\n"
+            "    - docs/research/context.md\n"
+            "  status: draft\n"
+            "  created_at: 2026-03-27\n"
+            "  updated_at: 2026-03-27\n"
+            "---\n"
+            "# Content\n"
+        )
+        doc = parse_document("docs/context/context-engineering.md", text)
+        assert doc.name == "Context Engineering"
+        assert doc.description == "The discipline of structuring project knowledge"
+        assert doc.type == "reference"
+        assert doc.sources == ["https://example.com/a", "https://example.com/b"]
+        assert doc.related == ["docs/research/context.md"]
+        assert doc.status == "draft"
+        assert doc.created_at == "2026-03-27"
+        assert doc.updated_at == "2026-03-27"
+
+    def test_flat_format_still_works(self) -> None:
+        """Backward compat: flat frontmatter parses identically."""
+        from wos.document import parse_document
+
+        text = (
+            "---\n"
+            "name: API Review\n"
+            "description: Research on REST API patterns\n"
+            "type: research\n"
+            "sources:\n"
+            "  - https://example.com/rest-guide\n"
+            "related:\n"
+            "  - docs/context/api/tokens.md\n"
+            "---\n"
+            "# Content\n"
+        )
+        doc = parse_document("docs/research/api-review.md", text)
+        assert doc.type == "research"
+        assert doc.sources == ["https://example.com/rest-guide"]
+        assert doc.related == ["docs/context/api/tokens.md"]
+
+    def test_metadata_takes_precedence_over_top_level(self) -> None:
+        """When both metadata and top-level have the same field, metadata wins."""
+        from wos.document import parse_document
+
+        text = (
+            "---\n"
+            "name: Mixed Doc\n"
+            "description: Has fields in both places\n"
+            "type: old-type\n"
+            "metadata:\n"
+            "  type: new-type\n"
+            "---\n"
+            "# Content\n"
+        )
+        doc = parse_document("test.md", text)
+        assert doc.type == "new-type"
+
+    def test_name_description_always_top_level(self) -> None:
+        """name and description are always read from top level."""
+        from wos.document import parse_document
+
+        text = (
+            "---\n"
+            "name: Top Level Name\n"
+            "description: Top Level Description\n"
+            "metadata:\n"
+            "  type: plan\n"
+            "---\n"
+            "# Content\n"
+        )
+        doc = parse_document("test.md", text)
+        assert doc.name == "Top Level Name"
+        assert doc.description == "Top Level Description"
+        assert doc.type == "plan"
+
+    def test_null_metadata_key_does_not_break(self) -> None:
+        """metadata: with no nested content stays None, doesn't crash."""
+        from wos.document import parse_document
+
+        text = (
+            "---\n"
+            "name: Safe Doc\n"
+            "description: Has null metadata\n"
+            "metadata:\n"
+            "type: context\n"
+            "---\n"
+            "# Content\n"
+        )
+        doc = parse_document("test.md", text)
+        # metadata: followed by non-indented type: means metadata is None
+        # and type is read from top level
+        assert doc.type == "context"
+
+    def test_metadata_plan_with_status(self) -> None:
+        """Plan status under metadata is validated normally."""
+        from wos.document import parse_document
+
+        text = (
+            "---\n"
+            "name: My Plan\n"
+            "description: A plan with metadata format\n"
+            "metadata:\n"
+            "  type: plan\n"
+            "  status: approved\n"
+            "---\n"
+            "# My Plan\n"
+        )
+        doc = parse_document("docs/plans/test.plan.md", text)
+        assert doc.type == "plan"
+        assert doc.status == "approved"
+
+    def test_metadata_invalid_status_raises(self) -> None:
+        """Invalid status under metadata still raises ValueError."""
+        from wos.document import parse_document
+
+        text = (
+            "---\n"
+            "name: Bad Plan\n"
+            "description: Invalid status in metadata\n"
+            "metadata:\n"
+            "  type: plan\n"
+            "  status: done\n"
+            "---\n"
+            "# Bad Plan\n"
+        )
+        with pytest.raises(ValueError, match="status"):
+            parse_document("docs/plans/bad.md", text)

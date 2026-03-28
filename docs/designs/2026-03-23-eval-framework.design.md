@@ -1,16 +1,17 @@
 ---
 name: Generic Prompt/Skill Evaluation Framework
 description: Design for a hybrid eval framework (YAML cases + Python scorers) supporting prompt performance monitoring, regression detection, and degradation alerting
-related:
-  - docs/research/2026-03-23-eval-case-management.research.md
-  - docs/research/2026-03-23-eval-assertion-dsls.research.md
-  - docs/research/2026-03-23-eval-benchmark-design.research.md
-  - docs/research/2026-03-23-eval-cost-optimization.research.md
-  - docs/research/2026-03-23-eval-result-reporting.research.md
-  - docs/research/2026-03-23-eval-threshold-calibration.research.md
-  - docs/research/2026-03-23-eval-dataset-curation.research.md
-  - docs/research/2026-03-23-eval-regression-detection.research.md
-  - docs/research/2026-03-23-eval-multi-judge-aggregation.research.md
+metadata:
+  related:
+    - docs/research/2026-03-23-eval-case-management.research.md
+    - docs/research/2026-03-23-eval-assertion-dsls.research.md
+    - docs/research/2026-03-23-eval-benchmark-design.research.md
+    - docs/research/2026-03-23-eval-cost-optimization.research.md
+    - docs/research/2026-03-23-eval-result-reporting.research.md
+    - docs/research/2026-03-23-eval-threshold-calibration.research.md
+    - docs/research/2026-03-23-eval-dataset-curation.research.md
+    - docs/research/2026-03-23-eval-regression-detection.research.md
+    - docs/research/2026-03-23-eval-multi-judge-aggregation.research.md
 ---
 
 # Generic Prompt/Skill Evaluation Framework

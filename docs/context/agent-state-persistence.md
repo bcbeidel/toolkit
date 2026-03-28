@@ -1,18 +1,19 @@
 ---
 name: "Agent State Persistence"
 description: "Architectural patterns for carrying agent knowledge across session boundaries: file-based, checkpoint-based, and database-backed persistence with tradeoffs"
-type: reference
-sources:
-  - https://arxiv.org/abs/2512.13564
-  - https://arxiv.org/abs/2404.13501
-  - https://arxiv.org/abs/2310.08560
-  - https://arxiv.org/abs/2502.12110
-  - https://docs.langchain.com/oss/python/langgraph/persistence
-  - https://code.claude.com/docs/en/memory
-  - https://arxiv.org/html/2602.20478v1
-related:
-  - docs/research/agent-state-persistence.md
-  - docs/context/context-window-management.md
+metadata:
+  type: reference
+  sources:
+    - https://arxiv.org/abs/2512.13564
+    - https://arxiv.org/abs/2404.13501
+    - https://arxiv.org/abs/2310.08560
+    - https://arxiv.org/abs/2502.12110
+    - https://docs.langchain.com/oss/python/langgraph/persistence
+    - https://code.claude.com/docs/en/memory
+    - https://arxiv.org/html/2602.20478v1
+  related:
+    - docs/research/agent-state-persistence.md
+    - docs/context/context-window-management.md
 ---
 
 Each new agent session starts with a blank context window. State persistence solves the problem of carrying knowledge, decisions, and progress across that boundary. Three architectural families dominate, each optimized for different constraints.

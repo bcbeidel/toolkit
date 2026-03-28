@@ -1,17 +1,18 @@
 ---
 name: "Error Classification for Agent Systems"
 description: "Two-axis failure taxonomy (retryability x origin phase) and structured failure reporting for LLM-based agents, where failures are probabilistic and may look like successes"
-type: reference
-sources:
-  - https://arxiv.org/abs/2508.07935
-  - https://arxiv.org/abs/2503.13657
-  - https://galileo.ai/blog/agent-failure-modes-guide
-  - https://www.sitepoint.com/error-handling-strategies-for-probabilistic-code-execution/
-related:
-  - docs/research/error-handling-agent-systems.md
-  - docs/context/escalation-circuit-breakers.md
-  - docs/context/llm-error-handling-fundamentals.md
-  - docs/context/validation-architecture.md
+metadata:
+  type: reference
+  sources:
+    - https://arxiv.org/abs/2508.07935
+    - https://arxiv.org/abs/2503.13657
+    - https://galileo.ai/blog/agent-failure-modes-guide
+    - https://www.sitepoint.com/error-handling-strategies-for-probabilistic-code-execution/
+  related:
+    - docs/research/error-handling-agent-systems.md
+    - docs/context/escalation-circuit-breakers.md
+    - docs/context/llm-error-handling-fundamentals.md
+    - docs/context/validation-architecture.md
 ---
 
 Traditional exception hierarchies assume deterministic failures with static types. Agent systems need a taxonomy that captures two orthogonal dimensions: whether the failure can be retried and where it originated. This two-axis model draws from SHIELDA's 36-type taxonomy and MAST's 14 failure modes, distilling them into a practical classification scheme.

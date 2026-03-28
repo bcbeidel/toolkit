@@ -1,6 +1,7 @@
 ---
 description: Drill to root cause by asking why repeatedly until fundamentals emerge
-argument-hint: "[problem or symptom to trace to its root cause]"
+metadata:
+  argument-hint: "[problem or symptom to trace to its root cause]"
 ---
 
 <objective>

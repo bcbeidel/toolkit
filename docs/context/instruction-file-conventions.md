@@ -1,22 +1,23 @@
 ---
 name: "Instruction File Conventions Across AI Coding Tools"
 description: "How all major AI coding assistants converged on markdown-in-repo instruction files with hierarchical precedence, while diverging on file naming, metadata schemas, and loading semantics"
-type: reference
-sources:
-  - https://claude.com/blog/using-claude-md-files
-  - https://docs.cursor.com/context/rules
-  - https://docs.github.com/copilot/customizing-copilot/adding-custom-instructions-for-github-copilot
-  - https://docs.windsurf.com/windsurf/cascade/memories
-  - https://developers.openai.com/codex/guides/agents-md/
-  - https://docs.cline.bot/prompting/cline-memory-bank
-  - https://aider.chat/docs/usage/conventions.html
-  - https://agents.md/
-related:
-  - docs/research/ai-coding-assistant-conventions.md
-  - docs/context/agents-md-standard.md
-  - docs/context/convention-driven-design.md
-  - docs/context/context-engineering.md
-  - docs/context/writing-for-llm-consumption.md
+metadata:
+  type: reference
+  sources:
+    - https://claude.com/blog/using-claude-md-files
+    - https://docs.cursor.com/context/rules
+    - https://docs.github.com/copilot/customizing-copilot/adding-custom-instructions-for-github-copilot
+    - https://docs.windsurf.com/windsurf/cascade/memories
+    - https://developers.openai.com/codex/guides/agents-md/
+    - https://docs.cline.bot/prompting/cline-memory-bank
+    - https://aider.chat/docs/usage/conventions.html
+    - https://agents.md/
+  related:
+    - docs/research/ai-coding-assistant-conventions.md
+    - docs/context/agents-md-standard.md
+    - docs/context/convention-driven-design.md
+    - docs/context/context-engineering.md
+    - docs/context/writing-for-llm-consumption.md
 ---
 
 Every major AI coding assistant uses markdown files committed to the repository to provide project-specific instructions. This is the most significant convergence in the ecosystem: the pattern is settled, even though naming, location, and metadata differ across tools.

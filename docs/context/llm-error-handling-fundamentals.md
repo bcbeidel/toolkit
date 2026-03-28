@@ -1,19 +1,20 @@
 ---
 name: "LLM Error Handling Fundamentals"
 description: "Five ways error handling differs when the failing component is an LLM -- probabilistic failures, semantic detection, multiplicative compounding, prompt-based recovery, and per-attempt cost"
-type: reference
-sources:
-  - https://stackoverflow.blog/2025/06/30/reliability-for-unreliable-llms/
-  - https://arxiv.org/abs/2503.13657
-  - https://www.sitepoint.com/error-handling-strategies-for-probabilistic-code-execution/
-  - https://medium.com/@michael.hannecke/resilience-circuit-breakers-for-agentic-ai-cc7075101486
-  - https://www.augmentcode.com/guides/why-multi-agent-llm-systems-fail-and-how-to-fix-them
-related:
-  - docs/research/error-handling-agent-systems.md
-  - docs/context/error-classification-agent-systems.md
-  - docs/context/escalation-circuit-breakers.md
-  - docs/context/validation-architecture.md
-  - docs/context/llm-capabilities-limitations.md
+metadata:
+  type: reference
+  sources:
+    - https://stackoverflow.blog/2025/06/30/reliability-for-unreliable-llms/
+    - https://arxiv.org/abs/2503.13657
+    - https://www.sitepoint.com/error-handling-strategies-for-probabilistic-code-execution/
+    - https://medium.com/@michael.hannecke/resilience-circuit-breakers-for-agentic-ai-cc7075101486
+    - https://www.augmentcode.com/guides/why-multi-agent-llm-systems-fail-and-how-to-fix-them
+  related:
+    - docs/research/error-handling-agent-systems.md
+    - docs/context/error-classification-agent-systems.md
+    - docs/context/escalation-circuit-breakers.md
+    - docs/context/validation-architecture.md
+    - docs/context/llm-capabilities-limitations.md
 ---
 
 Error handling for LLM-based agents requires fundamentally different assumptions than traditional software. The failing component is non-deterministic, failures often look like successes, and the same input can produce different failure modes across runs. Five differences change everything about how error handling systems should be designed.

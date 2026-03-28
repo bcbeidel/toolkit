@@ -1,17 +1,18 @@
 ---
 name: "AGENTS.md as Cross-Tool Standard"
 description: "How AGENTS.md emerged as the universal instruction file for AI coding tools — adoption trajectory, Linux Foundation governance, and practical layering with tool-specific files"
-type: reference
-sources:
-  - https://agents.md/
-  - https://developers.openai.com/codex/guides/agents-md/
-  - https://www.linuxfoundation.org/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation
-  - https://www.agentrulegen.com/guides/cursorrules-vs-claude-md
-related:
-  - docs/research/ai-coding-assistant-conventions.md
-  - docs/context/instruction-file-conventions.md
-  - docs/context/convention-driven-design.md
-  - docs/context/information-architecture.md
+metadata:
+  type: reference
+  sources:
+    - https://agents.md/
+    - https://developers.openai.com/codex/guides/agents-md/
+    - https://www.linuxfoundation.org/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation
+    - https://www.agentrulegen.com/guides/cursorrules-vs-claude-md
+  related:
+    - docs/research/ai-coding-assistant-conventions.md
+    - docs/context/instruction-file-conventions.md
+    - docs/context/convention-driven-design.md
+    - docs/context/information-architecture.md
 ---
 
 AGENTS.md is the closest thing to a universal instruction file for AI coding tools. Released by OpenAI as part of Codex CLI in August 2025, it reached 60,000+ open source projects by December 2025 and is now supported by Codex, Cursor, Copilot, Claude Code, Gemini CLI, Devin, Jules (Google), Factory, Amp, and VS Code.

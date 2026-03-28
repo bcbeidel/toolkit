@@ -1,18 +1,19 @@
 ---
 name: "Skill and Command System Landscape"
 description: "How AI coding tools diverge most sharply in their extensibility models — Claude Code skills, Codex skills, Cursor rules, Copilot agents, and Cline's MCP-first approach reflect fundamentally different interaction philosophies"
-type: reference
-sources:
-  - https://code.claude.com/docs/en/skills
-  - https://developers.openai.com/codex/skills/
-  - https://docs.cursor.com/context/rules
-  - https://docs.github.com/copilot/customizing-copilot/adding-custom-instructions-for-github-copilot
-  - https://docs.cline.bot/prompting/cline-memory-bank
-related:
-  - docs/research/ai-coding-assistant-conventions.md
-  - docs/context/plugin-extension-architecture.md
-  - docs/context/mcp-extensibility-standard.md
-  - docs/context/instruction-file-conventions.md
+metadata:
+  type: reference
+  sources:
+    - https://code.claude.com/docs/en/skills
+    - https://developers.openai.com/codex/skills/
+    - https://docs.cursor.com/context/rules
+    - https://docs.github.com/copilot/customizing-copilot/adding-custom-instructions-for-github-copilot
+    - https://docs.cline.bot/prompting/cline-memory-bank
+  related:
+    - docs/research/ai-coding-assistant-conventions.md
+    - docs/context/plugin-extension-architecture.md
+    - docs/context/mcp-extensibility-standard.md
+    - docs/context/instruction-file-conventions.md
 ---
 
 Skill and command systems are the most divergent area across AI coding tools. Unlike instruction files (converged on markdown) and extensibility protocols (converged on MCP), the approaches to user-defined workflows and commands reflect genuinely different interaction models. No convergence is expected because the differences are architectural, not accidental.

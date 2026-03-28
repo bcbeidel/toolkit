@@ -1,9 +1,10 @@
 ---
 name: Gather and Extract
 description: Phase 2 — search for sources, extract content verbatim, write to disk per sub-question
-stage: gather
-pipeline: research
-tools: [Read, Write, Edit, Glob, Grep, Bash, WebSearch, WebFetch]
+metadata:
+  stage: gather
+  pipeline: research
+  tools: [Read, Write, Edit, Glob, Grep, Bash, WebSearch, WebFetch]
 ---
 
 ## Purpose

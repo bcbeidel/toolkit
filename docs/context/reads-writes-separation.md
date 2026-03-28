@@ -1,20 +1,21 @@
 ---
 name: "Reads-Writes Separation"
 description: "Why separating observation from mutation is a safety invariant, not a performance optimization — CQS/CQRS principles applied to agent systems"
-type: reference
-sources:
-  - https://martinfowler.com/bliki/CommandQuerySeparation.html
-  - https://martinfowler.com/bliki/CQRS.html
-  - https://learn.microsoft.com/en-us/azure/architecture/patterns/cqrs
-  - https://en.wikipedia.org/wiki/Command%E2%80%93query_separation
-  - https://air-governance-framework.finos.org/mitigations/mi-18_agent-authority-least-privilege-framework.html
-  - https://sre.google/sre-book/automation-at-google/
-related:
-  - docs/research/reads-vs-writes-separation.md
-  - docs/context/preview-before-execute.md
-  - docs/context/human-in-the-loop-design.md
-  - docs/context/validation-architecture.md
-  - docs/context/idempotency-convergent-operations.md
+metadata:
+  type: reference
+  sources:
+    - https://martinfowler.com/bliki/CommandQuerySeparation.html
+    - https://martinfowler.com/bliki/CQRS.html
+    - https://learn.microsoft.com/en-us/azure/architecture/patterns/cqrs
+    - https://en.wikipedia.org/wiki/Command%E2%80%93query_separation
+    - https://air-governance-framework.finos.org/mitigations/mi-18_agent-authority-least-privilege-framework.html
+    - https://sre.google/sre-book/automation-at-google/
+  related:
+    - docs/research/reads-vs-writes-separation.md
+    - docs/context/preview-before-execute.md
+    - docs/context/human-in-the-loop-design.md
+    - docs/context/validation-architecture.md
+    - docs/context/idempotency-convergent-operations.md
 ---
 
 Observation and mutation are different operations with different risk profiles. They should use different code paths. This is a safety invariant, not an architectural preference.

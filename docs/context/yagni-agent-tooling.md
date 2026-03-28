@@ -1,20 +1,21 @@
 ---
 name: "YAGNI for Agent Tooling"
 description: "Why You Aren't Gonna Need It applies with amplified force when the consumer is an LLM — four costs of presumptive features, Beck's fewest elements rule, last responsible moment, and LLM-specific cost-of-carry dynamics"
-type: reference
-sources:
-  - https://martinfowler.com/bliki/Yagni.html
-  - https://martinfowler.com/bliki/BeckDesignRules.html
-  - https://en.wikipedia.org/wiki/You_aren't_gonna_need_it
-  - https://blog.codinghorror.com/the-last-responsible-moment/
-  - https://www.anthropic.com/research/building-effective-agents
-  - https://arxiv.org/html/2511.22729v1
-related:
-  - docs/research/scope-management-yagni.md
-  - docs/context/complexity-budgets.md
-  - docs/context/tool-vs-framework-spectrum.md
-  - docs/context/tool-design-for-llms.md
-  - docs/context/context-window-management.md
+metadata:
+  type: reference
+  sources:
+    - https://martinfowler.com/bliki/Yagni.html
+    - https://martinfowler.com/bliki/BeckDesignRules.html
+    - https://en.wikipedia.org/wiki/You_aren't_gonna_need_it
+    - https://blog.codinghorror.com/the-last-responsible-moment/
+    - https://www.anthropic.com/research/building-effective-agents
+    - https://arxiv.org/html/2511.22729v1
+  related:
+    - docs/research/scope-management-yagni.md
+    - docs/context/complexity-budgets.md
+    - docs/context/tool-vs-framework-spectrum.md
+    - docs/context/tool-design-for-llms.md
+    - docs/context/context-window-management.md
 ---
 
 YAGNI — You Aren't Gonna Need It — is stronger medicine in agent tooling than in traditional software. Every presumptive feature degrades the reasoning environment for every other feature, because tool descriptions compete for finite LLM attention. The bar for adding anything should be higher when the consumer is a language model.

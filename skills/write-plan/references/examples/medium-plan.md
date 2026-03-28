@@ -13,10 +13,11 @@ audit-based validation.
     ---
     name: Brainstorm Skill Implementation
     description: Create wos:brainstorm skill with SKILL.md and two reference files
-    type: plan
-    status: draft
-    related:
-      - skills/_shared/references/plan-format.md
+    metadata:
+      type: plan
+      status: draft
+      related:
+        - skills/_shared/references/plan-format.md
     ---
 
     # Brainstorm Skill Implementation

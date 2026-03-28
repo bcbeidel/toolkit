@@ -110,12 +110,13 @@ created, word counts, and any audit issues.
 ---
 name: "Event Loop Model"
 description: "How asyncio's single-threaded event loop achieves concurrency through cooperative multitasking"
-type: context
-sources:
-  - https://docs.python.org/3/library/asyncio-eventloop.html
-related:
-  - docs/research/2026-02-10-asyncio-deep-dive.research.md
-  - docs/context/async/concurrency-patterns.context.md
+metadata:
+  type: context
+  sources:
+    - https://docs.python.org/3/library/asyncio-eventloop.html
+  related:
+    - docs/research/2026-02-10-asyncio-deep-dive.research.md
+    - docs/context/async/concurrency-patterns.context.md
 ---
 ```
 

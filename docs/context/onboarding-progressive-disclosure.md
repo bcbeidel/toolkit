@@ -1,20 +1,21 @@
 ---
 name: "Onboarding Progressive Disclosure"
 description: "A three-layer model for managing CLI tool complexity — zero-config first run, configuration-driven customization, and expert-level control — grounded in progressive disclosure principles and developer adoption research"
-type: reference
-sources:
-  - https://www.nngroup.com/articles/progressive-disclosure/
-  - https://clig.dev/
-  - https://lawsofux.com/hicks-law/
-  - https://newsletter.pragmaticengineer.com/p/frictionless-why-great-developer
-  - https://www.doc-e.ai/post/measuring-and-analyzing-developer-adoption-metrics-the-roadmap-to-devtool-success
-  - https://www.nngroup.com/articles/empty-state-interface-design/
-  - https://developer.hashicorp.com/terraform/cli/commands/init
-related:
-  - docs/research/onboarding-progressive-disclosure.md
-  - docs/context/convention-driven-design.md
-  - docs/context/idempotency-convergent-operations.md
-  - docs/context/feedback-loop-design.md
+metadata:
+  type: reference
+  sources:
+    - https://www.nngroup.com/articles/progressive-disclosure/
+    - https://clig.dev/
+    - https://lawsofux.com/hicks-law/
+    - https://newsletter.pragmaticengineer.com/p/frictionless-why-great-developer
+    - https://www.doc-e.ai/post/measuring-and-analyzing-developer-adoption-metrics-the-roadmap-to-devtool-success
+    - https://www.nngroup.com/articles/empty-state-interface-design/
+    - https://developer.hashicorp.com/terraform/cli/commands/init
+  related:
+    - docs/research/onboarding-progressive-disclosure.md
+    - docs/context/convention-driven-design.md
+    - docs/context/idempotency-convergent-operations.md
+    - docs/context/feedback-loop-design.md
 ---
 
 Progressive disclosure — deferring advanced features until needed — is the

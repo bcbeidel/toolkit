@@ -1,9 +1,10 @@
 ---
 name: Finalize
 description: Phase 9 — restructure document, format search protocol, remove DRAFT marker, validate
-stage: finalize
-pipeline: research
-tools: [Read, Write, Edit, Glob, Grep, Bash]
+metadata:
+  stage: finalize
+  pipeline: research
+  tools: [Read, Write, Edit, Glob, Grep, Bash]
 ---
 
 ## Purpose

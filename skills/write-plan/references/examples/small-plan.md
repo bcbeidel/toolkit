@@ -12,10 +12,11 @@ focused scope, 3 tasks with TDD verification.
     ---
     name: Status Field Implementation
     description: Add status field to Document model with parse-time validation
-    type: plan
-    status: draft
-    related:
-      - docs/designs/2026-03-11-status-field.design.md
+    metadata:
+      type: plan
+      status: draft
+      related:
+        - docs/designs/2026-03-11-status-field.design.md
     ---
 
     # Status Field Implementation

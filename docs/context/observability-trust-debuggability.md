@@ -1,19 +1,20 @@
 ---
 name: "Observability, Trust, and Debuggability"
 description: "Design patterns that connect agent observability to debugging and trust: tiered content capture, trace-correlated logs, visual trace trees, cryptographic audit chains, and provenance graphs -- with the critical distinction that traces enable debugging but not trust"
-type: reference
-sources:
-  - https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-events/
-  - https://github.com/agentkitai/agentlens
-  - https://arxiv.org/html/2508.02866v2
-  - https://allen.hutchison.org/2026/02/17/the-observability-gap/
-  - https://langfuse.com/docs/observability/overview
-related:
-  - docs/research/observability-audit-trails.md
-  - docs/context/agent-observability-tracing.md
-  - docs/context/show-your-work-patterns.md
-  - docs/context/validation-architecture.md
-  - docs/context/human-in-the-loop-design.md
+metadata:
+  type: reference
+  sources:
+    - https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-events/
+    - https://github.com/agentkitai/agentlens
+    - https://arxiv.org/html/2508.02866v2
+    - https://allen.hutchison.org/2026/02/17/the-observability-gap/
+    - https://langfuse.com/docs/observability/overview
+  related:
+    - docs/research/observability-audit-trails.md
+    - docs/context/agent-observability-tracing.md
+    - docs/context/show-your-work-patterns.md
+    - docs/context/validation-architecture.md
+    - docs/context/human-in-the-loop-design.md
 ---
 
 Traces show what an agent did. They do not show whether its reasoning was sound. This distinction is the most important insight in agent observability: a complete execution trace can create false confidence when operators trust a system more because they can see its steps, even when those steps contain flawed reasoning.

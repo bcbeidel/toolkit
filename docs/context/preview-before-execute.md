@@ -1,20 +1,21 @@
 ---
 name: "Preview Before Execute"
 description: "The universal safety pattern of generating a reviewable artifact between observation and mutation — drawn from infrastructure automation, Kubernetes admission control, and agent system design"
-type: reference
-sources:
-  - https://developer.hashicorp.com/terraform/cli/commands/plan
-  - https://developer.hashicorp.com/terraform/tutorials/automation/automate-terraform
-  - https://docs.ansible.com/projects/ansible/2.9/user_guide/playbooks_checkmode.html
-  - https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/
-  - https://noma.security/blog/the-risk-of-destructive-capabilities-in-agentic-ai/
-  - https://cleanlab.ai/blog/ai-agent-safety/
-related:
-  - docs/research/reads-vs-writes-separation.md
-  - docs/context/reads-writes-separation.md
-  - docs/context/human-in-the-loop-design.md
-  - docs/context/idempotency-convergent-operations.md
-  - docs/context/escalation-circuit-breakers.md
+metadata:
+  type: reference
+  sources:
+    - https://developer.hashicorp.com/terraform/cli/commands/plan
+    - https://developer.hashicorp.com/terraform/tutorials/automation/automate-terraform
+    - https://docs.ansible.com/projects/ansible/2.9/user_guide/playbooks_checkmode.html
+    - https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/
+    - https://noma.security/blog/the-risk-of-destructive-capabilities-in-agentic-ai/
+    - https://cleanlab.ai/blog/ai-agent-safety/
+  related:
+    - docs/research/reads-vs-writes-separation.md
+    - docs/context/reads-writes-separation.md
+    - docs/context/human-in-the-loop-design.md
+    - docs/context/idempotency-convergent-operations.md
+    - docs/context/escalation-circuit-breakers.md
 ---
 
 Every mature infrastructure tool enforces the same pattern: observe proposed changes, produce a reviewable artifact, require explicit approval, then mutate. This is not optional ergonomics — it is safety architecture. Agent systems that skip preview execute incorrect mutations at machine speed.

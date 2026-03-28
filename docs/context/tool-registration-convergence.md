@@ -1,19 +1,20 @@
 ---
 name: "Tool Registration Convergence"
 description: "How nine major agent frameworks converged on function-as-tool with JSON Schema, the decorator registration pattern, and MCP as the cross-framework interop layer"
-type: reference
-sources:
-  - https://langfuse.com/blog/2025-03-19-ai-agent-comparison
-  - https://modelcontextprotocol.io/specification/2025-11-25
-  - https://dspy.ai/learn/programming/tools/
-  - https://openai.github.io/openai-agents-python/tools/
-  - https://platform.claude.com/docs/en/agent-sdk/overview
-related:
-  - docs/research/agent-framework-landscape.md
-  - docs/context/tool-design-for-llms.md
-  - docs/context/plugin-extension-architecture.md
-  - docs/context/agent-memory-tiers.md
-  - docs/context/agent-framework-portability.md
+metadata:
+  type: reference
+  sources:
+    - https://langfuse.com/blog/2025-03-19-ai-agent-comparison
+    - https://modelcontextprotocol.io/specification/2025-11-25
+    - https://dspy.ai/learn/programming/tools/
+    - https://openai.github.io/openai-agents-python/tools/
+    - https://platform.claude.com/docs/en/agent-sdk/overview
+  related:
+    - docs/research/agent-framework-landscape.md
+    - docs/context/tool-design-for-llms.md
+    - docs/context/plugin-extension-architecture.md
+    - docs/context/agent-memory-tiers.md
+    - docs/context/agent-framework-portability.md
 ---
 
 ## The Universal Tool Pattern

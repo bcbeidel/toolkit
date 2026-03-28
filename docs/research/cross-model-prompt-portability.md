@@ -1,23 +1,24 @@
 ---
 name: "Cross-Model Prompt Portability"
 description: "Format choice measurably affects LLM performance (40-300% variation on smaller models), but XML tags are converging as a cross-model standard while model-specific API parameters and reasoning modes remain the key non-portable elements"
-type: research
-sources:
-  - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/use-xml-tags
-  - https://developers.openai.com/cookbook/examples/gpt-5/gpt-5_prompting_guide
-  - https://ai.google.dev/gemini-api/docs/prompting-strategies
-  - https://www.llama.com/docs/model-cards-and-prompt-formats/llama3_1/
-  - https://arxiv.org/abs/2411.10541
-  - https://arxiv.org/html/2502.04295v3
-  - https://arxiv.org/html/2512.01420v1
-  - https://github.com/meta-llama/prompt-ops
-  - https://platform.openai.com/docs/guides/prompt-engineering
-  - https://simonwillison.net/2025/Feb/2/openai-reasoning-models-advice-on-prompting/
-  - https://docs.cloud.google.com/vertex-ai/generative-ai/docs/start/gemini-3-prompting-guide
-  - https://blog.promptlayer.com/model-agnostic/
-related:
-  - docs/context/cross-model-prompt-portability.md
-  - docs/context/reasoning-mode-divergence.md
+metadata:
+  type: research
+  sources:
+    - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/use-xml-tags
+    - https://developers.openai.com/cookbook/examples/gpt-5/gpt-5_prompting_guide
+    - https://ai.google.dev/gemini-api/docs/prompting-strategies
+    - https://www.llama.com/docs/model-cards-and-prompt-formats/llama3_1/
+    - https://arxiv.org/abs/2411.10541
+    - https://arxiv.org/html/2502.04295v3
+    - https://arxiv.org/html/2512.01420v1
+    - https://github.com/meta-llama/prompt-ops
+    - https://platform.openai.com/docs/guides/prompt-engineering
+    - https://simonwillison.net/2025/Feb/2/openai-reasoning-models-advice-on-prompting/
+    - https://docs.cloud.google.com/vertex-ai/generative-ai/docs/start/gemini-3-prompting-guide
+    - https://blog.promptlayer.com/model-agnostic/
+  related:
+    - docs/context/cross-model-prompt-portability.md
+    - docs/context/reasoning-mode-divergence.md
 ---
 
 ## Summary

@@ -1,26 +1,27 @@
 ---
 name: "Onboarding Progressive Disclosure"
 description: "How to layer complexity for different project maturity contexts, drawing on UX progressive disclosure research, CLI onboarding patterns, and developer tool adoption science"
-type: research
-sources:
-  - https://www.nngroup.com/articles/progressive-disclosure/
-  - https://clig.dev/
-  - https://lawsofux.com/hicks-law/
-  - https://www.lucasfcosta.com/blog/ux-patterns-cli-tools
-  - https://newsletter.pragmaticengineer.com/p/frictionless-why-great-developer
-  - https://thenewstack.io/tackling-developer-onboarding-complexity/
-  - https://en.wikipedia.org/wiki/Progressive_disclosure
-  - https://www.doc-e.ai/post/measuring-and-analyzing-developer-adoption-metrics-the-roadmap-to-devtool-success
-  - https://www.smashingmagazine.com/2017/02/user-onboarding-empty-states-mobile-apps/
-  - https://www.nngroup.com/articles/empty-state-interface-design/
-  - https://medium.com/relay-sh/command-line-ux-in-2020-e537018ebb69
-  - https://developer.hashicorp.com/terraform/cli/commands/init
-related:
-  - docs/research/context-engineering.md
-  - docs/research/information-architecture.md
-  - docs/research/feedback-loop-design.md
-  - docs/research/plugin-extension-architecture.md
-  - docs/context/onboarding-progressive-disclosure.md
+metadata:
+  type: research
+  sources:
+    - https://www.nngroup.com/articles/progressive-disclosure/
+    - https://clig.dev/
+    - https://lawsofux.com/hicks-law/
+    - https://www.lucasfcosta.com/blog/ux-patterns-cli-tools
+    - https://newsletter.pragmaticengineer.com/p/frictionless-why-great-developer
+    - https://thenewstack.io/tackling-developer-onboarding-complexity/
+    - https://en.wikipedia.org/wiki/Progressive_disclosure
+    - https://www.doc-e.ai/post/measuring-and-analyzing-developer-adoption-metrics-the-roadmap-to-devtool-success
+    - https://www.smashingmagazine.com/2017/02/user-onboarding-empty-states-mobile-apps/
+    - https://www.nngroup.com/articles/empty-state-interface-design/
+    - https://medium.com/relay-sh/command-line-ux-in-2020-e537018ebb69
+    - https://developer.hashicorp.com/terraform/cli/commands/init
+  related:
+    - docs/research/context-engineering.md
+    - docs/research/information-architecture.md
+    - docs/research/feedback-loop-design.md
+    - docs/research/plugin-extension-architecture.md
+    - docs/context/onboarding-progressive-disclosure.md
 ---
 
 ## Key Findings

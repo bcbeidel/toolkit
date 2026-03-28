@@ -11,10 +11,11 @@ remove the bracketed instructions.
     ---
     name: [Feature Name]
     description: [One-sentence summary of what this plan achieves]
-    type: plan
-    status: draft
-    related:
-      - [path/to/design-doc.md]
+    metadata:
+      type: plan
+      status: draft
+      related:
+        - [path/to/design-doc.md]
     ---
 
     # [Feature Name]

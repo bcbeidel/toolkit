@@ -1,19 +1,20 @@
 ---
 name: "Tool vs. Framework Spectrum"
 description: "Where agent tooling should sit on the tool-vs-framework spectrum — empirical evidence from Anthropic, OpenAI, and Agentless research converges on simple, composable patterns over complex frameworks"
-type: reference
-sources:
-  - https://www.anthropic.com/research/building-effective-agents
-  - https://openai.com/business/guides-and-resources/a-practical-guide-to-building-ai-agents/
-  - https://arxiv.org/abs/2407.01489
-  - https://www.infoq.com/presentations/Simple-Made-Easy/
-  - https://en.wikipedia.org/wiki/Unix_philosophy
-related:
-  - docs/research/scope-management-yagni.md
-  - docs/context/yagni-agent-tooling.md
-  - docs/context/complexity-budgets.md
-  - docs/context/tool-design-for-llms.md
-  - docs/context/abstraction-level-design.md
+metadata:
+  type: reference
+  sources:
+    - https://www.anthropic.com/research/building-effective-agents
+    - https://openai.com/business/guides-and-resources/a-practical-guide-to-building-ai-agents/
+    - https://arxiv.org/abs/2407.01489
+    - https://www.infoq.com/presentations/Simple-Made-Easy/
+    - https://en.wikipedia.org/wiki/Unix_philosophy
+  related:
+    - docs/research/scope-management-yagni.md
+    - docs/context/yagni-agent-tooling.md
+    - docs/context/complexity-budgets.md
+    - docs/context/tool-design-for-llms.md
+    - docs/context/abstraction-level-design.md
 ---
 
 The fundamental distinction: with a tool, you call the code; with a framework, the framework calls your code. Where agent tooling sits on this spectrum has direct consequences for performance, debuggability, and long-term maintenance. The empirical evidence points clearly toward the tool end.

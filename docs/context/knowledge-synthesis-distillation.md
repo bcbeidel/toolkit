@@ -1,20 +1,21 @@
 ---
 name: "Knowledge Synthesis and Distillation"
 description: "How to compress raw research into focused, actionable context: purpose-driven compression, structured preservation, provenance separation, and practical keep/discard heuristics"
-type: reference
-sources:
-  - https://arxiv.org/abs/physics/0004057
-  - https://arxiv.org/abs/2307.03172
-  - https://arxiv.org/abs/2310.05736
-  - https://factory.ai/news/evaluating-compression
-  - https://factory.ai/news/compressing-context
-  - https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
-  - https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus
-  - https://fortelabs.com/blog/progressive-summarization-a-practical-technique-for-designing-discoverable-notes/
-related:
-  - docs/research/knowledge-synthesis-distillation.md
-  - docs/context/context-window-management.md
-  - docs/context/prompt-engineering.md
+metadata:
+  type: reference
+  sources:
+    - https://arxiv.org/abs/physics/0004057
+    - https://arxiv.org/abs/2307.03172
+    - https://arxiv.org/abs/2310.05736
+    - https://factory.ai/news/evaluating-compression
+    - https://factory.ai/news/compressing-context
+    - https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
+    - https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus
+    - https://fortelabs.com/blog/progressive-summarization-a-practical-technique-for-designing-discoverable-notes/
+  related:
+    - docs/research/knowledge-synthesis-distillation.md
+    - docs/context/context-window-management.md
+    - docs/context/prompt-engineering.md
 ---
 
 Knowledge distillation is lossy compression. You cannot compress without defining what counts as acceptable loss, and that definition depends on the downstream task. The information bottleneck method (Tishby et al., 1999) formalizes this: relevant information is what the compressed output needs to predict. For agent-facing documents, the relevant variable is the decision or action the agent will take. Content that informs agent behavior is incompressible; everything else is compressible.

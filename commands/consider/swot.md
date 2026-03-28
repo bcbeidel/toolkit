@@ -1,6 +1,7 @@
 ---
 description: Map strengths, weaknesses, opportunities, and threats systematically
-argument-hint: "[project, product, team, or strategy to evaluate]"
+metadata:
+  argument-hint: "[project, product, team, or strategy to evaluate]"
 ---
 
 <objective>

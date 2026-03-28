@@ -1,26 +1,27 @@
 ---
 name: "Research Methodology for Systematic Information Gathering"
 description: "Landscape survey of source discovery strategies, evaluation frameworks, cross-referencing techniques, and confidence assessment — three traditions (academic, intelligence, agent-driven) converge on layered approaches combining source-level filtering with claim-level verification"
-type: research
-sources:
-  - https://pmc.ncbi.nlm.nih.gov/articles/PMC7839230/
-  - https://www.prisma-statement.org/
-  - https://arxiv.org/html/2508.12752v1
-  - https://arxiv.org/html/2503.24047v1
-  - https://pressbooks.pub/introtocollegeresearch/chapter/the-sift-method/
-  - https://en.wikipedia.org/wiki/Analysis_of_competing_hypotheses
-  - https://www.cisecurity.org/ms-isac/services/words-of-estimative-probability-analytic-confidences-and-structured-analytic-techniques
-  - https://arxiv.org/abs/2309.11495
-  - https://pmc.ncbi.nlm.nih.gov/articles/PMC9714985/
-  - https://www.scribbr.com/methodology/triangulation/
-  - https://www.cdc.gov/acip-grade-handbook/hcp/chapter-7-grade-criteria-determining-certainty-of-evidence/index.html
-  - https://arxiv.org/html/2506.18096v1
-  - https://pmc.ncbi.nlm.nih.gov/articles/PMC8474097/
-related:
-  - docs/research/prompt-engineering.md
-  - docs/research/llm-capabilities-limitations.md
-  - docs/research/tool-design-for-llms.md
-  - docs/context/research-methodology.md
+metadata:
+  type: research
+  sources:
+    - https://pmc.ncbi.nlm.nih.gov/articles/PMC7839230/
+    - https://www.prisma-statement.org/
+    - https://arxiv.org/html/2508.12752v1
+    - https://arxiv.org/html/2503.24047v1
+    - https://pressbooks.pub/introtocollegeresearch/chapter/the-sift-method/
+    - https://en.wikipedia.org/wiki/Analysis_of_competing_hypotheses
+    - https://www.cisecurity.org/ms-isac/services/words-of-estimative-probability-analytic-confidences-and-structured-analytic-techniques
+    - https://arxiv.org/abs/2309.11495
+    - https://pmc.ncbi.nlm.nih.gov/articles/PMC9714985/
+    - https://www.scribbr.com/methodology/triangulation/
+    - https://www.cdc.gov/acip-grade-handbook/hcp/chapter-7-grade-criteria-determining-certainty-of-evidence/index.html
+    - https://arxiv.org/html/2506.18096v1
+    - https://pmc.ncbi.nlm.nih.gov/articles/PMC8474097/
+  related:
+    - docs/research/prompt-engineering.md
+    - docs/research/llm-capabilities-limitations.md
+    - docs/research/tool-design-for-llms.md
+    - docs/context/research-methodology.md
 ---
 
 ## Summary

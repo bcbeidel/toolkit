@@ -1,32 +1,33 @@
 ---
 name: "Knowledge Synthesis and Distillation"
 description: "Compression of raw research into agent-facing context is best understood through the information bottleneck: compress relative to a purpose, preserve provenance via separate channels, and use structure to force retention of what matters"
-type: research
-sources:
-  - https://en.wikipedia.org/wiki/Rate%E2%80%93distortion_theory
-  - https://en.wikipedia.org/wiki/Information_bottleneck_method
-  - https://en.wikipedia.org/wiki/Minimum_description_length
-  - https://en.wikipedia.org/wiki/Kolmogorov_complexity
-  - https://arxiv.org/abs/physics/0004057
-  - https://pmc.ncbi.nlm.nih.gov/articles/PMC10968930/
-  - https://arxiv.org/abs/2307.03172
-  - https://factory.ai/news/evaluating-compression
-  - https://factory.ai/news/compressing-context
-  - https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
-  - https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus
-  - https://github.com/microsoft/LLMLingua
-  - https://arxiv.org/abs/2310.05736
-  - https://arxiv.org/abs/2310.06839
-  - https://compression.md/
-  - https://fortelabs.com/blog/progressive-summarization-a-practical-technique-for-designing-discoverable-notes/
-  - https://topos.institute/blog/2025-04-04-scalable-distillations-for-research/
-  - https://dl.acm.org/doi/10.1145/3706599.3719830
-  - https://pmc.ncbi.nlm.nih.gov/articles/PMC12109975/
-  - https://arxiv.org/html/2510.00615v1
-related:
-  - docs/research/context-window-management.md
-  - docs/research/prompt-engineering.md
-  - docs/context/knowledge-synthesis-distillation.md
+metadata:
+  type: research
+  sources:
+    - https://en.wikipedia.org/wiki/Rate%E2%80%93distortion_theory
+    - https://en.wikipedia.org/wiki/Information_bottleneck_method
+    - https://en.wikipedia.org/wiki/Minimum_description_length
+    - https://en.wikipedia.org/wiki/Kolmogorov_complexity
+    - https://arxiv.org/abs/physics/0004057
+    - https://pmc.ncbi.nlm.nih.gov/articles/PMC10968930/
+    - https://arxiv.org/abs/2307.03172
+    - https://factory.ai/news/evaluating-compression
+    - https://factory.ai/news/compressing-context
+    - https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
+    - https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus
+    - https://github.com/microsoft/LLMLingua
+    - https://arxiv.org/abs/2310.05736
+    - https://arxiv.org/abs/2310.06839
+    - https://compression.md/
+    - https://fortelabs.com/blog/progressive-summarization-a-practical-technique-for-designing-discoverable-notes/
+    - https://topos.institute/blog/2025-04-04-scalable-distillations-for-research/
+    - https://dl.acm.org/doi/10.1145/3706599.3719830
+    - https://pmc.ncbi.nlm.nih.gov/articles/PMC12109975/
+    - https://arxiv.org/html/2510.00615v1
+  related:
+    - docs/research/context-window-management.md
+    - docs/research/prompt-engineering.md
+    - docs/context/knowledge-synthesis-distillation.md
 ---
 
 ## Summary

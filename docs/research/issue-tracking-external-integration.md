@@ -1,30 +1,31 @@
 ---
 name: "Issue Tracking and External Integration Patterns for Agent Systems"
 description: "Agent-to-issue-tracker integration centers on three layers: direct API calls (REST/GraphQL), MCP-mediated tool access, and orchestration platforms. Deduplication is rare; Claude Code's multi-agent search is the most sophisticated public implementation. Feedback loops are converging on CI-driven iteration with inner verification and emerging outer CI loops."
-type: research
-sources:
-  - https://github.blog/ai-and-ml/automate-repository-tasks-with-github-agentic-workflows/
-  - https://github.github.com/gh-aw/
-  - https://github.blog/ai-and-ml/generative-ai/continuous-ai-in-practice-what-developers-can-automate-today-with-agentic-ci/
-  - https://docs.github.com/en/rest/issues/issues
-  - https://docs.github.com/en/rest/overview/authenticating-to-the-rest-api
-  - https://github.com/anthropics/claude-code/blob/main/.github/workflows/claude-dedupe-issues.yml
-  - https://deepwiki.com/anthropics/claude-code/5.2-firewall-setup
-  - https://linear.app/developers/graphql
-  - https://developer.atlassian.com/cloud/jira/platform/rest/v3/intro/
-  - https://github.com/atlassian/atlassian-mcp-server
-  - https://composio.dev/blog/secure-ai-agent-infrastructure-guide
-  - https://engineering.atspotify.com/2025/12/feedback-loops-background-coding-agents-part-3
-  - https://www.datadoghq.com/blog/bits-ai-dev-agent/
-  - https://www.coderabbit.ai/blog/issue-planner-collaborative-planning-for-teams-with-ai-agents
-  - https://sargehq.dev/
-  - https://playbooks.com/mcp/dxheroes-jira-linear
-related:
-  - docs/research/feedback-loop-design.md
-  - docs/research/multi-agent-coordination.md
-  - docs/research/tool-design-for-llms.md
-  - docs/research/plugin-extension-architecture.md
-  - docs/context/issue-tracking-external-integration.md
+metadata:
+  type: research
+  sources:
+    - https://github.blog/ai-and-ml/automate-repository-tasks-with-github-agentic-workflows/
+    - https://github.github.com/gh-aw/
+    - https://github.blog/ai-and-ml/generative-ai/continuous-ai-in-practice-what-developers-can-automate-today-with-agentic-ci/
+    - https://docs.github.com/en/rest/issues/issues
+    - https://docs.github.com/en/rest/overview/authenticating-to-the-rest-api
+    - https://github.com/anthropics/claude-code/blob/main/.github/workflows/claude-dedupe-issues.yml
+    - https://deepwiki.com/anthropics/claude-code/5.2-firewall-setup
+    - https://linear.app/developers/graphql
+    - https://developer.atlassian.com/cloud/jira/platform/rest/v3/intro/
+    - https://github.com/atlassian/atlassian-mcp-server
+    - https://composio.dev/blog/secure-ai-agent-infrastructure-guide
+    - https://engineering.atspotify.com/2025/12/feedback-loops-background-coding-agents-part-3
+    - https://www.datadoghq.com/blog/bits-ai-dev-agent/
+    - https://www.coderabbit.ai/blog/issue-planner-collaborative-planning-for-teams-with-ai-agents
+    - https://sargehq.dev/
+    - https://playbooks.com/mcp/dxheroes-jira-linear
+  related:
+    - docs/research/feedback-loop-design.md
+    - docs/research/multi-agent-coordination.md
+    - docs/research/tool-design-for-llms.md
+    - docs/research/plugin-extension-architecture.md
+    - docs/context/issue-tracking-external-integration.md
 ---
 
 ## Summary

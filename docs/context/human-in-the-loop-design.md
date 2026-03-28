@@ -1,17 +1,18 @@
 ---
 name: "Human-in-the-Loop Design"
 description: "When AI agents should gate on human approval vs. act autonomously, based on reversibility, confidence, and trust calibration research"
-type: reference
-sources:
-  - https://nap.nationalacademies.org/read/26355/chapter/9
-  - https://ieeexplore.ieee.org/document/844354
-  - https://journals.sagepub.com/doi/10.1518/001872097778543886
-  - https://link.springer.com/article/10.1007/s00146-025-02422-7
-  - https://www.smashingmagazine.com/2026/02/designing-agentic-ai-practical-ux-patterns/
-related:
-  - docs/research/human-in-the-loop-design.md
-  - docs/context/agentic-planning-execution.md
-  - docs/context/tool-design-for-llms.md
+metadata:
+  type: reference
+  sources:
+    - https://nap.nationalacademies.org/read/26355/chapter/9
+    - https://ieeexplore.ieee.org/document/844354
+    - https://journals.sagepub.com/doi/10.1518/001872097778543886
+    - https://link.springer.com/article/10.1007/s00146-025-02422-7
+    - https://www.smashingmagazine.com/2026/02/designing-agentic-ai-practical-ux-patterns/
+  related:
+    - docs/research/human-in-the-loop-design.md
+    - docs/context/agentic-planning-execution.md
+    - docs/context/tool-design-for-llms.md
 ---
 
 Human-in-the-loop (HITL) design is not a binary choice between full autonomy and full oversight. It is a spectrum, and the optimal point shifts with context, risk, and accumulated trust. Getting it wrong in either direction hurts: too much autonomy causes automation bias and missed errors; too little creates bottleneck fatigue and disuse.

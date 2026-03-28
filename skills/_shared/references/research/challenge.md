@@ -1,9 +1,10 @@
 ---
 name: Challenge
 description: Phase 5 — test assumptions, run ACH and premortem based on research mode
-stage: challenge
-pipeline: research
-tools: [Read, Write, Edit, Glob, Grep, Bash, WebSearch, WebFetch]
+metadata:
+  stage: challenge
+  pipeline: research
+  tools: [Read, Write, Edit, Glob, Grep, Bash, WebSearch, WebFetch]
 ---
 
 ## Purpose

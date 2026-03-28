@@ -1,23 +1,24 @@
 ---
 name: "Context Window Management"
 description: "Strategies for maximizing LLM performance within token limits: position-aware formatting, compression, structured markup, and budget allocation"
-type: reference
-sources:
-  - https://arxiv.org/abs/2307.03172
-  - https://arxiv.org/abs/2310.06839
-  - https://arxiv.org/abs/2404.02060
-  - https://arxiv.org/abs/2309.17453
-  - https://arxiv.org/abs/2404.06654
-  - https://platform.claude.com/docs/en/docs/build-with-claude/context-windows
-  - https://platform.claude.com/docs/en/docs/build-with-claude/prompt-engineering/long-context-tips
-related:
-  - docs/research/context-window-management.md
-  - docs/research/prompt-engineering.md
-  - docs/context/writing-for-llm-consumption.md
-  - docs/context/prompt-engineering.md
-  - docs/context/llm-capabilities-limitations.md
-  - docs/context/agent-state-persistence.md
-  - docs/context/context-engineering.md
+metadata:
+  type: reference
+  sources:
+    - https://arxiv.org/abs/2307.03172
+    - https://arxiv.org/abs/2310.06839
+    - https://arxiv.org/abs/2404.02060
+    - https://arxiv.org/abs/2309.17453
+    - https://arxiv.org/abs/2404.06654
+    - https://platform.claude.com/docs/en/docs/build-with-claude/context-windows
+    - https://platform.claude.com/docs/en/docs/build-with-claude/prompt-engineering/long-context-tips
+  related:
+    - docs/research/context-window-management.md
+    - docs/research/prompt-engineering.md
+    - docs/context/writing-for-llm-consumption.md
+    - docs/context/prompt-engineering.md
+    - docs/context/llm-capabilities-limitations.md
+    - docs/context/agent-state-persistence.md
+    - docs/context/context-engineering.md
 ---
 
 Context window management determines what enters an LLM's working memory and how it is structured. Performance degrades predictably as context grows — not from capacity limits alone but from attention distribution patterns that favor boundary positions. Three coordinated strategies address this: strategic positioning, compression, and structured formatting.

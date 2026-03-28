@@ -1,27 +1,28 @@
 ---
 name: "Intent Classification and Mode Selection"
 description: "How agents detect user intent and adapt behavior through classification approaches, mode switching patterns, and complexity calibration"
-type: research
-sources:
-  - https://platform.claude.com/docs/en/docs/build-with-claude/tool-use
-  - https://arxiv.org/abs/2210.03629
-  - https://arxiv.org/abs/2303.17580
-  - https://arxiv.org/abs/2303.11366
-  - https://arxiv.org/abs/2305.15334
-  - https://arxiv.org/abs/2304.08354
-  - https://arxiv.org/abs/2307.16789
-  - https://arxiv.org/abs/2308.08155
-  - https://arxiv.org/abs/2308.00352
-  - https://arxiv.org/abs/2310.04406
-  - https://arxiv.org/abs/2309.17452
-  - https://arxiv.org/abs/2406.18665
-  - https://github.com/aurelio-labs/semantic-router
-related:
-  - docs/research/tool-design-for-llms.md
-  - docs/research/agentic-planning-execution.md
-  - docs/research/multi-agent-coordination.md
-  - docs/research/prompt-engineering.md
-  - docs/context/intent-classification-mode-selection.md
+metadata:
+  type: research
+  sources:
+    - https://platform.claude.com/docs/en/docs/build-with-claude/tool-use
+    - https://arxiv.org/abs/2210.03629
+    - https://arxiv.org/abs/2303.17580
+    - https://arxiv.org/abs/2303.11366
+    - https://arxiv.org/abs/2305.15334
+    - https://arxiv.org/abs/2304.08354
+    - https://arxiv.org/abs/2307.16789
+    - https://arxiv.org/abs/2308.08155
+    - https://arxiv.org/abs/2308.00352
+    - https://arxiv.org/abs/2310.04406
+    - https://arxiv.org/abs/2309.17452
+    - https://arxiv.org/abs/2406.18665
+    - https://github.com/aurelio-labs/semantic-router
+  related:
+    - docs/research/tool-design-for-llms.md
+    - docs/research/agentic-planning-execution.md
+    - docs/research/multi-agent-coordination.md
+    - docs/research/prompt-engineering.md
+    - docs/context/intent-classification-mode-selection.md
 ---
 
 Intent classification and mode selection determine how agents interpret what users want and adjust their behavior accordingly. Three generations of approaches exist: rule-based pattern matching, ML-based classifiers trained on labeled intent data, and LLM-native approaches where the language model itself performs classification as part of generation. The shift toward LLM-native classification collapses what was previously a multi-component pipeline into a single inference step, but introduces new challenges around controllability and predictability.

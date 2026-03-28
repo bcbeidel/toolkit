@@ -1,28 +1,29 @@
 ---
 name: "Testing Non-Deterministic Systems"
 description: "Industry has converged on a three-layer testing pyramid for agent systems: deterministic unit tests, LLM-as-judge quality evaluation, and end-to-end scenarios, supported by property-based testing, golden dataset regression, and eval frameworks (DeepEval, promptfoo, Langfuse)"
-type: research
-sources:
-  - https://dev.to/aws/beyond-traditional-testing-addressing-the-challenges-of-non-deterministic-software-583a
-  - https://engineering.block.xyz/blog/testing-pyramid-for-ai-agents
-  - https://datagrid.com/blog/4-frameworks-test-non-deterministic-ai-agents
-  - https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents
-  - https://www.anthropic.com/research/building-effective-agents
-  - https://www.confident-ai.com/blog/llm-testing-in-2024-top-methods-and-strategies
-  - https://langfuse.com/blog/2025-10-21-testing-llm-applications
-  - https://towardsdatascience.com/how-we-are-testing-our-agents-in-dev/
-  - https://www.sitepoint.com/testing-ai-agents-deterministic-evaluation-in-a-non-deterministic-world/
-  - https://github.com/confident-ai/deepeval
-  - https://www.promptfoo.dev/docs/configuration/expected-outputs/
-  - https://rchaves.app/the-agent-testing-pyramid/
-  - https://langfuse.com/blog/2025-11-12-evals
-  - https://www.traceloop.com/blog/automated-prompt-regression-testing-with-llm-as-a-judge-and-ci-cd
-related:
-  - docs/research/validation-architecture.md
-  - docs/research/tool-design-for-llms.md
-  - docs/context/agent-testing-pyramid.md
-  - docs/context/llm-as-judge-evaluation.md
-  - docs/context/eval-framework-landscape.md
+metadata:
+  type: research
+  sources:
+    - https://dev.to/aws/beyond-traditional-testing-addressing-the-challenges-of-non-deterministic-software-583a
+    - https://engineering.block.xyz/blog/testing-pyramid-for-ai-agents
+    - https://datagrid.com/blog/4-frameworks-test-non-deterministic-ai-agents
+    - https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents
+    - https://www.anthropic.com/research/building-effective-agents
+    - https://www.confident-ai.com/blog/llm-testing-in-2024-top-methods-and-strategies
+    - https://langfuse.com/blog/2025-10-21-testing-llm-applications
+    - https://towardsdatascience.com/how-we-are-testing-our-agents-in-dev/
+    - https://www.sitepoint.com/testing-ai-agents-deterministic-evaluation-in-a-non-deterministic-world/
+    - https://github.com/confident-ai/deepeval
+    - https://www.promptfoo.dev/docs/configuration/expected-outputs/
+    - https://rchaves.app/the-agent-testing-pyramid/
+    - https://langfuse.com/blog/2025-11-12-evals
+    - https://www.traceloop.com/blog/automated-prompt-regression-testing-with-llm-as-a-judge-and-ci-cd
+  related:
+    - docs/research/validation-architecture.md
+    - docs/research/tool-design-for-llms.md
+    - docs/context/agent-testing-pyramid.md
+    - docs/context/llm-as-judge-evaluation.md
+    - docs/context/eval-framework-landscape.md
 ---
 
 ## Summary

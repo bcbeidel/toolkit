@@ -1,25 +1,26 @@
 ---
 name: "Human-in-the-Loop Design for AI-Assisted Workflows"
 description: "When to gate on user approval vs. automate, how to present decisions needing input, trust calibration, and cost/benefit of autonomy — drawing on human-AI teaming, appropriate reliance, and automation bias research"
-type: research
-sources:
-  - https://nap.nationalacademies.org/read/26355/chapter/9
-  - https://journals.sagepub.com/doi/10.1518/hfes.46.1.50_30392
-  - https://ieeexplore.ieee.org/document/844354
-  - https://journals.sagepub.com/doi/10.1518/001872097778543886
-  - https://link.springer.com/article/10.1007/s00146-025-02422-7
-  - https://www.smashingmagazine.com/2026/02/designing-agentic-ai-practical-ux-patterns/
-  - https://www.researchsquare.com/article/rs-8952805/v1
-  - https://artificialintelligenceact.eu/article/14/
-  - https://www.tandfonline.com/doi/full/10.1080/12460125.2025.2593251
-  - https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0229132
-  - https://pmc.ncbi.nlm.nih.gov/articles/PMC12058881/
-  - https://www.permit.io/blog/human-in-the-loop-for-ai-agents-best-practices-frameworks-use-cases-and-demo
-related:
-  - docs/research/agentic-planning-execution.md
-  - docs/research/multi-agent-coordination.md
-  - docs/research/llm-capabilities-limitations.md
-  - docs/context/human-in-the-loop-design.md
+metadata:
+  type: research
+  sources:
+    - https://nap.nationalacademies.org/read/26355/chapter/9
+    - https://journals.sagepub.com/doi/10.1518/hfes.46.1.50_30392
+    - https://ieeexplore.ieee.org/document/844354
+    - https://journals.sagepub.com/doi/10.1518/001872097778543886
+    - https://link.springer.com/article/10.1007/s00146-025-02422-7
+    - https://www.smashingmagazine.com/2026/02/designing-agentic-ai-practical-ux-patterns/
+    - https://www.researchsquare.com/article/rs-8952805/v1
+    - https://artificialintelligenceact.eu/article/14/
+    - https://www.tandfonline.com/doi/full/10.1080/12460125.2025.2593251
+    - https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0229132
+    - https://pmc.ncbi.nlm.nih.gov/articles/PMC12058881/
+    - https://www.permit.io/blog/human-in-the-loop-for-ai-agents-best-practices-frameworks-use-cases-and-demo
+  related:
+    - docs/research/agentic-planning-execution.md
+    - docs/research/multi-agent-coordination.md
+    - docs/research/llm-capabilities-limitations.md
+    - docs/context/human-in-the-loop-design.md
 ---
 
 ## Summary

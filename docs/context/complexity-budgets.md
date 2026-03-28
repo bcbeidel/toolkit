@@ -1,18 +1,19 @@
 ---
 name: "Complexity Budgets for Agent Systems"
 description: "Treating total system complexity as a finite, measurable resource — tool-count cliffs, context-complexity degradation, token budgeting per tool, and periodic pruning as a first-class engineering activity"
-type: reference
-sources:
-  - https://arxiv.org/html/2511.22729v1
-  - https://arxiv.org/html/2601.06112v1
-  - https://www.anthropic.com/research/building-effective-agents
-  - https://openai.com/business/guides-and-resources/a-practical-guide-to-building-ai-agents/
-related:
-  - docs/research/scope-management-yagni.md
-  - docs/context/yagni-agent-tooling.md
-  - docs/context/tool-vs-framework-spectrum.md
-  - docs/context/context-window-management.md
-  - docs/context/tool-design-for-llms.md
+metadata:
+  type: reference
+  sources:
+    - https://arxiv.org/html/2511.22729v1
+    - https://arxiv.org/html/2601.06112v1
+    - https://www.anthropic.com/research/building-effective-agents
+    - https://openai.com/business/guides-and-resources/a-practical-guide-to-building-ai-agents/
+  related:
+    - docs/research/scope-management-yagni.md
+    - docs/context/yagni-agent-tooling.md
+    - docs/context/tool-vs-framework-spectrum.md
+    - docs/context/context-window-management.md
+    - docs/context/tool-design-for-llms.md
 ---
 
 A complexity budget is the total cognitive and computational overhead a system can bear before incremental additions degrade overall performance. In agent tooling, this budget is not abstract — it is measurable in tokens, tool counts, and conversation turns.

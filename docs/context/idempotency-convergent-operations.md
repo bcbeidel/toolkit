@@ -1,18 +1,19 @@
 ---
 name: "Idempotency and Convergent Operations"
 description: "Patterns for operations safe to run repeatedly — convergence as the design goal, idempotency as the mechanism, and the declare-compare-converge loop that unifies IaC, migrations, and agent systems"
-type: reference
-sources:
-  - https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/
-  - https://inria.hal.science/inria-00555588/document
-  - https://developer.hashicorp.com/terraform/tutorials/state/resource-drift
-  - https://markburgess.org/blog_principles.html
-  - https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents
-related:
-  - docs/research/idempotency-convergent-operations.md
-  - docs/context/agent-state-persistence.md
-  - docs/context/workflow-orchestration.md
-  - docs/context/tool-design-for-llms.md
+metadata:
+  type: reference
+  sources:
+    - https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/
+    - https://inria.hal.science/inria-00555588/document
+    - https://developer.hashicorp.com/terraform/tutorials/state/resource-drift
+    - https://markburgess.org/blog_principles.html
+    - https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents
+  related:
+    - docs/research/idempotency-convergent-operations.md
+    - docs/context/agent-state-persistence.md
+    - docs/context/workflow-orchestration.md
+    - docs/context/tool-design-for-llms.md
 ---
 
 Convergence is the design goal; idempotency is the mechanism. An idempotent operation produces the same result regardless of how many times it runs (f(f(x)) = f(x)). A convergent operation goes further: it drives a system toward a desired state from any starting point and stays there. Every system that needs retry safety — infrastructure-as-code, database migrations, agent document management — implements convergence through variations of the same fundamental pattern.

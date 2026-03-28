@@ -1,26 +1,27 @@
 ---
 name: "LLM Capabilities and Limitations for Agent Design"
 description: "Landscape of what LLMs do reliably vs. where they fail — hallucination patterns, attention decay, reasoning limits, calibration — with implications for agent system architecture"
-type: research
-sources:
-  - https://arxiv.org/abs/2307.03172
-  - https://arxiv.org/abs/2311.05232
-  - https://arxiv.org/abs/2302.04023
-  - https://arxiv.org/abs/2305.18654
-  - https://arxiv.org/abs/2402.01817
-  - https://arxiv.org/abs/2309.11495
-  - https://arxiv.org/abs/2310.01798
-  - https://arxiv.org/abs/2310.12397
-  - https://arxiv.org/abs/2310.13548
-  - https://arxiv.org/abs/2207.05221
-  - https://arxiv.org/abs/2401.02009
-  - https://arxiv.org/abs/2305.20050
-  - https://arxiv.org/abs/2406.12045
-  - https://arxiv.org/abs/2305.14325
-  - https://arxiv.org/abs/2304.11633
-related:
-  - docs/research/prompt-engineering.md
-  - docs/context/llm-capabilities-limitations.md
+metadata:
+  type: research
+  sources:
+    - https://arxiv.org/abs/2307.03172
+    - https://arxiv.org/abs/2311.05232
+    - https://arxiv.org/abs/2302.04023
+    - https://arxiv.org/abs/2305.18654
+    - https://arxiv.org/abs/2402.01817
+    - https://arxiv.org/abs/2309.11495
+    - https://arxiv.org/abs/2310.01798
+    - https://arxiv.org/abs/2310.12397
+    - https://arxiv.org/abs/2310.13548
+    - https://arxiv.org/abs/2207.05221
+    - https://arxiv.org/abs/2401.02009
+    - https://arxiv.org/abs/2305.20050
+    - https://arxiv.org/abs/2406.12045
+    - https://arxiv.org/abs/2305.14325
+    - https://arxiv.org/abs/2304.11633
+  related:
+    - docs/research/prompt-engineering.md
+    - docs/context/llm-capabilities-limitations.md
 ---
 
 ## Key Takeaways

@@ -1,9 +1,10 @@
 ---
 name: Synthesize
 description: Phase 6 — organize findings by sub-question with confidence levels and writing constraints
-stage: synthesize
-pipeline: research
-tools: [Read, Write, Edit, Glob, Grep, Bash]
+metadata:
+  stage: synthesize
+  pipeline: research
+  tools: [Read, Write, Edit, Glob, Grep, Bash]
 ---
 
 ## Purpose

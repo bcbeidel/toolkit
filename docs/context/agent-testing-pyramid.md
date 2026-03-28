@@ -1,20 +1,21 @@
 ---
 name: "Agent Testing Pyramid"
 description: "Three-layer testing model for agent systems — deterministic unit tests, LLM-as-judge evaluation, and end-to-end scenarios — with CI integration philosophy and property-based testing for invariant verification"
-type: reference
-sources:
-  - https://engineering.block.xyz/blog/testing-pyramid-for-ai-agents
-  - https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents
-  - https://www.anthropic.com/research/building-effective-agents
-  - https://datagrid.com/blog/4-frameworks-test-non-deterministic-ai-agents
-  - https://rchaves.app/the-agent-testing-pyramid/
-  - https://dev.to/aws/beyond-traditional-testing-addressing-the-challenges-of-non-deterministic-software-583a
-related:
-  - docs/research/testing-non-deterministic-systems.md
-  - docs/context/llm-as-judge-evaluation.md
-  - docs/context/eval-framework-landscape.md
-  - docs/context/validation-architecture.md
-  - docs/context/tool-design-for-llms.md
+metadata:
+  type: reference
+  sources:
+    - https://engineering.block.xyz/blog/testing-pyramid-for-ai-agents
+    - https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents
+    - https://www.anthropic.com/research/building-effective-agents
+    - https://datagrid.com/blog/4-frameworks-test-non-deterministic-ai-agents
+    - https://rchaves.app/the-agent-testing-pyramid/
+    - https://dev.to/aws/beyond-traditional-testing-addressing-the-challenges-of-non-deterministic-software-583a
+  related:
+    - docs/research/testing-non-deterministic-systems.md
+    - docs/context/llm-as-judge-evaluation.md
+    - docs/context/eval-framework-landscape.md
+    - docs/context/validation-architecture.md
+    - docs/context/tool-design-for-llms.md
 ---
 
 Testing agent systems requires abandoning exact-match expectations. The industry has converged on an adapted testing pyramid that separates deterministic from non-deterministic concerns at architectural boundaries. Maximum investment goes to the deterministic base where traditional testing works; costlier evaluation methods apply only where they must.

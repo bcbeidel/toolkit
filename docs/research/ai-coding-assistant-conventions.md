@@ -1,35 +1,36 @@
 ---
 name: "AI Coding Assistant Conventions: Instruction Files, Context, and Extensibility"
 description: "Landscape survey of how AI coding tools (Claude Code, GitHub Copilot, Cursor, Windsurf, Codex CLI, Cline, Aider) handle project context, instruction files, tool invocation, and skill/command systems — mapping common patterns and divergences across the ecosystem"
-type: research
-sources:
-  - https://claude.com/blog/using-claude-md-files
-  - https://code.claude.com/docs/en/skills
-  - https://code.claude.com/docs/en/overview
-  - https://docs.cursor.com/context/rules
-  - https://docs.github.com/copilot/customizing-copilot/adding-custom-instructions-for-github-copilot
-  - https://code.visualstudio.com/docs/copilot/customization/custom-instructions
-  - https://github.blog/changelog/2025-07-23-github-copilot-coding-agent-now-supports-instructions-md-custom-instructions
-  - https://docs.windsurf.com/windsurf/cascade/memories
-  - https://developers.openai.com/codex/guides/agents-md/
-  - https://developers.openai.com/codex/skills/
-  - https://docs.cline.bot/prompting/cline-memory-bank
-  - https://cline.ghost.io/clinerules-version-controlled-shareable-and-ai-editable-instructions/
-  - https://aider.chat/docs/usage/conventions.html
-  - https://agents.md/
-  - https://www.linuxfoundation.org/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation
-  - https://www.agentrulegen.com/guides/cursorrules-vs-claude-md
-  - https://modelcontextprotocol.io/specification/2025-11-25
-related:
-  - docs/research/plugin-extension-architecture.md
-  - docs/research/context-engineering.md
-  - docs/research/tool-design-for-llms.md
-  - docs/research/workflow-orchestration.md
-  - docs/context/instruction-file-conventions.md
-  - docs/context/agents-md-standard.md
-  - docs/context/context-injection-strategies.md
-  - docs/context/mcp-extensibility-standard.md
-  - docs/context/skill-command-system-landscape.md
+metadata:
+  type: research
+  sources:
+    - https://claude.com/blog/using-claude-md-files
+    - https://code.claude.com/docs/en/skills
+    - https://code.claude.com/docs/en/overview
+    - https://docs.cursor.com/context/rules
+    - https://docs.github.com/copilot/customizing-copilot/adding-custom-instructions-for-github-copilot
+    - https://code.visualstudio.com/docs/copilot/customization/custom-instructions
+    - https://github.blog/changelog/2025-07-23-github-copilot-coding-agent-now-supports-instructions-md-custom-instructions
+    - https://docs.windsurf.com/windsurf/cascade/memories
+    - https://developers.openai.com/codex/guides/agents-md/
+    - https://developers.openai.com/codex/skills/
+    - https://docs.cline.bot/prompting/cline-memory-bank
+    - https://cline.ghost.io/clinerules-version-controlled-shareable-and-ai-editable-instructions/
+    - https://aider.chat/docs/usage/conventions.html
+    - https://agents.md/
+    - https://www.linuxfoundation.org/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation
+    - https://www.agentrulegen.com/guides/cursorrules-vs-claude-md
+    - https://modelcontextprotocol.io/specification/2025-11-25
+  related:
+    - docs/research/plugin-extension-architecture.md
+    - docs/research/context-engineering.md
+    - docs/research/tool-design-for-llms.md
+    - docs/research/workflow-orchestration.md
+    - docs/context/instruction-file-conventions.md
+    - docs/context/agents-md-standard.md
+    - docs/context/context-injection-strategies.md
+    - docs/context/mcp-extensibility-standard.md
+    - docs/context/skill-command-system-landscape.md
 ---
 
 ## Summary

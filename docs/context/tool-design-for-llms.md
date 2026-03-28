@@ -1,17 +1,18 @@
 ---
 name: "Tool Design for LLM Agents"
 description: "How to design tool interfaces that LLM agents can select, invoke, and recover from reliably: schemas, descriptions, error signaling, idempotency, and scaling"
-type: reference
-sources:
-  - https://platform.claude.com/docs/en/docs/build-with-claude/tool-use/overview
-  - https://developers.openai.com/docs/guides/function-calling
-  - https://modelcontextprotocol.io/docs/concepts/tools
-  - https://arxiv.org/abs/2305.15334
-  - https://www.anthropic.com/engineering/building-effective-agents
-related:
-  - docs/research/tool-design-for-llms.md
-  - docs/context/prompt-engineering.md
-  - docs/context/llm-capabilities-limitations.md
+metadata:
+  type: reference
+  sources:
+    - https://platform.claude.com/docs/en/docs/build-with-claude/tool-use/overview
+    - https://developers.openai.com/docs/guides/function-calling
+    - https://modelcontextprotocol.io/docs/concepts/tools
+    - https://arxiv.org/abs/2305.15334
+    - https://www.anthropic.com/engineering/building-effective-agents
+  related:
+    - docs/research/tool-design-for-llms.md
+    - docs/context/prompt-engineering.md
+    - docs/context/llm-capabilities-limitations.md
 ---
 
 Tool design for LLM agents differs from traditional API design in one

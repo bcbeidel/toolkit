@@ -1,8 +1,9 @@
 ---
 name: Research Modes
 description: Eight research modes with distinct methodology intensity, SIFT rigor, and challenge requirements
-stage: frame
-pipeline: research
+metadata:
+  stage: frame
+  pipeline: research
 ---
 
 ## Purpose

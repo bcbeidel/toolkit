@@ -1,18 +1,19 @@
 ---
 name: "Reasoning Mode Divergence"
 description: "How chain-of-thought and reasoning capabilities differ across LLM families — each has incompatible built-in reasoning mechanisms while explicit CoT prompting remains the only portable technique"
-type: reference
-sources:
-  - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/use-xml-tags
-  - https://developers.openai.com/cookbook/examples/gpt-5/gpt-5_prompting_guide
-  - https://ai.google.dev/gemini-api/docs/prompting-strategies
-  - https://simonwillison.net/2025/Feb/2/openai-reasoning-models-advice-on-prompting/
-  - https://docs.cloud.google.com/vertex-ai/generative-ai/docs/start/gemini-3-prompting-guide
-related:
-  - docs/research/cross-model-prompt-portability.md
-  - docs/context/cross-model-prompt-portability.md
-  - docs/context/prompt-engineering.md
-  - docs/context/llm-capabilities-limitations.md
+metadata:
+  type: reference
+  sources:
+    - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/use-xml-tags
+    - https://developers.openai.com/cookbook/examples/gpt-5/gpt-5_prompting_guide
+    - https://ai.google.dev/gemini-api/docs/prompting-strategies
+    - https://simonwillison.net/2025/Feb/2/openai-reasoning-models-advice-on-prompting/
+    - https://docs.cloud.google.com/vertex-ai/generative-ai/docs/start/gemini-3-prompting-guide
+  related:
+    - docs/research/cross-model-prompt-portability.md
+    - docs/context/cross-model-prompt-portability.md
+    - docs/context/prompt-engineering.md
+    - docs/context/llm-capabilities-limitations.md
 ---
 
 ## Key Insight

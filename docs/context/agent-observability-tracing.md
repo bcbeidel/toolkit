@@ -1,20 +1,21 @@
 ---
 name: "Agent Observability and Tracing"
 description: "OpenTelemetry GenAI semantic conventions as the vendor-neutral standard for agent tracing: the three-layer span model (agent, LLM, tool), key attributes, and structured logging with trace correlation"
-type: reference
-sources:
-  - https://opentelemetry.io/blog/2025/ai-agent-observability/
-  - https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-agent-spans/
-  - https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-spans/
-  - https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-events/
-  - https://www.w3.org/TR/trace-context/
-  - https://arize-ai.github.io/openinference/spec/
-related:
-  - docs/research/observability-audit-trails.md
-  - docs/context/show-your-work-patterns.md
-  - docs/context/observability-trust-debuggability.md
-  - docs/context/workflow-orchestration.md
-  - docs/context/tool-design-for-llms.md
+metadata:
+  type: reference
+  sources:
+    - https://opentelemetry.io/blog/2025/ai-agent-observability/
+    - https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-agent-spans/
+    - https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-spans/
+    - https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-events/
+    - https://www.w3.org/TR/trace-context/
+    - https://arize-ai.github.io/openinference/spec/
+  related:
+    - docs/research/observability-audit-trails.md
+    - docs/context/show-your-work-patterns.md
+    - docs/context/observability-trust-debuggability.md
+    - docs/context/workflow-orchestration.md
+    - docs/context/tool-design-for-llms.md
 ---
 
 OpenTelemetry GenAI semantic conventions provide the emerging vendor-neutral standard for tracing agent execution. The `gen_ai.*` attribute namespace defines three layers that map directly to how agent systems operate: agent invocation, LLM calls, and tool execution. Even without deploying a full OTel collector, structuring internal traces with these conventions ensures future compatibility and a shared vocabulary.

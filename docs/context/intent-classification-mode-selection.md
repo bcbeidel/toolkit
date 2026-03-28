@@ -1,19 +1,20 @@
 ---
 name: "Intent Classification and Mode Selection"
 description: "Three generations of intent classification (rule-based, ML-based, LLM-native), four mode-switching patterns, and complexity calibration strategies that production agents combine into hybrid routing architectures"
-type: reference
-sources:
-  - https://platform.claude.com/docs/en/docs/build-with-claude/tool-use
-  - https://arxiv.org/abs/2210.03629
-  - https://arxiv.org/abs/2303.11366
-  - https://arxiv.org/abs/2406.18665
-  - https://arxiv.org/abs/2305.15334
-  - https://arxiv.org/abs/2307.16789
-related:
-  - docs/research/intent-classification-mode-selection.md
-  - docs/context/tool-design-for-llms.md
-  - docs/context/agentic-planning-execution.md
-  - docs/context/multi-agent-coordination.md
+metadata:
+  type: reference
+  sources:
+    - https://platform.claude.com/docs/en/docs/build-with-claude/tool-use
+    - https://arxiv.org/abs/2210.03629
+    - https://arxiv.org/abs/2303.11366
+    - https://arxiv.org/abs/2406.18665
+    - https://arxiv.org/abs/2305.15334
+    - https://arxiv.org/abs/2307.16789
+  related:
+    - docs/research/intent-classification-mode-selection.md
+    - docs/context/tool-design-for-llms.md
+    - docs/context/agentic-planning-execution.md
+    - docs/context/multi-agent-coordination.md
 ---
 
 Production agents must solve three interrelated problems: classifying what the user wants, switching into the right behavioral mode, and calibrating response complexity. The dominant pattern is hybrid routing -- combining explicit commands for predictable dispatch with LLM-native classification for flexible natural language handling.

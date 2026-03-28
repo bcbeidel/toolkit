@@ -1,33 +1,34 @@
 ---
 name: "Idempotency and Convergent Operations"
 description: "Patterns for designing operations safe to run repeatedly — convergent state, idempotent writes, and safe retries across infrastructure-as-code, database migrations, and agent document management"
-type: research
-sources:
-  - https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/
-  - https://blog.algomaster.io/p/idempotency-in-distributed-systems
-  - https://backendbytes.com/articles/idempotency-patterns-distributed-systems/
-  - https://en.wikipedia.org/wiki/Conflict-free_replicated_data_type
-  - https://inria.hal.science/inria-00555588/document
-  - https://aws.plainenglish.io/what-is-idempotency-in-terraform-and-ansible-ebc2ef2e4234
-  - https://developer.hashicorp.com/terraform/tutorials/state/resource-drift
-  - https://www.hashicorp.com/en/blog/detecting-and-managing-drift-with-terraform
-  - https://docs.ansible.com/projects/ansible/latest/playbook_guide/playbooks_intro.html
-  - https://www.techtarget.com/searchitoperations/tip/Idempotent-configuration-management-sets-things-right-no-matter-what
-  - https://dzone.com/articles/trouble-free-database-migration-idempotence-and-co
-  - https://github.com/graphile/migrate/blob/main/docs/idempotent-examples.md
-  - https://www.getdefacto.com/article/database-schema-migrations
-  - https://airbyte.com/data-engineering-resources/idempotency-in-data-pipelines
-  - https://dev.to/alexmercedcoder/idempotent-pipelines-build-once-run-safely-forever-2o2o
-  - https://markburgess.org/blog_principles.html
-  - https://en.wikipedia.org/wiki/Promise_theory
-  - https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents
-  - https://promptengineering.org/agents-at-work-the-2026-playbook-for-building-reliable-agentic-workflows/
-  - https://composio.dev/blog/outgrowing-make-zapier-n8n-ai-agents
-related:
-  - docs/research/agent-state-persistence.md
-  - docs/research/workflow-orchestration.md
-  - docs/research/tool-design-for-llms.md
-  - docs/context/idempotency-convergent-operations.md
+metadata:
+  type: research
+  sources:
+    - https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/
+    - https://blog.algomaster.io/p/idempotency-in-distributed-systems
+    - https://backendbytes.com/articles/idempotency-patterns-distributed-systems/
+    - https://en.wikipedia.org/wiki/Conflict-free_replicated_data_type
+    - https://inria.hal.science/inria-00555588/document
+    - https://aws.plainenglish.io/what-is-idempotency-in-terraform-and-ansible-ebc2ef2e4234
+    - https://developer.hashicorp.com/terraform/tutorials/state/resource-drift
+    - https://www.hashicorp.com/en/blog/detecting-and-managing-drift-with-terraform
+    - https://docs.ansible.com/projects/ansible/latest/playbook_guide/playbooks_intro.html
+    - https://www.techtarget.com/searchitoperations/tip/Idempotent-configuration-management-sets-things-right-no-matter-what
+    - https://dzone.com/articles/trouble-free-database-migration-idempotence-and-co
+    - https://github.com/graphile/migrate/blob/main/docs/idempotent-examples.md
+    - https://www.getdefacto.com/article/database-schema-migrations
+    - https://airbyte.com/data-engineering-resources/idempotency-in-data-pipelines
+    - https://dev.to/alexmercedcoder/idempotent-pipelines-build-once-run-safely-forever-2o2o
+    - https://markburgess.org/blog_principles.html
+    - https://en.wikipedia.org/wiki/Promise_theory
+    - https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents
+    - https://promptengineering.org/agents-at-work-the-2026-playbook-for-building-reliable-agentic-workflows/
+    - https://composio.dev/blog/outgrowing-make-zapier-n8n-ai-agents
+  related:
+    - docs/research/agent-state-persistence.md
+    - docs/research/workflow-orchestration.md
+    - docs/research/tool-design-for-llms.md
+    - docs/context/idempotency-convergent-operations.md
 ---
 
 ## Key Findings

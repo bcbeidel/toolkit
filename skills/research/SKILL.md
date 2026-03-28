@@ -285,11 +285,12 @@ Frontmatter follows the document standards in AGENTS.md:
 ---
 name: "Title of the investigation"
 description: "One-sentence summary of findings"
-type: research
-sources:
-  - https://example.com/primary-source
-related:
-  - docs/research/2026-01-15-related-topic.research.md
+metadata:
+  type: research
+  sources:
+    - https://example.com/primary-source
+  related:
+    - docs/research/2026-01-15-related-topic.research.md
 ---
 ```
 

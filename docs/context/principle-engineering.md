@@ -1,19 +1,20 @@
 ---
 name: "Principle Engineering"
 description: "Methods for classifying, verifying, and maintaining design principles as living documents — taxonomy dimensions, fitness functions, drift detection, instruction density limits, and governance lifecycles"
-type: reference
-sources:
-  - https://arxiv.org/html/2507.11538v1
-  - https://www.anthropic.com/news/claudes-constitution
-  - https://newsletter.pragmaticengineer.com/p/rfcs-and-design-docs
-  - https://aws.amazon.com/blogs/architecture/master-architecture-decision-records-adrs-best-practices-for-effective-decision-making/
-  - https://continuous-architecture.org/practices/fitness-functions/
-  - https://www.anthropic.com/research/constitutional-ai-harmlessness-from-ai-feedback
-related:
-  - docs/research/principle-engineering.md
-  - docs/context/prompt-engineering.md
-  - docs/context/context-window-management.md
-  - docs/context/information-architecture.md
+metadata:
+  type: reference
+  sources:
+    - https://arxiv.org/html/2507.11538v1
+    - https://www.anthropic.com/news/claudes-constitution
+    - https://newsletter.pragmaticengineer.com/p/rfcs-and-design-docs
+    - https://aws.amazon.com/blogs/architecture/master-architecture-decision-records-adrs-best-practices-for-effective-decision-making/
+    - https://continuous-architecture.org/practices/fitness-functions/
+    - https://www.anthropic.com/research/constitutional-ai-harmlessness-from-ai-feedback
+  related:
+    - docs/research/principle-engineering.md
+    - docs/context/prompt-engineering.md
+    - docs/context/context-window-management.md
+    - docs/context/information-architecture.md
 ---
 
 Design principles drift, conflict, and accumulate. Maintaining them as living

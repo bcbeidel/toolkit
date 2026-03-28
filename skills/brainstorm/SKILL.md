@@ -134,12 +134,13 @@ Design docs use WOS frontmatter:
     ---
     name: Feature Name
     description: One-sentence summary
-    type: design
-    status: draft
-    related:
-      - docs/context/relevant-file.md
+    metadata:
+      type: design
+      status: draft
+      related:
+        - docs/context/relevant-file.md
     ---
 
 Save location follows the project's layout hint (see step 4 above).
-The `related` field links to context files, research docs, or other
+The `metadata.related` field links to context files, research docs, or other
 design docs.

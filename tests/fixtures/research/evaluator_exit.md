@@ -1,10 +1,11 @@
 ---
 name: Test Research — Evaluator Exit
 description: Fixture representing state after evaluator completes
-type: research
-sources:
-  - https://docs.python.org/3/library/asyncio.html
-  - https://realpython.com/async-io-python/
+metadata:
+  type: research
+  sources:
+    - https://docs.python.org/3/library/asyncio.html
+    - https://realpython.com/async-io-python/
 ---
 
 <!-- DRAFT -->

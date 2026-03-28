@@ -1,20 +1,21 @@
 ---
 name: "Issue Tracking and External Integration Patterns"
 description: "Three integration layers, authentication tiers, deduplication strategies, and feedback loop patterns for agent-to-issue-tracker systems"
-type: reference
-sources:
-  - https://github.blog/ai-and-ml/automate-repository-tasks-with-github-agentic-workflows/
-  - https://github.com/anthropics/claude-code/blob/main/.github/workflows/claude-dedupe-issues.yml
-  - https://engineering.atspotify.com/2025/12/feedback-loops-background-coding-agents-part-3
-  - https://docs.github.com/en/rest/issues/issues
-  - https://linear.app/developers/graphql
-  - https://developer.atlassian.com/cloud/jira/platform/rest/v3/intro/
-  - https://github.com/atlassian/atlassian-mcp-server
-related:
-  - docs/research/issue-tracking-external-integration.md
-  - docs/context/feedback-loop-design.md
-  - docs/context/tool-design-for-llms.md
-  - docs/context/multi-agent-coordination.md
+metadata:
+  type: reference
+  sources:
+    - https://github.blog/ai-and-ml/automate-repository-tasks-with-github-agentic-workflows/
+    - https://github.com/anthropics/claude-code/blob/main/.github/workflows/claude-dedupe-issues.yml
+    - https://engineering.atspotify.com/2025/12/feedback-loops-background-coding-agents-part-3
+    - https://docs.github.com/en/rest/issues/issues
+    - https://linear.app/developers/graphql
+    - https://developer.atlassian.com/cloud/jira/platform/rest/v3/intro/
+    - https://github.com/atlassian/atlassian-mcp-server
+  related:
+    - docs/research/issue-tracking-external-integration.md
+    - docs/context/feedback-loop-design.md
+    - docs/context/tool-design-for-llms.md
+    - docs/context/multi-agent-coordination.md
 ---
 
 Agent systems interact with issue trackers through three integration layers, three authentication tiers, and four feedback loop patterns. The right combination depends on scope: single-platform scripts need different patterns than multi-tenant agent fleets.

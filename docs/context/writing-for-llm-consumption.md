@@ -1,19 +1,20 @@
 ---
 name: "Writing for LLM Consumption"
 description: "Six structural principles for agent-facing documentation: BLUF positioning, explicit conventions, self-contained sections, navigable metadata, consistent formatting, and token efficiency"
-type: reference
-sources:
-  - https://arxiv.org/abs/2307.03172
-  - https://arxiv.org/abs/2406.16008
-  - https://arxiv.org/abs/2411.10541
-  - https://arxiv.org/abs/2602.20478
-  - https://llmstxt.org/
-  - https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
-  - https://github.blog/ai-and-ml/github-copilot/how-to-write-a-great-agents-md-lessons-from-over-2500-repositories/
-related:
-  - docs/research/writing-for-llm-consumption.md
-  - docs/context/context-window-management.md
-  - docs/context/prompt-engineering.md
+metadata:
+  type: reference
+  sources:
+    - https://arxiv.org/abs/2307.03172
+    - https://arxiv.org/abs/2406.16008
+    - https://arxiv.org/abs/2411.10541
+    - https://arxiv.org/abs/2602.20478
+    - https://llmstxt.org/
+    - https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
+    - https://github.blog/ai-and-ml/github-copilot/how-to-write-a-great-agents-md-lessons-from-over-2500-repositories/
+  related:
+    - docs/research/writing-for-llm-consumption.md
+    - docs/context/context-window-management.md
+    - docs/context/prompt-engineering.md
 ---
 
 Agent-facing documentation operates under different constraints than human-facing writing. Humans scan headings, build spatial memory, and infer unstated context from experience. LLMs process documents as linear token sequences within a fixed context window, exhibit positional attention biases, and cannot infer information that is not explicitly stated. How documentation is structured affects LLM output quality as much as what it contains.

@@ -1,19 +1,20 @@
 ---
 name: "Agentic Planning and Execution Patterns"
 description: "Three dominant paradigms for LLM agent planning — ReAct, Plan-and-Execute, and Tree-of-Thought — with trade-offs for decomposition, failure recovery, and session persistence"
-type: reference
-sources:
-  - https://arxiv.org/abs/2210.03629
-  - https://arxiv.org/abs/2305.04091
-  - https://arxiv.org/abs/2305.10601
-  - https://arxiv.org/abs/2402.02716
-  - https://arxiv.org/abs/2305.16291
-  - https://arxiv.org/abs/2312.04511
-  - https://arxiv.org/abs/2303.11366
-related:
-  - docs/research/agentic-planning-execution.md
-  - docs/context/llm-capabilities-limitations.md
-  - docs/context/prompt-engineering.md
+metadata:
+  type: reference
+  sources:
+    - https://arxiv.org/abs/2210.03629
+    - https://arxiv.org/abs/2305.04091
+    - https://arxiv.org/abs/2305.10601
+    - https://arxiv.org/abs/2402.02716
+    - https://arxiv.org/abs/2305.16291
+    - https://arxiv.org/abs/2312.04511
+    - https://arxiv.org/abs/2303.11366
+  related:
+    - docs/research/agentic-planning-execution.md
+    - docs/context/llm-capabilities-limitations.md
+    - docs/context/prompt-engineering.md
 ---
 
 LLM agent planning has converged on three paradigms: reactive (ReAct), deliberative (Plan-and-Execute), and exploratory (Tree-of-Thought). Each makes fundamentally different trade-offs in how goals are decomposed, failures are handled, and progress persists across sessions. Choosing the right paradigm — or combining them — is the central architectural decision for any agent system.

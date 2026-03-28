@@ -1,24 +1,25 @@
 ---
 name: "Validation Architecture: Separating Structure from Quality"
 description: "Three-layer validation model (structural/semantic/quality) derived from compiler phases, linter categories, and CI quality gates, with severity calibration patterns and agent-specific considerations"
-type: research
-sources:
-  - https://doc.rust-lang.org/rustc/lints/levels.html
-  - https://doc.rust-lang.org/stable/clippy/lints.html
-  - https://eslint.org/docs/latest/rules/
-  - https://gcc.gnu.org/onlinedocs/gccint/Guidelines-for-Diagnostics.html
-  - https://pylint.readthedocs.io/en/stable/user_guide/messages/messages_overview.html
-  - https://docs.astral.sh/ruff/linter/
-  - https://docs.sonarsource.com/sonarqube-server/quality-standards-administration/managing-rules/rules
-  - https://www.typescriptlang.org/tsconfig/strict.html
-  - https://greatexpectations.io/blog/exploring-data-quality-schema-validation/
-  - https://www.infoq.com/articles/pipeline-quality-gates/
-  - https://cs.lmu.edu/~ray/notes/compilerarchitecture/
-  - https://rustc-dev-guide.rust-lang.org/diagnostics.html
-related:
-  - docs/research/tool-design-for-llms.md
-  - docs/research/prompt-engineering.md
-  - docs/context/validation-architecture.md
+metadata:
+  type: research
+  sources:
+    - https://doc.rust-lang.org/rustc/lints/levels.html
+    - https://doc.rust-lang.org/stable/clippy/lints.html
+    - https://eslint.org/docs/latest/rules/
+    - https://gcc.gnu.org/onlinedocs/gccint/Guidelines-for-Diagnostics.html
+    - https://pylint.readthedocs.io/en/stable/user_guide/messages/messages_overview.html
+    - https://docs.astral.sh/ruff/linter/
+    - https://docs.sonarsource.com/sonarqube-server/quality-standards-administration/managing-rules/rules
+    - https://www.typescriptlang.org/tsconfig/strict.html
+    - https://greatexpectations.io/blog/exploring-data-quality-schema-validation/
+    - https://www.infoq.com/articles/pipeline-quality-gates/
+    - https://cs.lmu.edu/~ray/notes/compilerarchitecture/
+    - https://rustc-dev-guide.rust-lang.org/diagnostics.html
+  related:
+    - docs/research/tool-design-for-llms.md
+    - docs/research/prompt-engineering.md
+    - docs/context/validation-architecture.md
 ---
 
 ## Summary

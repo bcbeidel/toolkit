@@ -1,19 +1,20 @@
 ---
 name: "Tool Design for LLM Agents"
 description: "Technical investigation of tool interface design for LLM agents: input/output contracts, error signaling, idempotency, and how tool design affects agent reasoning, with patterns from Claude, OpenAI, and MCP"
-type: research
-sources:
-  - https://platform.claude.com/docs/en/docs/build-with-claude/tool-use/overview
-  - https://developers.openai.com/docs/guides/function-calling
-  - https://modelcontextprotocol.io/docs/concepts/tools
-  - https://arxiv.org/abs/2305.15334
-  - https://arxiv.org/abs/2304.08354
-  - https://developers.openai.com/docs/guides/tools-tool-search
-  - https://www.anthropic.com/engineering/building-effective-agents
-related:
-  - docs/research/prompt-engineering.md
-  - docs/research/llm-capabilities-limitations.md
-  - docs/context/tool-design-for-llms.md
+metadata:
+  type: research
+  sources:
+    - https://platform.claude.com/docs/en/docs/build-with-claude/tool-use/overview
+    - https://developers.openai.com/docs/guides/function-calling
+    - https://modelcontextprotocol.io/docs/concepts/tools
+    - https://arxiv.org/abs/2305.15334
+    - https://arxiv.org/abs/2304.08354
+    - https://developers.openai.com/docs/guides/tools-tool-search
+    - https://www.anthropic.com/engineering/building-effective-agents
+  related:
+    - docs/research/prompt-engineering.md
+    - docs/research/llm-capabilities-limitations.md
+    - docs/context/tool-design-for-llms.md
 ---
 
 ## Summary

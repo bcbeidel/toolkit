@@ -1,6 +1,7 @@
 ---
 description: Prioritize tasks and decisions by mapping urgency against importance
-argument-hint: "[list of tasks, decisions, or competing priorities]"
+metadata:
+  argument-hint: "[list of tasks, decisions, or competing priorities]"
 ---
 
 <objective>

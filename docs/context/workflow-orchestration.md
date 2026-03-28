@@ -1,19 +1,20 @@
 ---
 name: "Workflow Orchestration for Agent Systems"
 description: "State machine models, durable execution engines, phase gates, and resumability patterns for managing multi-phase agent workflows — from FSMs to Temporal and LangGraph"
-type: reference
-sources:
-  - https://www.sciencedirect.com/science/article/pii/0167642387900359
-  - https://users.cs.northwestern.edu/~robby/courses/395-495-2017-winter/Van%20Der%20Aalst%201998%20The%20Application%20of%20Petri%20Nets%20to%20Workflow%20Management.pdf
-  - https://temporal.io/blog/temporal-replaces-state-machines-for-distributed-applications
-  - https://docs.langchain.com/oss/python/langgraph/durable-execution
-  - https://stately.ai/docs/xstate
-  - https://www.restate.dev/what-is-durable-execution
-related:
-  - docs/research/workflow-orchestration.md
-  - docs/context/agent-state-persistence.md
-  - docs/context/agentic-planning-execution.md
-  - docs/context/multi-agent-coordination.md
+metadata:
+  type: reference
+  sources:
+    - https://www.sciencedirect.com/science/article/pii/0167642387900359
+    - https://users.cs.northwestern.edu/~robby/courses/395-495-2017-winter/Van%20Der%20Aalst%201998%20The%20Application%20of%20Petri%20Nets%20to%20Workflow%20Management.pdf
+    - https://temporal.io/blog/temporal-replaces-state-machines-for-distributed-applications
+    - https://docs.langchain.com/oss/python/langgraph/durable-execution
+    - https://stately.ai/docs/xstate
+    - https://www.restate.dev/what-is-durable-execution
+  related:
+    - docs/research/workflow-orchestration.md
+    - docs/context/agent-state-persistence.md
+    - docs/context/agentic-planning-execution.md
+    - docs/context/multi-agent-coordination.md
 ---
 
 Agent workflows that span multiple phases — research, synthesis, review, revision — need orchestration models that handle branching, failure recovery, and auditability. The choice of model depends on workflow complexity, and the options form a clear spectrum.

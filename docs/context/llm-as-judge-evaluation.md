@@ -1,19 +1,20 @@
 ---
 name: "LLM-as-Judge Evaluation"
 description: "Using LLMs to evaluate LLM outputs: multi-trial scoring, soft failure thresholds, golden dataset regression, calibration concerns, and practical guidelines for automated quality gates"
-type: reference
-sources:
-  - https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents
-  - https://engineering.block.xyz/blog/testing-pyramid-for-ai-agents
-  - https://towardsdatascience.com/how-we-are-testing-our-agents-in-dev/
-  - https://www.confident-ai.com/blog/llm-testing-in-2024-top-methods-and-strategies
-  - https://www.traceloop.com/blog/automated-prompt-regression-testing-with-llm-as-a-judge-and-ci-cd
-related:
-  - docs/research/testing-non-deterministic-systems.md
-  - docs/context/agent-testing-pyramid.md
-  - docs/context/eval-framework-landscape.md
-  - docs/context/validation-architecture.md
-  - docs/context/prompt-engineering.md
+metadata:
+  type: reference
+  sources:
+    - https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents
+    - https://engineering.block.xyz/blog/testing-pyramid-for-ai-agents
+    - https://towardsdatascience.com/how-we-are-testing-our-agents-in-dev/
+    - https://www.confident-ai.com/blog/llm-testing-in-2024-top-methods-and-strategies
+    - https://www.traceloop.com/blog/automated-prompt-regression-testing-with-llm-as-a-judge-and-ci-cd
+  related:
+    - docs/research/testing-non-deterministic-systems.md
+    - docs/context/agent-testing-pyramid.md
+    - docs/context/eval-framework-landscape.md
+    - docs/context/validation-architecture.md
+    - docs/context/prompt-engineering.md
 ---
 
 LLM-as-judge is the practical middle ground between "can't test it" and "test it perfectly." Research shows approximately 85% alignment with human judgment -- higher than human-to-human agreement at 81%. It is the standard approach for the middle layer of the agent testing pyramid, catching quality regressions that deterministic tests cannot detect.

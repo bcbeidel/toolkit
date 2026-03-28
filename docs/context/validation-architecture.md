@@ -1,17 +1,18 @@
 ---
 name: "Validation Architecture: Three Layers"
 description: "Three-layer validation model (structural, semantic, quality) derived from compiler and linter patterns, with severity calibration principles and agent-specific quality considerations"
-type: reference
-sources:
-  - https://doc.rust-lang.org/rustc/lints/levels.html
-  - https://doc.rust-lang.org/stable/clippy/lints.html
-  - https://eslint.org/docs/latest/rules/
-  - https://gcc.gnu.org/onlinedocs/gccint/Guidelines-for-Diagnostics.html
-  - https://docs.sonarsource.com/sonarqube-server/quality-standards-administration/managing-rules/rules
-related:
-  - docs/research/validation-architecture.md
-  - docs/context/tool-design-for-llms.md
-  - docs/context/feedback-loop-design.md
+metadata:
+  type: reference
+  sources:
+    - https://doc.rust-lang.org/rustc/lints/levels.html
+    - https://doc.rust-lang.org/stable/clippy/lints.html
+    - https://eslint.org/docs/latest/rules/
+    - https://gcc.gnu.org/onlinedocs/gccint/Guidelines-for-Diagnostics.html
+    - https://docs.sonarsource.com/sonarqube-server/quality-standards-administration/managing-rules/rules
+  related:
+    - docs/research/validation-architecture.md
+    - docs/context/tool-design-for-llms.md
+    - docs/context/feedback-loop-design.md
 ---
 
 Validation systems across compilers, linters, and CI pipelines converge on the

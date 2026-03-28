@@ -1,31 +1,32 @@
 ---
 name: "Plugin and Extension Architecture Patterns"
 description: "How host systems discover, load, and invoke plugins — registration mechanisms, script execution patterns, sandboxing constraints, and version management across Claude Code, VS Code, Vim/Neovim, JetBrains, browser extensions, and other extension models"
-type: research
-sources:
-  - https://code.claude.com/docs/en/plugins
-  - https://code.claude.com/docs/en/plugins-reference
-  - https://code.visualstudio.com/api/references/activation-events
-  - https://code.visualstudio.com/api/advanced-topics/extension-host
-  - https://code.visualstudio.com/api/get-started/extension-anatomy
-  - https://code.visualstudio.com/api/references/extension-manifest
-  - https://code.visualstudio.com/blogs/2022/11/28/vscode-sandbox
-  - https://code.visualstudio.com/docs/configure/extensions/extension-runtime-security
-  - https://deepwiki.com/microsoft/vscode/3-product-configuration-and-policy
-  - https://neovim.io/doc/user/lua-plugin.html
-  - https://github.com/folke/lazy.nvim
-  - https://plugins.jetbrains.com/docs/intellij/plugin-extensions.html
-  - https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html
-  - https://plugins.jetbrains.com/docs/intellij/plugin-services.html
-  - https://developer.chrome.com/docs/extensions/develop/migrate/what-is-mv3
-  - https://www.figma.com/blog/how-we-built-the-figma-plugin-system/
-  - https://www.figma.com/blog/an-update-on-plugin-security/
-  - https://dev.to/cyberpath/designing-secure-plugin-architectures-for-desktop-applications-1meh
-related:
-  - docs/research/tool-design-for-llms.md
-  - docs/research/workflow-orchestration.md
-  - docs/research/context-engineering.md
-  - docs/context/plugin-extension-architecture.md
+metadata:
+  type: research
+  sources:
+    - https://code.claude.com/docs/en/plugins
+    - https://code.claude.com/docs/en/plugins-reference
+    - https://code.visualstudio.com/api/references/activation-events
+    - https://code.visualstudio.com/api/advanced-topics/extension-host
+    - https://code.visualstudio.com/api/get-started/extension-anatomy
+    - https://code.visualstudio.com/api/references/extension-manifest
+    - https://code.visualstudio.com/blogs/2022/11/28/vscode-sandbox
+    - https://code.visualstudio.com/docs/configure/extensions/extension-runtime-security
+    - https://deepwiki.com/microsoft/vscode/3-product-configuration-and-policy
+    - https://neovim.io/doc/user/lua-plugin.html
+    - https://github.com/folke/lazy.nvim
+    - https://plugins.jetbrains.com/docs/intellij/plugin-extensions.html
+    - https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html
+    - https://plugins.jetbrains.com/docs/intellij/plugin-services.html
+    - https://developer.chrome.com/docs/extensions/develop/migrate/what-is-mv3
+    - https://www.figma.com/blog/how-we-built-the-figma-plugin-system/
+    - https://www.figma.com/blog/an-update-on-plugin-security/
+    - https://dev.to/cyberpath/designing-secure-plugin-architectures-for-desktop-applications-1meh
+  related:
+    - docs/research/tool-design-for-llms.md
+    - docs/research/workflow-orchestration.md
+    - docs/research/context-engineering.md
+    - docs/context/plugin-extension-architecture.md
 ---
 
 ## Summary

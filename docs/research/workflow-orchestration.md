@@ -1,29 +1,30 @@
 ---
 name: "Workflow Orchestration: State Machines for Multi-Phase Agent Processes"
 description: "Landscape survey of state machine models for agent workflow orchestration, covering theoretical foundations (Petri nets, statecharts), practical engines (Temporal, LangGraph, XState), and design patterns for resumable, auditable multi-phase processes."
-type: research
-sources:
-  - https://www.sciencedirect.com/science/article/pii/0167642387900359
-  - https://users.cs.northwestern.edu/~robby/courses/395-495-2017-winter/Van%20Der%20Aalst%201998%20The%20Application%20of%20Petri%20Nets%20to%20Workflow%20Management.pdf
-  - https://temporal.io/blog/temporal-replaces-state-machines-for-distributed-applications
-  - https://docs.temporal.io/workflow-execution
-  - https://docs.temporal.io/workflows
-  - https://github.com/statelyai/xstate
-  - https://stately.ai/docs/xstate
-  - https://docs.langchain.com/oss/python/langgraph/durable-execution
-  - https://www.restate.dev/what-is-durable-execution
-  - https://www.restate.dev/blog/persistent-serverless-state-machines-with-xstate-and-restate
-  - https://workflowengine.io/blog/workflow-engine-vs-state-machine/
-  - https://learn.microsoft.com/en-us/azure/architecture/patterns/event-sourcing
-  - https://en.wikipedia.org/wiki/Petri_net
-  - https://en.wikipedia.org/wiki/State_diagram
-  - https://www.prefect.io/blog/you-probably-dont-need-a-dag
-  - https://en.wikipedia.org/wiki/Phase-gate_process
-related:
-  - docs/research/agent-state-persistence.md
-  - docs/research/agentic-planning-execution.md
-  - docs/research/multi-agent-coordination.md
-  - docs/context/workflow-orchestration.md
+metadata:
+  type: research
+  sources:
+    - https://www.sciencedirect.com/science/article/pii/0167642387900359
+    - https://users.cs.northwestern.edu/~robby/courses/395-495-2017-winter/Van%20Der%20Aalst%201998%20The%20Application%20of%20Petri%20Nets%20to%20Workflow%20Management.pdf
+    - https://temporal.io/blog/temporal-replaces-state-machines-for-distributed-applications
+    - https://docs.temporal.io/workflow-execution
+    - https://docs.temporal.io/workflows
+    - https://github.com/statelyai/xstate
+    - https://stately.ai/docs/xstate
+    - https://docs.langchain.com/oss/python/langgraph/durable-execution
+    - https://www.restate.dev/what-is-durable-execution
+    - https://www.restate.dev/blog/persistent-serverless-state-machines-with-xstate-and-restate
+    - https://workflowengine.io/blog/workflow-engine-vs-state-machine/
+    - https://learn.microsoft.com/en-us/azure/architecture/patterns/event-sourcing
+    - https://en.wikipedia.org/wiki/Petri_net
+    - https://en.wikipedia.org/wiki/State_diagram
+    - https://www.prefect.io/blog/you-probably-dont-need-a-dag
+    - https://en.wikipedia.org/wiki/Phase-gate_process
+  related:
+    - docs/research/agent-state-persistence.md
+    - docs/research/agentic-planning-execution.md
+    - docs/research/multi-agent-coordination.md
+    - docs/context/workflow-orchestration.md
 ---
 
 State machines are the foundational abstraction for managing multi-phase agent processes. This document surveys the theoretical models, practical engines, and design patterns that enable lifecycle management, phase gates, transition rules, and resumable, auditable workflows for agent systems.

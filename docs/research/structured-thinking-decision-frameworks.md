@@ -1,22 +1,23 @@
 ---
 name: "Structured Thinking and Decision Frameworks"
 description: "Mental models and structured thinking frameworks — how to operationalize them as agent-usable tools rather than passive reference material"
-type: research
-sources:
-  - https://fs.blog/mental-models/
-  - https://arxiv.org/abs/2201.11903
-  - https://arxiv.org/abs/2305.10601
-  - https://arxiv.org/html/2602.16512
-  - https://arxiv.org/abs/2210.03629
-  - https://lilianweng.github.io/posts/2023-06-23-agent/
-  - https://towardsdatascience.com/something-of-thought-in-llm-prompting-an-overview-of-structured-llm-reasoning-70302752b390/
-  - https://arxiv.org/html/2510.08104
-  - https://learnprompting.org/docs/advanced/self_criticism/cumulative_reasoning
-  - https://www.promptingguide.ai/techniques/tot
-related:
-  - docs/context/structured-thinking-decision-frameworks.md
-  - docs/context/agentic-planning-execution.md
-  - docs/context/prompt-engineering.md
+metadata:
+  type: research
+  sources:
+    - https://fs.blog/mental-models/
+    - https://arxiv.org/abs/2201.11903
+    - https://arxiv.org/abs/2305.10601
+    - https://arxiv.org/html/2602.16512
+    - https://arxiv.org/abs/2210.03629
+    - https://lilianweng.github.io/posts/2023-06-23-agent/
+    - https://towardsdatascience.com/something-of-thought-in-llm-prompting-an-overview-of-structured-llm-reasoning-70302752b390/
+    - https://arxiv.org/html/2510.08104
+    - https://learnprompting.org/docs/advanced/self_criticism/cumulative_reasoning
+    - https://www.promptingguide.ai/techniques/tot
+  related:
+    - docs/context/structured-thinking-decision-frameworks.md
+    - docs/context/agentic-planning-execution.md
+    - docs/context/prompt-engineering.md
 ---
 
 # Structured Thinking and Decision Frameworks

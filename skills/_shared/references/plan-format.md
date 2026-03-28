@@ -13,22 +13,25 @@ Plans are Markdown files stored at `docs/plans/YYYY-MM-DD-<feature-name>.plan.md
 ---
 name: Feature Name
 description: One-sentence summary of what this plan achieves
-type: plan
-status: draft
-related:
-  - docs/designs/YYYY-MM-DD-<topic>.design.md
+metadata:
+  type: plan
+  status: draft
+  related:
+    - docs/designs/YYYY-MM-DD-<topic>.design.md
 ---
 ```
 
 **Fields:**
 
-- `name` — plan title (required)
-- `description` — one-sentence summary (required)
-- `type: plan` — document type (required, literal)
-- `status` — lifecycle state (required when `type: plan`, one of: draft,
-  approved, executing, completed, abandoned)
-- `related` — links to design docs, context files, other plans (optional)
+- `name` — plan title (required, top-level)
+- `description` — one-sentence summary (required, top-level)
+- `metadata.type: plan` — document type (required, literal)
+- `metadata.status` — lifecycle state (required when `type: plan`, one of:
+  draft, approved, executing, completed, abandoned)
+- `metadata.related` — links to design docs, context files, other plans (optional)
 
+Top-level fields (`name`, `description`) follow the Agent Skills spec.
+All other fields live under `metadata` as a superset of that spec.
 Note: the WOS frontmatter parser does not strip quotes. Use unquoted values.
 
 ## Required Sections

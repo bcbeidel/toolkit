@@ -1,9 +1,10 @@
 ---
 name: Distill Mapping Guide
 description: Boundary heuristics for the foreground distill agent that proposes N:M research-to-context-file mappings
-stage: map
-pipeline: distill
-tools: [Read, Glob, Grep]
+metadata:
+  stage: map
+  pipeline: distill
+  tools: [Read, Glob, Grep]
 ---
 
 # Distill Mapping Guide

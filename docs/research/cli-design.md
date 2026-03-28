@@ -1,27 +1,28 @@
 ---
 name: "CLI Design Patterns for Human and Agent Usability"
 description: "Technical investigation of argument patterns, output formatting, exit codes, and conventions that make CLI scripts usable by both humans and AI agents, covering POSIX conventions, 12-factor CLI patterns, and agent-specific considerations."
-type: research
-sources:
-  - https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html
-  - https://www.gnu.org/software/libc/manual/html_node/Argument-Syntax.html
-  - https://www.gnu.org/prep/standards/html_node/Command_002dLine-Interfaces.html
-  - https://clig.dev/
-  - https://medium.com/@jdxcode/12-factor-cli-apps-dd3c227a0e46
-  - https://devcenter.heroku.com/articles/cli-style-guide
-  - https://no-color.org/
-  - https://en.wikipedia.org/wiki/Exit_status
-  - https://tldp.org/LDP/abs/html/exitcodes.html
-  - https://man7.org/linux/man-pages/man3/sysexits.h.3head.html
-  - https://justin.poehnelt.com/posts/rewrite-your-cli-for-ai-agents/
-  - https://www.anthropic.com/engineering/writing-tools-for-agents
-  - https://www.infoq.com/articles/ai-agent-cli/
-  - https://dev.to/uenyioha/writing-cli-tools-that-ai-agents-actually-want-to-use-39no
-related:
-  - docs/research/tool-design-for-llms.md
-  - docs/research/validation-architecture.md
-  - docs/research/convention-driven-design.md
-  - docs/context/cli-design.md
+metadata:
+  type: research
+  sources:
+    - https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html
+    - https://www.gnu.org/software/libc/manual/html_node/Argument-Syntax.html
+    - https://www.gnu.org/prep/standards/html_node/Command_002dLine-Interfaces.html
+    - https://clig.dev/
+    - https://medium.com/@jdxcode/12-factor-cli-apps-dd3c227a0e46
+    - https://devcenter.heroku.com/articles/cli-style-guide
+    - https://no-color.org/
+    - https://en.wikipedia.org/wiki/Exit_status
+    - https://tldp.org/LDP/abs/html/exitcodes.html
+    - https://man7.org/linux/man-pages/man3/sysexits.h.3head.html
+    - https://justin.poehnelt.com/posts/rewrite-your-cli-for-ai-agents/
+    - https://www.anthropic.com/engineering/writing-tools-for-agents
+    - https://www.infoq.com/articles/ai-agent-cli/
+    - https://dev.to/uenyioha/writing-cli-tools-that-ai-agents-actually-want-to-use-39no
+  related:
+    - docs/research/tool-design-for-llms.md
+    - docs/research/validation-architecture.md
+    - docs/research/convention-driven-design.md
+    - docs/context/cli-design.md
 ---
 
 ## Summary

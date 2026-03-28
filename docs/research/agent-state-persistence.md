@@ -1,29 +1,30 @@
 ---
 name: "Agent State Persistence"
 description: "Architectural patterns for maintaining agent context across sessions — disk-as-truth, checkpoint-based resumption, memory taxonomies, and persistence substrate tradeoffs"
-type: research
-sources:
-  - https://arxiv.org/abs/2512.13564
-  - https://arxiv.org/abs/2404.13501
-  - https://arxiv.org/abs/2310.08560
-  - https://arxiv.org/abs/2502.12110
-  - https://arxiv.org/abs/2501.13956
-  - https://arxiv.org/abs/2504.19413
-  - https://arxiv.org/abs/2512.05470
-  - https://arxiv.org/html/2602.20478v1
-  - https://docs.langchain.com/oss/python/langgraph/persistence
-  - https://code.claude.com/docs/en/memory
-  - https://openai.github.io/openai-agents-python/sessions/
-  - https://earezki.com/ai-news/2026-03-09-the-state-management-pattern-that-runs-our-5-agent-system-24-7/
-  - https://engineering.atspotify.com/2025/11/context-engineering-background-coding-agents-part-2
-  - https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents
-  - https://blogs.oracle.com/developers/comparing-file-systems-and-databases-for-effective-ai-agent-memory-management
-  - https://dev.to/foxgem/ai-agent-memory-a-comparative-analysis-of-langgraph-crewai-and-autogen-31dp
-  - https://dl.acm.org/doi/10.1145/3748302
-  - https://docs.letta.com/concepts/memgpt/
-related:
-  - docs/research/context-window-management.md
-  - docs/context/agent-state-persistence.md
+metadata:
+  type: research
+  sources:
+    - https://arxiv.org/abs/2512.13564
+    - https://arxiv.org/abs/2404.13501
+    - https://arxiv.org/abs/2310.08560
+    - https://arxiv.org/abs/2502.12110
+    - https://arxiv.org/abs/2501.13956
+    - https://arxiv.org/abs/2504.19413
+    - https://arxiv.org/abs/2512.05470
+    - https://arxiv.org/html/2602.20478v1
+    - https://docs.langchain.com/oss/python/langgraph/persistence
+    - https://code.claude.com/docs/en/memory
+    - https://openai.github.io/openai-agents-python/sessions/
+    - https://earezki.com/ai-news/2026-03-09-the-state-management-pattern-that-runs-our-5-agent-system-24-7/
+    - https://engineering.atspotify.com/2025/11/context-engineering-background-coding-agents-part-2
+    - https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents
+    - https://blogs.oracle.com/developers/comparing-file-systems-and-databases-for-effective-ai-agent-memory-management
+    - https://dev.to/foxgem/ai-agent-memory-a-comparative-analysis-of-langgraph-crewai-and-autogen-31dp
+    - https://dl.acm.org/doi/10.1145/3748302
+    - https://docs.letta.com/concepts/memgpt/
+  related:
+    - docs/research/context-window-management.md
+    - docs/context/agent-state-persistence.md
 ---
 
 ## Key Findings

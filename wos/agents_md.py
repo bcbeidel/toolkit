@@ -164,9 +164,10 @@ def render_wos_section(
     lines.append("---")
     lines.append("name: Title")
     lines.append("description: What this covers")
-    lines.append("type: research       # optional")
-    lines.append("sources: []          # required if type is research")
-    lines.append("related: []          # optional, file paths from project root")
+    lines.append("metadata:")
+    lines.append("  type: research       # optional")
+    lines.append("  sources: []          # required if type is research")
+    lines.append("  related: []          # optional, file paths from project root")
     lines.append("---")
     lines.append("```")
 

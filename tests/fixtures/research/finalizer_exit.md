@@ -1,10 +1,11 @@
 ---
 name: How Asyncio Handles Concurrency in Python
 description: Technical investigation of asyncio's concurrency model, event loop, and primitives
-type: research
-sources:
-  - https://docs.python.org/3/library/asyncio.html
-  - https://realpython.com/async-io-python/
+metadata:
+  type: research
+  sources:
+    - https://docs.python.org/3/library/asyncio.html
+    - https://realpython.com/async-io-python/
 ---
 
 ## Summary

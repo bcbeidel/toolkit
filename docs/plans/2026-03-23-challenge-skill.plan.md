@@ -1,10 +1,11 @@
 ---
 name: Challenge Skill Implementation Plan
 description: Step-by-step plan to implement /wos:challenge — Python discovery module, CLI script, SKILL.md, reference docs, and tests
-type: plan
-status: complete
-related:
-  - docs/designs/2026-03-23-challenge-skill.design.md
+metadata:
+  type: plan
+  status: complete
+  related:
+    - docs/designs/2026-03-23-challenge-skill.design.md
 ---
 
 # /wos:challenge Implementation Plan

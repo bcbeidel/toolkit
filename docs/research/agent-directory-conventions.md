@@ -1,23 +1,24 @@
 ---
 name: "Agent Directory Conventions Across AI Tools and Frameworks"
 description: "How AI coding tools and agent frameworks define reusable autonomous subagents through directory conventions, file formats, and dispatch patterns — covering Claude Code, Copilot, Gemini CLI, CrewAI, Semantic Kernel, AG2, and emerging standards (A2A, AgentSpec)"
-type: research
-sources:
-  - https://code.claude.com/docs/en/sub-agents
-  - https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/create-custom-agents
-  - https://docs.github.com/en/copilot/reference/custom-agents-configuration
-  - https://geminicli.com/docs/core/subagents/
-  - https://docs.crewai.com/en/concepts/agents
-  - https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/agent-templates
-  - https://github.com/oracle/agent-spec
-  - https://agent2agent.info/docs/concepts/agentcard/
-  - https://docs.cline.bot/features/subagents
-  - https://blogs.oracle.com/ai-and-datascience/introducing-open-agent-specification
-related:
-  - docs/context/agent-framework-portability.md
-  - docs/context/skill-command-system-landscape.md
-  - docs/context/plugin-extension-architecture.md
-  - docs/context/multi-agent-coordination.md
+metadata:
+  type: research
+  sources:
+    - https://code.claude.com/docs/en/sub-agents
+    - https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/create-custom-agents
+    - https://docs.github.com/en/copilot/reference/custom-agents-configuration
+    - https://geminicli.com/docs/core/subagents/
+    - https://docs.crewai.com/en/concepts/agents
+    - https://learn.microsoft.com/en-us/semantic-kernel/frameworks/agent/agent-templates
+    - https://github.com/oracle/agent-spec
+    - https://agent2agent.info/docs/concepts/agentcard/
+    - https://docs.cline.bot/features/subagents
+    - https://blogs.oracle.com/ai-and-datascience/introducing-open-agent-specification
+  related:
+    - docs/context/agent-framework-portability.md
+    - docs/context/skill-command-system-landscape.md
+    - docs/context/plugin-extension-architecture.md
+    - docs/context/multi-agent-coordination.md
 ---
 
 ## Summary

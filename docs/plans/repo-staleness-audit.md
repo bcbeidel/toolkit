@@ -1,7 +1,8 @@
 ---
 name: Repo Staleness Audit
 description: Comprehensive audit of stale documentation, dead code, and outdated references across the WOS repository
-created_at: 2026-03-20
+metadata:
+  created_at: 2026-03-20
 ---
 
 # Repo Staleness Audit
