@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.33.0] - 2026-03-27
+
+### Removed
+
+- **`wos/challenge/` subpackage and `scripts/discover_context.py`.**
+  Replaced Python keyword-matching discovery with LLM-driven document
+  search via AGENTS.md indexes. The LLM outperforms keyword overlap at
+  finding relevant context — it understands synonyms, intent, and
+  semantic relevance. The `/wos:challenge` skill workflow is unchanged;
+  only the Phase 2 search mechanism was simplified.
+
 ## [0.32.0] - 2026-03-23
 
 ### Added
@@ -17,12 +28,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   corrections for gaps. Four-phase workflow: extract assumptions, layered
   document search, gap analysis with confidence levels, and user-gated
   correction proposals.
-- **`wos/challenge/` subpackage.** Assumption-to-document matching via
-  keyword-overlap scoring (`keyword_score`), explicit-layer search
-  (`discover_related`), and broad discovery (`discover_by_relevance`)
-  building on `wos.discovery`.
-- **`scripts/discover_context.py`.** CLI script for the challenge skill's
-  layered document search, outputting JSON assumption-to-match mappings.
 
 ## [0.31.0] - 2026-03-13
 

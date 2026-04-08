@@ -54,26 +54,25 @@ not proceed.
 If more than 15 assumptions are extracted, ask the user to prioritize
 before proceeding.
 
-### Phase 2 — Layered Search
+### Phase 2 — Document Search
 
-Run the discovery script to find relevant documents:
+Search the project's context and research documents for evidence relevant
+to each assumption.
 
-```bash
-python <plugin-scripts-dir>/discover_context.py \
-  --assumptions "assumption 1" "assumption 2" ... \
-  --root <project-root>
-```
-
-If in artifact mode with a file path, add `--artifact <path>`.
-
-Parse the JSON output. For each assumption, read the top-scoring
-documents (up to 5 per assumption) using the Read tool. Evaluate which
-assumptions each document supports, contradicts, or is silent on.
+1. **Read AGENTS.md** to find the area index paths (the `_index.md` listings).
+2. **Read each `_index.md`** and scan file descriptions for relevance to the
+   assumptions. Prioritize `docs/context/` and `docs/research/` areas.
+3. **In artifact mode**, if the artifact has a `related` frontmatter field,
+   read those linked documents first — they are the most likely to be relevant.
+4. **Read the top candidates in full** (up to 5 per assumption) using the
+   Read tool. Use Grep for targeted keyword searches when index descriptions
+   are insufficient.
+5. **Evaluate** which assumptions each document supports, contradicts, or
+   is silent on.
 
 Log each search step for the search protocol:
 - Which assumptions were searched
-- Which documents matched (with scores)
-- Which documents were read in full
+- Which index files and documents were read
 - What evidence was extracted
 
 No user-facing output in this phase.
