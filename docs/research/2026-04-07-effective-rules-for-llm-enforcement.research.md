@@ -31,7 +31,9 @@ sources:
   - https://www.coderabbit.ai/blog/why-developers-hate-linters
   - https://medium.com/agoda-engineering/how-to-make-linting-rules-work-from-enforcement-to-education-be7071d2fcf0
 related:
-  - docs/designs/2026-04-07-rule-extraction-enforcement.design.md
+  - docs/context/effective-rule-anatomy.context.md
+  - docs/context/rule-system-pitfalls.context.md
+  - docs/context/llm-rule-evaluation-reliability.context.md
 ---
 
 ## Key Takeaways
