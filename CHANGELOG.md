@@ -7,6 +7,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.34.0] - 2026-04-07
+
+### Added
+
+- **`/wos:extract-rules` skill.** Surfaces and captures codebase conventions
+  as structured rule files in `docs/rules/`. Three extraction modes:
+  conversation (describe a convention), from-code (infer from exemplary
+  files), and from-source (distill from external style guides). Includes
+  self-check, duplicate detection, and edge case handling.
+
+- **`/wos:check-rules` skill.** Evaluates files against project rules using
+  LLM-based semantic compliance checking. Matches rules to files by scope
+  glob, evaluates each rule-file pair independently using the locked rubric
+  pattern (verbatim rule, chain-of-thought reasoning, binary PASS/FAIL
+  verdict). Research-informed evaluation prompt based on 27-source
+  investigation into LLM-as-judge reliability.
+
+- **Rule format specification.** Structured markdown rule files with
+  frontmatter (name, description, type, scope, severity) and three required
+  body sections (Intent, Non-Compliant Example, Compliant Example).
+  Non-compliant examples listed first per research findings on classification
+  accuracy.
+
+- **6 rule templates.** Starter templates covering layer boundary purity,
+  test file requirements, no hardcoded secrets, input validation, no circular
+  imports, and public module docstrings. Each template includes intent,
+  scope patterns, and compliant/non-compliant examples.
+
+- **Hook setup guidance.** Reference document for wiring `/wos:check-rules`
+  into Claude Code hooks for automatic enforcement on commit.
+
+- **Research: Effective Rules for LLM Enforcement.** 27-source deep dive
+  covering rule anatomy, existing rule system design patterns (ESLint,
+  Semgrep, Ruff, dbt, OPA, Spectral, ast-grep), pitfalls and failure
+  modes, LLM evaluation consistency, and rule template best practices.
+
 ## [0.33.0] - 2026-03-27
 
 ### Removed
