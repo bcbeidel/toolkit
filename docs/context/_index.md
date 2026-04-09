@@ -60,7 +60,3 @@ Project context documents covering domain knowledge, patterns, and conventions.
 | [workflow-orchestration.md](workflow-orchestration.md) | "State machine models, durable execution engines, phase gates, and resumability patterns for managing multi-phase agent workflows — from FSMs to Temporal and LangGraph" |
 | [writing-for-llm-consumption.md](writing-for-llm-consumption.md) | "Six structural principles for agent-facing documentation: BLUF positioning, explicit conventions, self-contained sections, navigable metadata, consistent formatting, and token efficiency" |
 | [yagni-agent-tooling.md](yagni-agent-tooling.md) | "Why You Aren't Gonna Need It applies with amplified force when the consumer is an LLM — four costs of presumptive features, Beck's fewest elements rule, last responsible moment, and LLM-specific cost-of-carry dynamics" |
-
-| Directory | Description |
-| --- | --- |
-| [eval/](eval/) | Eval |
