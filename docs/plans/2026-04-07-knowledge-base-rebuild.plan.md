@@ -21,7 +21,7 @@ built on 2025-2026 sources.
 
 - Pre-flight permission and branch setup
 - Archive existing context and research files (recoverable via git)
-- 23 fresh research documents covering all codebase components
+- 72 fresh research documents covering all codebase components
 - ~90-140 distilled context files (200-800 words each)
 - Research briefs pre-approved in this plan (user confirms when skill gate fires)
 - Distillation follows standard pattern with explicit naming/dedup rules
@@ -37,20 +37,27 @@ built on 2025-2026 sources.
 
 ## Approach
 
-**Three-phase execution with maximum parallelism:**
+**Five-phase sequential execution via WOS skills:**
 
 1. **Setup** — archive existing docs to a git tag, delete from working tree
-2. **Research** — 13 cluster tasks, each dispatching 4-8 parallel research
-   agents with pre-approved briefs. All clusters can run in parallel.
-3. **Distill** — 13 cluster tasks, each writing context files from completed
-   research. All clusters can run in parallel.
-4. **Cleanup** — delete research docs (value captured in context), reindex,
-   audit, validate
+2. **Research** — 13 cluster tasks executed sequentially. Within each
+   cluster, invoke `/wos:research` sequentially for each topic (one
+   skill invocation at a time). The skill handles the full pipeline
+   internally (framer → gatherer → evaluator → challenger → synthesizer
+   → verifier → finalizer).
+3. **Validate & Review Research** — audit all research documents, then
+   present summaries for user review. **Hard gate:** user must approve
+   research batch before distillation begins.
+4. **Distill** — 13 cluster tasks executed sequentially. Within each
+   cluster, invoke `/wos:distill` with the completed research documents.
+   The skill handles mapping, writing, and per-file validation.
+5. **Validate & Cleanup** — audit distilled context files, verify links
+   and index sync, delete research docs, final audit.
 
-**Pre-approved research briefs:** Each research topic below includes the
-exact brief (mode, sub-questions, search strategy). Plan approval = bulk
-approval of all 23 briefs. The `/wos:research` skill will fire its brief
-approval gate — the user should confirm promptly since the briefs are
+**Research briefs:** Each research topic below includes the exact brief
+(mode, sub-questions, search strategy). Plan approval = bulk approval
+of all briefs. The `/wos:research` skill will fire its brief approval
+gate — the user should confirm when prompted since the briefs are
 already reviewed in this plan.
 
 **Distillation rules:**
@@ -60,22 +67,26 @@ already reviewed in this plan.
 - 200-800 words per file, one atomic concept per file
 - Carry `sources:` URLs forward from research into context files
 - Link context files to EACH OTHER via `related:`, NOT to research docs
-  (research docs are deleted in Task 12 — linking to them creates breakage)
+  (research docs are deleted in cleanup — linking to them creates breakage)
 - When two research docs in the same cluster cover overlapping territory,
   merge overlapping findings into a single context file citing both sources
-- No interactive mapping approval — follow these rules directly
 
-**Branch:** `knowledge-base-rebuild`
+**Branch:** `feat-rebuild-knowlege-base`
 
 **Freshness requirement:** All research must prioritize 2025-2026 sources.
 When older foundational sources are cited, note what has changed since.
+
+**Multi-session execution:** This plan is designed for execution across
+multiple sessions. The checkpoint structure (checkboxes + commit SHAs)
+supports resumption at any point. Each cluster is a natural session
+boundary.
 
 ## Pre-Flight (before executing)
 
 Before starting execution, the user should:
 
 1. **Configure tool permissions.** Add auto-approve for research tools
-   to reduce interruptions during parallel research dispatch:
+   to reduce interruptions during sequential research execution:
    ```json
    // .claude/settings.json
    {
@@ -89,15 +100,13 @@ Before starting execution, the user should:
 
 2. **Expect research brief confirmations.** The `/wos:research` skill
    has a hard gate requiring brief approval. The briefs are pre-approved
-   in this plan, so confirm promptly when prompted. Expect up to 72
-   confirmation prompts (one per topic, though parallel dispatch within
-   clusters will batch them into ~13 rounds).
+   in this plan, so confirm promptly when prompted. Expect 72 brief
+   confirmation prompts (one per topic, sequential).
 
-3. **Budget for API usage.** 72 research agents each performing multiple
-   WebSearch + WebFetch calls, followed by 30-40 context file writes.
-   This is a significant single-session workload. Consider executing
-   across multiple sessions if needed (the plan's checkpoint structure
-   supports mid-execution resumption).
+3. **Budget for multi-session execution.** 72 sequential research skill
+   invocations, each running the full 6-agent pipeline. This will span
+   multiple sessions. Each cluster is a natural session boundary — use
+   the checkpoint structure to resume.
 
 ## File Changes
 
@@ -110,19 +119,19 @@ All files in `docs/research/*.md` (except `_index.md`)
 
 72 research documents in `docs/research/`
 
-### Create (Tasks 15-27)
+### Create (Tasks 17-29)
 
 ~90-140 context files in `docs/context/`
 
-### Delete (Task 28)
+### Delete (Task 31)
 
 All research documents created in Tasks 2-14 (value captured in context)
 
 ## Tasks
 
-### Chunk 1: Setup
+### Phase 1: Setup
 
-- [ ] **Task 1: Archive existing knowledge base, remove deprecated skills, and clean directories.**
+- [x] **Task 1: Archive existing knowledge base, remove deprecated skills, and clean directories.** <!-- sha:14259c6 -->
   Create a git tag `knowledge-base-v1-archive` on the current commit to
   preserve the existing knowledge base in git history. Then:
   1. Delete deprecated skills: `skills/report-issue/`, `skills/principles/`,
@@ -137,15 +146,18 @@ All research documents created in Tasks 2-14 (value captured in context)
   `docs/research/` contains only `_index.md`; `skills/report-issue/`,
   `skills/principles/`, and `skills/challenge/` no longer exist.
 
-### Chunk 2: Research (13 tasks, parallel eligible)
+### Phase 2: Research (13 cluster tasks, sequential via `/wos:research`)
 
-Each task dispatches parallel research subagents using the Agent tool.
-Each subagent executes the full research pipeline (gather, evaluate,
-synthesize, verify, finalize) and writes a research document to
-`docs/research/`. Briefs below are pre-approved — skip the interactive
-brief approval gate.
+For each topic within each cluster, invoke `/wos:research` sequentially.
+The skill handles the full pipeline internally (framer → gatherer →
+evaluator → challenger → synthesizer → verifier → finalizer) with gate
+validation between each agent. Briefs below are pre-approved — confirm
+when the skill fires its brief approval gate.
 
-All research agents must prioritize 2025-2026 sources. Use `landscape`
+Execute clusters in order (Task 2 → Task 14). Within each cluster,
+execute topics in order. Commit after each cluster completes.
+
+All research must prioritize 2025-2026 sources. Use `landscape`
 mode for broad surveys, `deep-dive` for focused investigations,
 `technical` for implementation-specific topics.
 
@@ -155,12 +167,10 @@ implementations that exemplify the topic's best practices. Include links
 to repositories, documentation, or examples with a brief note on why
 they're considered high-quality (adoption, design, documentation, test
 coverage). These serve as both implementation references and exemplars
-for WOS's own development. Examples: for CI/CD, link to well-structured
-GitHub Actions workflows; for testing, link to projects with strong eval
-pipelines; for MCP, link to well-designed MCP server implementations.
+for WOS's own development.
 
 - [ ] **Task 2: Research Cluster 1 — Core LLM Patterns (8 topics).**
-  Dispatch 8 parallel research agents:
+  Invoke `/wos:research` sequentially for each topic:
 
   **Topic 1.1: Prompt Engineering & Instruction Design**
   Mode: deep-dive. Output: `2026-04-07-prompt-engineering.research.md`
@@ -240,11 +250,11 @@ pipelines; for MCP, link to well-designed MCP server implementations.
   Search: Anthropic prompting best practices 2025-2026, OpenAI prompt engineering guide, chain-of-thought research, few-shot learning surveys, prompt optimization methodologies, Prompt Report (Schulhoff 2024).
 
   Verify: 8 research documents exist in `docs/research/` with valid
-  frontmatter, sources, and findings sections. Each passes
-  `python scripts/audit.py --root . --no-urls`.
+  frontmatter (`type: research`, non-empty `sources:`), findings
+  sections, and no `<!-- DRAFT -->` markers.
 
 - [ ] **Task 3: Research Cluster 2 — Developer Tool Architecture (6 topics).**
-  Dispatch 6 parallel research agents:
+  Invoke `/wos:research` sequentially for each topic:
 
   **Topic 2.1: Instruction File Conventions & Cross-Platform Standards**
   Mode: landscape. Output: `2026-04-07-instruction-file-conventions.research.md`
@@ -306,7 +316,7 @@ pipelines; for MCP, link to well-designed MCP server implementations.
   Verify: 6 research documents exist with valid frontmatter and sources.
 
 - [ ] **Task 4: Research Cluster 3 — Knowledge Management (4 topics).**
-  Dispatch 4 parallel research agents:
+  Invoke `/wos:research` sequentially for each topic:
 
   **Topic 3.1: Information Architecture & Retrieval**
   Mode: deep-dive. Output: `2026-04-07-information-architecture.research.md`
@@ -348,7 +358,7 @@ pipelines; for MCP, link to well-designed MCP server implementations.
   Verify: 4 research documents exist with valid frontmatter and sources.
 
 - [ ] **Task 5: Research Cluster 4 — Agent System Design (6 topics).**
-  Dispatch 6 parallel research agents:
+  Invoke `/wos:research` sequentially for each topic:
 
   **Topic 4.1: Agent Frameworks, Portability & MCP**
   Mode: landscape. Output: `2026-04-07-agent-frameworks.research.md`
@@ -409,7 +419,7 @@ pipelines; for MCP, link to well-designed MCP server implementations.
   Verify: 6 research documents exist with valid frontmatter and sources.
 
 - [ ] **Task 6: Research Cluster 5A — Quality & Validation (5 topics).**
-  Dispatch 5 parallel research agents:
+  Invoke `/wos:research` sequentially for each topic:
 
   **Topic 5.1: Validation Architecture & Structural Checks**
   Mode: technical. Output: `2026-04-07-validation-architecture.research.md`
@@ -459,7 +469,7 @@ pipelines; for MCP, link to well-designed MCP server implementations.
   Verify: 5 research documents exist with valid frontmatter and sources.
 
 - [ ] **Task 7: Research Cluster 5B — Practices & Standards (5 topics).**
-  Dispatch 5 parallel research agents:
+  Invoke `/wos:research` sequentially for each topic:
 
   **Topic 5.6: Rule-Based LLM Enforcement**
   Mode: deep-dive. Output: `2026-04-07-rule-enforcement.research.md`
@@ -512,7 +522,7 @@ pipelines; for MCP, link to well-designed MCP server implementations.
   Verify: 5 research documents exist with valid frontmatter and sources.
 
 - [ ] **Task 8: Research Cluster 5C — Engineering Disciplines (6 topics).**
-  Dispatch 6 parallel research agents:
+  Invoke `/wos:research` sequentially for each topic:
 
   **Topic 5.11: AI-Assisted Code Review**
   Mode: deep-dive. Output: `2026-04-07-ai-code-review.research.md`
@@ -575,7 +585,7 @@ pipelines; for MCP, link to well-designed MCP server implementations.
   Verify: 6 research documents exist with valid frontmatter and sources.
 
 - [ ] **Task 9: Research Cluster 6 — Application Engineering (6 topics).**
-  Dispatch 6 parallel research agents:
+  Invoke `/wos:research` sequentially for each topic:
 
   **Topic 6.1: Data Engineering**
   Mode: deep-dive. Output: `2026-04-07-data-engineering.research.md`
@@ -640,7 +650,7 @@ pipelines; for MCP, link to well-designed MCP server implementations.
   Verify: 6 research documents exist with valid frontmatter and sources.
 
 - [ ] **Task 10: Research Cluster 7 — Operations & Platform (5 topics).**
-  Dispatch 5 parallel research agents:
+  Invoke `/wos:research` sequentially for each topic:
 
   **Topic 7.1: Site Reliability Engineering (SRE)**
   Mode: deep-dive. Output: `2026-04-07-sre.research.md`
@@ -695,7 +705,7 @@ pipelines; for MCP, link to well-designed MCP server implementations.
   Verify: 5 research documents exist with valid frontmatter and sources.
 
 - [ ] **Task 11: Research Cluster 8 — Cross-Cutting & Management (5 topics).**
-  Dispatch 5 parallel research agents:
+  Invoke `/wos:research` sequentially for each topic:
 
   **Topic 8.1: Quality Assurance Engineering**
   Mode: deep-dive. Output: `2026-04-07-qa-engineering.research.md`
@@ -750,7 +760,7 @@ pipelines; for MCP, link to well-designed MCP server implementations.
   Verify: 5 research documents exist with valid frontmatter and sources.
 
 - [ ] **Task 12: Research Cluster 8B — Product, Content & Revenue (4 topics).**
-  Dispatch 4 parallel research agents:
+  Invoke `/wos:research` sequentially for each topic:
 
   **Topic 8.6: Product Design & UX Research**
   Mode: deep-dive. Output: `2026-04-07-product-design-ux.research.md`
@@ -795,7 +805,7 @@ pipelines; for MCP, link to well-designed MCP server implementations.
   Verify: 4 research documents exist with valid frontmatter and sources.
 
 - [ ] **Task 13: Research Cluster 9 — Digital Marketing (6 topics).**
-  Dispatch 6 parallel research agents:
+  Invoke `/wos:research` sequentially for each topic:
 
   **Topic 9.1: Marketing Analytics & Attribution**
   Mode: deep-dive. Output: `2026-04-07-marketing-analytics.research.md`
@@ -860,7 +870,7 @@ pipelines; for MCP, link to well-designed MCP server implementations.
   Verify: 6 research documents exist with valid frontmatter and sources.
 
 - [ ] **Task 14: Research Cluster 10 — Data Science & Analytics (6 topics).**
-  Dispatch 6 parallel research agents:
+  Invoke `/wos:research` sequentially for each topic:
 
   **Topic 10.1: Statistical Modeling & Inference**
   Mode: deep-dive. Output: `2026-04-07-statistical-modeling.research.md`
@@ -924,14 +934,38 @@ pipelines; for MCP, link to well-designed MCP server implementations.
 
   Verify: 6 research documents exist with valid frontmatter and sources.
 
-### Chunk 3: Distill (13 tasks, parallel eligible)
+### Phase 3: Validate & Review Research (human gate)
 
-Note: Distill task numbers start at Task 15. Each distill task corresponds
-to the research task that produced its input documents.
+- [ ] **Task 15: Validate all research documents.**
+  Run `python scripts/audit.py --root . --no-urls` to check structural
+  validity of all research documents. For each document, verify:
+  1. Frontmatter present with `type: research`
+  2. `sources:` non-empty
+  3. `<!-- DRAFT -->` marker removed
+  4. `## Findings` section exists
+  Fix any failures before proceeding to review.
+  Verify: 0 audit failures related to research documents.
 
-Each task reads completed research documents from its cluster and writes
-focused context files to `docs/context/`. Follow the distillation rules
-from the Approach section:
+- [ ] **Task 16: Present research summaries for user review (HARD GATE).**
+  Present a summary of each research document:
+  - Title and research question
+  - Key findings (count and confidence levels)
+  - Source count
+  - Limitations or gaps noted
+  Ask the user to review research quality and completeness. If the user
+  provides feedback on specific documents, apply corrections before
+  proceeding. **Do not begin distillation until the user explicitly
+  approves the research batch.**
+  Verify: User has explicitly approved the research batch.
+
+### Phase 4: Distill (13 cluster tasks, sequential via `/wos:distill`)
+
+For each cluster, invoke `/wos:distill` with the completed research
+document paths. The skill handles mapping, writing, and per-file
+validation. Execute clusters in order (Task 17 → Task 29). Commit
+after each cluster completes.
+
+Follow the distillation rules from the Approach section:
 - 1-2 context files per research document, `.context.md` suffix
 - 200-800 words, one atomic concept per file
 - `sources:` URLs carried forward from research
@@ -939,108 +973,105 @@ from the Approach section:
 - Merge overlapping findings across research docs into single context files
 - Derive filenames from finding content, not research topic name
 
-- [ ] **Task 15: Distill Cluster 1 — Core LLM Patterns.**
-  Read the 8 research documents from Task 2. For each, identify discrete
-  findings and write focused context files. Expected output: 10-16 context
-  files covering prompt engineering, context engineering, LLM-as-judge
-  evaluation, writing for LLM consumption, cross-model portability,
-  LLM capabilities/limitations, LLM anti-patterns, and prompting best
-  practices. Run
-  `python scripts/reindex.py --root .` after writing.
+- [ ] **Task 17: Distill Cluster 1 — Core LLM Patterns.**
+  Invoke `/wos:distill` with the 8 research documents from Task 2.
+  Expected output: 10-16 context files covering prompt engineering,
+  context engineering, LLM-as-judge evaluation, writing for LLM
+  consumption, cross-model portability, LLM capabilities/limitations,
+  LLM anti-patterns, and prompting best practices.
   Verify: context files exist with valid frontmatter, 200-800 words each,
   `sources:` populated, `related:` links to sibling context files.
 
-- [ ] **Task 16: Distill Cluster 2 — Developer Tool Architecture.**
-  Read the 6 research documents from Task 3. Write focused context files.
+- [ ] **Task 18: Distill Cluster 2 — Developer Tool Architecture.**
+  Invoke `/wos:distill` with the 6 research documents from Task 3.
   Expected output: 7-12 context files covering instruction file conventions,
   skill ecosystem design, plugin architecture, CLI/tool design, MCP, and
   hooks ecosystem.
-  Run reindex after writing.
   Verify: context files exist with valid frontmatter, 200-800 words each.
 
-- [ ] **Task 17: Distill Cluster 3 — Knowledge Management.**
-  Read the 4 research documents from Task 4. Write focused context files.
+- [ ] **Task 19: Distill Cluster 3 — Knowledge Management.**
+  Invoke `/wos:distill` with the 4 research documents from Task 4.
   Expected output: 5-8 context files covering information architecture,
   knowledge synthesis, research methodology, and convention-driven design.
-  Run reindex after writing.
   Verify: context files exist with valid frontmatter, 200-800 words each.
 
-- [ ] **Task 18: Distill Cluster 4 — Agent System Design.**
-  Read the 6 research documents from Task 5. Write focused context files.
+- [ ] **Task 20: Distill Cluster 4 — Agent System Design.**
+  Invoke `/wos:distill` with the 6 research documents from Task 5.
   Expected output: 8-14 context files covering agent frameworks, multi-agent
   coordination, error handling, human-in-the-loop, git workflow, and
   agentic planning/execution.
-  Run reindex after writing.
   Verify: context files exist with valid frontmatter, 200-800 words each.
 
-- [ ] **Task 19: Distill Cluster 5A — Quality & Validation.**
-  Read the 5 research documents from Task 6. Write focused context files.
+- [ ] **Task 21: Distill Cluster 5A — Quality & Validation.**
+  Invoke `/wos:distill` with the 5 research documents from Task 6.
   Expected output: 6-10 context files covering validation, testing,
   decision frameworks, observability, and feedback loops.
-  Run reindex after writing.
   Verify: context files exist with valid frontmatter, 200-800 words each.
 
-- [ ] **Task 20: Distill Cluster 5B — Practices & Standards.**
-  Read the 5 research documents from Task 7. Write focused context files.
+- [ ] **Task 22: Distill Cluster 5B — Practices & Standards.**
+  Invoke `/wos:distill` with the 5 research documents from Task 7.
   Expected output: 6-10 context files covering rule enforcement,
   design thinking, specification patterns, LLM security, and CI/CD.
-  Run reindex after writing.
   Verify: context files exist with valid frontmatter, 200-800 words each.
 
-- [ ] **Task 21: Distill Cluster 5C — Engineering Disciplines.**
-  Read the 6 research documents from Task 8. Write focused context files.
+- [ ] **Task 23: Distill Cluster 5C — Engineering Disciplines.**
+  Invoke `/wos:distill` with the 6 research documents from Task 8.
   Expected output: 8-12 context files covering AI code review, prompt
   versioning, token economics, AI pair programming, documentation-driven
   development, and technical debt management.
-  Run reindex after writing.
   Verify: context files exist with valid frontmatter, 200-800 words each.
 
-- [ ] **Task 22: Distill Cluster 6 — Application Engineering.**
-  Read the 6 research documents from Task 9. Write focused context files.
+- [ ] **Task 24: Distill Cluster 6 — Application Engineering.**
+  Invoke `/wos:distill` with the 6 research documents from Task 9.
   Expected output: 8-12 context files covering data engineering, frontend,
   backend/API, mobile, database, and distributed systems engineering.
-  Run reindex after writing.
   Verify: context files exist with valid frontmatter, 200-800 words each.
 
-- [ ] **Task 23: Distill Cluster 7 — Operations & Platform.**
-  Read the 5 research documents from Task 10. Write focused context files.
+- [ ] **Task 25: Distill Cluster 7 — Operations & Platform.**
+  Invoke `/wos:distill` with the 5 research documents from Task 10.
   Expected output: 6-10 context files covering SRE, platform engineering,
   DevOps/IaC, cloud architecture, and ML engineering/MLOps.
-  Run reindex after writing.
   Verify: context files exist with valid frontmatter, 200-800 words each.
 
-- [ ] **Task 24: Distill Cluster 8A — Cross-Cutting & Management.**
-  Read the 5 research documents from Task 11. Write focused context files.
+- [ ] **Task 26: Distill Cluster 8A — Cross-Cutting & Management.**
+  Invoke `/wos:distill` with the 5 research documents from Task 11.
   Expected output: 6-10 context files covering QA engineering, performance
   engineering, accessibility, project management, and program management.
-  Run reindex after writing.
   Verify: context files exist with valid frontmatter, 200-800 words each.
 
-- [ ] **Task 25: Distill Cluster 8B — Product, Content & Revenue.**
-  Read the 4 research documents from Task 12. Write focused context files.
+- [ ] **Task 27: Distill Cluster 8B — Product, Content & Revenue.**
+  Invoke `/wos:distill` with the 4 research documents from Task 12.
   Expected output: 5-8 context files covering product design/UX, content
   strategy/operations, AI product management, and sales/revenue operations.
-  Run reindex after writing.
   Verify: context files exist with valid frontmatter, 200-800 words each.
 
-- [ ] **Task 26: Distill Cluster 9 — Digital Marketing.**
-  Read the 6 research documents from Task 13. Write focused context files.
+- [ ] **Task 28: Distill Cluster 9 — Digital Marketing.**
+  Invoke `/wos:distill` with the 6 research documents from Task 13.
   Expected output: 8-12 context files covering marketing analytics,
   SEO/content, paid media, CDPs/martech, marketing automation, and CRO.
-  Run reindex after writing.
   Verify: context files exist with valid frontmatter, 200-800 words each.
 
-- [ ] **Task 27: Distill Cluster 10 — Data Science & Analytics.**
-  Read the 6 research documents from Task 14. Write focused context files.
+- [ ] **Task 29: Distill Cluster 10 — Data Science & Analytics.**
+  Invoke `/wos:distill` with the 6 research documents from Task 14.
   Expected output: 8-12 context files covering statistical modeling,
   ML for business, data visualization, customer analytics, data governance,
   and analytics engineering.
-  Run reindex after writing.
   Verify: context files exist with valid frontmatter, 200-800 words each.
 
-### Chunk 4: Cleanup
+### Phase 5: Validate Distill & Cleanup
 
-- [ ] **Task 28: Delete research docs, reindex, audit, validate.**
+- [ ] **Task 30: Validate all distilled context files.**
+  Run `python scripts/reindex.py --root .` to regenerate indexes.
+  Run `python scripts/audit.py --root . --no-urls` to check structural
+  validity of all context files. Verify:
+  1. Each context file has valid frontmatter (name, description, sources)
+  2. `related:` links point to sibling context files ONLY (not research docs)
+  3. `_index.md` files match directory contents
+  4. Word counts are 200-800 per context file
+  Present results to user. Fix any failures before cleanup.
+  Verify: 0 audit failures related to context files.
+
+- [ ] **Task 31: Delete research docs, final audit.**
   Delete all research documents created in Tasks 2-14 (their value is
   captured in the distilled context files). Context files should have
   no `related:` links to research docs (distillation rules prevent this),
