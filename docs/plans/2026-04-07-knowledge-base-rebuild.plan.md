@@ -2,7 +2,8 @@
 name: Knowledge Base Rebuild
 description: Clean-sweep rebuild of the WOS knowledge base — archive existing docs, research 72 topics with fresh sources, distill into focused context files
 type: plan
-status: draft
+status: executing
+branch: feat-rebuild-knowlege-base
 related: []
 ---
 
