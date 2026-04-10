@@ -982,7 +982,7 @@ Follow the distillation rules from the Approach section:
   Verify: context files exist with valid frontmatter, 200-800 words each,
   `sources:` populated, `related:` links to sibling context files.
 
-- [ ] **Task 18: Distill Cluster 2 — Developer Tool Architecture.**
+- [x] **Task 18: Distill Cluster 2 — Developer Tool Architecture.**
   Invoke `/wos:distill` with the 6 research documents from Task 3.
   Expected output: 7-12 context files covering instruction file conventions,
   skill ecosystem design, plugin architecture, CLI/tool design, MCP, and
