@@ -418,7 +418,7 @@ for WOS's own development.
 
   Verify: 6 research documents exist with valid frontmatter and sources.
 
-- [ ] **Task 6: Research Cluster 5A — Quality & Validation (5 topics).**
+- [x] **Task 6: Research Cluster 5A — Quality & Validation (5 topics).** <!-- sha:ff0144b -->
   Invoke `/wos:research` sequentially for each topic:
 
   **Topic 5.1: Validation Architecture & Structural Checks**
@@ -468,7 +468,7 @@ for WOS's own development.
 
   Verify: 5 research documents exist with valid frontmatter and sources.
 
-- [ ] **Task 7: Research Cluster 5B — Practices & Standards (5 topics).**
+- [x] **Task 7: Research Cluster 5B — Practices & Standards (5 topics).** <!-- sha:b49ef4b -->
   Invoke `/wos:research` sequentially for each topic:
 
   **Topic 5.6: Rule-Based LLM Enforcement**
@@ -521,7 +521,7 @@ for WOS's own development.
 
   Verify: 5 research documents exist with valid frontmatter and sources.
 
-- [ ] **Task 8: Research Cluster 5C — Engineering Disciplines (6 topics).**
+- [x] **Task 8: Research Cluster 5C — Engineering Disciplines (6 topics).** <!-- sha:74e8c26 -->
   Invoke `/wos:research` sequentially for each topic:
 
   **Topic 5.11: AI-Assisted Code Review**
@@ -584,7 +584,7 @@ for WOS's own development.
 
   Verify: 6 research documents exist with valid frontmatter and sources.
 
-- [ ] **Task 9: Research Cluster 6 — Application Engineering (6 topics).**
+- [x] **Task 9: Research Cluster 6 — Application Engineering (6 topics).** <!-- sha:9114a12 -->
   Invoke `/wos:research` sequentially for each topic:
 
   **Topic 6.1: Data Engineering**
@@ -649,7 +649,7 @@ for WOS's own development.
 
   Verify: 6 research documents exist with valid frontmatter and sources.
 
-- [ ] **Task 10: Research Cluster 7 — Operations & Platform (5 topics).**
+- [x] **Task 10: Research Cluster 7 — Operations & Platform (5 topics).** <!-- sha:adaec52 -->
   Invoke `/wos:research` sequentially for each topic:
 
   **Topic 7.1: Site Reliability Engineering (SRE)**
@@ -704,7 +704,7 @@ for WOS's own development.
 
   Verify: 5 research documents exist with valid frontmatter and sources.
 
-- [ ] **Task 11: Research Cluster 8 — Cross-Cutting & Management (5 topics).**
+- [x] **Task 11: Research Cluster 8A — Cross-Cutting & Management (5 topics).** <!-- sha:9bc19ea -->
   Invoke `/wos:research` sequentially for each topic:
 
   **Topic 8.1: Quality Assurance Engineering**
@@ -759,7 +759,7 @@ for WOS's own development.
 
   Verify: 5 research documents exist with valid frontmatter and sources.
 
-- [ ] **Task 12: Research Cluster 8B — Product, Content & Revenue (4 topics).**
+- [x] **Task 12: Research Cluster 8B — Product, Content & Revenue (4 topics).** <!-- sha:84f30bc -->
   Invoke `/wos:research` sequentially for each topic:
 
   **Topic 8.6: Product Design & UX Research**
