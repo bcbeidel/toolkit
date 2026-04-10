@@ -946,7 +946,7 @@ for WOS's own development.
   Fix any failures before proceeding to review.
   Verify: 0 audit failures related to research documents.
 
-- [ ] **Task 16: Present research summaries for user review (HARD GATE).**
+- [x] **Task 16: Present research summaries for user review (HARD GATE).** <!-- approved:2026-04-10 -->
   Present a summary of each research document:
   - Title and research question
   - Key findings (count and confidence levels)
