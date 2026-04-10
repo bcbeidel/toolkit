@@ -357,7 +357,7 @@ for WOS's own development.
 
   Verify: 4 research documents exist with valid frontmatter and sources.
 
-- [ ] **Task 5: Research Cluster 4 — Agent System Design (6 topics).**
+- [x] **Task 5: Research Cluster 4 — Agent System Design (6 topics).** <!-- sha:ea40156 -->
   Invoke `/wos:research` sequentially for each topic:
 
   **Topic 4.1: Agent Frameworks, Portability & MCP**
