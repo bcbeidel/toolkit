@@ -995,7 +995,7 @@ Follow the distillation rules from the Approach section:
   knowledge synthesis, research methodology, and convention-driven design.
   Verify: context files exist with valid frontmatter, 200-800 words each.
 
-- [ ] **Task 20: Distill Cluster 4 — Agent System Design.**
+- [x] **Task 20: Distill Cluster 4 — Agent System Design.** <!-- sha:e77f77d -->
   Invoke `/wos:distill` with the 6 research documents from Task 5.
   Expected output: 8-14 context files covering agent frameworks, multi-agent
   coordination, error handling, human-in-the-loop, git workflow, and
