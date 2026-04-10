@@ -253,7 +253,7 @@ for WOS's own development.
   frontmatter (`type: research`, non-empty `sources:`), findings
   sections, and no `<!-- DRAFT -->` markers.
 
-- [x] **Task 3: Research Cluster 2 — Developer Tool Architecture (6 topics).** <!-- sha:pending -->
+- [x] **Task 3: Research Cluster 2 — Developer Tool Architecture (6 topics).** <!-- sha:3e37105 -->
   Invoke `/wos:research` sequentially for each topic:
 
   **Topic 2.1: Instruction File Conventions & Cross-Platform Standards**
