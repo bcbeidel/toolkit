@@ -520,3 +520,44 @@ def validate_wiki(wiki_dir: Path, schema_path: Path) -> List[dict]:
     issues.extend(check_index_sync(wiki_dir))
 
     return issues
+
+
+def validate_chain(manifest_path: Path, skills_dirs: List[Path]) -> List[dict]:
+    """Validate a chain manifest against all structural checks.
+
+    Parses the manifest and runs 5 structural checks. If parsing fails,
+    returns a single warn and exits early.
+
+    Args:
+        manifest_path: Path to a *.chain.md file.
+        skills_dirs: Directories to search for declared skills.
+
+    Returns:
+        List of issue dicts. Empty on a clean manifest.
+    """
+    from wos.chain import (
+        check_chain_cycles,
+        check_chain_gates,
+        check_chain_internal_consistency,
+        check_chain_skills_exist,
+        check_chain_termination,
+        parse_chain,
+    )
+
+    try:
+        manifest = parse_chain(manifest_path)
+    except ValueError as exc:
+        return [{
+            "file": str(manifest_path),
+            "issue": f"Invalid chain manifest: {exc}",
+            "severity": "warn",
+        }]
+
+    issues: List[dict] = []
+    issues.extend(check_chain_skills_exist(manifest, skills_dirs))
+    issues.extend(check_chain_internal_consistency(manifest))
+    issues.extend(check_chain_gates(manifest))
+    issues.extend(check_chain_termination(manifest))
+    issues.extend(check_chain_cycles(manifest))
+
+    return issues

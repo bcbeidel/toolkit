@@ -161,6 +161,17 @@ def main() -> None:
         from wos.validators import validate_wiki
         issues.extend(validate_wiki(root / "wiki", wiki_schema))
 
+    # Chain validation — auto-activated when *.chain.md files are present
+    chain_manifests = [
+        p for p in root.rglob("*.chain.md")
+        if not any(part.startswith(".") for part in p.parts)
+    ]
+    if chain_manifests:
+        from wos.validators import validate_chain
+        chain_skills_dirs = [root / "skills"] if (root / "skills").is_dir() else []
+        for manifest_path in sorted(chain_manifests):
+            issues.extend(validate_chain(manifest_path, chain_skills_dirs))
+
     # Skill instruction density reporting
     from wos.skill_audit import check_skill_meta, check_skill_sizes
 

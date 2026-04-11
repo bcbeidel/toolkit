@@ -202,3 +202,69 @@ class TestFixOutput:
         result = idx_file.read_text(encoding="utf-8")
         assert preamble_text in result
         assert "tokens.md" in result
+
+
+# ── TestChainAutoDetection ────────────────────────────────────────────
+
+
+class TestChainAutoDetection:
+    def _write_chain_manifest(self, path: Path, goal: str = "") -> None:
+        """Write a minimal *.chain.md manifest to path."""
+        content = (
+            "---\n"
+            "name: Test Chain\n"
+            "description: A test chain\n"
+            "type: chain\n"
+            f"goal: {goal}\n"
+            "---\n\n"
+            "## Steps\n\n"
+            "| Step | Skill | Input Contract | Output Contract | Gate |\n"
+            "|------|-------|----------------|-----------------|------|\n"
+            "| 1 | research | question | research.md | |\n"
+        )
+        path.write_text(content, encoding="utf-8")
+
+    def test_no_chain_files_validate_chain_not_called(
+        self, tmp_path: Path
+    ) -> None:
+        from unittest.mock import patch as _patch
+
+        root = tmp_path / "project"
+        root.mkdir()
+
+        with _patch("wos.validators.validate_project", return_value=[]), \
+             _patch("wos.validators.validate_chain") as mock_chain:
+            _run_audit("--root", str(root), "--no-urls")
+
+        mock_chain.assert_not_called()
+
+    def test_chain_manifest_issues_surfaced(self, tmp_path: Path) -> None:
+        root = tmp_path / "project"
+        root.mkdir()
+
+        # Write a chain manifest with an empty goal — triggers termination fail
+        self._write_chain_manifest(root / "my.chain.md", goal="")
+
+        with patch("wos.validators.validate_project", return_value=[]):
+            stdout, _, exit_code = _run_audit("--root", str(root), "--no-urls")
+
+        # termination check produces a fail → exit code 1
+        assert exit_code == 1
+        assert "chain" in stdout.lower() or "termination" in stdout.lower()
+
+    def test_chain_in_hidden_dir_skipped(self, tmp_path: Path) -> None:
+        from unittest.mock import patch as _patch
+
+        root = tmp_path / "project"
+        root.mkdir()
+        hidden = root / ".git"
+        hidden.mkdir()
+
+        # Write chain manifest inside a hidden directory
+        self._write_chain_manifest(hidden / "nested.chain.md", goal="some goal")
+
+        with _patch("wos.validators.validate_project", return_value=[]), \
+             _patch("wos.validators.validate_chain") as mock_chain:
+            _run_audit("--root", str(root), "--no-urls")
+
+        mock_chain.assert_not_called()
