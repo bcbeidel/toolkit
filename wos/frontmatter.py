@@ -84,8 +84,12 @@ def _parse_yaml_subset(
         key = stripped[:colon_idx].strip()
         raw_value = stripped[colon_idx + 1:]
 
-        if raw_value.strip():
-            result[key] = raw_value.strip()
+        value_stripped = raw_value.strip()
+        if value_stripped == "[]":
+            result[key] = []
+            current_key = None
+        elif value_stripped:
+            result[key] = value_stripped
             current_key = None
         else:
             result[key] = None

@@ -123,3 +123,14 @@ class TestEdgeCases:
         fm, _ = parse_frontmatter(text)
         # Quotes are part of the string (no YAML quoting semantics)
         assert fm["name"] == '"Quoted Value"'
+
+    def test_inline_empty_list_returns_list(self) -> None:
+        # related: [] should parse as an empty list, not the string "[]"
+        text = "---\nname: Test\nrelated: []\n---\n"
+        fm, _ = parse_frontmatter(text)
+        assert fm["related"] == []
+
+    def test_inline_empty_sources_returns_list(self) -> None:
+        text = "---\nname: Test\nsources: []\n---\n"
+        fm, _ = parse_frontmatter(text)
+        assert fm["sources"] == []

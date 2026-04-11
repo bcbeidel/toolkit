@@ -292,7 +292,7 @@ def _check_synthesizer_exit(sections: Dict[str, bool]) -> dict:
 
 
 def _check_verifier_exit(content: str, sections: Dict[str, bool]) -> dict:
-    """Verifier exit: Claims section with rows, no 'unverified' cells."""
+    """Verifier exit: Claims section with rows, no 'unverified' in Status column."""
     has_claims = sections.get("claims", False)
     claims_table = _find_table_under_heading(content, "claims")
     has_rows = False
@@ -300,8 +300,17 @@ def _check_verifier_exit(content: str, sections: Dict[str, bool]) -> dict:
     if claims_table is not None:
         rows = _table_data_rows(claims_table)
         has_rows = len(rows) > 0
+        columns = _table_columns(claims_table)
+        status_idx = next(
+            (i for i, c in enumerate(columns) if "status" in c.lower()), None
+        )
         for row in rows:
-            for cell in row:
+            # Check only the Status column if found, else fall back to all cells.
+            cells_to_check = (
+                [row[status_idx]] if status_idx is not None and status_idx < len(row)
+                else row
+            )
+            for cell in cells_to_check:
                 if "unverified" in cell.lower():
                     no_unverified = False
                     break
@@ -334,6 +343,7 @@ def _find_table_under_heading(content: str, keyword: str) -> Optional[str]:
     """
     lines = content.split("\n")
     in_section = False
+    section_level = 0
     table_lines: List[str] = []
     collecting = False
 
@@ -342,14 +352,19 @@ def _find_table_under_heading(content: str, keyword: str) -> Optional[str]:
 
         # Detect headings.
         if stripped.startswith("#"):
+            heading_level = len(stripped) - len(stripped.lstrip("#"))
             heading_text = stripped.lstrip("#").strip().lower()
             if keyword in heading_text:
                 in_section = True
+                section_level = heading_level
                 collecting = False
                 table_lines = []
                 continue
             elif in_section:
-                # New heading ends the section.
+                # Sub-headings (deeper level) stay within the section.
+                if heading_level > section_level:
+                    continue
+                # Same or higher level heading ends the section.
                 if collecting and table_lines:
                     return "\n".join(table_lines)
                 in_section = False
