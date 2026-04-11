@@ -2,7 +2,7 @@
 name: Knowledge Base Rebuild
 description: Clean-sweep rebuild of the WOS knowledge base — archive existing docs, research 72 topics with fresh sources, distill into focused context files
 type: plan
-status: executing
+status: completed
 branch: feat-rebuild-knowlege-base
 related:
 ---
@@ -1060,7 +1060,7 @@ Follow the distillation rules from the Approach section:
 
 ### Phase 5: Validate Distill & Cleanup
 
-- [ ] **Task 30: Validate all distilled context files.**
+- [x] **Task 30: Validate all distilled context files.** <!-- sha:f1501ad -->
   Run `python scripts/reindex.py --root .` to regenerate indexes.
   Run `python scripts/audit.py --root . --no-urls` to check structural
   validity of all context files. Verify:
@@ -1071,7 +1071,7 @@ Follow the distillation rules from the Approach section:
   Present results to user. Fix any failures before cleanup.
   Verify: 0 audit failures related to context files.
 
-- [ ] **Task 31: Final audit.**
+- [x] **Task 31: Final audit.** <!-- sha:f1501ad -->
   Research documents are preserved (user decision). Run:
   ```
   python scripts/reindex.py --root .
