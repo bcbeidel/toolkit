@@ -96,7 +96,7 @@ audit-based validation.
     Depends on: Tasks 1-3
 
     - [ ] Run test suite: `python python -m pytest tests/ -v` — all pass
-    - [ ] Run skill audit: `python scripts/audit.py --root .` — no failures
+    - [ ] Run skill audit: `python scripts/lint.py --root .` — no failures
           for brainstorm skill
     - [ ] Fix any audit findings and re-run
     - [ ] Commit fixes (if any)
@@ -106,7 +106,7 @@ audit-based validation.
     ## Validation
 
     - [ ] `python python -m pytest tests/ -v` — all tests pass (no regressions)
-    - [ ] `python scripts/audit.py --root .` — no failures for brainstorm skill
+    - [ ] `python scripts/lint.py --root .` — no failures for brainstorm skill
     - [ ] `skills/brainstorm/SKILL.md` exists and is under 500 body lines
     - [ ] SKILL.md frontmatter has name, description, user-invocable, references
     - [ ] Hard gate text present in SKILL.md body

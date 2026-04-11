@@ -7,3 +7,5 @@ Implementation plans for WOS features.
 | --- | --- |
 | [2026-04-07-knowledge-base-rebuild.plan.md](2026-04-07-knowledge-base-rebuild.plan.md) | Clean-sweep rebuild of the WOS knowledge base — archive existing docs, research 72 topics with fresh sources, distill into focused context files |
 | [2026-04-10-roadmap-v036-v039.plan.md](2026-04-10-roadmap-v036-v039.plan.md) | Execute 15 feature issues across 4 releases — wiki foundation, skill refresh, audit-chain and build/audit family, and orchestrator |
+| [2026-04-10-skill-script-renames.plan.md](2026-04-10-skill-script-renames.plan.md) | Rename audit-wos→lint, init-wos→setup, audit.py→lint.py, and update all cross-references |
+| [2026-04-10-wiki-schema-infrastructure.plan.md](2026-04-10-wiki-schema-infrastructure.plan.md) | Add wos/wiki.py validators, validate_wiki() in validators.py, wiki auto-detection in scripts/lint.py, and a default SCHEMA.md template — Python foundation for the wiki feature. |

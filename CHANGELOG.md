@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.36.0] - 2026-04-10
+
+### Changed
+
+- **Renamed `/wos:audit-wos` to `/wos:lint`.** Skill directory renamed from
+  `skills/audit-wos/` to `skills/lint/`. All invocation examples and references
+  updated throughout.
+
+- **Renamed `/wos:init-wos` to `/wos:setup`.** Skill directory renamed from
+  `skills/init-wos/` to `skills/setup/`. All references updated throughout.
+
+- **Renamed `scripts/audit.py` to `scripts/lint.py`.** Test file renamed from
+  `tests/test_audit.py` to `tests/test_lint.py`. All import paths and argv
+  references updated.
+
+## [0.35.0] - 2026-04-07
+
+### Added
+
+- **Knowledge base rebuild.** Pre-audited and refactored 72 context documents
+  across `docs/context/`. Fresh research with source verification, focused
+  distillation, and bidirectional linking.
+
 ## [0.34.0] - 2026-04-07
 
 ### Added

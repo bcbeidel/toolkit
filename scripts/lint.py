@@ -6,9 +6,9 @@
 """Run WOS validation checks on a project.
 
 Usage:
-    python scripts/audit.py [FILE] [--root DIR] [--no-urls] [--json]
-                            [--fix] [--strict] [--context-max-words N]
-                            [--context-min-words N] [--skill-max-lines N]
+    python scripts/lint.py [FILE] [--root DIR] [--no-urls] [--json]
+                           [--fix] [--strict] [--context-max-words N]
+                           [--context-min-words N] [--skill-max-lines N]
 """
 from __future__ import annotations
 
@@ -154,6 +154,12 @@ def main() -> None:
             else:
                 remaining.append(issue)
         issues = remaining
+
+    # Wiki validation — auto-activated when wiki/SCHEMA.md is present
+    wiki_schema = root / "wiki" / "SCHEMA.md"
+    if wiki_schema.is_file():
+        from wos.validators import validate_wiki
+        issues.extend(validate_wiki(root / "wiki", wiki_schema))
 
     # Skill instruction density reporting
     from wos.skill_audit import check_skill_meta, check_skill_sizes

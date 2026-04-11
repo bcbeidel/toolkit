@@ -2,7 +2,7 @@
 
 How to write effective skills for Claude Code. This guide covers
 structure, conventions, and quality criteria. It also serves as the
-rubric when `/wos:audit-wos` evaluates skill quality.
+rubric when `/wos:lint` evaluates skill quality.
 
 ## The Loading Model
 
@@ -40,7 +40,7 @@ references:
 - Lowercase letters, numbers, and hyphens only
 - Maximum 64 characters
 - Cannot contain "anthropic" or "claude"
-- Should describe the action, not the target: `audit-wos` not `audit-documents`
+- Should describe the action, not the target: `lint` not `lint-documents`
 
 ### `description` (required)
 
@@ -154,7 +154,7 @@ covering splitting heuristics and word count rationale.
 
 When evaluating a skill, check these criteria:
 
-### Automated (Python — checked by `audit.py`)
+### Automated (Python — checked by `lint.py`)
 
 | Check | Severity | Standard |
 |-------|----------|----------|

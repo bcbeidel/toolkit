@@ -336,7 +336,7 @@ Automated evals pre-launch and in CI/CD; production monitoring post-launch for d
 ### SQ8: Implications for wos tooling
 
 **wos skill ecosystem — current state:**
-wos provides 13+ skills that naturally form sequential patterns (wos:research → wos:distill → wos:audit-wos; wos:brainstorm → wos:write-plan → wos:execute-plan → wos:validate-work → wos:finish-work). These are currently invoked by description-matching, not by explicit chain definitions. There are no documented output contracts between skills, no shared state schema, and no chain-level validation tooling.
+wos provides 13+ skills that naturally form sequential patterns (wos:research → wos:distill → wos:lint; wos:brainstorm → wos:write-plan → wos:execute-plan → wos:validate-work → wos:finish-work). These are currently invoked by description-matching, not by explicit chain definitions. There are no documented output contracts between skills, no shared state schema, and no chain-level validation tooling.
 
 **What the evidence implies wos needs:**
 
@@ -348,7 +348,7 @@ wos provides 13+ skills that naturally form sequential patterns (wos:research �
 
 4. **Shared state schema.** For multi-skill workflows (the research pipeline being the canonical example), wos should define a lightweight JSON schema for workflow state — analogous to the WorkflowContext pattern [17] — that survives across skill invocations within a session.
 
-5. **Chain-level audit.** The audit-wos skill checks individual document quality. There is no equivalent check that a skill chain was invoked correctly (e.g., distill was run on a research doc that has passed verification, not a draft). A chain-level validator would mirror the "validate every agent boundary" principle. [15]
+5. **Chain-level audit.** The lint skill checks individual document quality. There is no equivalent check that a skill chain was invoked correctly (e.g., distill was run on a research doc that has passed verification, not a draft). A chain-level validator would mirror the "validate every agent boundary" principle. [15]
 
 6. **Transition logging.** The evidence is unambiguous: "log each transition." [16] wos plan files track task checkboxes but not when each step produced its output, what it handed off, or whether the handoff was valid. A structured transition log in the plan file would enable debugging of failed chains.
 
@@ -567,7 +567,7 @@ wos has a functioning skill ecosystem where sequential patterns already occur in
 
 4. **Idempotency markers** (MEDIUM priority). Skills should be designed to read plan checkbox state and skip already-completed stages. The plan file is already the shared state layer; skills should write to it and consult it.
 
-5. **Chain-level audit** (MEDIUM priority). The audit-wos skill checks document quality. A complementary check that validates chain preconditions (e.g., distill was run on a verified research doc, not a DRAFT) would catch sequencing errors before they propagate.
+5. **Chain-level audit** (MEDIUM priority). The lint skill checks document quality. A complementary check that validates chain preconditions (e.g., distill was run on a verified research doc, not a DRAFT) would catch sequencing errors before they propagate.
 
 6. **Evaluation harness** (LOWER priority for current scale). Given that wos chains are short (4–5 skills), interactive (human in the loop at every gate), and session-scoped rather than automated pipelines, the overhead of a full evaluation harness exceeds the failure surface it covers. Prioritize observability (transition logging in plan files) over formal test suites until chains become automated and unattended.
 

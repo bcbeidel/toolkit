@@ -371,7 +371,7 @@ def check_project_files(root: Path) -> List[dict]:
     if not agents_path.is_file():
         issues.append({
             "file": "AGENTS.md",
-            "issue": "No AGENTS.md found. Run /wos:init-wos to initialize.",
+            "issue": "No AGENTS.md found. Run /wos:setup to initialize.",
             "severity": "warn",
         })
     else:
@@ -390,7 +390,7 @@ def check_project_files(root: Path) -> List[dict]:
     if not claude_path.is_file():
         issues.append({
             "file": "CLAUDE.md",
-            "issue": "No CLAUDE.md found. Run /wos:init-wos to initialize.",
+            "issue": "No CLAUDE.md found. Run /wos:setup to initialize.",
             "severity": "warn",
         })
     else:
@@ -459,5 +459,64 @@ def validate_project(
     doc_dirs = discover_document_dirs(root, exclude_dirs=exclude_dirs)
     for directory in doc_dirs:
         issues.extend(check_all_indexes(directory))
+
+    return issues
+
+
+def validate_wiki(wiki_dir: Path, schema_path: Path) -> List[dict]:
+    """Validate all documents in a wiki directory against its SCHEMA.md.
+
+    Runs schema violation and frontmatter checks per file, orphan check
+    across the directory, and index sync for wiki_dir. If SCHEMA.md is
+    missing or malformed, returns a single warn and exits early.
+
+    Args:
+        wiki_dir: Path to the wiki directory.
+        schema_path: Path to wiki/SCHEMA.md.
+
+    Returns:
+        List of issue dicts. Empty on a clean wiki.
+    """
+    from wos.wiki import (
+        check_wiki_frontmatter,
+        check_wiki_orphans,
+        check_wiki_schema_violations,
+        parse_schema,
+    )
+
+    issues: List[dict] = []
+
+    # Parse schema — on failure, emit a single warn and abort
+    try:
+        schema = parse_schema(schema_path)
+    except ValueError as exc:
+        return [{
+            "file": str(schema_path),
+            "issue": f"Invalid SCHEMA.md: {exc}",
+            "severity": "warn",
+        }]
+
+    # Per-file checks
+    for md_file in sorted(wiki_dir.iterdir()):
+        if not md_file.is_file() or md_file.suffix != ".md":
+            continue
+        if md_file.name in ("_index.md", "SCHEMA.md"):
+            continue
+        try:
+            text = md_file.read_text(encoding="utf-8")
+            doc = parse_document(str(md_file), text)
+        except (OSError, ValueError) as exc:
+            issues.append({
+                "file": str(md_file),
+                "issue": f"Parse error: {exc}",
+                "severity": "fail",
+            })
+            continue
+        issues.extend(check_wiki_schema_violations(doc, schema))
+        issues.extend(check_wiki_frontmatter(doc))
+
+    # Directory-level checks
+    issues.extend(check_wiki_orphans(wiki_dir))
+    issues.extend(check_index_sync(wiki_dir))
 
     return issues

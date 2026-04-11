@@ -44,7 +44,7 @@ wos/
   preferences.py       # Communication preferences capture
   research_protocol.py # Search protocol logging
 scripts/
-  audit.py             # CLI: run validation, offer fixes
+  lint.py              # CLI: run validation, offer fixes
   reindex.py           # CLI: regenerate all _index.md files
   deploy.py            # CLI: export skills to .agents/ for cross-platform use
   check_url.py         # CLI: URL reachability checking
@@ -54,7 +54,7 @@ skills/                # Skill definitions (SKILL.md + references/)
   _shared/references/  # Shared references (research, distill pipelines)
 tests/                 # pytest tests
 docs/                  # Documentation, plans, and research
-  context/             # Topic areas (created by /wos:init-wos)
+  context/             # Topic areas (created by /wos:setup)
   plans/               # Design docs and implementation plans
   research/            # Research artifacts
 ```

@@ -38,7 +38,7 @@ Include summary line: `N searches across M sources, X found, Y used`.
 
 ```bash
 python <plugin-scripts-dir>/reindex.py --root .
-python <plugin-scripts-dir>/audit.py <file> --root . --no-urls
+python <plugin-scripts-dir>/lint.py <file> --root . --no-urls
 ```
 
 ## Output

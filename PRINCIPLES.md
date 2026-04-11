@@ -122,7 +122,7 @@ without worrying about unintended modifications. This builds trust in the
 tooling.
 **Boundary:** The `--fix` flag on audit explicitly opts into writes — this is
 the user choosing to modify, not a side effect of reading.
-**Verification:** `scripts/audit.py` without `--fix` modifies no files.
+**Verification:** `scripts/lint.py` without `--fix` modifies no files.
 `scripts/reindex.py` is a separate explicit command.
 
 ### 10. Bottom line up front

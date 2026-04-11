@@ -937,7 +937,7 @@ for WOS's own development.
 ### Phase 3: Validate & Review Research (human gate)
 
 - [x] **Task 15: Validate all research documents.**
-  Run `python scripts/audit.py --root . --no-urls` to check structural
+  Run `python scripts/lint.py --root . --no-urls` to check structural
   validity of all research documents. For each document, verify:
   1. Frontmatter present with `type: research`
   2. `sources:` non-empty
@@ -1062,7 +1062,7 @@ Follow the distillation rules from the Approach section:
 
 - [x] **Task 30: Validate all distilled context files.** <!-- sha:f1501ad -->
   Run `python scripts/reindex.py --root .` to regenerate indexes.
-  Run `python scripts/audit.py --root . --no-urls` to check structural
+  Run `python scripts/lint.py --root . --no-urls` to check structural
   validity of all context files. Verify:
   1. Each context file has valid frontmatter (name, description, sources)
   2. `related:` links point to sibling context files ONLY (not research docs)
@@ -1075,7 +1075,7 @@ Follow the distillation rules from the Approach section:
   Research documents are preserved (user decision). Run:
   ```
   python scripts/reindex.py --root .
-  python scripts/audit.py --root . --no-urls
+  python scripts/lint.py --root . --no-urls
   python -m pytest tests/ -v
   ```
   If any audit issues arise, fix them (likely index sync only).
@@ -1087,7 +1087,7 @@ Follow the distillation rules from the Approach section:
    least one context file. Verify by listing skills and confirming each
    has a supporting context document.
 
-2. **Audit clean:** `python scripts/audit.py --root . --no-urls` produces
+2. **Audit clean:** `python scripts/lint.py --root . --no-urls` produces
    0 failures and 0 warnings related to context files.
 
 3. **Tests pass:** `python -m pytest tests/ -v` — no regressions.

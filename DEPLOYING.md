@@ -35,7 +35,7 @@ your-project/
     wos/              → <wos-plugin>/wos/
     scripts/          → <wos-plugin>/scripts/
     skills/
-      audit-wos/      → <wos-plugin>/skills/audit-wos/
+      lint/      → <wos-plugin>/skills/lint/
       brainstorm/     → <wos-plugin>/skills/brainstorm/
       research/       → <wos-plugin>/skills/research/
       ...
@@ -89,7 +89,7 @@ a stale symlink), it is renamed with a timestamped backup suffix before
 the new symlink is created:
 
 ```
-skills/audit-wos → skills/audit-wos.backup_20260313T141500
+skills/lint → skills/lint.backup_20260313T141500
 ```
 
 ### Idempotency
@@ -102,7 +102,7 @@ $ python scripts/deploy.py --platform copilot
 Deployed to GitHub Copilot (~/.copilot/)
   skip wos (already linked)
   skip scripts (already linked)
-  skip audit-wos (already linked)
+  skip lint (already linked)
   ...
 ```
 

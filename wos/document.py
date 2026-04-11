@@ -29,6 +29,7 @@ class Document:
     status: Optional[str] = None
     created_at: Optional[str] = None
     updated_at: Optional[str] = None
+    meta: dict = field(default_factory=dict)
 
 
 def parse_document(path: str, text: str) -> Document:
@@ -36,7 +37,7 @@ def parse_document(path: str, text: str) -> Document:
 
     Extracts frontmatter between ``---`` delimiters. Known fields
     (name, description, type, sources, related) become Document
-    attributes; unknown fields are ignored.
+    attributes; unknown fields are collected in ``meta``.
 
     Args:
         path: File path for the document.
@@ -90,6 +91,10 @@ def parse_document(path: str, text: str) -> Document:
     if not isinstance(updated_at, str) and updated_at is not None:
         updated_at = str(updated_at)
 
+    _KNOWN_KEYS = {"name", "description", "type", "sources", "related",
+                   "status", "created_at", "updated_at"}
+    meta = {k: v for k, v in fm.items() if k not in _KNOWN_KEYS}
+
     return Document(
         path=path,
         name=name,
@@ -101,4 +106,5 @@ def parse_document(path: str, text: str) -> Document:
         status=status,
         created_at=created_at,
         updated_at=updated_at,
+        meta=meta,
     )

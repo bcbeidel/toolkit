@@ -1,12 +1,12 @@
 ---
-name: audit-wos
+name: lint
 description: >
-  Validates project content quality and reports frontmatter, URL, index,
-  and skill issues. Use when the user asks to "check health", "validate
-  documents", "run validation", "audit content quality", "review documents",
-  "check coverage", "check freshness", "run health check", or "what needs
-  attention".
-argument-hint: "[check|audit|review|coverage|freshness]"
+  Runs lint checks on project content quality and reports frontmatter, URL,
+  index, and skill issues. Use when the user asks to "lint", "run lint",
+  "check lint", "check health", "validate documents", "run validation",
+  "audit content quality", "review documents", "check coverage",
+  "check freshness", "run health check", or "what needs attention".
+argument-hint: "[lint|check|review|coverage|freshness]"
 user-invocable: true
 references:
   - references/skill-authoring-guide.md
@@ -21,25 +21,25 @@ does not modify any files (unless `--fix` is used for index regeneration).
 
 ```bash
 # Default: run all checks including URL reachability
-python <plugin-scripts-dir>/audit.py --root .
+python <plugin-scripts-dir>/lint.py --root .
 
 # Skip URL reachability checks (fast, offline-friendly)
-python <plugin-scripts-dir>/audit.py --root . --no-urls
+python <plugin-scripts-dir>/lint.py --root . --no-urls
 
 # Validate a single file
-python <plugin-scripts-dir>/audit.py path/to/file.md --root . --no-urls
+python <plugin-scripts-dir>/lint.py path/to/file.md --root . --no-urls
 
 # JSON output for programmatic use
-python <plugin-scripts-dir>/audit.py --root . --json
+python <plugin-scripts-dir>/lint.py --root . --json
 
 # Auto-fix out-of-sync or missing _index.md files
-python <plugin-scripts-dir>/audit.py --root . --fix
+python <plugin-scripts-dir>/lint.py --root . --fix
 
 # Exit 1 on any issue (including warnings)
-python <plugin-scripts-dir>/audit.py --root . --strict
+python <plugin-scripts-dir>/lint.py --root . --strict
 
 # Custom word count threshold for context files (default: 800)
-python <plugin-scripts-dir>/audit.py --root . --context-max-words 500
+python <plugin-scripts-dir>/lint.py --root . --context-max-words 500
 ```
 
 Exit code: 1 if any `fail`, 0 if only `warn`. Use `--strict` to exit 1 on any issue.
@@ -108,9 +108,9 @@ All checks passed.
 
 After presenting audit results, offer to help resolve actionable warnings:
 
-- **Missing AGENTS.md or CLAUDE.md:** Offer to run `/wos:init-wos` to
+- **Missing AGENTS.md or CLAUDE.md:** Offer to run `/wos:setup` to
   initialize. Confirm with the user before writing any files.
-- **AGENTS.md missing WOS markers:** Offer to run `/wos:init-wos` to add
+- **AGENTS.md missing WOS markers:** Offer to run `/wos:setup` to add
   the WOS-managed section. Confirm before modifying existing content.
 - **CLAUDE.md missing @AGENTS.md reference:** Offer to add the reference.
   Do not rewrite CLAUDE.md contents — only add the `@AGENTS.md` line.
@@ -139,7 +139,7 @@ After presenting audit results, offer to help resolve actionable warnings:
 ## Key Rules
 
 - Audit is read-only (except `--fix` which only regenerates `_index.md` files)
-- Use `/wos:init-wos` to initialize missing project structure
+- Use `/wos:setup` to initialize missing project structure
 - Empty project (no `docs/` directory) exits 0 with no issues
 
 ## Skill Evaluation

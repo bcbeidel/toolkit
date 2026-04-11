@@ -66,7 +66,7 @@ Full descriptions: [Design Principles](PRINCIPLES.md)
   - `research/` — research skill support (`assess_research.py` — research document assessment)
   - `plan/` — plan skill support (`assess_plan.py` — plan document structural assessment)
 - `scripts/` — thin CLI entry points with argparse and PEP 723 inline metadata
-  - `audit.py` — run validation checks (`--root`, `--no-urls`, `--json`, `--fix`, `--strict`, `--context-min-words`, `--context-max-words`, `--skill-max-lines`)
+  - `lint.py` — run validation checks (`--root`, `--no-urls`, `--json`, `--fix`, `--strict`, `--context-min-words`, `--context-max-words`, `--skill-max-lines`)
   - `reindex.py` — regenerate all `_index.md` files (preamble-preserving)
   - `deploy.py` — export skills to `.agents/` for cross-platform deployment
   - `check_url.py` — URL reachability checking via `wos.url_checker`
@@ -93,7 +93,7 @@ instructions, areas table, metadata format, and communication preferences.
 
 ### Skills
 
-Prefix: `/wos:` (e.g., `/wos:init-wos`, `/wos:audit-wos`). 13 skills + 1 command.
+Prefix: `/wos:` (e.g., `/wos:setup`, `/wos:lint`). 13 skills + 1 command.
 Full skill ecosystem, lifecycle diagram, and layer descriptions: [OVERVIEW.md](OVERVIEW.md)
 
 ### Validation (8 checks, warn/fail severity)
@@ -113,7 +113,7 @@ Full skill ecosystem, lifecycle diagram, and layer descriptions: [OVERVIEW.md](O
 - `wos/validators.py` — `validate_project()` runs all checks
 - `wos/skill_audit.py` — `check_skill_sizes()` and `check_skill_meta()` for skill quality
 - `wos/index.py` — `generate_index()` and `check_index_sync()`
-- `scripts/audit.py` — CLI for validation
+- `scripts/lint.py` — CLI for validation
 - `scripts/reindex.py` — CLI for index regeneration
 
 ## Reference

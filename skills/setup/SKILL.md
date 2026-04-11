@@ -1,5 +1,5 @@
 ---
-name: init-wos
+name: setup
 description: >
   Initialize or update WOS project context. Use when starting a new project
   with WOS, setting up context structure, configuring project documentation,

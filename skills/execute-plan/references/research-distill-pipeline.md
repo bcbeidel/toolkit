@@ -56,7 +56,7 @@ Verify research outputs are well-formed before user review.
 
 **Actions:**
 
-1. Run `python <plugin-scripts-dir>/audit.py --root . --no-urls` to
+1. Run `python <plugin-scripts-dir>/lint.py --root . --no-urls` to
    check structural validity of new research documents.
 2. For each research document, verify:
    - Frontmatter present with `type: research`
@@ -119,7 +119,7 @@ Verify distillation outputs are well-formed and properly linked.
 
 1. Run `python <plugin-scripts-dir>/reindex.py --root .` to regenerate
    indexes.
-2. Run `python <plugin-scripts-dir>/audit.py --root . --no-urls` to
+2. Run `python <plugin-scripts-dir>/lint.py --root . --no-urls` to
    check structural validity.
 3. Verify bidirectional links:
    - Each context file links to its source research doc via `related:`

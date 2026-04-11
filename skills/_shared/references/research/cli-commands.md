@@ -16,7 +16,7 @@ the `scripts/` directory at the root of the WOS plugin.
 ## Validate a Document
 
 ```bash
-python <plugin-scripts-dir>/audit.py <file> --root . [--no-urls]
+python <plugin-scripts-dir>/lint.py <file> --root . [--no-urls]
 ```
 
 ## Regenerate Index Files

@@ -110,7 +110,7 @@ Ensure all `related:` links are bidirectional:
 
 ```bash
 python <plugin-scripts-dir>/reindex.py --root .
-python <plugin-scripts-dir>/audit.py <file> --root . --no-urls
+python <plugin-scripts-dir>/lint.py <file> --root . --no-urls
 ```
 
 Run reindex to update `_index.md` files, then audit each written file.

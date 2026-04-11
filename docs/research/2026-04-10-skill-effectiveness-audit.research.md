@@ -323,7 +323,7 @@ Following the existing WOS model (fail = blocking, warn = accumulating), all sev
 - Description routing coverage is heuristic, not definitive
 
 **Output format recommendation:**
-New checks should emit the same `{file, issue, severity}` dict format as existing validators. The `audit.py` CLI should surface them in the existing grouped output under a "Skill Quality" section. No new output format is needed.
+New checks should emit the same `{file, issue, severity}` dict format as existing validators. The `lint.py` CLI should surface them in the existing grouped output under a "Skill Quality" section. No new output format is needed.
 
 ---
 
@@ -331,7 +331,7 @@ New checks should emit the same `{file, issue, severity}` dict format as existin
 
 **Current architecture:**
 - `wos/skill_audit.py` — `check_skill_sizes()` and `check_skill_meta()` — contains all skill-specific quality checks
-- `scripts/audit.py` — CLI entry point that calls skill audit via `--skill-max-lines` flag
+- `scripts/lint.py` — CLI entry point that calls skill audit via `--skill-max-lines` flag
 - `wos/validators.py` — document-level validation (frontmatter, URLs, content length, etc.) — currently has no skill-specific section
 
 The existing design is correct: skill-specific checks belong in `wos/skill_audit.py`, not in `validators.py`. `validators.py` operates on `Document` instances (parsed from `.md` files in `docs/`); skill audit operates on skill directories (SKILL.md + scripts + references). These are distinct data models.
@@ -367,7 +367,7 @@ _SCOPE_EXCLUSION_SIGNALS = (
 ```
 
 **CLI integration:**
-The `scripts/audit.py` `--skill-max-lines` flag already conditionally enables skill audit. New checks integrate into the same `check_skill_meta()` call path; no new CLI flags are needed unless authors want to disable specific checks. Following WOS convention, new flags should only be added when there is a clear user need to override defaults.
+The `scripts/lint.py` `--skill-max-lines` flag already conditionally enables skill audit. New checks integrate into the same `check_skill_meta()` call path; no new CLI flags are needed unless authors want to disable specific checks. Following WOS convention, new flags should only be added when there is a clear user need to override defaults.
 
 **Separation of reads from writes (CQS principle from validation-architecture research):**
 All proposed new checks are pure reads: they observe SKILL.md content and return issue lists without mutating anything. The reads/writes separation is already maintained in `skill_audit.py` and should continue. Any future "fix" operations (e.g., auto-generating missing output format declarations) belong in a separate, explicitly invoked command — not in the audit path.
