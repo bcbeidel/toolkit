@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.39.0] - 2026-04-11
+
+### Added
+
+- **`/wos:audit` — project health orchestrator.** Combines structural findings
+  from `scripts/lint.py` with LLM-judgment findings from the audit family
+  (audit-skill, audit-rule, audit-chain, wiki validation) into a prioritized
+  health report (Critical / High / Medium / Low). Offers to work through
+  findings in priority order.
+
+- **`WORKFLOW.md` — canonical lifecycle guide.** Documents all WOS workflows:
+  development lifecycle (brainstorm → write-plan → execute-plan → validate-work
+  → finish-work), knowledge management (ingest, research → ingest), skill chain
+  design (audit-chain), and the self-improvement loop (audit → build-X →
+  audit-X). Includes the full primitive taxonomy table.
+
+### Removed
+
+- **`/wos:retrospective`** — removed. Use `/wos:finish-work` Step 6.
+- **`/wos:check-rules`** — removed. Use `/wos:audit-rule`.
+- **`/wos:extract-rules`** — removed. Use `/wos:build-rule`.
+
 ## [0.38.0] - 2026-04-11
 
 ### Added
