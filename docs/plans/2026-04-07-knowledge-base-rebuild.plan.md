@@ -1033,7 +1033,7 @@ Follow the distillation rules from the Approach section:
   DevOps/IaC, cloud architecture, and ML engineering/MLOps.
   Verify: context files exist with valid frontmatter, 200-800 words each.
 
-- [ ] **Task 26: Distill Cluster 8A — Cross-Cutting & Management.**
+- [x] **Task 26: Distill Cluster 8A — Cross-Cutting & Management.** <!-- sha:a8209c2 -->
   Invoke `/wos:distill` with the 5 research documents from Task 11.
   Expected output: 6-10 context files covering QA engineering, performance
   engineering, accessibility, project management, and program management.
