@@ -2,7 +2,7 @@
 name: Context File Wiki Schema Migration
 description: Add confidence, created, updated, and wiki-compatible type fields to all 190 docs/context/*.context.md files — closes bcbeidel/wos#220
 type: plan
-status: executing
+status: completed
 branch: feat/context-migration
 pr: ~
 related:
