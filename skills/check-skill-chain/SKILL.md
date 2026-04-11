@@ -1,18 +1,18 @@
 ---
-name: audit-chain
+name: check-skill-chain
 description: >
-  Design a skill chain from a goal, or audit an existing chain manifest for
-  structural and contract issues. Use when the user wants to "design a chain",
-  "create a workflow", "check a chain manifest", "audit a chain", or "repair
-  a chain".
+  Design a skill-chain from a goal, or check an existing skill-chain manifest
+  for structural and contract issues. Use when the user wants to "design a
+  skill-chain", "create a workflow", "check a chain manifest", "audit a chain",
+  or "repair a chain".
 argument-hint: "[workflow goal or path/to/manifest.chain.md]"
 user-invocable: true
 ---
 
-# Audit Chain
+# Check Skill-Chain
 
-Design a `*.chain.md` manifest from a workflow goal, or audit an existing
-manifest for structural and contract correctness with an opt-in repair loop.
+Design a `*.chain.md` manifest from a workflow goal, or check an existing
+skill-chain manifest for structural and contract correctness with an opt-in repair loop.
 
 ## Workflow
 
@@ -31,12 +31,12 @@ manifest for structural and contract correctness with an opt-in repair loop.
    - Input requirement per step (what does this step need from the prior step?)
    - Gate condition per consequential step (when does a human review before continuing?)
    - Termination condition (what constitutes chain-complete success?)
-   - Negative scope (what does this chain explicitly not do?)
+   - Negative scope (what does this skill-chain explicitly not do?)
 3. **Produce manifest** — write `plans/YYYY-MM-DD-<name>.chain.md`:
    - Frontmatter: `name`, `description`, `type: chain`, `goal`, `negative-scope`
    - Body: `## Steps` pipe table — `| Step | Skill | Input Contract | Output Contract | Gate |`
 4. **Hard gate** — present for user review. State: "This is a design artifact — invoke
-   `/wos:execute-plan` or run each skill manually to execute." Do not invoke any step.
+   `/wos:start-work` or run each skill manually to execute." Do not invoke any step.
 
 ### Manifest Mode
 
@@ -62,7 +62,7 @@ manifest for structural and contract correctness with an opt-in repair loop.
 5. **Re-verify** — after each applied fix, re-run `scripts/lint.py` and re-run
    cross-reference on affected steps. Return to findings presentation.
 6. **Exit** — when all findings are resolved or user declines remaining fixes:
-   "Chain manifest is well-formed — 0 issues found."
+   "Skill-chain manifest is well-formed — 0 issues found."
 
 ## Anti-Pattern Guards
 
@@ -70,7 +70,7 @@ manifest for structural and contract correctness with an opt-in repair loop.
    surface structural failures before LLM judgment
 2. **Bulk repair without per-change confirmation** — each fix requires separate confirmation;
    never apply more than one change without a confirmation step between them
-3. **Executing the chain in goal mode** — goal mode produces a design artifact only; the
+3. **Executing the skill-chain in goal mode** — goal mode produces a design artifact only; the
    hard gate must be stated explicitly before exiting
 4. **Treating cross-reference mismatches as fail** — cross-reference findings are `warn`;
    the user decides whether the contract or the SKILL.md needs updating
@@ -82,13 +82,13 @@ manifest for structural and contract correctness with an opt-in repair loop.
 **Receives:** Free-text workflow goal (goal mode) or path to `*.chain.md` (manifest mode)
 **Produces:** Goal mode — `plans/YYYY-MM-DD-<name>.chain.md`. Manifest mode — structured
 findings table; optionally, targeted edits applied to the manifest or referenced SKILL.md files.
-**Chainable to:** execute-plan (to run the chain steps), build-skill (gap case in repair loop)
+**Chainable to:** start-work (to run the skill-chain steps), build-skill (gap case in repair loop)
 
 ## Key Instructions
 
-- Goal mode is design-only — never invoke a step in the chain; the manifest is the deliverable
+- Goal mode is design-only — never invoke a step in the skill-chain; the manifest is the deliverable
 - Cross-reference is LLM judgment — flag mismatches as `warn` only; the user decides what to fix
 - Per-change confirmation is non-negotiable — never apply more than one fix without separate confirmation
 - `scripts/lint.py` structural checks cover 5 dimensions (skills exist, contracts declared, gates
   on consequential steps, termination condition, no cycles) — do not re-implement them
-- Won't: execute chain steps, bulk-apply fixes, or treat cross-reference mismatches as hard failures
+- Won't: execute skill-chain steps, bulk-apply fixes, or treat cross-reference mismatches as hard failures
