@@ -2,7 +2,7 @@
 name: Add Handoff Contracts to All Skills
 description: Add a standardized ## Handoff section (Receives / Produces / Chainable-to) to every existing SKILL.md — prerequisite for audit-chain
 type: plan
-status: executing
+status: completed
 branch: feat/skill-refresh
 pr: TBD
 related:
