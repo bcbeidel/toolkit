@@ -1008,7 +1008,7 @@ Follow the distillation rules from the Approach section:
   decision frameworks, observability, and feedback loops.
   Verify: context files exist with valid frontmatter, 200-800 words each.
 
-- [ ] **Task 22: Distill Cluster 5B — Practices & Standards.**
+- [x] **Task 22: Distill Cluster 5B — Practices & Standards.** <!-- sha:06d039a -->
   Invoke `/wos:distill` with the 5 research documents from Task 7.
   Expected output: 6-10 context files covering rule enforcement,
   design thinking, specification patterns, LLM security, and CI/CD.
