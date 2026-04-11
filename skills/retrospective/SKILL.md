@@ -12,12 +12,22 @@ references:
   - references/retrospective-workflow.md
 ---
 
+> **Deprecated as of v0.38.0.** The retrospective step is available in
+> `/wos:finish-work` (Step 6). This skill continues to work but will be
+> removed in v0.39.0. Migrate to `/wos:finish-work`.
+
 # Retrospective Skill
 
 Review the current session's use of WOS and submit structured feedback
 to the WOS source repository via GitHub Issues.
 
 ## Workflow
+
+Before continuing, emit this notice to the user:
+
+> **Deprecation notice:** `/wos:retrospective` is deprecated as of v0.38.0.
+> The same functionality is built into `/wos:finish-work` Step 6.
+> This skill will be removed in v0.39.0.
 
 Follow the steps in `references/retrospective-workflow.md`.
 
