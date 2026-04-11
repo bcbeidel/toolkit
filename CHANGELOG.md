@@ -7,6 +7,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.38.0] - 2026-04-11
+
+### Added
+
+- **`wos/chain.py` — chain manifest infrastructure.** Six validator functions:
+  `parse_chain`, `check_chain_skills_exist`, `check_chain_internal_consistency`,
+  `check_chain_gates`, `check_chain_termination`, `check_chain_cycles`.
+  `scripts/lint.py` auto-detects `*.chain.md` files and runs structural checks.
+
+- **`/wos:audit-chain` skill.** Repair loop for skill chains. When invoked with
+  a workflow goal, produces a `*.chain.md` manifest through structured dialogue.
+  When invoked with an existing manifest, runs structural checks, cross-references
+  SKILL.md bodies with LLM judgment, proposes fixes per-change, and re-verifies
+  after repairs. Invokes `/wos:build-skill` inline for missing skills.
+
+- **`/wos:build-skill` + `/wos:audit-skill`.** Scaffolds new SKILL.md files from
+  a description and handoff contracts; audits existing skills against research-backed
+  criteria (instruction density, handoff completeness, anti-pattern guards, gate
+  checks).
+
+- **`/wos:build-rule` + `/wos:audit-rule`.** Scaffolds correctly-formatted rule
+  files with conflict detection; audits existing rules for conflicts, coverage
+  gaps, specificity, and staleness. `check-rules` and `extract-rules` deprecated.
+
+- **`/wos:build-subagent` + `/wos:audit-subagent`.** Scaffolds `.claude/agents/`
+  definitions with least-privilege tool sets; audits for over-permissioning and
+  overlap with existing skills.
+
+- **`/wos:build-command` + `/wos:audit-command` + `/wos:build-hook` +
+  `/wos:audit-hook`.** Completes the `build-X` / `audit-X` family for all five
+  Claude Code primitives: skills, rules, subagents, commands, hooks.
+
+### Deprecated
+
+- **`/wos:retrospective`** — functionality fully covered by `/wos:finish-work`
+  Step 6. Will be removed in v0.39.0.
+
+- **`/wos:check-rules`** — replaced by `/wos:audit-rule`.
+
+- **`/wos:extract-rules`** — replaced by `/wos:build-rule`.
+
 ## [0.37.0] - 2026-04-11
 
 ### Added
