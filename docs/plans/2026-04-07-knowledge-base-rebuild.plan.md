@@ -1021,7 +1021,7 @@ Follow the distillation rules from the Approach section:
   development, and technical debt management.
   Verify: context files exist with valid frontmatter, 200-800 words each.
 
-- [ ] **Task 24: Distill Cluster 6 — Application Engineering.**
+- [x] **Task 24: Distill Cluster 6 — Application Engineering.** <!-- sha:bcb71bb -->
   Invoke `/wos:distill` with the 6 research documents from Task 9.
   Expected output: 8-12 context files covering data engineering, frontend,
   backend/API, mobile, database, and distributed systems engineering.
