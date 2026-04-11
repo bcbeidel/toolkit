@@ -1,13 +1,13 @@
 ---
-name: audit-rule
-description: Audit a rule library for quality issues — conflicts, specificity, staleness, fix-safety, and rubric instability. Use when the user wants to "audit rules", "check rule quality", "find conflicting rules", "review my rules", or "are my rules well-formed".
+name: check-rule
+description: Check a rule library for quality issues — conflicts, specificity, staleness, fix-safety, and rubric instability. Use when the user wants to "audit rules", "check rule quality", "find conflicting rules", "review my rules", or "are my rules well-formed".
 argument-hint: "[path to rule file or directory — scans project if omitted]"
 user-invocable: true
 references:
   - references/audit-dimensions.md
 ---
 
-# /wos:audit-rule
+# /wos:check-rule
 
 Evaluate the quality of an existing rule library. Checks format validity
 deterministically, then evaluates five semantic quality dimensions per rule

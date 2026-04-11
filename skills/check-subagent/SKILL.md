@@ -1,5 +1,5 @@
 ---
-name: audit-subagent
+name: check-subagent
 description: >
   Audits Claude Code custom subagent definitions in .claude/agents/.
   Detects over-permissioned tool sets, unclear routing descriptions,
@@ -11,7 +11,7 @@ argument-hint: "[path to agent file (optional; defaults to scanning .claude/agen
 user-invocable: true
 ---
 
-# Audit Subagent
+# Check Subagent
 
 Inspect Claude Code custom subagent definitions for structural quality,
 tool set hygiene, description clarity, and handoff contract completeness.
