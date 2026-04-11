@@ -13,12 +13,12 @@ from pathlib import Path
 SCRIPTS_DIR = Path(__file__).resolve().parent.parent / "scripts"
 
 
-class TestAuditSysPath:
-    def test_audit_runs_from_different_cwd(self, tmp_path: Path) -> None:
-        """audit.py should work when CWD is not the plugin root."""
+class TestLintSysPath:
+    def test_lint_runs_from_different_cwd(self, tmp_path: Path) -> None:
+        """lint.py should work when CWD is not the plugin root."""
         result = subprocess.run(
             [
-                sys.executable, str(SCRIPTS_DIR / "audit.py"),
+                sys.executable, str(SCRIPTS_DIR / "lint.py"),
                 "--root", str(tmp_path), "--no-urls",
             ],
             capture_output=True,
@@ -30,10 +30,10 @@ class TestAuditSysPath:
         assert "ModuleNotFoundError" not in result.stderr
         assert "No module named" not in result.stderr
 
-    def test_audit_help_from_different_cwd(self, tmp_path: Path) -> None:
-        """audit.py --help should work from any directory."""
+    def test_lint_help_from_different_cwd(self, tmp_path: Path) -> None:
+        """lint.py --help should work from any directory."""
         result = subprocess.run(
-            [sys.executable, str(SCRIPTS_DIR / "audit.py"), "--help"],
+            [sys.executable, str(SCRIPTS_DIR / "lint.py"), "--help"],
             capture_output=True,
             text=True,
             cwd=str(tmp_path),
@@ -66,14 +66,14 @@ class TestReindexSysPath:
         assert "reindex" in result.stdout.lower() or "_index.md" in result.stdout
 
 
-class TestAuditSingleFileSysPath:
-    def test_audit_single_file_from_different_cwd(self, tmp_path: Path) -> None:
-        """audit.py FILE should work when CWD is not the plugin root."""
+class TestLintSingleFileSysPath:
+    def test_lint_single_file_from_different_cwd(self, tmp_path: Path) -> None:
+        """lint.py FILE should work when CWD is not the plugin root."""
         doc = tmp_path / "test.md"
         doc.write_text("---\nname: Test\ndescription: A test\n---\nBody\n")
         result = subprocess.run(
             [
-                sys.executable, str(SCRIPTS_DIR / "audit.py"),
+                sys.executable, str(SCRIPTS_DIR / "lint.py"),
                 str(doc), "--root", str(tmp_path), "--no-urls",
             ],
             capture_output=True,

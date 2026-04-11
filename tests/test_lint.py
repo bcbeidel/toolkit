@@ -1,4 +1,4 @@
-"""Tests for scripts/audit.py — LLM-friendly CLI output."""
+"""Tests for scripts/lint.py — LLM-friendly CLI output."""
 
 from __future__ import annotations
 
@@ -10,22 +10,22 @@ from unittest.mock import patch
 
 
 def _run_audit(*args: str, issues: list[dict] | None = None) -> tuple[str, str, int]:
-    """Run audit.main() with given CLI args, returning (stdout, stderr, exitcode)."""
+    """Run lint.main() with given CLI args, returning (stdout, stderr, exitcode)."""
     captured_stdout = StringIO()
     captured_stderr = StringIO()
     exit_code = 0
 
     mock_target = "wos.validators.validate_project"
 
-    with patch.object(sys, "argv", ["audit.py", *args]):
+    with patch.object(sys, "argv", ["lint.py", *args]):
         with patch("sys.stdout", captured_stdout), patch("sys.stderr", captured_stderr):
             try:
                 if issues is not None:
                     with patch(mock_target, return_value=issues):
-                        from scripts.audit import main
+                        from scripts.lint import main
                         main()
                 else:
-                    from scripts.audit import main
+                    from scripts.lint import main
                     main()
             except SystemExit as exc:
                 exit_code = exc.code if exc.code is not None else 0
