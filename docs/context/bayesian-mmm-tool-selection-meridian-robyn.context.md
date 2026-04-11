@@ -1,7 +1,10 @@
 ---
 name: "Bayesian MMM Tool Selection: Meridian vs. Robyn"
 description: "Meridian (Bayesian/Python) supersedes LightweightMMM as of January 2025 and suits enterprise teams; Robyn (Ridge/R) suits smaller teams; data infrastructure is 80% of MMM work regardless of tool choice"
-type: context
+type: comparison
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://developers.google.com/meridian/docs/basics/about-the-project
   - https://blog.google/products/ads-commerce/meridian-marketing-mix-model-open-to-everyone/
@@ -12,7 +15,6 @@ related:
   - docs/context/measurement-triangulation-attribution-incrementality-mmm.context.md
   - docs/context/paid-automation-data-sufficiency-gates.context.md
 ---
-
 Google open-sourced Meridian on January 29, 2025, making it the canonical replacement for LightweightMMM, which is no longer supported. Any organization using LightweightMMM should treat it as deprecated. The choice between Meridian and Robyn is not primarily a statistical choice — both are capable — but a team capability and infrastructure choice.
 
 Meridian is built on Bayesian causal inference using TensorFlow Probability and XLA compilers. Its distinguishing architectural feature is hierarchical geo-level modeling: it supports 50+ geographic regions, yields tighter ROI credible intervals than national-level models, and produces probability distributions across all parameters rather than point estimates. Hill functions capture saturation; geometric and binomial adstock functions capture carryover. GPU acceleration via Google Colab Pro+ is recommended for performance. Calibration uses complementary geo-experiment tools (GeoX, trimmed_match, matched_markets). Meridian requires a strong data science background and is better suited for organizations with dedicated data teams. The implementation requires 2-3 years of weekly geographic data.

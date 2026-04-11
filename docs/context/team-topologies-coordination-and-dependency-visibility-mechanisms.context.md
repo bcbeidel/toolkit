@@ -1,7 +1,10 @@
 ---
 name: Team Topologies Coordination and Dependency Visibility Mechanisms
 description: Team Topologies defines four team types with prescribed interaction modes to reduce coordination overhead structurally — RAID logs and PI Planning are the operational dependency-tracking mechanisms that make inter-team dependencies visible and owned.
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.atlassian.com/devops/frameworks/team-topologies
   - https://asana.com/resources/raid-log
@@ -13,7 +16,6 @@ related:
   - docs/context/platform-engineering-as-load-reduction-discipline.context.md
   - docs/context/flow-metrics-and-monte-carlo-simulation-stability-precondition.context.md
 ---
-
 # Team Topologies Coordination and Dependency Visibility Mechanisms
 
 ## Key Insight

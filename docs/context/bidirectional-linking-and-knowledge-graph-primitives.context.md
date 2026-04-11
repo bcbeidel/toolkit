@@ -1,7 +1,10 @@
 ---
 name: "Bidirectional Linking and Knowledge Graph Primitives"
 description: "Bidirectional related: linking enables graph-style traversal without a vector database, scaling to ~100-500 docs"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://medium.com/@visrow/zettelkasten-agentic-memory-self-organizing-knowledge-graph-with-rag-in-java-36ec2672ea57
   - https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f
@@ -10,7 +13,6 @@ related:
   - docs/context/atomic-file-granularity-and-frontmatter-navigation.context.md
   - docs/context/agent-context-file-quality-over-completeness.context.md
 ---
-
 Bidirectional linking is the knowledge-graph primitive that file-based knowledge bases can implement without a vector database. When document A lists document B in its `related:` field and document B lists document A in return, an agent traversing the corpus can follow concept chains rather than guessing at structure from an index alone.
 
 ## What Bidirectionality Enables

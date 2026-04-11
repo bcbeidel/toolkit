@@ -1,7 +1,10 @@
 ---
 name: WCAG 2.2 Legal Compliance Targets and New AA Criteria
-description: WCAG 2.2 AA is the current legal target globally (EU EAA enforced June 2025, US ADA de facto standard); WCAG 3.0 won't supersede WCAG 2 before 2028+ and WCAG 2 will not be deprecated.
-type: context
+description: "WCAG 2.2 AA is the current legal target globally (EU EAA enforced June 2025, US ADA de facto standard); WCAG 3.0 won't supersede WCAG 2 before 2028+ and WCAG 2 will not be deprecated."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.w3.org/WAI/standards-guidelines/wcag/
   - https://www.w3.org/WAI/standards-guidelines/wcag/new-in-22/
@@ -11,7 +14,6 @@ related:
   - docs/context/accessibility-automation-coverage-ceiling-and-manual-testing-floor.context.md
   - docs/context/semantic-html-first-and-overlay-anti-pattern.context.md
 ---
-
 # WCAG 2.2 Legal Compliance Targets and New AA Criteria
 
 ## Key Insight

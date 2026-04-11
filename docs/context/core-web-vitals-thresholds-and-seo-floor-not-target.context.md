@@ -1,7 +1,10 @@
 ---
 name: Core Web Vitals Thresholds and SEO Floor Not Target
 description: CWV thresholds apply at the 75th percentile of real user sessions; reaching "Good" removes a ranking penalty but exceeding it yields no additional SEO benefit — engineering effort past the floor has diminishing returns.
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://web.dev/articles/defining-core-web-vitals-thresholds
   - https://www.debugbear.com/docs/core-web-vitals-metrics
@@ -11,7 +14,6 @@ related:
   - docs/context/percentile-approximation-hazard-and-histogram-based-slo-metrics.context.md
   - docs/context/opentelemetry-overhead-and-sampling-strategy-timing.context.md
 ---
-
 # Core Web Vitals Thresholds and SEO Floor Not Target
 
 ## Key Insight

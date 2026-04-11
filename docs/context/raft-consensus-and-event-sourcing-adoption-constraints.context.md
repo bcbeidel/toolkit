@@ -1,7 +1,10 @@
 ---
 name: Raft Consensus and Event Sourcing Adoption Constraints
 description: Raft is the de facto industrial consensus standard; event sourcing and CRDTs deliver real benefits but require strong justification before adoption due to operational complexity.
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://raft.github.io/
   - https://martinfowler.com/eaaDev/EventSourcing.html
@@ -12,7 +15,6 @@ related:
   - docs/context/distributed-resilience-stack-circuit-breaker-retry-jitter.context.md
   - docs/context/opentelemetry-overhead-and-sampling-strategy-timing.context.md
 ---
-
 # Raft Consensus and Event Sourcing Adoption Constraints
 
 Raft is the correct consensus algorithm for new distributed systems — industrially deployed, well-understood, and designed for understandability. Event sourcing and CRDTs are operationally expensive patterns that are more constrained than their reputations suggest. Both require explicit justification before adoption.

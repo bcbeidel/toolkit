@@ -1,7 +1,10 @@
 ---
 name: "CLI Dual-Mode Design for Agents"
 description: "CLIs for LLM agents: stdout is the API contract (clean JSON), stderr is diagnostics, exit codes are a versioned API, TTY detection enables dual-mode output for humans and agents"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.infoq.com/articles/ai-agent-cli/
   - https://dev.to/uenyioha/writing-cli-tools-that-ai-agents-actually-want-to-use-39no
@@ -12,7 +15,6 @@ related:
   - docs/context/mcp-vs-function-calling-tradeoffs.context.md
   - docs/context/llm-failure-modes-and-mitigations.context.md
 ---
-
 CLIs built for humans use color, pagination, interactive prompts, and pretty-printed output. Each of these breaks agent workflows. The solution is dual-mode design: full UX for TTY sessions, machine output for non-TTY sessions, detected via `isatty()`.
 
 **The stdout/stderr contract is non-negotiable.** Stdout is the machine-parseable data — the API contract. When `--json` is used, stdout must be clean JSON and nothing else. Stderr is for diagnostics: progress messages, warnings, spinners, human-readable errors. Agents pipe stdout to subsequent commands. Any human text in stdout breaks parsing. The asymmetry matters in the failure case: "Stderr is the information agents need most, precisely when commands fail — never drop it."

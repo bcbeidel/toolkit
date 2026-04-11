@@ -1,7 +1,10 @@
 ---
 name: "Deterministic vs Advisory Principle Enforcement"
 description: "Enforce principles deterministically (hooks/linters) where mechanically verifiable; advisory text in docs is not a substitute for a linter"
-type: context
+type: comparison
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://code.claude.com/docs/en/best-practices
   - https://www.humanlayer.dev/blog/writing-a-good-claude-md
@@ -12,7 +15,6 @@ related:
   - docs/context/agent-facing-document-structure.context.md
   - docs/context/context-file-content-selection-and-coverage-threshold.context.md
 ---
-
 Advisory guidance and deterministic enforcement are not interchangeable. The failure mode of conflating them is well-documented: a CLAUDE.md rule that says "NEVER edit .env files" is a suggestion the model weighs against other signals. A hook that blocks `.env` edits via exit code 2 is a wall. Only one of these is enforcement.
 
 The practical rule is simple: if a principle can be mechanically verified, use a tool. Never send an LLM to do a linter's job.

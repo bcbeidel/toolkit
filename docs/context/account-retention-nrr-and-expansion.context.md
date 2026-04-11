@@ -1,7 +1,10 @@
 ---
-name: Account Retention, NRR, and Expansion
-description: NRR is the central account health metric; CS manages renewals while AM handles expansion; health scoring, QBRs, and expansion-moment identification are the primary NRR levers.
-type: context
+name: "Account Retention, NRR, and Expansion"
+description: "NRR is the central account health metric; CS manages renewals while AM handles expansion; health scoring, QBRs, and expansion-moment identification are the primary NRR levers."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://salesmotion.io/blog/net-revenue-retention
   - https://churnzero.net/blog/customer-growth-trends-tips-2026/
@@ -9,7 +12,6 @@ sources:
 related:
   - docs/context/revops-alignment-pipeline-crm-hygiene.context.md
 ---
-
 # Account Retention, NRR, and Expansion
 
 Net Revenue Retention (NRR) is the central metric for account health in SaaS. It measures whether existing customers generate growing or shrinking revenue independent of new customer acquisition, which makes it the cleanest signal of product value and customer success effectiveness. 73% of Chief Sales Officers name existing-customer growth as their top 2025 priority — expansion has overtaken acquisition as the primary growth lever for mature SaaS businesses.

@@ -1,7 +1,10 @@
 ---
 name: "Churn Prediction vs. Uplift Modeling"
 description: "Churn prediction does not equal churn prevention. A Harvard Business School field experiment found proactive churn campaigns increased churn from 6% to 10% in the treatment group. Uplift modeling is the correct framework."
-type: context
+type: comparison
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.hbs.edu/faculty/Pages/item.aspx?num=54941
   - https://www.sciencedirect.com/science/article/pii/S0020025519312022
@@ -10,7 +13,6 @@ related:
   - docs/context/clv-model-selection-contractual-vs-non-contractual.context.md
   - docs/context/ml-vs-statistical-methods-sample-size-tradeoff.context.md
 ---
-
 # Churn Prediction vs. Uplift Modeling
 
 Predicting which customers will churn is not the same as preventing them from churning. An HBS field experiment found that proactive churn prevention campaigns increased churn from 6% to 10% in the treatment group. The correct intervention framework is uplift modeling, which identifies who will respond positively to retention outreach — not who is most likely to churn.

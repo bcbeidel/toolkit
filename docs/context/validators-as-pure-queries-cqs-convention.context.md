@@ -1,7 +1,10 @@
 ---
 name: "Validators as Pure Queries: CQS Convention"
 description: "Validators should be pure query functions — observe and return issue lists, never mutate — while fix operations are separate explicit commands. CQS maps cleanly onto validation design as a code-level convention, not a structural constraint."
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://martinfowler.com/bliki/CQRS.html
   - https://khalilstemmler.com/articles/oop-design-principles/command-query-separation/
@@ -11,7 +14,6 @@ related:
   - docs/context/composable-validators-stateless-accumulator-pattern.context.md
   - docs/context/structural-gates-llm-quality-checks.context.md
 ---
-
 ## Key Insight
 
 Command-Query Separation (CQS) maps directly onto validation design. Validators are pure query functions: they observe state and return issue lists without mutating anything. Fix operations are separate explicit commands. This separation makes validators safe to run in CI, enables memoization and parallelization, and prevents accidental mutations during audit passes.

@@ -1,7 +1,10 @@
 ---
 name: "MCP Security: Annotations and Protocol Limitations"
 description: "MCP tool annotations are hints not guarantees — tool poisoning and prompt injection are unmitigated at the protocol level; enterprise deployments require network controls and sandboxing"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://modelcontextprotocol.io/specification/2025-11-25/server/tools
   - https://blog.modelcontextprotocol.io/posts/2026-03-16-tool-annotations/
@@ -14,7 +17,6 @@ related:
   - docs/context/llm-failure-modes-and-mitigations.context.md
   - docs/context/production-reliability-gap-and-multi-agent-failures.context.md
 ---
-
 MCP tool annotations communicate behavioral intent to clients, but they provide no security guarantee. A tool with `readOnlyHint: true` from an untrusted server can still perform writes. The protocol cannot enforce consent at the wire level — it relies on implementers to follow "SHOULD" requirements for user oversight.
 
 **The four annotation hints (added March 2025):**

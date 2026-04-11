@@ -1,7 +1,10 @@
 ---
 name: IaC Tool Selection by Team Profile
-description: IaC tool selection is team-profile-driven — Terraform/OpenTofu for declarative/large-ops teams, Pulumi for developer-heavy teams needing testability, CDK for AWS-native shops.
-type: context
+description: "IaC tool selection is team-profile-driven — Terraform/OpenTofu for declarative/large-ops teams, Pulumi for developer-heavy teams needing testability, CDK for AWS-native shops."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://toolshelf.tech/blog/terraform-vs-pulumi-vs-opentofu-2025-iac-showdown/
   - https://www.naviteq.io/blog/choosing-the-right-infrastructure-as-code-tools-a-ctos-guide-to-terraform-pulumi-cdk-and-more/
@@ -13,7 +16,6 @@ related:
   - docs/context/iac-testing-pyramid-and-adoption-gap.context.md
   - docs/context/platform-engineering-as-load-reduction-discipline.context.md
 ---
-
 # IaC Tool Selection by Team Profile
 
 No single IaC tool is universally superior. The correct choice depends on team composition, cloud strategy, and organizational constraints. The three main contenders occupy distinct niches.

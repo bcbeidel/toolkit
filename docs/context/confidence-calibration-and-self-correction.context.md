@@ -1,7 +1,10 @@
 ---
 name: "Confidence Calibration and Self-Correction"
 description: "LLM confidence severely miscalibrated; self-correction without external feedback yields +1.8pp; structured external feedback yields 21-32pp"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://arxiv.org/html/2503.15850v1
   - https://arxiv.org/html/2604.00445
@@ -11,7 +14,6 @@ related:
   - docs/context/llm-failure-modes-and-mitigations.context.md
   - docs/context/llm-as-judge-biases-and-mitigations.context.md
 ---
-
 LLM confidence estimates are severely miscalibrated, and self-correction without external feedback provides almost no improvement. The distinction between intrinsic self-correction (the model critiquing itself) and extrinsic self-correction (structured feedback from tests, tools, or execution) is the key design principle.
 
 ## Calibration Is Broken

@@ -1,7 +1,10 @@
 ---
 name: "Paid Automation Data Sufficiency Gates"
 description: "Smart Bidding, Advantage+, and PMax all require minimum conversion volumes to function reliably; automation underperforms at cold start; PMax cannibalizes branded search with 91% keyword overlap"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.wordstream.com/blog/2025-google-ads-updates
   - https://leadsbridge.com/blog/google-ads-campaign-structure/
@@ -13,7 +16,6 @@ related:
   - docs/context/bayesian-mmm-tool-selection-meridian-robyn.context.md
   - docs/context/creative-testing-refresh-cadence-and-dco.context.md
 ---
-
 Automation-first paid media is best practice above data-sufficiency thresholds — not universally. The governing variable is account maturity: conversion volume, historical data, and budget scale determine whether automation creates leverage or uncontrolled cost. Treating Smart Bidding, Advantage+, and Performance Max as universal defaults regardless of account maturity is the most common structural error in paid media management.
 
 Smart Bidding (Google's automated bidding suite including Maximize Conversions and Maximize Conversion Value with optional tCPA/tROAS targets) requires a minimum of 30 conversions per month to function reliably. Accounts below this floor experience extended learning periods — typically 7-14 days after any significant change — with CPAs running 30-50% higher during that period. Smart Bidding Exploration, which expands targeting beyond historical patterns to reach new audiences, is explicitly restricted by Google to high-volume, high-performing accounts. Activating it on low-volume accounts produces unpredictable spend behavior. Microsoft Ads consolidated tCPA and tROAS into Maximize Conversions and Maximize Conversion Value as standalone targets in August 2025; the recommended approach for new Microsoft campaigns is a 30-day manual CPC phase to establish baseline performance data before enabling automation.

@@ -1,7 +1,10 @@
 ---
 name: API Backwards Compatibility and Deprecation Protocol
-description: Backwards compatibility is a hard API design constraint — extend, never break; announce deprecations 6–12 months ahead using machine-readable Deprecation and Sunset headers.
-type: context
+description: "Backwards compatibility is a hard API design constraint — extend, never break; announce deprecations 6–12 months ahead using machine-readable Deprecation and Sunset headers."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-design
   - https://stripe.com/blog/api-versioning
@@ -12,7 +15,6 @@ related:
   - docs/context/oauth-2-1-pkce-and-rbac-abac-layering.context.md
   - docs/context/schema-evolution-expand-contract-pattern.context.md
 ---
-
 # API Backwards Compatibility and Deprecation Protocol
 
 Backwards compatibility is a first-class API design constraint, not an afterthought. The cost of a breaking change — client breakage, migration effort, trust erosion — far exceeds the cost of early design iteration. The rule: extend, never break. When breaking is unavoidable, announce 6–12 months ahead with machine-readable signals.

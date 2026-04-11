@@ -1,7 +1,10 @@
 ---
 name: "SIFT Lateral Reading and Tool-Based Verification"
 description: "SIFT (lateral reading) is the validated source evaluation foundation; tool-based URL verification is the only reliable hallucination mitigation"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://hapgood.us/2019/06/19/sift-the-four-moves/
   - https://journals.sagepub.com/doi/10.1177/016146811912101102
@@ -16,7 +19,6 @@ related:
   - docs/context/confidence-calibration-and-self-correction.context.md
   - docs/context/llm-as-judge-biases-and-mitigations.context.md
 ---
-
 SIFT is the validated foundation for source evaluation. Tool-based verification is the only reliable mitigation for LLM citation hallucination. These are separate concerns that compose into a complete verification workflow.
 
 ## SIFT: The Four Moves

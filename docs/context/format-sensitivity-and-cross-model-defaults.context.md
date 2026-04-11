@@ -1,7 +1,10 @@
 ---
 name: "Format Sensitivity and Cross-Model Defaults"
 description: "Format sensitivity is real (up to 40% swing); XML optimal for Claude, Markdown safest cross-model default"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://arxiv.org/html/2411.10541v1
   - https://www.improvingagents.com/blog/best-nested-data-format/
@@ -12,7 +15,6 @@ related:
   - docs/context/portable-vs-model-specific-prompt-constructs.context.md
   - docs/context/prompt-design-principles-framing-and-emphasis.context.md
 ---
-
 Format choice is not cosmetic. Prompt format can swing GPT-3.5 performance by up to 40% (Agrawal et al., NAACL 2025). Only 16% of responses were identical between Markdown and JSON formatting on MMLU with GPT-3.5. No universal best format exists — optimal format depends on both model and task.
 
 ## The Core Finding

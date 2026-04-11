@@ -1,7 +1,10 @@
 ---
 name: Content Governance and the Scale Threshold
-description: Content governance (RACI, approval workflows, content models) is the differentiator between teams that scale and those that burn out; formal governance applies above approximately 10 people and 3+ channels.
-type: context
+description: "Content governance (RACI, approval workflows, content models) is the differentiator between teams that scale and those that burn out; formal governance applies above approximately 10 people and 3+ channels."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.lullabot.com/articles/content-management-trends-what-changed-2025-and-what-comes-next
   - https://www.contentful.com/blog/content-creation-workflows/
@@ -13,7 +16,6 @@ related:
   - docs/context/ai-adoption-governance-lag.context.md
   - docs/context/ai-pm-eval-lifecycle-and-ownership.context.md
 ---
-
 # Content Governance and the Scale Threshold
 
 Content governance became a primary differentiator between organizations that scaled successfully and those that burned out teams in 2025. The pattern is consistent across T2 and T4 practitioner sources: organizations that built governance infrastructure first — before adding tools, channels, or headcount — outperformed those that retrofitted governance onto existing chaos.

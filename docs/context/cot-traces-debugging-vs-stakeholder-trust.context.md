@@ -1,7 +1,10 @@
 ---
 name: "CoT Traces: Debugging Value vs. Stakeholder Trust Risk"
 description: "Chain-of-thought traces are highly valuable for engineering debugging but carry documented post-hoc rationalization rates (0.04–13%) that make them unreliable as stakeholder trust signals, particularly for smaller models."
-type: context
+type: comparison
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://arxiv.org/abs/2503.08679
   - https://arxiv.org/abs/2602.10133
@@ -12,7 +15,6 @@ related:
   - docs/context/observability-vs-auditability-shared-infrastructure.context.md
   - docs/context/agent-feedback-loop-lifecycle-coverage-and-traces.context.md
 ---
-
 ## Key Insight
 
 Execution traces are essential for agent debugging because agent execution paths emerge at runtime rather than being defined in code. As stakeholder-facing transparency artifacts, CoT traces carry a material risk: instrumentation faithfully records the model's stated reasoning, but has no mechanism to detect whether that reasoning was genuinely prior to the conclusion or post-hoc rationalization. Empirical evidence shows post-hoc rationalization rates ranging from ~0.04% (Sonnet 3.7 extended thinking) to ~13% (GPT-4o-mini).

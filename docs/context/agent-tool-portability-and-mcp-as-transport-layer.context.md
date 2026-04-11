@@ -1,7 +1,10 @@
 ---
 name: Agent Tool Portability and MCP as Transport Layer
-description: MCP is a stateless transport layer for tool invocation, not an orchestration environment; portability lives at the tool layer, not the orchestration layer.
-type: context
+description: "MCP is a stateless transport layer for tool invocation, not an orchestration environment; portability lives at the tool layer, not the orchestration layer."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.scalekit.com/blog/unified-tool-calling-architecture-langchain-crewai-mcp
   - https://arxiv.org/html/2505.02279v1
@@ -13,7 +16,6 @@ related:
   - docs/context/multi-agent-orchestration-patterns-and-selection-criteria.context.md
   - docs/context/agentic-resilience-infrastructure-primitives.context.md
 ---
-
 # Agent Tool Portability and MCP as Transport Layer
 
 **Portability lives at the tool layer, not the orchestration layer.** Tools implemented against MCP are callable from LangChain, CrewAI, Claude Agent SDK, AutoGen, or any other framework without bespoke adapters. Orchestration topology — state management, agent identity, access control — remains framework-specific and cannot be abstracted to the tool layer.

@@ -1,7 +1,10 @@
 ---
 name: "Bayesian A/B Testing: Interpretability Advantage, Not Sample Efficiency"
 description: "Bayesian A/B testing's defensible advantage is interpretability — probability to be best (P2BB) gives intuitive decision support. The '75% fewer samples' figure is unsubstantiated vendor marketing."
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.dynamicyield.com/lesson/running-effective-bayesian-ab-tests/
   - https://pmc.ncbi.nlm.nih.gov/articles/PMC8526359/
@@ -10,7 +13,6 @@ related:
   - docs/context/causal-inference-twfe-did-and-dag-discipline.context.md
   - docs/context/ml-vs-statistical-methods-sample-size-tradeoff.context.md
 ---
-
 # Bayesian A/B Testing: Interpretability Advantage, Not Sample Efficiency
 
 The defensible advantage of Bayesian A/B testing is interpretability: probability to be best (P2BB) expresses evidence as a probability statement, which is what business decision-makers actually want. The widely cited "75% sample-size reduction" claim is unsubstantiated vendor marketing, not a replicable finding.

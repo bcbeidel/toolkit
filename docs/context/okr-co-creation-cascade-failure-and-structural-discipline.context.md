@@ -1,7 +1,10 @@
 ---
 name: OKR Co-Creation Cascade Failure and Structural Discipline
-description: Top-down OKR cascades produce weak commitment — teams receive objectives they didn't help create. The effective pattern is top-down strategy context plus bottom-up team OKR drafts, capped at 3–5 objectives per level.
-type: context
+description: "Top-down OKR cascades produce weak commitment — teams receive objectives they didn't help create. The effective pattern is top-down strategy context plus bottom-up team OKR drafts, capped at 3–5 objectives per level."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://martinfowler.com/articles/team-okr.html
   - https://www.atlassian.com/agile/agile-at-scale/okr
@@ -11,7 +14,6 @@ related:
   - docs/context/agile-methodology-selection-by-context-and-hybrid-principle-commitment.context.md
   - docs/context/flow-metrics-and-monte-carlo-simulation-stability-precondition.context.md
 ---
-
 # OKR Co-Creation Cascade Failure and Structural Discipline
 
 ## Key Insight

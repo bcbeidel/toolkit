@@ -1,7 +1,10 @@
 ---
 name: "Prompt Design Principles: Framing and Emphasis"
 description: "Affirmative framing, context/motivation for rules, avoid ALL-CAPS on Claude 4.6 — most transferable prompt design principles"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices
   - https://arxiv.org/html/2312.16171v1
@@ -13,7 +16,6 @@ related:
   - docs/context/instruction-capacity-and-context-file-length.context.md
   - docs/context/format-sensitivity-and-cross-model-defaults.context.md
 ---
-
 A small set of prompt design principles shows reliable, transferable effects across model families. These are distinct from model-specific optimizations — they apply broadly enough to be worth applying as defaults.
 
 ## Affirmative Framing Outperforms Prohibitions

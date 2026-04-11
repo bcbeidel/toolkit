@@ -1,7 +1,10 @@
 ---
 name: ML Drift Detection Methods and Retraining Trigger Hierarchy
-description: Performance degradation is the most reliable retraining trigger — distribution drift statistics produce false positives; KS, PSI, and Wasserstein each fit different dataset sizes and sensitivity requirements.
-type: context
+description: "Performance degradation is the most reliable retraining trigger — distribution drift statistics produce false positives; KS, PSI, and Wasserstein each fit different dataset sizes and sensitivity requirements."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.evidentlyai.com/ml-in-production/data-drift
   - https://www.evidentlyai.com/blog/data-drift-detection-large-datasets
@@ -10,7 +13,6 @@ related:
   - docs/context/mlops-maturity-levels-and-organizational-prerequisites.context.md
   - docs/context/feature-store-dual-store-pattern-and-scale-threshold.context.md
 ---
-
 # ML Drift Detection Methods and Retraining Trigger Hierarchy
 
 Drift detection is essential for production ML, but statistical drift signals are unreliable retraining triggers on their own. Business metric degradation — model performance declining on actual outcomes — is the more reliable and actionable signal.

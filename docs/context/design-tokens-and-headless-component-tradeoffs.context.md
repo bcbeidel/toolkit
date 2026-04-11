@@ -1,7 +1,10 @@
 ---
 name: Design Tokens and Headless Component Tradeoffs
 description: Design tokens are the foundational primitive for cross-platform consistency; headless libs (Radix) handle accessible behavior; shadcn/ui transfers maintenance burden to the consuming team.
-type: context
+type: comparison
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://zenriotech.com/blog/shadcn-radix-ui-headless-component-architectures-standard
   - https://makersden.io/blog/react-ui-libs-2025-comparing-shadcn-radix-mantine-mui-chakra
@@ -11,7 +14,6 @@ related:
   - docs/context/react-server-components-adoption-scope.context.md
   - docs/context/vite-rolldown-vs-turbopack-framework-alignment.context.md
 ---
-
 # Design Tokens and Headless Component Tradeoffs
 
 A scalable frontend design system is built in layers: tokens define visual values, headless libraries provide accessible behavior, and component libraries (like shadcn/ui) build on both. Each layer has distinct tradeoffs, and the shadcn/ui model in particular carries a maintenance cost that teams must consciously accept.

@@ -1,7 +1,10 @@
 ---
 name: "LLM Agents Need Architecture, Not Instructions, for Decision Frameworks"
 description: "Standard chain-of-thought reasoning is structurally greedy and cannot reliably apply multi-step decision frameworks — Tree of Thoughts, process-reward models, and multi-agent verification provide the architectural mechanisms required."
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://arxiv.org/abs/2601.22311
   - https://arxiv.org/abs/2508.17692
@@ -11,7 +14,6 @@ related:
   - docs/context/mental-models-software-decisions-practitioner-vs-empirical.context.md
   - docs/context/cot-traces-debugging-vs-stakeholder-trust.context.md
 ---
-
 ## Key Insight
 
 LLM agents can produce framework-shaped outputs via pattern matching. Producing outputs formatted as Richardson's seven steps or an ADR template does not mean the agent reasoned within those frameworks' logic. Standard chain-of-thought is structurally greedy — it creates myopic commitments at each step and cannot perform lookahead. Reliable systematic framework application requires architectural mechanisms (Tree of Thoughts, process-based reward models, multi-agent verification), not prompting alone.

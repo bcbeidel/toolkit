@@ -1,7 +1,10 @@
 ---
-name: Agentic Failure Recovery — Classify, Retry, Replan, Abandon
-description: Effective agentic failure recovery follows a three-tier escalation (retry transient errors, replan on state divergence, abandon on permanent failures), with error classification at the tool boundary determining which tier to enter.
-type: context
+name: "Agentic Failure Recovery — Classify, Retry, Replan, Abandon"
+description: "Effective agentic failure recovery follows a three-tier escalation (retry transient errors, replan on state divergence, abandon on permanent failures), with error classification at the tool boundary determining which tier to enter."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.anthropic.com/research/building-effective-agents
   - https://www.gocodeo.com/post/error-recovery-and-fallback-strategies-in-ai-agent-development
@@ -13,7 +16,6 @@ related:
   - docs/context/agentic-resilience-infrastructure-primitives.context.md
   - docs/context/agentic-fault-taxonomy-and-interface-mismatch-pattern.context.md
 ---
-
 # Agentic Failure Recovery — Classify, Retry, Replan, Abandon
 
 **Classify the failure before choosing a response.** The recovery tier — retry, replan, or abandon — is determined by error type, not by how many attempts have been made. LLM-based error classification is unreliable for semantic errors; wherever possible, classify at the tool boundary using structural signals.

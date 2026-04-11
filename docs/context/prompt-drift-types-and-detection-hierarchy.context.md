@@ -1,7 +1,10 @@
 ---
 name: Prompt Drift — Types and Detection Hierarchy
-description: Three distinct drift types (data, concept, model) require different detection approaches; model-based detection (binary classifier + ROC AUC) is the recommended default over Wasserstein distance.
-type: context
+description: "Three distinct drift types (data, concept, model) require different detection approaches; model-based detection (binary classifier + ROC AUC) is the recommended default over Wasserstein distance."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://docs.aws.amazon.com/prescriptive-guidance/latest/gen-ai-lifecycle-operational-excellence/prod-monitoring-drift.html
   - https://orq.ai/blog/model-vs-data-drift
@@ -11,7 +14,6 @@ related:
   - docs/context/prompt-regression-deterministic-first-assertion-layering.context.md
   - docs/context/knowledge-confidence-lifecycle-and-state-tracking.context.md
 ---
-
 # Prompt Drift — Types and Detection Hierarchy
 
 Prompt drift has three distinct causes, each requiring a different detection approach. Treating them as one problem leads to applying the wrong detection method and missing the actual signal.

@@ -1,7 +1,10 @@
 ---
-name: Mobile MVVM, MVI, and Clean Architecture Selection
+name: "Mobile MVVM, MVI, and Clean Architecture Selection"
 description: MVVM is the default for mobile; MVI is correct for complex state machines — both coexist within Clean Architecture and can be mixed per screen.
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://medium.com/@jyc.dev/architecture-patterns-in-mobile-development-2026-mvvm-mvi-and-clean-architecture-f26583f53522
   - https://nextnative.dev/blog/mobile-app-architecture-best-practices
@@ -11,7 +14,6 @@ related:
   - docs/context/android-state-persistence-survival-matrix.context.md
   - docs/context/offline-first-read-write-strategy-model.context.md
 ---
-
 # Mobile MVVM, MVI, and Clean Architecture Selection
 
 MVVM is the dominant mobile architecture pattern and the correct default. MVI is preferred for screens with complex, interdependent state. Both fit cleanly inside Clean Architecture layers and can coexist within the same app. Start with MVVM; escalate individual screens to MVI as complexity demands.

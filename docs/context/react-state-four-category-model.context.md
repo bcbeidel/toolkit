@@ -1,7 +1,10 @@
 ---
 name: React State Four-Category Model
-description: React state falls into four distinct categories — local UI, shared cross-component, server/remote, and URL — each with a distinct recommended tool; conflating them is the primary source of over-engineering.
-type: context
+description: "React state falls into four distinct categories — local UI, shared cross-component, server/remote, and URL — each with a distinct recommended tool; conflating them is the primary source of over-engineering."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.developerway.com/posts/react-state-management-2025
   - https://strapi.io/blog/react-and-nextjs-in-2025-modern-best-practices
@@ -11,7 +14,6 @@ related:
   - docs/context/vite-rolldown-vs-turbopack-framework-alignment.context.md
   - docs/context/design-tokens-and-headless-component-tradeoffs.context.md
 ---
-
 # React State Four-Category Model
 
 Conflating different types of state is the most common source of over-engineering in React applications. State falls into four categories with non-overlapping characteristics, and each category has an appropriate tool. Using the wrong tool for a category adds complexity without benefit.

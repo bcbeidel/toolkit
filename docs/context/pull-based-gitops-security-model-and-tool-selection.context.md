@@ -1,7 +1,10 @@
 ---
 name: Pull-Based GitOps Security Model and Tool Selection
-description: Pull-based GitOps (ArgoCD/Flux) is the preferred security model — cluster credentials are never exposed to external CI pipelines; ArgoCD wins for most teams, Flux for platform engineers.
-type: context
+description: "Pull-based GitOps (ArgoCD/Flux) is the preferred security model — cluster credentials are never exposed to external CI pipelines; ArgoCD wins for most teams, Flux for platform engineers."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.cncf.io/blog/2025/06/09/gitops-in-2025-from-old-school-updates-to-the-modern-way/
   - https://orthogonal.info/argocd-vs-flux-secure-gitops-kubernetes-2025/
@@ -12,7 +15,6 @@ related:
   - docs/context/iac-testing-pyramid-and-adoption-gap.context.md
   - docs/context/cloud-native-security-identity-first-shift-left-runtime.context.md
 ---
-
 # Pull-Based GitOps Security Model and Tool Selection
 
 Pull-based GitOps is preferred over push-based deployment because cluster credentials never leave the cluster. The security boundary is fundamentally different — worth understanding before choosing a GitOps tool.

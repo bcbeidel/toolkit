@@ -1,7 +1,10 @@
 ---
 name: "Atomic File Granularity and Frontmatter Navigation"
 description: "Atomic files (one concept, 200-800 words) with rich frontmatter description outperform monolithic docs for agent retrieval precision"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://weaviate.io/blog/chunking-strategies-for-rag
   - https://arxiv.org/abs/2406.00456
@@ -14,7 +17,6 @@ related:
   - docs/context/agent-context-file-quality-over-completeness.context.md
   - docs/context/bidirectional-linking-and-knowledge-graph-primitives.context.md
 ---
-
 One atomic concept per file is the organizing principle with the strongest support across chunking research, RAG benchmarks, and Zettelkasten-derived practices. When a file contains multiple concepts, its embedding mixes signals — retrieval precision drops because the vector represents an averaged semantic space rather than a clean concept boundary.
 
 ## Why Atomicity Improves Retrieval

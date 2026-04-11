@@ -1,7 +1,10 @@
 ---
 name: Rule Library Operational Practices
-description: Five operational practices for maintaining LLM rule libraries — warn-before-enforce, 100 labeled examples, chain-of-thought reasoning, structured output, and positive+negative test cases.
-type: context
+description: "Five operational practices for maintaining LLM rule libraries — warn-before-enforce, 100 labeled examples, chain-of-thought reasoning, structured output, and positive+negative test cases."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.evidentlyai.com/llm-guide/llm-as-a-judge
   - https://semgrep.dev/blog/2020/writing-semgrep-rules-a-methodology/
@@ -14,7 +17,6 @@ related:
   - docs/context/linter-patterns-transferable-to-llm-rules.context.md
   - docs/context/rubric-specificity-and-deterministic-first-evaluation.context.md
 ---
-
 # Rule Library Operational Practices
 
 ## Key Insight

@@ -1,7 +1,10 @@
 ---
 name: Mobile Framework Selection Decision Guide
-description: Swift/Kotlin native, KMP, Flutter, and React Native each have a defensible sweet spot — framework selection is a team-and-product decision, not a technical superiority question.
-type: context
+description: "Swift/Kotlin native, KMP, Flutter, and React Native each have a defensible sweet spot — framework selection is a team-and-product decision, not a technical superiority question."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://kotlinlang.org/docs/multiplatform/native-and-cross-platform.html
   - https://www.kmpship.app/blog/kmp-vs-flutter-vs-react-native-2025
@@ -11,7 +14,6 @@ related:
   - docs/context/android-state-persistence-survival-matrix.context.md
   - docs/context/offline-first-read-write-strategy-model.context.md
 ---
-
 # Mobile Framework Selection Decision Guide
 
 Mobile framework selection is a team-and-product decision, not a technical superiority question. Swift/Kotlin native, Kotlin Multiplatform (KMP), Flutter, and React Native each have a defensible sweet spot with real tradeoffs. Benchmark comparisons between frameworks are less useful than matching a framework to team expertise and product requirements.

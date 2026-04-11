@@ -1,7 +1,10 @@
 ---
 name: "Production Reliability Gap and Multi-Agent Failures"
 description: "No single model dominates all task types; benchmark scores overestimate production reliability by 20-40%; multi-agent failure rates 41-86%"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://arxiv.org/html/2601.06112v1
   - https://arxiv.org/abs/2503.13657
@@ -12,7 +15,6 @@ related:
   - docs/context/llm-failure-modes-and-mitigations.context.md
   - docs/context/confidence-calibration-and-self-correction.context.md
 ---
-
 Two findings should anchor all production deployment decisions: benchmark scores overestimate real-world reliability by 20-40%, and no single model dominates all task types. Model selection is a routing problem, not a single-choice decision.
 
 ## The Benchmark Reliability Gap

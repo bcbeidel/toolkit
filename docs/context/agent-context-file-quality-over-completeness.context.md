@@ -1,7 +1,10 @@
 ---
 name: "Agent Context File Quality Over Completeness"
 description: "Human-optimized READMEs can actively decrease LLM performance; minimal curated context files beat verbose auto-generated ones"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://arxiv.org/html/2504.09798v2
   - https://arxiv.org/abs/2602.11988
@@ -14,7 +17,6 @@ related:
   - docs/context/instruction-capacity-and-context-file-length.context.md
   - docs/context/context-rot-and-window-degradation.context.md
 ---
-
 Human-optimized README files can actively decrease LLM performance. Providing traditional README.md alone decreased performance for DeepSeek R1 — LLMs process human-optimized formats poorly (Giordano et al., ReadMe.LLM, 2025). Minimal, curated context files outperform verbose or auto-generated ones on both task success and cost.
 
 ## The Core Evidence

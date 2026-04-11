@@ -1,7 +1,10 @@
 ---
 name: "Tool Description Quality and Consolidation"
 description: "Tool description quality is the single biggest lever for selection accuracy; consolidation (fewer, more capable tools) outperforms proliferation"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.anthropic.com/engineering/writing-tools-for-agents
   - https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools
@@ -14,7 +17,6 @@ related:
   - docs/context/mcp-vs-function-calling-tradeoffs.context.md
   - docs/context/agent-context-file-quality-over-completeness.context.md
 ---
-
 Detailed tool descriptions are the single most important factor for tool selection accuracy. This holds across Claude Code skills, MCP tools, and function calling definitions. The description is the input the model uses to decide which tool to invoke. Schema completeness matters far less than description clarity.
 
 **What a good description covers:**

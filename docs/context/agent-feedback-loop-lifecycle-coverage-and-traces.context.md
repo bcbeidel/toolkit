@@ -1,7 +1,10 @@
 ---
 name: "Agent Feedback Loop Lifecycle Coverage and Execution Traces"
 description: "Effective agent feedback loops require lifecycle coverage spanning pre-deployment, post-deployment, and continuous operation — and execution traces are the universal primitive that enables corrections to be routed to the right component."
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://arxiv.org/html/2411.13768v3
   - https://www.langchain.com/conceptual-guides/traces-start-agent-improvement-loop
@@ -12,7 +15,6 @@ related:
   - docs/context/otel-genai-span-hierarchy-and-adoption-status.context.md
   - docs/context/cot-traces-debugging-vs-stakeholder-trust.context.md
 ---
-
 ## Key Insight
 
 Execution traces are the universal primitive of structured agent improvement. Every major feedback methodology — LangChain's improvement loop, OpenAI's self-evolving pattern, EDDOps — anchors to traces. Without structured traces, corrections cannot be routed to the right component: a prompt failure, a tool interface error, and a routing logic issue look identical at the output level without trace decomposition.

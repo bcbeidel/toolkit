@@ -1,7 +1,10 @@
 ---
 name: "Data Communication: Audience Determines the Mode"
 description: "Executives need narrative + recommendation; analysts need methodology + uncertainty; operations need action + trigger. Applying storytelling mechanics to analysts introduces selection bias."
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.atscale.com/blog/essential-elements-data-storytelling/
   - https://mitsloan.mit.edu/ideas-made-to-matter/next-chapter-analytics-data-storytelling
@@ -10,7 +13,6 @@ related:
   - docs/context/agentic-ai-reliability-gap-and-agent-washing.context.md
   - docs/context/semantic-layer-as-ai-analytics-infrastructure.context.md
 ---
-
 # Data Communication: Audience Determines the Mode
 
 Communication mode must match audience. Executives need narrative plus a recommendation. Analysts need methodology, assumptions, and uncertainty. Operations teams need the specific action and the trigger condition. Using storytelling framing with analysts or general audiences actively harms communication quality by privileging narrative coherence over methodological transparency.

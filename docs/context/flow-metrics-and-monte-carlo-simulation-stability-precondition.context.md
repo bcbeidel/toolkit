@@ -1,7 +1,10 @@
 ---
 name: Flow Metrics and Monte Carlo Simulation Stability Precondition
-description: Flow metrics (WIP, cycle time, lead time, throughput) enable data-driven delivery forecasting; Monte Carlo simulation achieves 81% accuracy at the 85th percentile, but only when the system is stable — check control limits before trusting confidence intervals.
-type: context
+description: "Flow metrics (WIP, cycle time, lead time, throughput) enable data-driven delivery forecasting; Monte Carlo simulation achieves 81% accuracy at the 85th percentile, but only when the system is stable — check control limits before trusting confidence intervals."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://teachingagile.com/kanban/introduction/kanban-metrics
   - https://resources.scrumalliance.org/Article/blending-scrum-and-kanban-for-better-flow-and-predictability
@@ -12,7 +15,6 @@ related:
   - docs/context/team-topologies-coordination-and-dependency-visibility-mechanisms.context.md
   - docs/context/okr-co-creation-cascade-failure-and-structural-discipline.context.md
 ---
-
 # Flow Metrics and Monte Carlo Simulation Stability Precondition
 
 ## Key Insight

@@ -1,7 +1,10 @@
 ---
 name: Docs as Constitutional Constraints on LLM Generation
-description: Without rich documentation, LLMs default to generic patterns inappropriate for the domain; specs and context files function as constitutional constraints that bound generation toward project-specific choices.
-type: context
+description: "Without rich documentation, LLMs default to generic patterns inappropriate for the domain; specs and context files function as constitutional constraints that bound generation toward project-specific choices."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://arxiv.org/html/2602.00180v1
   - https://medium.com/lifefunk/documentation-driven-development-how-good-docs-become-your-ai-pair-programming-superpower-e0e574db2f3b
@@ -13,7 +16,6 @@ related:
   - docs/context/instruction-file-hierarchy-and-path-scoping.context.md
   - docs/context/ai-pair-programming-asymmetry-and-context-as-resource.context.md
 ---
-
 # Docs as Constitutional Constraints on LLM Generation
 
 Without documentation, AI coding assistants default to generic patterns. In a specific documented case, this meant suggesting `UserConnection` when `PeerConnection` was architecturally appropriate, and proposing REST APIs for a peer-to-peer system where REST is structurally wrong. The model did not hallucinate — it generated code that was technically correct in a generic sense but architecturally inappropriate for the specific system.

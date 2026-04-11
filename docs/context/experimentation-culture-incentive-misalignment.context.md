@@ -1,7 +1,10 @@
 ---
 name: "Experimentation Culture and Incentive Misalignment"
 description: "Incentive misalignment is the dominant failure mode for experimentation programs; performance reviews that reward wins cause p-hacking by organizational design; velocity metrics signal program activity, not maturity"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://mixpanel.com/blog/culture-of-experimentation/
   - https://www.optimizely.com/insights/blog/measuring-pillars-for-building-a-culture-of-experimentation/
@@ -10,7 +13,6 @@ sources:
 related:
   - docs/context/ab-testing-statistical-rigor-and-peeking-problem.context.md
 ---
-
 The dominant failure mode for experimentation programs is not lack of leadership buy-in, insufficient tooling, or low test velocity — it is incentive misalignment. When individual performance is evaluated on wins, teams rationally engage in p-hacking: running experiments until a favorable result appears, selectively reporting metrics where significance was achieved, stopping experiments early when the treatment looks positive, and publishing only the tests that produced wins. These behaviors are individually rational given the incentive structure and collectively destroy the statistical validity of the experimentation program. P-hacking by organizational design means the program generates confident-looking results that do not replicate.
 
 The specific behaviors that result from win-rewarding incentives: selective metric reporting (choosing which metrics to report after seeing results), early stopping on promising signals (the peeking problem as an organizational behavior, not just a statistical one), winner-only publication (creating a biased record of what the organization "learned"), and HiPPO deference (running experiments only on ideas that leadership already believes will win, then stopping experiments that contradict those beliefs). Each of these is rational from the individual's perspective and corrosive to the program's validity in aggregate.

@@ -1,7 +1,10 @@
 ---
 name: "Warehouse-Native Activation and Reverse ETL"
 description: "Direct warehouse-to-ESP/ad-platform sync (Hightouch, Census) is the 2025 dominant activation pattern; most use cases do not require sub-hourly refresh; composable CDP adds no-code marketer tooling on top"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.growthloop.com/resources/university/reverse-etl
   - https://hightouch.com/blog/cdp-vs-composable-customer-data-platform
@@ -11,7 +14,6 @@ sources:
 related:
   - docs/context/gdpr-ccpa-consent-infrastructure-structural-differences.context.md
 ---
-
 Warehouse-native activation — connecting a cloud data warehouse directly to marketing execution channels (ESPs, ad platforms, CRMs) without a separate CDP layer — is the dominant data activation pattern in 2025. Tools like Hightouch and Census implement this via reverse ETL: extract transformed segments from Snowflake, BigQuery, or Databricks, then load them into destination systems via API or batch sync. Unlike CDPs, reverse ETL tools are movement mechanisms, not storage systems. They sync SQL-defined audience segments rather than requiring a separate customer data store.
 
 The canonical composable stack is: Snowplow or RudderStack (behavioral event capture) → Snowflake, BigQuery, or Databricks (storage and transformation) → dbt (data modeling) → Hightouch or Census (activation layer). This architecture gives organizations full control over their data model, enables any-warehouse-as-source-of-truth, and avoids vendor lock-in at the storage layer. The composable CDP adds a no-code or low-code marketer interface on top — journey building, audience management, experiment targeting — to remove the SQL expertise barrier for non-technical users. Without that layer, marketers are dependent on data engineers for every segment request, which creates bottlenecks that undermine the operational agility the architecture promises.

@@ -1,7 +1,10 @@
 ---
 name: Technical Debt Detection — Static vs. Behavioral Paradigms
 description: Static analysis (SonarQube) finds theoretical debt comprehensively; behavioral hotspot analysis (CodeScene) finds active debt by actual maintenance cost; a complete stack combines both.
-type: context
+type: comparison
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.sonarsource.com/resources/library/measuring-and-identifying-code-level-technical-debt-a-practical-guide/
   - https://codescene.com/blog/measure-code-health-of-your-codebase
@@ -12,7 +15,6 @@ related:
   - docs/context/quality-ratchet-pattern-for-gradual-enforcement.context.md
   - docs/context/deterministic-vs-advisory-principle-enforcement.context.md
 ---
-
 # Technical Debt Detection — Static vs. Behavioral Paradigms
 
 Two detection paradigms dominate technical debt identification, and they measure fundamentally different things. Using only one leaves a significant blind spot.

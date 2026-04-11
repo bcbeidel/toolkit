@@ -1,7 +1,10 @@
 ---
 name: "Structural Gates on LLM Quality Checks"
 description: "Deterministic structural checks should run first and short-circuit expensive LLM-quality checks on structural failure, saving cost and preventing garbage input from reaching LLM evaluators."
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.hebbia.com/blog/evaluating-ai-agents-a-hybrid-deterministic-and-rubric-based-framework
   - https://github.com/mlflow/mlflow/issues/20827
@@ -12,7 +15,6 @@ related:
   - docs/context/validation-severity-tiers-and-confidence-decoupling.context.md
   - docs/context/validators-as-pure-queries-cqs-convention.context.md
 ---
-
 ## Key Insight
 
 Structural checks should run before LLM-quality checks in validation pipelines. When structural validation fails, there is no point invoking an LLM evaluator — the output is malformed and the semantic judgment would be meaningless. Gating on structural failure eliminates a significant portion of LLM API calls at zero quality cost.

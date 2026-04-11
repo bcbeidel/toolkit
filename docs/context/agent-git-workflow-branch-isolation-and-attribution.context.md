@@ -1,7 +1,10 @@
 ---
 name: Agent Git Workflow — Branch Isolation and Attribution
 description: Branch-per-task with draft PR and dual attribution is the settled production pattern across GitHub Copilot and Claude Code; agents cannot self-approve or merge.
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-coding-agent
   - https://docs.github.com/en/copilot/concepts/agents/cloud-agent/risks-and-mitigations
@@ -14,7 +17,6 @@ related:
   - docs/context/agent-git-safety-deterministic-enforcement-and-audit.context.md
   - docs/context/hitl-oversight-as-tuned-policy-and-reversibility-gate.context.md
 ---
-
 # Agent Git Workflow — Branch Isolation and Attribution
 
 **Branch-per-task + draft PR + human review gate is the settled production pattern.** GitHub Copilot and Claude Code converged on this independently. Agents operate on isolated branches, commit with dual attribution, and cannot self-approve or merge.

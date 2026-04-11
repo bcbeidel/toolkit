@@ -1,7 +1,10 @@
 ---
 name: LLM Code Review — Commenters Not Gatekeepers
 description: LLMs are unreliable standalone reviewers (best independent F1 19.38%); the correct architecture keeps them as first-pass commenters with human approval gates.
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://arxiv.org/html/2509.01494v1
   - https://arxiv.org/html/2505.20206v1
@@ -14,7 +17,6 @@ related:
   - docs/context/approval-gate-trust-calibration-and-overconfidence.context.md
   - docs/context/hitl-oversight-as-tuned-policy-and-reversibility-gate.context.md
 ---
-
 # LLM Code Review — Commenters Not Gatekeepers
 
 The best independently validated F1 score for AI code review on real-world change-point detection is 19.38% — achieved with PR-Review + Gemini-2.5-Pro across 11 change types. Even with multi-run aggregation (5 passes), the ceiling is still below 20%. LLM approval accuracy reaches 44.44% inaccuracy under some conditions. These numbers make autonomous merge gating a direct reliability risk.

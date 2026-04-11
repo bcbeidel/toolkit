@@ -1,7 +1,10 @@
 ---
 name: "ML vs. Statistical Methods: Sample Size Determines the Winner"
 description: "Statistical forecasting methods (Theta, Comb, ARIMA) statistically dominate ML at small sample sizes. Gradient boosting is the sound tabular default for large datasets, but not universally dominant."
-type: context
+type: comparison
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.mdpi.com/1099-4300/27/3/279
   - https://www.genpact.com/insight/the-evolution-of-forecasting-techniques-traditional-versus-machine-learning-methods
@@ -11,7 +14,6 @@ related:
   - docs/context/agentic-ai-reliability-gap-and-agent-washing.context.md
   - docs/context/bayesian-ab-testing-interpretability-not-sample-efficiency.context.md
 ---
-
 # ML vs. Statistical Methods: Sample Size Determines the Winner
 
 At small sample sizes, statistical forecasting methods statistically dominate ML across horizons. Gradient boosting is the sound default for tabular business data when datasets are large, but neural networks can exceed it on smooth-feature, large-sample tasks. There is no universal winner — the right choice depends on dataset size, feature distribution, and nonlinearity.

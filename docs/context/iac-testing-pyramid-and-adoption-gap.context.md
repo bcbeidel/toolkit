@@ -1,7 +1,10 @@
 ---
 name: IaC Testing Pyramid and Adoption Gap
 description: 86% of enterprises use Terraform in production but only 43% have automated testing — the four-layer testing pyramid is well-known but critically underdeployed.
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://calmops.com/devops/infrastructure-testing-terraform-terratest-opa/
   - https://www.devopsness.com/blog/infrastructure-testing-strategies-validating-iac
@@ -10,7 +13,6 @@ related:
   - docs/context/iac-tool-selection-by-team-profile.context.md
   - docs/context/pull-based-gitops-security-model-and-tool-selection.context.md
 ---
-
 # IaC Testing Pyramid and Adoption Gap
 
 Infrastructure testing is critically underdeployed. The HashiCorp 2024 State of Cloud Strategy Survey found 86% of enterprises use Terraform in production, but only 43% have automated testing for their Terraform modules. The gap exists despite a well-understood testing pyramid.

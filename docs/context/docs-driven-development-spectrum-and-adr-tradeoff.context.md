@@ -1,7 +1,10 @@
 ---
 name: Docs-Driven Development — Spectrum and ADR Tradeoff
 description: DDD is a spectrum from Spec-First to Spec-as-Source; ADRs are the high-confidence lightweight alternative delivering organizational memory without the full synchronization burden.
-type: context
+type: comparison
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://arxiv.org/html/2602.00180v1
   - https://martinfowler.com/bliki/ArchitectureDecisionRecord.html
@@ -14,7 +17,6 @@ related:
   - docs/context/specification-format-taxonomy-adr-rfc-sdd.context.md
   - docs/context/agent-context-file-quality-over-completeness.context.md
 ---
-
 # Docs-Driven Development — Spectrum and ADR Tradeoff
 
 Documentation-Driven Development (DDD) is writing documentation before the corresponding implementation. The spectrum ranges from a single README to executable specifications where tests fail if code diverges. The form factor determines the overhead and synchronization burden.

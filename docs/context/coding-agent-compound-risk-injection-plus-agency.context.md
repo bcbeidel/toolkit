@@ -1,7 +1,10 @@
 ---
 name: Coding Agent Compound Risk — Injection Plus Excessive Agency
 description: LLM01 (Prompt Injection) and LLM06 (Excessive Agency) combine into a compound risk where successful injection reaches excessive permissions — least privilege is the last line of defense.
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://genai.owasp.org/llmrisk/llm01-prompt-injection/
   - https://www.firetail.ai/blog/llm06-excessive-agency
@@ -13,7 +16,6 @@ related:
   - docs/context/llm-agent-sdl-maturity-and-best-practice-composite.context.md
   - docs/context/mcp-security-annotations-and-limitations.context.md
 ---
-
 # Coding Agent Compound Risk — Injection Plus Excessive Agency
 
 ## Key Insight

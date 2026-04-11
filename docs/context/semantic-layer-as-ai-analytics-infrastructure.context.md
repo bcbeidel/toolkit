@@ -1,7 +1,10 @@
 ---
 name: "Semantic Layer as AI Analytics Infrastructure"
 description: "Semantic layer is a prerequisite for reliable NLQ and text-to-SQL. AI systems using MetricFlow achieved 83% accuracy on addressable questions vs. ~15% on raw schemas. MetricFlow's core principle is deterministic metrics — not LLM-guessed joins."
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.getdbt.com/blog/open-source-metricflow-governed-metrics
   - https://docs.getdbt.com/docs/use-dbt-semantic-layer/dbt-sl
@@ -16,7 +19,6 @@ related:
   - docs/context/agentic-ai-reliability-gap-and-agent-washing.context.md
   - docs/context/data-communication-audience-modes.context.md
 ---
-
 # Semantic Layer as AI Analytics Infrastructure
 
 A governed semantic layer is a prerequisite for reliable NLQ and text-to-SQL — not an optional enhancement. Text-to-SQL on raw enterprise schemas achieves approximately 10–20% accuracy in practice despite 85%+ benchmark performance. AI systems using MetricFlow's semantic layer achieved 83% accuracy on addressable questions. MetricFlow's core design principle: metrics must be deterministic, not LLM-guessed.

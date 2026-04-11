@@ -1,7 +1,10 @@
 ---
 name: Offline-First Read/Write Strategy Model
-description: Offline-first architecture requires explicit selection of read strategy (3 options) and write strategy (2 options) — conflict resolution must be chosen explicitly, not deferred.
-type: context
+description: "Offline-first architecture requires explicit selection of read strategy (3 options) and write strategy (2 options) — conflict resolution must be chosen explicitly, not deferred."
+type: concept
+confidence: medium
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://docs.flutter.dev/app-architecture/design-patterns/offline-first
   - https://dev.to/odunayo_dada/offline-first-mobile-app-architecture-syncing-caching-and-conflict-resolution-518n
@@ -10,7 +13,6 @@ related:
   - docs/context/mobile-mvvm-mvi-clean-architecture-selection.context.md
   - docs/context/android-state-persistence-survival-matrix.context.md
 ---
-
 # Offline-First Read/Write Strategy Model
 
 Offline-first is not just a caching decision — it is an architecture decision about read behavior, write behavior, and conflict resolution. Each strategy has distinct UX and consistency tradeoffs. Conflict resolution must be chosen explicitly before implementation; it cannot be added as an afterthought without restructuring the sync layer.

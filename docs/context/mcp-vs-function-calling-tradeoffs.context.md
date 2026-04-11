@@ -1,7 +1,10 @@
 ---
 name: "MCP vs Function Calling Tradeoffs"
 description: "MCP solves M×N→M+N with dynamic discovery and reuse; function calling embeds schemas per-request per-vendor — distinct coupling, reuse, and maintenance tradeoffs"
-type: context
+type: comparison
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://modelcontextprotocol.io/specification/2025-11-25/server/tools
   - https://www.descope.com/blog/post/mcp-vs-function-calling
@@ -14,7 +17,6 @@ related:
   - docs/context/mcp-security-annotations-and-limitations.context.md
   - docs/context/production-reliability-gap-and-multi-agent-failures.context.md
 ---
-
 Function calling and MCP are not alternatives to evaluate and pick one — they solve different scaling problems and are both used in production systems.
 
 **Function calling** embeds tool definitions directly in every LLM API request. The tools go with the request; the model returns tool calls; the application handles execution and feeds results back. Coupling is tight: tool definitions are part of the application, not separately deployable services. Each provider has an incompatible schema format (OpenAI uses `parameters`, Anthropic uses `input_schema`, Gemini uses Protocol Buffer-style `types.Schema`). Adding a new model integration requires rewriting tool definitions.

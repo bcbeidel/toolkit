@@ -1,7 +1,10 @@
 ---
 name: LLM Context Credential Leakage and Sanitization
 description: Debug logging into context windows is the dominant credential leakage vector (73.5% of cases) — stdout sanitization and runtime-only credential retrieval are the top controls.
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://arxiv.org/html/2604.03070
   - https://hivetrail.com/blog/prevent-api-key-pii-leaks-llm-prompts
@@ -12,7 +15,6 @@ related:
   - docs/context/prompt-injection-architectural-defense-patterns.context.md
   - docs/context/llm-agent-sdl-maturity-and-best-practice-composite.context.md
 ---
-
 # LLM Context Credential Leakage and Sanitization
 
 ## Key Insight

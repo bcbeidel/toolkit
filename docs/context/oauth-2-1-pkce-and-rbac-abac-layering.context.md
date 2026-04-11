@@ -1,7 +1,10 @@
 ---
-name: OAuth 2.1, PKCE, and RBAC/ABAC Layering
+name: "OAuth 2.1, PKCE, and RBAC/ABAC Layering"
 description: OAuth 2.1 requires PKCE for all Authorization Code flows and deprecates Implicit and Password grants; use RBAC at the gateway for coarse checks and ABAC at the resource level for fine-grained policy.
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://datatracker.ietf.org/doc/rfc9700/
   - https://microservices.io/post/architecture/2025/04/25/microservices-authn-authz-part-1-introduction.html
@@ -11,7 +14,6 @@ related:
   - docs/context/api-backwards-compatibility-and-deprecation-protocol.context.md
   - docs/context/microservices-sizing-ddd-boundaries-and-default-monolith.context.md
 ---
-
 # OAuth 2.1, PKCE, and RBAC/ABAC Layering
 
 RFC 9700 (IETF, 2025) formalizes current OAuth security best practices. PKCE is now required for all Authorization Code flows. The Implicit and Password grant flows are deprecated entirely. Access tokens should expire in 15 minutes or less.

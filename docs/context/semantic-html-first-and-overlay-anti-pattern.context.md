@@ -1,7 +1,10 @@
 ---
 name: Semantic HTML First and Overlay Anti-Pattern
-description: Use semantic HTML elements before ARIA; overlays (accessiBe, UserWay) do not achieve WCAG compliance and introduce legal risk — the FTC fined accessiBe $1M in 2025.
-type: context
+description: "Use semantic HTML elements before ARIA; overlays (accessiBe, UserWay) do not achieve WCAG compliance and introduce legal risk — the FTC fined accessiBe $1M in 2025."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.w3.org/WAI/ARIA/apg/
   - https://www.accesify.io/blog/accessibility-design-systems-component-libraries/
@@ -10,7 +13,6 @@ related:
   - docs/context/wcag-2-2-legal-compliance-targets-and-new-aa-criteria.context.md
   - docs/context/accessibility-automation-coverage-ceiling-and-manual-testing-floor.context.md
 ---
-
 # Semantic HTML First and Overlay Anti-Pattern
 
 ## Key Insight

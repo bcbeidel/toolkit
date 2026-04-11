@@ -1,7 +1,10 @@
 ---
 name: "Agent Improvement Maturity Gradient"
 description: "Agent improvement follows a three-stage maturity gradient from informal prompt iteration through minimal production sampling to full EDDOps lifecycle coverage — with formal eval infrastructure only necessary after informal approaches produce diminishing returns."
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://arxiv.org/html/2411.13768v3
   - https://medium.com/@alexgidiotis_96550/a-minimal-feedback-loop-for-llm-applications-aecfaede98e1
@@ -12,7 +15,6 @@ related:
   - docs/context/implicit-behavioral-signals-as-correction-input.context.md
   - docs/context/eval-pipeline-ci-cd-integration-and-adoption-gap.context.md
 ---
-
 ## Key Insight
 
 Agent improvement is not a single architecture but a maturity gradient. Informal prompt iteration is appropriate — and often optimal — at early stages. Formal eval infrastructure is necessary only after informal approaches produce diminishing returns or failures become hard to attribute. Jumping to full EDDOps infrastructure at Stage 1 wastes engineering capacity on tooling rather than learning.

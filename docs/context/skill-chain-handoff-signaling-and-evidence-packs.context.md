@@ -1,7 +1,10 @@
 ---
 name: "Skill Chain Handoff Signaling and Evidence Packs"
 description: "Every skill boundary needs three elements: closure signal, intent preview, and provenance tag; confidence scores cause overreliance not calibration; evidence packs beat confidence scores; approximate language beats numerical precision."
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.mindstudio.ai/blog/claude-code-skill-collaboration-chaining-workflows
   - https://learn.microsoft.com/en-us/microsoft-copilot-studio/advanced-hand-off
@@ -19,7 +22,6 @@ related:
   - docs/context/skill-chain-human-control-and-interruption-design.context.md
   - docs/context/skill-chain-hitl-patterns-and-cli-translation-gap.context.md
 ---
-
 # Skill Chain Handoff Signaling and Evidence Packs
 
 **Do not surface a confidence percentage at approval gates. Evidence packs beat confidence scores.** Automation bias research shows that confidence signals cause overreliance — users scrutinize less when AI appears confident, not more. The goal at a skill handoff is a genuine decision moment, not a checkbox interaction.

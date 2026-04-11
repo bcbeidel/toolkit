@@ -1,7 +1,10 @@
 ---
 name: Agentic Planning — Hybrid Global-Plan / Local ReAct
-description: Production systems converge on a "plan globally, act locally" hybrid combining structured upfront plans with ReAct-style adaptive execution; dynamic replanning after each executor step is the architectural direction of current research.
-type: context
+description: "Production systems converge on a \"plan globally, act locally\" hybrid combining structured upfront plans with ReAct-style adaptive execution; dynamic replanning after each executor step is the architectural direction of current research."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.anthropic.com/research/building-effective-agents
   - https://arxiv.org/abs/2305.18323
@@ -15,7 +18,6 @@ related:
   - docs/context/agentic-resilience-infrastructure-primitives.context.md
   - docs/context/agent-memory-tier-taxonomy-and-implementation-gaps.context.md
 ---
-
 # Agentic Planning — Hybrid Global-Plan / Local ReAct
 
 **Production systems converge on "plan globally, act locally"**: structure major stages upfront, use ReAct-style adaptive execution within each stage. This combines planning's strategic coherence with ReAct's tactical flexibility.

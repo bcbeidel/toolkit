@@ -1,7 +1,10 @@
 ---
 name: "Instruction File Non-Inferable Specificity"
 description: "Rules that state only what an agent cannot determine from reading the codebase add value; rules restating model defaults or code-readable conventions waste tokens without changing behavior"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://code.claude.com/docs/en/best-practices
   - https://www.humanlayer.dev/blog/writing-a-good-claude-md
@@ -13,7 +16,6 @@ related:
   - docs/context/instruction-file-authoring-anti-patterns.context.md
   - docs/context/instruction-file-lifecycle-and-pruning.context.md
 ---
-
 # Instruction File Non-Inferable Specificity
 
 Non-inferable specificity is the decisive quality signal for instruction files. A rule earns its tokens only if it states something an agent cannot determine by reading the codebase — custom commands, non-default conventions, architecture constraints, environment quirks. Rules that restate model defaults or conventions already visible in code consume context without changing behavior.

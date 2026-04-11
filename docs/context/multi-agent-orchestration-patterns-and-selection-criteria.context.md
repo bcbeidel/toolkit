@@ -1,7 +1,10 @@
 ---
 name: Multi-Agent Orchestration Patterns and Selection Criteria
-description: Five orchestration patterns (orchestrator-worker, hierarchical, pipeline, mesh, swarm) have distinct tradeoffs; most production systems combine them, and qualitative fit criteria are high-confidence but quantitative thresholds are not.
-type: context
+description: "Five orchestration patterns (orchestrator-worker, hierarchical, pipeline, mesh, swarm) have distinct tradeoffs; most production systems combine them, and qualitative fit criteria are high-confidence but quantitative thresholds are not."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.anthropic.com/research/building-effective-agents
   - https://blog.langchain.com/langgraph-multi-agent-workflows/
@@ -14,7 +17,6 @@ related:
   - docs/context/agentic-planning-hybrid-global-plan-local-react.context.md
   - docs/context/skill-chain-sequential-and-recursive-design-rules.context.md
 ---
-
 # Multi-Agent Orchestration Patterns and Selection Criteria
 
 **Five patterns are documented in the literature. The qualitative tradeoffs are high-confidence (T1/T3 sources converge); specific numeric thresholds are low-confidence (T5 single source).** Use pattern descriptions for architecture decisions; treat the numbers as rough intuition.

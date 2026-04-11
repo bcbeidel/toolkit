@@ -1,7 +1,10 @@
 ---
 name: Quality Ratchet Pattern for Gradual Enforcement
-description: Version-control a per-file, per-rule violation baseline in TSV format. CI blocks merges that increase any count; fixes reduce it. Gradual quality improvement without blocking velocity.
-type: context
+description: "Version-control a per-file, per-rule violation baseline in TSV format. CI blocks merges that increase any count; fixes reduce it. Gradual quality improvement without blocking velocity."
+type: concept
+confidence: medium
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.notion.com/blog/how-we-evolved-our-code-notions-ratcheting-system-using-custom-eslint-rules
 related:
@@ -10,7 +13,6 @@ related:
   - docs/context/rule-library-operational-practices.context.md
   - docs/context/rule-system-failure-modes-fatigue-and-instability.context.md
 ---
-
 # Quality Ratchet Pattern for Gradual Enforcement
 
 ## Key Insight

@@ -1,7 +1,10 @@
 ---
 name: "LLM Failure Modes and Mitigations"
 description: "Sycophancy, instruction attenuation, hallucination, mode collapse require architectural countermeasures; prompt-level fixes yield only ~14% improvement"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://arxiv.org/abs/2411.15287
   - https://arxiv.org/html/2509.21305v1
@@ -15,7 +18,6 @@ related:
   - docs/context/llm-as-judge-biases-and-mitigations.context.md
   - docs/context/instruction-capacity-and-context-file-length.context.md
 ---
-
 The most critical finding on LLM failure modes: tactical prompt-level fixes yield only approximately 14% improvement in multi-agent failure rates. Structural redesigns — architectural changes, deterministic orchestration — are required for meaningful reliability gains (MAST, UC Berkeley, 2025).
 
 ## Sycophancy

@@ -1,7 +1,10 @@
 ---
 name: "Record-and-Replay Fixture Drift and Metadata Verification"
 description: "Record-and-replay cassettes go stale when model version, tool API, or prompt state changes — without metadata verification, replay tests pass while the live system has diverged from the recording."
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://arxiv.org/abs/2505.17716
   - https://www.sakurasky.com/blog/missing-primitives-for-trustworthy-ai-part-8/
@@ -10,7 +13,6 @@ related:
   - docs/context/agent-testing-pyramid-uncertainty-tolerance-layers.context.md
   - docs/context/eval-pipeline-ci-cd-integration-and-adoption-gap.context.md
 ---
-
 ## Key Insight
 
 Record-and-replay is the most-cited technique for bridging determinism and real model behavior in agent testing. Its critical vulnerability: cassette files record against a specific model version, tool API version, and prompt state. When any of those change, the replay environment has silently diverged from the recording — and the test still passes.

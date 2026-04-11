@@ -1,7 +1,10 @@
 ---
 name: "GEO and AI Overviews as SEO Context Shift"
 description: "Generative Engine Optimization extends SEO rather than replacing it; 90% of AI citations come from Google's top-20; AI Overviews reduce CTR ~61% for exposed queries but being cited yields +35% organic and +91% paid CTR"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.seerinteractive.com/insights/aio-impact-on-google-ctr-september-2025-update
   - https://backlinko.com/generative-engine-optimization-geo
@@ -9,7 +12,6 @@ sources:
 related:
   - docs/context/seo-floor-constraints-cwv-eeat-structured-data.context.md
 ---
-
 GEO (Generative Engine Optimization) and AEO (Answer Engine Optimization) describe optimizing content so AI systems cite and surface it in responses. The key finding from the evidence base is that GEO is additive to traditional SEO, not a replacement: AI citation is downstream of traditional ranking authority. AI systems preferentially draw from sources that already rank well in conventional search. This means the tactical work — topical authority, structured data, authoritative backlinks, EEAT signals — remains the foundation. GEO tactics are standard content quality practices operating under a new label.
 
 AI Overviews grew from 6.49% of queries in January 2025 to a peak of 24.61% in July 2025, settling at 15.69% in November 2025 per Semrush's study. By January 2026, AIO exposure reached 25.8% of US searches, with informational queries at 39.4% exposure and e-commerce queries at only 4%. The CTR impact on exposed queries is significant: Seer Interactive's September 2025 study found organic CTR dropped 61% for queries triggering AI Overviews (from 1.76% to 0.61%). However, the causal interpretation requires care — text ads independently captured 7-13 percentage points of click share, and non-AIO queries also fell 41% year-over-year, suggesting market-wide behavioral shift rather than AIO alone.

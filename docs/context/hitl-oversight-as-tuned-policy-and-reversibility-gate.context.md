@@ -1,7 +1,10 @@
 ---
 name: HITL Oversight as Tuned Policy and Reversibility Gate
-description: Human-in-the-loop oversight is a spectrum calibrated by reversibility, stakes, and affordances — not a binary switch; requiring approval for every action creates friction without proportional safety benefit.
-type: context
+description: "Human-in-the-loop oversight is a spectrum calibrated by reversibility, stakes, and affordances — not a binary switch; requiring approval for every action creates friction without proportional safety benefit."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.anthropic.com/research/measuring-agent-autonomy
   - https://www.anthropic.com/news/our-framework-for-developing-safe-and-trustworthy-agents
@@ -17,7 +20,6 @@ related:
   - docs/context/skill-chain-human-control-and-interruption-design.context.md
   - docs/context/skill-chain-hitl-patterns-and-cli-translation-gap.context.md
 ---
-
 # HITL Oversight as Tuned Policy and Reversibility Gate
 
 **Requiring humans to approve every action creates friction without necessarily producing safety benefits.** Anthropic's empirical finding (millions of real Claude Code interactions): the correct model is trustworthy visibility plus easy intervention — positioning humans to monitor and interrupt, not to approve each step.

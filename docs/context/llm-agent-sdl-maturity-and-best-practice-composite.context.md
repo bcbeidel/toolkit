@@ -1,7 +1,10 @@
 ---
 name: LLM Agent SDL Maturity and Best-Practice Composite
-description: No mature SDL standard exists for LLM agents — best practice composites NIST 800-218A, OWASP LLM Top 10, and MITRE ATLAS with evaluation-driven development and adaptive red teaming.
-type: context
+description: "No mature SDL standard exists for LLM agents — best practice composites NIST 800-218A, OWASP LLM Top 10, and MITRE ATLAS with evaluation-driven development and adaptive red teaming."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://iain.so/security-for-production-ai-agents-in-2026
   - https://www.giskard.ai/knowledge/risk-assessment-for-llms-and-ai-agents-owasp-mitre-atlas-and-nist-ai-rmf-explained
@@ -14,7 +17,6 @@ related:
   - docs/context/agent-generated-code-security-patterns.context.md
   - docs/context/llm-context-credential-leakage-and-sanitization.context.md
 ---
-
 # LLM Agent SDL Maturity and Best-Practice Composite
 
 ## Key Insight

@@ -1,7 +1,10 @@
 ---
-name: Microservices Sizing, DDD Boundaries, and the Default Monolith
+name: "Microservices Sizing, DDD Boundaries, and the Default Monolith"
 description: Start with a modular monolith; extract microservices only when team scaling or independent deployment requirements explicitly justify the operational cost.
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://learn.microsoft.com/en-us/azure/architecture/microservices/model/tactical-domain-driven-design
   - https://microservices.io/patterns/data/event-driven-architecture.html
@@ -12,7 +15,6 @@ related:
   - docs/context/saga-orchestration-vs-choreography-default.context.md
   - docs/context/distributed-resilience-stack-circuit-breaker-retry-jitter.context.md
 ---
-
 # Microservices Sizing, DDD Boundaries, and the Default Monolith
 
 The most common microservices mistake is adopting them too early. A 2025 CNCF survey found 42% of microservices adopters have consolidated services back into larger units, reflecting the real operational cost differential. The correct default is a modular monolith with clear internal boundaries; extract services when team scaling or independent deployment requirements explicitly justify it.

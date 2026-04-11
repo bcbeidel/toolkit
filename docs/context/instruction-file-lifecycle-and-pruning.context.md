@@ -1,7 +1,10 @@
 ---
 name: "Instruction File Lifecycle and Pruning"
 description: "Treat instruction files like code: version in git, add rules when mistakes recur, prune on schedule using a four-tier audit filter — stale rules actively mislead agents and are worse than no rules"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://code.claude.com/docs/en/best-practices
   - https://cursor.com/blog/agent-best-practices
@@ -14,7 +17,6 @@ related:
   - docs/context/instruction-file-extraction-techniques.context.md
   - docs/context/instruction-file-authoring-anti-patterns.context.md
 ---
-
 # Instruction File Lifecycle and Pruning
 
 Treat instruction files like code: version in git, review changes in PRs, and prune on a schedule. A stale rules file is worse than no rules file — it tells agents to do things that are no longer true about the project, actively misleading rather than guiding.

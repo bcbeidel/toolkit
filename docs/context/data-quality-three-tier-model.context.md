@@ -1,7 +1,10 @@
 ---
 name: Data Quality Three-Tier Model
-description: Data quality requires three distinct tiers — build-time tests, scheduled monitoring, and runtime observability — but most teams operate only the first.
-type: context
+description: "Data quality requires three distinct tiers — build-time tests, scheduled monitoring, and runtime observability — but most teams operate only the first."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.sparvi.io/blog/great-expectations-vs-dbt-tests
   - https://www.elementary-data.com/post/data-contracts
@@ -11,7 +14,6 @@ related:
   - docs/context/data-contracts-scope-and-incentive-alignment.context.md
   - docs/context/elt-vs-etl-workload-boundary.context.md
 ---
-
 # Data Quality Three-Tier Model
 
 Most teams treat data quality as a testing problem: validate at build time and move on. Production pipelines require two additional tiers — scheduled monitoring and runtime observability — that test-time validation cannot cover.

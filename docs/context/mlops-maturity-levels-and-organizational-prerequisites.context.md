@@ -1,7 +1,10 @@
 ---
 name: MLOps Maturity Levels and Organizational Prerequisites
-description: The Google L0/L1/L2 maturity model describes a destination, not a roadmap — most organizations never reach Level 2; the barriers are organizational, not technical.
-type: context
+description: "The Google L0/L1/L2 maturity model describes a destination, not a roadmap — most organizations never reach Level 2; the barriers are organizational, not technical."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://docs.cloud.google.com/architecture/mlops-continuous-delivery-and-automation-pipelines-in-machine-learning
   - https://arxiv.org/html/2503.15577v1
@@ -10,7 +13,6 @@ related:
   - docs/context/feature-store-dual-store-pattern-and-scale-threshold.context.md
   - docs/context/ml-drift-detection-methods-and-retraining-trigger-hierarchy.context.md
 ---
-
 # MLOps Maturity Levels and Organizational Prerequisites
 
 The Google MLOps maturity model is widely cited but frequently misapplied. Organizations often treat it as a linear progression to follow rather than a description of different operating modes. Most never reach Level 2 — and that may be the correct outcome.

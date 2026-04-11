@@ -1,7 +1,10 @@
 ---
 name: "Skill Chaining: Definition and Vocabulary"
 description: "No settled standard exists for 'skill chaining'; practitioner consensus converges on coordinated sequential outputs, while the 2025 academic SoK four-tuple definition is stricter and wos SKILL.md satisfies it only partially."
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.anthropic.com/research/building-effective-agents
   - https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/ai-agent-design-patterns
@@ -13,7 +16,6 @@ related:
   - docs/context/skill-handoff-contracts-and-state-design.context.md
   - docs/context/skill-chain-sequential-and-recursive-design-rules.context.md
 ---
-
 # Skill Chaining: Definition and Vocabulary
 
 **The field is mid-consolidation — no single authoritative standard exists (MODERATE confidence).** The dominant practical vocabulary is "prompt chaining" or "sequential orchestration": decomposing a task into subtasks where each LLM call processes the output of the previous one. The terminology varies across frameworks; the underlying concept is stable.

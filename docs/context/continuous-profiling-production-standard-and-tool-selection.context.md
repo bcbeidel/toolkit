@@ -1,7 +1,10 @@
 ---
 name: Continuous Profiling Production Standard and Tool Selection
-description: Continuous profiling belongs in production, not just local dev. Language-specific profilers add 2–5% CPU overhead (sampling-rate-dependent); eBPF-based tools add less than 1% with zero instrumentation required.
-type: context
+description: "Continuous profiling belongs in production, not just local dev. Language-specific profilers add 2–5% CPU overhead (sampling-rate-dependent); eBPF-based tools add less than 1% with zero instrumentation required."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://grafana.com/docs/pyroscope/latest/introduction/continuous-profiling/
   - https://uptrace.dev/tools/continuous-profiling-tools
@@ -11,7 +14,6 @@ related:
   - docs/context/percentile-approximation-hazard-and-histogram-based-slo-metrics.context.md
   - docs/context/opentelemetry-overhead-and-sampling-strategy-timing.context.md
 ---
-
 # Continuous Profiling Production Standard and Tool Selection
 
 ## Key Insight

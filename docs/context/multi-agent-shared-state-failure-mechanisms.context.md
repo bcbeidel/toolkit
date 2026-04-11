@@ -1,7 +1,10 @@
 ---
 name: Multi-Agent Shared State Failure Mechanisms
-description: Shared state is the central reliability surface in multi-agent systems; four cascading failure mechanisms (memory poisoning, lost updates, retry storms, deadlocks) are well-established and require defense-in-depth.
-type: context
+description: "Shared state is the central reliability surface in multi-agent systems; four cascading failure mechanisms (memory poisoning, lost updates, retry storms, deadlocks) are well-established and require defense-in-depth."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://arxiv.org/abs/2503.13657
   - https://arxiv.org/abs/2601.13671
@@ -15,7 +18,6 @@ related:
   - docs/context/agentic-fault-taxonomy-and-interface-mismatch-pattern.context.md
   - docs/context/agentic-resilience-infrastructure-primitives.context.md
 ---
-
 # Multi-Agent Shared State Failure Mechanisms
 
 **Shared state is the central reliability surface in multi-agent systems.** The failure mechanisms are conceptually well-established and confirmed by both T1 architecture guidance (Anthropic, Microsoft) and T2/T3 research (MAST study, UC Berkeley / ICLR 2025). Quantitative statistics on failure rates come from vendor sources and should be treated as directional upper bounds.

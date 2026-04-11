@@ -1,7 +1,10 @@
 ---
 name: "Eval Pipeline CI/CD Integration and the Adoption Gap"
 description: "Golden datasets and CI/CD eval pipelines enable continuous regression detection for LLM systems — but only 52% of organizations run offline evals at all, making CI/CD integration an achievable architecture rather than current industry norm."
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.braintrust.dev/articles/best-ai-evals-tools-cicd-2025
   - https://www.promptfoo.dev/docs/integrations/ci-cd/
@@ -13,7 +16,6 @@ related:
   - docs/context/llm-judge-as-trend-detector-not-hard-gate.context.md
   - docs/context/record-replay-fixture-drift-and-metadata-verification.context.md
 ---
-
 ## Key Insight
 
 Continuous regression detection via eval pipelines is architecturally achievable and well-tooled. However, the LangChain State of AI Agents report (2026, N=1,340) shows only 52.4% of organizations run offline evals at all. CI/CD-integrated eval is a subset of that. "Achievable" and "adopted as the norm" are different claims — the evidence supports the former.

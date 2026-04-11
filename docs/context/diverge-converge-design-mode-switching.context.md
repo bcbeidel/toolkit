@@ -1,7 +1,10 @@
 ---
 name: Diverge-Converge Design Mode Switching
-description: Effective design requires switchable divergent and convergent modes with preserved history, individual-first ideation, and successive cycles — rigid phase-gating amplifies design fixation.
-type: context
+description: "Effective design requires switchable divergent and convergent modes with preserved history, individual-first ideation, and successive cycles — rigid phase-gating amplifies design fixation."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://arxiv.org/html/2512.18388
   - https://essenceofsoftware.com/tutorials/design-general/diverge-converge/
@@ -12,7 +15,6 @@ related:
   - docs/context/llm-brainstorming-exploration-exploitation-patterns.context.md
   - docs/context/design-spec-as-tradeoff-document.context.md
 ---
-
 # Diverge-Converge Design Mode Switching
 
 ## Key Insight

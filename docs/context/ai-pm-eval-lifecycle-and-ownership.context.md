@@ -1,7 +1,10 @@
 ---
 name: AI PM Eval Lifecycle and Ownership
-description: PMs must own model quality through a three-stage eval lifecycle (experimentation → testing → production); layered eval pipelines combine deterministic, statistical, and LLM-as-judge evaluators.
-type: context
+description: "PMs must own model quality through a three-stage eval lifecycle (experimentation → testing → production); layered eval pipelines combine deterministic, statistical, and LLM-as-judge evaluators."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://labs.adaline.ai/p/llm-evals-are-product-managers-secret-weapon
   - https://www.productboard.com/blog/ai-evals-for-product-managers/
@@ -12,7 +15,6 @@ related:
   - docs/context/ai-adoption-governance-lag.context.md
   - docs/context/content-governance-scale-threshold.context.md
 ---
-
 # AI PM Eval Lifecycle and Ownership
 
 PMs building AI products must own model quality — not as a courtesy to engineering, but as a core product responsibility. Eval-driven development is the most defensible shift in AI PM practice: PMs define success criteria for model behavior, translate statistical metrics into business language, and enforce release gates. Writing good evals is to AI product management what A/B testing was to digital product management a decade ago — it is now mission-critical infrastructure.

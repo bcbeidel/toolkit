@@ -1,7 +1,10 @@
 ---
 name: Golden Path Design Principles and Failure Modes
-description: Golden paths must be co-designed with engineering teams, voluntary, and transparent — documentation length is a signal of path complexity that needs fixing.
-type: context
+description: "Golden paths must be co-designed with engineering teams, voluntary, and transparent — documentation length is a signal of path complexity that needs fixing."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://jellyfish.co/library/platform-engineering/golden-paths/
   - https://www.infoworld.com/article/4073159/key-principles-of-a-successful-internal-developer-platform.html
@@ -11,7 +14,6 @@ related:
   - docs/context/platform-engineering-as-load-reduction-discipline.context.md
   - docs/context/backstage-adoption-gap-and-build-vs-buy-framing.context.md
 ---
-
 # Golden Path Design Principles and Failure Modes
 
 A golden path is a pre-defined, opinionated, and supported way of building, deploying, and operating software. Done well, it removes friction. Done poorly, it recreates ticket-ops behind a self-service UI.

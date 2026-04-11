@@ -1,7 +1,10 @@
 ---
 name: Performance Test Type Taxonomy and Environment Parity Prerequisite
-description: The six-type performance test taxonomy (smoke, average-load, stress, spike, soak, breakpoint) is industry-standard; each type gates the next. Environment parity — not threshold calibration — is the real prerequisite for reliable CI performance gating.
-type: context
+description: "The six-type performance test taxonomy (smoke, average-load, stress, spike, soak, breakpoint) is industry-standard; each type gates the next. Environment parity — not threshold calibration — is the real prerequisite for reliable CI performance gating."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://grafana.com/docs/k6/latest/testing-guides/test-types/
   - https://www.locust.cloud/blog/5-essential-load-test-profiles/
@@ -13,7 +16,6 @@ related:
   - docs/context/continuous-profiling-production-standard-and-tool-selection.context.md
   - docs/context/ci-pipeline-test-layer-ordering-and-quality-gate-calibration.context.md
 ---
-
 # Performance Test Type Taxonomy and Environment Parity Prerequisite
 
 ## Key Insight

@@ -1,7 +1,10 @@
 ---
 name: "RAG Hallucination and the Retrieval Quality Gap"
 description: "Production RAG hallucination rates are 17–33% in specialized domains. Retrieval quality and chunking are the bottleneck, not model choice. RAG shifts the hallucination problem rather than solving it."
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://techcrunch.com/2024/05/04/why-rag-wont-solve-generative-ais-hallucination-problem/
   - https://hackernoon.com/designing-production-ready-rag-pipelines-tackling-latency-hallucinations-and-cost-at-scale
@@ -13,7 +16,6 @@ related:
   - docs/context/ml-vs-statistical-methods-sample-size-tradeoff.context.md
   - docs/context/semantic-layer-as-ai-analytics-infrastructure.context.md
 ---
-
 # RAG Hallucination and the Retrieval Quality Gap
 
 RAG does not solve the hallucination problem — it moves it from the model to the retrieval pipeline. A Stanford Law evaluation found 17–33% hallucination rates across leading legal RAG tools despite retrieval. Chunking quality and corpus curation are the primary levers for reliability, not model selection.

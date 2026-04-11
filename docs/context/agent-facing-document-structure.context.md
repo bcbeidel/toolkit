@@ -1,7 +1,10 @@
 ---
 name: "Agent-Facing Document Structure"
 description: "Documents for LLM consumption: key insights at start and end, answer-first structure, explicit paths/commands over prose"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
   - https://arxiv.org/abs/2307.03172
@@ -13,7 +16,6 @@ related:
   - docs/context/instruction-capacity-and-context-file-length.context.md
   - docs/context/agent-context-file-quality-over-completeness.context.md
 ---
-
 The structural rules for agent-facing documents differ fundamentally from human-facing documentation. The core principle: place key insights at the beginning and end; treat the middle as a dead zone for anything critical.
 
 ## Answer-First Structure

@@ -1,7 +1,10 @@
 ---
 name: "Mental Models for Software Decisions: Practitioner Consensus vs. Empirical Evidence"
 description: "Mental models (second-order thinking, inversion, first principles) have strong practitioner consensus and intuitive merit, but no T1 empirical studies establish whether applying them improves software engineering outcomes at scale."
-type: context
+type: comparison
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://newsletter.techworld-with-milan.com/p/how-to-make-better-decisions-with
   - https://dev.to/_b8d89ece3338719863cb03/7-mental-models-that-made-me-a-better-software-architect-30d8
@@ -11,7 +14,6 @@ sources:
 related:
   - docs/context/llm-agents-need-architecture-not-instructions-for-frameworks.context.md
 ---
-
 ## Key Insight
 
 A consistent portfolio of mental models appears across practitioner software engineering literature: second-order thinking, inversion, first principles, Occam's Razor, Margin of Safety, and Circle of Competence. No T1/T2 empirical studies establish whether applying these models actually improves software engineering outcomes at scale. Adopt them for their reasoning structure, not their demonstrated ROI.

@@ -1,7 +1,10 @@
 ---
-name: Toil Definition, Measurement, and Automation Gate
+name: "Toil Definition, Measurement, and Automation Gate"
 description: Toil has six defining characteristics; the 50% cap is aspirational (actual average is ~33%); automate when breakeven is within 12 weeks.
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://sre.google/sre-book/eliminating-toil/
   - https://sre.google/workbook/eliminating-toil/
@@ -12,7 +15,6 @@ related:
   - docs/context/blameless-postmortem-prerequisites-and-effectiveness-limits.context.md
   - docs/context/runbook-as-code-quality-criteria-and-automation-path.context.md
 ---
-
 # Toil Definition, Measurement, and Automation Gate
 
 Toil is a specific technical term, not a synonym for unpleasant work. Misidentifying overhead as toil leads to misallocating automation investment. Organizational discipline matters more than tooling — toil levels rose 6% in 2024 despite continued SRE adoption.

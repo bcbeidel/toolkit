@@ -1,7 +1,10 @@
 ---
 name: dbt Three-Layer Transformation Model
-description: The staging → intermediate → marts model gives each layer a clear, non-overlapping responsibility; best suited to multi-team analytics orgs with 10+ data sources.
-type: context
+description: "The staging → intermediate → marts model gives each layer a clear, non-overlapping responsibility; best suited to multi-team analytics orgs with 10+ data sources."
+type: entity
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://docs.getdbt.com/best-practices/how-we-structure/1-guide-overview
   - https://docs.getdbt.com/best-practices/how-we-structure/2-staging
@@ -13,7 +16,6 @@ related:
   - docs/context/data-contracts-scope-and-incentive-alignment.context.md
   - docs/context/schema-evolution-expand-contract-pattern.context.md
 ---
-
 # dbt Three-Layer Transformation Model
 
 The three-layer model — staging → intermediate → marts — gives each layer a distinct, non-overlapping responsibility and is the consensus structure for multi-team analytics orgs. Smaller teams may not need the intermediate layer; the pattern is overhead-justified at scale.

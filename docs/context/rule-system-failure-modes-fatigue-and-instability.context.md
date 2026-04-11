@@ -1,7 +1,10 @@
 ---
 name: Rule System Failure Modes — Fatigue and Instability
-description: Alert fatigue, enforcement without rationale, and rubric instability are three self-reinforcing failure modes that compound each other and destroy trust in rule-based systems.
-type: context
+description: "Alert fatigue, enforcement without rationale, and rubric instability are three self-reinforcing failure modes that compound each other and destroy trust in rule-based systems."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://corgea.com/Learn/how-to-reduce-false-positives-in-sast
   - https://www.coderabbit.ai/blog/why-developers-hate-linters
@@ -12,7 +15,6 @@ related:
   - docs/context/linter-patterns-transferable-to-llm-rules.context.md
   - docs/context/rule-library-operational-practices.context.md
 ---
-
 # Rule System Failure Modes — Fatigue and Instability
 
 ## Key Insight

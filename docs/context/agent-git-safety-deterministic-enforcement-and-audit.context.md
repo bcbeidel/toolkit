@@ -1,7 +1,10 @@
 ---
 name: Agent Git Safety — Deterministic Enforcement and Audit
-description: Git safety for agents requires deterministic enforcement at the OS and platform level — branch protection rules, permission-gated operations, and path validation code — not configuration assumptions.
-type: context
+description: "Git safety for agents requires deterministic enforcement at the OS and platform level — branch protection rules, permission-gated operations, and path validation code — not configuration assumptions."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://docs.github.com/en/copilot/concepts/agents/cloud-agent/risks-and-mitigations
   - https://docs.github.com/en/enterprise-cloud@latest/copilot/concepts/agents/coding-agent/risks-and-mitigations
@@ -14,7 +17,6 @@ related:
   - docs/context/hitl-oversight-as-tuned-policy-and-reversibility-gate.context.md
   - docs/context/agentic-resilience-infrastructure-primitives.context.md
 ---
-
 # Agent Git Safety — Deterministic Enforcement and Audit
 
 **The primary failure mode is unreviewed code landing on main.** If branch protection is absent, an agent with push access will push to main, and CI/CD will deploy. "Your AI coding agent is one bad prompt away from force-pushing to production." The fix is enforcement — not configuration assumptions.

@@ -1,7 +1,10 @@
 ---
 name: "Skill Handoff Contracts and State Design"
 description: "Clean skill handoffs require three components: output contracts, shared state, and an orchestrator; structured JSON beats plain text; typed schemas are necessary but not sufficient — behavioral drift occurs even with schemas."
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.anthropic.com/research/building-effective-agents
   - https://openai.github.io/openai-agents-python/multi_agent/
@@ -16,7 +19,6 @@ related:
   - docs/context/skill-chain-sequential-and-recursive-design-rules.context.md
   - docs/context/skill-chain-failure-modes-and-antipatterns.context.md
 ---
-
 # Skill Handoff Contracts and State Design
 
 **Three components are necessary for clean skill handoffs: output contracts, shared state, and an orchestrator (HIGH confidence, T1 sources converge).** Without all three, chains become fragile — skills cannot consume each other's outputs reliably, state diverges across invocations, and the orchestrator cannot route or validate correctly.

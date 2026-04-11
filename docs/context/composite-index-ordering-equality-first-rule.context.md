@@ -1,14 +1,16 @@
 ---
 name: Composite Index Ordering — Equality First Rule
 description: Place equality conditions first and range conditions last in composite indexes — the common "most selective column first" heuristic is wrong and can produce useless indexes.
-type: context
+type: concept
+confidence: medium
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://learn.microsoft.com/en-us/sql/relational-databases/sql-server-index-design-guide?view=sql-server-ver17
 related:
   - docs/context/orm-n-plus-one-eager-loading-dto-projection.context.md
   - docs/context/database-workload-selection-and-polyglot-cost.context.md
 ---
-
 # Composite Index Ordering — Equality First Rule
 
 The most commonly repeated composite index heuristic — "put the most selective column first" — is wrong. The correct rule is: equality conditions first, range conditions last. A highly selective column placed first that is not in the query's WHERE clause produces an index the query cannot use at all.

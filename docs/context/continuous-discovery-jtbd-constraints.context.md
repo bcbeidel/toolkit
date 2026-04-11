@@ -1,7 +1,10 @@
 ---
 name: Continuous Discovery and JTBD Constraints
-description: Continuous discovery (OST, weekly touchpoints) is the gold standard for B2C/B2B-SMB product teams; JTBD has documented failure modes in multi-stakeholder B2B contexts.
-type: context
+description: "Continuous discovery (OST, weekly touchpoints) is the gold standard for B2C/B2B-SMB product teams; JTBD has documented failure modes in multi-stakeholder B2B contexts."
+type: concept
+confidence: medium
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://arize.com/ai-product-manager-role
   - https://www.productboard.com/blog/ai-evals-for-product-managers/
@@ -9,7 +12,6 @@ related:
   - docs/context/design-systems-accessibility-false-confidence.context.md
   - docs/context/ai-pm-eval-lifecycle-and-ownership.context.md
 ---
-
 # Continuous Discovery and JTBD Constraints
 
 Continuous discovery — using Opportunity Solution Trees (OST) and weekly customer touchpoints — is the current gold standard for product teams with direct customer access. JTBD (Jobs-to-be-Done) is valuable for uncovering unmet needs in early discovery but has well-documented failure modes that disqualify it as a primary framework in multi-stakeholder B2B contexts.

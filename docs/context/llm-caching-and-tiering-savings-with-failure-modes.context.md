@@ -1,7 +1,10 @@
 ---
 name: LLM Caching and Tiering Savings with Failure Modes
 description: Combining prompt caching and batch API yields up to 95% savings; model tiering reduces costs 30–80%; routing collapse and cache invalidation are the key failure modes to avoid.
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://platform.claude.com/docs/en/build-with-claude/prompt-caching
   - https://www.lmsys.org/blog/2024-07-01-routellm/
@@ -12,7 +15,6 @@ related:
   - docs/context/llm-token-cost-asymmetry-and-agentic-accumulation.context.md
   - docs/context/agent-driven-ci-guardrails-and-confidence-routing.context.md
 ---
-
 # LLM Caching and Tiering Savings with Failure Modes
 
 Two complementary cost reduction mechanisms — prompt caching and model tiering — can together reduce LLM spend by 50–95% compared to uncached flagship-model calls. Both have documented failure modes that negate the savings when misconfigured.

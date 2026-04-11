@@ -1,7 +1,10 @@
 ---
 name: "Observability vs. Auditability: Shared Infrastructure, Divergent Governance"
 description: "Observability (debugging) and auditability (compliance) serve distinct purposes but can share the same OTel telemetry infrastructure — the divergence is a governance layer concern (immutability, authority chains, retention), not a data architecture concern."
-type: context
+type: comparison
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.elixirdata.co/blog/ai-agent-decision-traces-vs-logs-audit-trail-compliance
   - https://fifthelement.ai/ai-observability-auditability-transparency-trust/
@@ -12,7 +15,6 @@ related:
   - docs/context/cot-traces-debugging-vs-stakeholder-trust.context.md
   - docs/context/agent-feedback-loop-lifecycle-coverage-and-traces.context.md
 ---
-
 ## Key Insight
 
 Observability and auditability are distinct purposes that share telemetry infrastructure. The divergence is real but occurs at the governance layer — immutability guarantees, authority chains, and retention policies — not in the underlying data schema. Building a second "Decision Trace" architecture is unnecessary if the storage and governance layer is hardened.

@@ -1,7 +1,10 @@
 ---
 name: "Context Rot and Window Degradation"
 description: "LLM attention degrades non-linearly — performance drops begin as early as 500-750 tokens, worst when critical content sits in the middle"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.trychroma.com/research/context-rot
   - https://arxiv.org/abs/2307.03172
@@ -13,7 +16,6 @@ related:
   - docs/context/agent-facing-document-structure.context.md
   - docs/context/agent-context-file-quality-over-completeness.context.md
 ---
-
 Every tested LLM degrades as input length increases — without exception. Chroma's 2025 study across 18 frontier models (Claude Opus 4, Sonnet 4, GPT-4.1, Gemini 2.5, Qwen3) found performance drops at every length increment tested. The Maximum Effective Context Window (MECW) falls far below advertised limits — by up to 99% on some tasks. A model with a 200K token window can exhibit significant degradation at 50K tokens.
 
 ## Degradation Begins Early

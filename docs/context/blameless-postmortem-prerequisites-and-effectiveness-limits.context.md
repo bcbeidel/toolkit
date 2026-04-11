@@ -1,7 +1,10 @@
 ---
 name: Blameless Postmortem Prerequisites and Effectiveness Limits
-description: Blameless postmortems require psychological safety as a prerequisite; measure effectiveness by repeat-incident rate, not completion rate.
-type: context
+description: "Blameless postmortems require psychological safety as a prerequisite; measure effectiveness by repeat-incident rate, not completion rate."
+type: concept
+confidence: medium
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://sre.google/sre-book/postmortem-culture/
   - https://rootly.com/sre/2025-sre-incident-management-best-practices-checklist
@@ -10,7 +13,6 @@ related:
   - docs/context/runbook-as-code-quality-criteria-and-automation-path.context.md
   - docs/context/toil-definition-measurement-and-automation-gate.context.md
 ---
-
 # Blameless Postmortem Prerequisites and Effectiveness Limits
 
 A blameless postmortem is only as effective as the culture that hosts it. The technique does not create psychological safety — it requires it. In adversarial cultures, the same process becomes a paper shield for blame.

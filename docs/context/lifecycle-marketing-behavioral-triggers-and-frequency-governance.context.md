@@ -1,7 +1,10 @@
 ---
 name: "Lifecycle Marketing: Behavioral Triggers and Frequency Governance"
 description: "Five-stage lifecycle model; behavioral triggers outperform time-based sequences; 5+ touchpoint journeys produce negative ROI in 61% of cases; frequency governance is the critical variable"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://customer.io/learn/lifecycle-marketing/state-of-lifecycle-marketing-report
   - https://customer.io/learn/lifecycle-marketing/essential-lifecycle-marketing-campaigns
@@ -11,7 +14,6 @@ sources:
 related:
   - docs/context/email-authentication-mandatory-stack-bulk-senders.context.md
 ---
-
 Lifecycle marketing programs that work are sequenced around five stages — Acquisition, Onboarding, Retention, Expansion, Win-back — with touchpoints triggered by behavior rather than time. The dominant failure mode is not under-messaging but over-messaging: 5+ touchpoint journeys produce negative ROI in 61% of cases according to Customer.io's 2025 State of Lifecycle Marketing Report (600+ brands across SaaS, fintech, edtech, marketplaces, and healthcare). Frequency governance — knowing when to stop — is more operationally important than message quality for mature programs.
 
 The onboarding stage is where lifecycle economics are decided. Users who complete onboarding activation behaviors (creating first project, completing setup wizard, inviting teammates) are dramatically more likely to convert and retain. Impala case study: users completing an onboarding walkthrough activated at 46% vs. 23% without it — a 2x lift. The correct onboarding design focuses one primary action at a time, uses first-party data collected at signup (role, company size, use case) to tailor messaging, and gates the next message on whether the prior activation behavior occurred. Time-based drip sequences that advance regardless of behavior completion are a known failure pattern.

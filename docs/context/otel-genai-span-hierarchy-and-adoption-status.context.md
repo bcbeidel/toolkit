@@ -1,7 +1,10 @@
 ---
 name: "OTel GenAI Span Hierarchy and Adoption Status"
 description: "OTel GenAI semantic conventions define a three-tier agent span hierarchy (invoke_agent → gen_ai.chat → execute_tool) that is production-usable but still experimental as of early 2026, with vendor convergence underway and agent framework conventions unfinished."
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://opentelemetry.io/blog/2025/ai-agent-observability/
   - https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-agent-spans/
@@ -13,7 +16,6 @@ related:
   - docs/context/observability-vs-auditability-shared-infrastructure.context.md
   - docs/context/agent-feedback-loop-lifecycle-coverage-and-traces.context.md
 ---
-
 ## Key Insight
 
 The OTel GenAI semantic conventions formally define a three-tier agent span hierarchy that is well-specified and usable in production. As of early 2026, these conventions remain experimental — but "experimental" means attribute names may change, not that the infrastructure is unsafe. Major vendors (Datadog, Langfuse, Langsmith) converged on OTel GenAI support in 2025. Agent framework conventions for multi-agent orchestration remain unfinished.

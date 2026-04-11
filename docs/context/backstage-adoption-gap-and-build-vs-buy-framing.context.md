@@ -1,7 +1,10 @@
 ---
 name: Backstage Adoption Gap and Build vs. Buy Framing
-description: Backstage is deployed in 3,400+ organizations but averages ~10% internal adoption; 6–18 months to set up and 3–15 FTE to maintain — treat as a product initiative, not infrastructure.
-type: context
+description: "Backstage is deployed in 3,400+ organizations but averages ~10% internal adoption; 6–18 months to set up and 3–15 FTE to maintain — treat as a product initiative, not infrastructure."
+type: comparison
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://platformengineering.org/reports/state-of-platform-engineering-volume-4
   - https://roadie.io/blog/platform-engineering-in-2026-why-diy-is-dead/
@@ -11,7 +14,6 @@ related:
   - docs/context/platform-engineering-as-load-reduction-discipline.context.md
   - docs/context/golden-path-design-principles-and-failure-modes.context.md
 ---
-
 # Backstage Adoption Gap and Build vs. Buy Framing
 
 Backstage dominates developer portal market share but struggles with internal adoption. The "DIY is dead" narrative originates entirely from vendors selling alternatives. The honest framing is: resource availability determines outcomes, not inherent superiority of either approach.

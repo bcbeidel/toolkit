@@ -1,7 +1,10 @@
 ---
 name: Agentic Resilience Infrastructure Primitives
-description: Retry with exponential backoff, circuit breakers with a DEGRADED intermediate state, idempotency keys, and checkpointing are the four deterministic infrastructure primitives that move reliability out of prompts and into the runtime.
-type: context
+description: "Retry with exponential backoff, circuit breakers with a DEGRADED intermediate state, idempotency keys, and checkpointing are the four deterministic infrastructure primitives that move reliability out of prompts and into the runtime."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://medium.com/@michael.hannecke/resilience-circuit-breakers-for-agentic-ai-cc7075101486
   - https://hatchworks.com/blog/ai-agents/orchestrating-ai-agents/
@@ -16,7 +19,6 @@ related:
   - docs/context/agentic-failure-recovery-classify-retry-replan-abandon.context.md
   - docs/context/agentic-planning-hybrid-global-plan-local-react.context.md
 ---
-
 # Agentic Resilience Infrastructure Primitives
 
 **"Move reliability into deterministic infrastructure (not prompt magic). Prompts don't roll back production systems; your runtime does."** Four primitives implement this principle: retry with backoff, circuit breakers, idempotency keys, and checkpointing.

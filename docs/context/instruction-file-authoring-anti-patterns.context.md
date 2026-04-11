@@ -1,7 +1,10 @@
 ---
 name: "Instruction File Authoring Anti-Patterns"
 description: "Ten ranked anti-patterns in instruction file authoring, from vagueness and length bloat to persona instructions and redundancy with project docs — the top five have HIGH evidence from practitioner research and empirical studies"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://code.claude.com/docs/en/best-practices
   - https://www.humanlayer.dev/blog/writing-a-good-claude-md
@@ -19,7 +22,6 @@ related:
   - docs/context/instruction-file-extraction-techniques.context.md
   - docs/context/agents-md-empirical-effectiveness-findings.context.md
 ---
-
 # Instruction File Authoring Anti-Patterns
 
 Ten anti-patterns appear consistently across practitioner research and empirical studies. The top five have HIGH evidence — multiple independent sources converging on the same failure mode.

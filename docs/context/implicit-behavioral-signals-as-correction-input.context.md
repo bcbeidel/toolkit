@@ -1,7 +1,10 @@
 ---
 name: "Implicit Behavioral Signals as Correction Input"
 description: "Edit rates, override patterns, abandonment, and retry frequencies are high-volume correction signals that require no explicit user feedback — each pattern maps to a distinct class of agent failure and prompt-level fix."
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://datagrid.com/blog/7-tips-build-self-improving-ai-agents-feedback-loops
   - https://sparkco.ai/blog/mastering-agent-feedback-loops-best-practices-and-trends
@@ -10,7 +13,6 @@ related:
   - docs/context/agent-improvement-maturity-gradient.context.md
   - docs/context/agent-feedback-loop-lifecycle-coverage-and-traces.context.md
 ---
-
 ## Key Insight
 
 Implicit behavioral signals — how users interact with agent outputs without being asked for feedback — provide high-volume correction input at zero explicit collection cost. Each signal pattern maps to a distinct failure class with a specific intervention target.

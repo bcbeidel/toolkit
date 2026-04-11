@@ -1,7 +1,10 @@
 ---
 name: "Context File Content Selection and Coverage Threshold"
 description: "Context files should document only what is non-inferable from code; LLM-generated files hurt performance; human-written yield only +4% at +19% inference cost"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://arxiv.org/html/2510.21413v1
   - https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
@@ -13,7 +16,6 @@ related:
   - docs/context/agent-facing-document-structure.context.md
   - docs/context/context-rot-and-window-degradation.context.md
 ---
-
 Context files have a documented marginal benefit and a real cost. The ETH Zurich study (Gloaguen et al., 2025) provides the strongest empirical evidence available: across 10,000 open-source repositories, human-written context files yielded only +4% task success improvement at up to +19% inference cost. LLM-generated context files reduced task success in 5 of 8 settings and increased inference costs 20-23%.
 
 The practical conclusion is not that context files are useless — it is that most of what developers put in them provides no value, and the selection threshold must be high.

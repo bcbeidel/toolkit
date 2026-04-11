@@ -1,7 +1,10 @@
 ---
 name: "Data Governance: Failure Modes and the Federated Model"
 description: "Gartner predicts 80% of data governance initiatives will fail by 2027 — from accountability gaps, not tooling. Federated governance (central standards + domain ownership) is the favored model at enterprise scale."
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://atlan.com/data-governance-principles/
   - https://www.getcollate.io/learning-center/data-governance
@@ -12,7 +15,6 @@ related:
   - docs/context/ethical-ai-bias-toolkit-limitations-and-eu-ai-act.context.md
   - docs/context/dbt-layered-architecture-and-testing-patterns.context.md
 ---
-
 # Data Governance: Failure Modes and the Federated Model
 
 Gartner (Feb 2024) predicts 80% of data and analytics governance initiatives will fail by 2027. The cause is not poor tooling — it is accountability gaps, governance theater, and vendor overselling of platform capabilities. Federated governance (central standards with domain-level ownership) is the structural model that addresses the underlying cause.

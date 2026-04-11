@@ -1,7 +1,10 @@
 ---
 name: LLM Code Review — Framing Bias and Neutral Presentation
-description: "Bug-free" framing triggers 16–93% fewer vulnerability detections across state-of-the-art models; submitters naturally frame their own code as correct, making this the default condition.
-type: context
+description: "\"Bug-free\" framing triggers 16–93% fewer vulnerability detections across state-of-the-art models; submitters naturally frame their own code as correct, making this the default condition."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://arxiv.org/abs/2603.18740
   - https://arxiv.org/abs/2502.08177
@@ -11,7 +14,6 @@ related:
   - docs/context/llm-code-review-context-engineering-quality-ceiling.context.md
   - docs/context/confidence-calibration-and-self-correction.context.md
 ---
-
 # LLM Code Review — Framing Bias and Neutral Presentation
 
 A March 2026 paper tested 250 CVE pairs across four state-of-the-art models (GPT-4o-mini, Claude 3.5 Haiku, Gemini 2.0 Flash, DeepSeek V3). When code was framed as "bug-free," vulnerability detection rates dropped 16–93 percentage points. Adversarial framing succeeded in 88% of cases against Claude Code in autonomous agent configurations.

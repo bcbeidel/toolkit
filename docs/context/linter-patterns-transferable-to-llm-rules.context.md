@@ -1,7 +1,10 @@
 ---
 name: Linter Patterns Transferable to LLM Rules
-description: Five structural patterns from ESLint, Semgrep, OPA, and Ruff that directly transfer to LLM rule design — meta/create separation, start-narrow, default-closed, fix-safety classification, and concern-prefix organization.
-type: context
+description: "Five structural patterns from ESLint, Semgrep, OPA, and Ruff that directly transfer to LLM rule design — meta/create separation, start-narrow, default-closed, fix-safety classification, and concern-prefix organization."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://eslint.org/docs/latest/extend/custom-rules
   - https://semgrep.dev/blog/2020/writing-semgrep-rules-a-methodology/
@@ -12,7 +15,6 @@ related:
   - docs/context/rule-system-failure-modes-fatigue-and-instability.context.md
   - docs/context/rule-library-operational-practices.context.md
 ---
-
 # Linter Patterns Transferable to LLM Rules
 
 ## Key Insight

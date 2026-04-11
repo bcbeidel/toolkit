@@ -1,7 +1,10 @@
 ---
 name: "Agent Testing Pyramid: Uncertainty Tolerance Layers"
 description: "Agent testing layers represent tolerance for uncertainty rather than proximity to production — a four-layer structure from deterministic unit tests through record-and-replay, LLM-as-judge, and full agent simulation, with genuine counter-models at the apex."
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://engineering.block.xyz/blog/testing-pyramid-for-ai-agents
   - https://medium.com/@derekcashmore/the-ai-agent-testing-pyramid-a-practical-framework-for-non-deterministic-systems-276c22feaec8
@@ -12,7 +15,6 @@ related:
   - docs/context/eval-pipeline-ci-cd-integration-and-adoption-gap.context.md
   - docs/context/llm-judge-as-trend-detector-not-hard-gate.context.md
 ---
-
 ## Key Insight
 
 The fundamental reframe for agent testing: layers represent **tolerance for uncertainty**, not proximity to production. Agent testing embraces probabilistic validation — measuring trends instead of exact matches, success rates instead of binary outcomes.

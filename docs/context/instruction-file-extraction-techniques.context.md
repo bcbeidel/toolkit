@@ -1,7 +1,10 @@
 ---
 name: "Instruction File Extraction Techniques"
 description: "Three techniques for extracting instruction file rules from existing codebases, ranked by evidence strength: iterative correction loop, meta-prompt from code samples, and full-codebase scan — all require a human filtering pass before deployment"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://cursor.com/blog/agent-best-practices
   - https://code.claude.com/docs/en/best-practices
@@ -15,7 +18,6 @@ related:
   - docs/context/agents-md-empirical-effectiveness-findings.context.md
   - docs/context/instruction-file-authoring-anti-patterns.context.md
 ---
-
 # Instruction File Extraction Techniques
 
 Three techniques extract rules from existing source material. All three produce candidate rules that require a human filtering pass before deployment — the ETH Zurich finding (arXiv 2602.11988) shows that unfiltered generated rules reduce task success −0.5% to −2%.

@@ -1,7 +1,10 @@
 ---
 name: "Plugin Distribution and Versioning Patterns"
 description: "Plugin systems converged on JSON manifests, git-based distribution with SHA pinning, version-keyed caching, and scoped installation across user/project/local/managed levels"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://code.claude.com/docs/en/plugins-reference
   - https://code.claude.com/docs/en/plugin-marketplaces
@@ -11,7 +14,6 @@ sources:
 related:
   - docs/context/instruction-file-fragmentation-and-convergence.context.md
 ---
-
 All major AI coding tool plugin systems have converged on the same structural patterns: a JSON manifest declaring identity and component paths, git-based distribution as the primary flexible channel, scoped installation with user/project/local separation, and semantic versioning as the version language.
 
 **JSON manifests are universal.** VS Code's `package.json`, Claude Code's `plugin.json`, and GitHub Copilot's `plugin.json` all serve the same function: declaring what a plugin provides and where its components live. Claude Code's manifest is optional — components are auto-discovered from conventional directory locations if no manifest is present. This lowers the friction for simple plugins while enabling full control for complex ones.

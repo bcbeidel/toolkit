@@ -1,7 +1,10 @@
 ---
 name: LLM Rule Structural Characteristics
-description: Four structural requirements for reliable LLM rules — specificity, scale matching, scope isolation, and behavioral anchoring — and why a full rubric outperforms sequential evaluation.
-type: context
+description: "Four structural requirements for reliable LLM rules — specificity, scale matching, scope isolation, and behavioral anchoring — and why a full rubric outperforms sequential evaluation."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.evidentlyai.com/llm-guide/llm-as-a-judge
   - https://aclanthology.org/2025.coling-main.710.pdf
@@ -15,7 +18,6 @@ related:
   - docs/context/rule-library-operational-practices.context.md
   - docs/context/rubric-specificity-and-deterministic-first-evaluation.context.md
 ---
-
 # LLM Rule Structural Characteristics
 
 ## Key Insight

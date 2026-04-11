@@ -1,7 +1,10 @@
 ---
 name: "Causal Inference: TWFE DiD Bias and DAG Discipline"
 description: "Standard two-way fixed effects DiD is biased under staggered treatment adoption; Callaway & Sant'Anna is the modern fix. DAGs are widely applied but only ~20% of studies report the implied adjustment set."
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://arxiv.org/html/2508.02310v1
   - https://pmc.ncbi.nlm.nih.gov/articles/PMC11875439/
@@ -10,7 +13,6 @@ sources:
 related:
   - docs/context/bayesian-ab-testing-interpretability-not-sample-efficiency.context.md
 ---
-
 # Causal Inference: TWFE DiD Bias and DAG Discipline
 
 Standard two-way fixed effects (TWFE) difference-in-differences is biased when treatment adoption is staggered across units over time. The modern fix is Callaway & Sant'Anna (2021) or equivalent methods. DAGs are necessary for identifying adjustment sets, but only ~20% of studies that use them actually report the implied set.

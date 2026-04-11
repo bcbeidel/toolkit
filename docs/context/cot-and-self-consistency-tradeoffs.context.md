@@ -1,7 +1,10 @@
 ---
 name: "CoT and Self-Consistency Tradeoffs"
 description: "CoT yields diminishing/negative returns on frontier reasoning models; self-consistency reliably boosts fixed-answer tasks"
-type: context
+type: comparison
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://gail.wharton.upenn.edu/research-and-insights/tech-report-chain-of-thought/
   - https://arxiv.org/abs/2308.00436
@@ -13,7 +16,6 @@ related:
   - docs/context/prompt-repetition-technique.context.md
   - docs/context/prompt-design-principles-framing-and-emphasis.context.md
 ---
-
 Chain-of-thought prompting shows sharply diminishing and sometimes negative returns on frontier reasoning models. Self-consistency remains reliably effective but only for fixed-answer tasks. These are distinct tools with different applicability profiles.
 
 ## CoT on Frontier Models: Mostly Not Worth It

@@ -1,7 +1,10 @@
 ---
 name: Accessibility Automation Coverage Ceiling and Manual Testing Floor
-description: Automated tools cover only 30–40% of WCAG criteria in open-source CI configurations; a three-tool CI stack (axe-core, Lighthouse, Pa11y) plus manual screen reader testing is required for meaningful coverage.
-type: context
+description: "Automated tools cover only 30–40% of WCAG criteria in open-source CI configurations; a three-tool CI stack (axe-core, Lighthouse, Pa11y) plus manual screen reader testing is required for meaningful coverage."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://github.com/dequelabs/axe-core
   - https://playwright.dev/docs/accessibility-testing
@@ -12,7 +15,6 @@ related:
   - docs/context/semantic-html-first-and-overlay-anti-pattern.context.md
   - docs/context/ci-pipeline-test-layer-ordering-and-quality-gate-calibration.context.md
 ---
-
 # Accessibility Automation Coverage Ceiling and Manual Testing Floor
 
 ## Key Insight

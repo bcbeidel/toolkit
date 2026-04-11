@@ -1,7 +1,10 @@
 ---
 name: "Creative Testing, Refresh Cadence, and DCO"
 description: "Three-phase creative testing framework; 70/20/10 budget rule; DCO accelerates creative fatigue 40% faster requiring 2-3 week refresh cadence; vertical 9:16 is structural table stakes across platforms"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://motionapp.com/blog/ultimate-guide-creative-testing-2025
   - https://www.hunchads.com/blog/dynamic-creative-optimization
@@ -11,7 +14,6 @@ sources:
 related:
   - docs/context/paid-automation-data-sufficiency-gates.context.md
 ---
-
 Creative quality is the primary performance lever within automated ad platforms: once automated bidding systems are operating above data-sufficiency thresholds, the algorithm distributes to the best-performing assets, so assets determine the ceiling. Systematic creative testing — not set-it-and-forget-it — is the operational requirement for sustained performance.
 
 The three-phase creative testing framework addresses a specific failure mode: testing new creatives against existing legacy ads produces invalid comparisons. Legacy ads carry accumulated pixel data, engagement signals, and social proof (comments, shares, reactions) that inflate their performance metrics versus new entrants. Phase 1 (Pre-Flight): test new creatives only against other new creatives to establish fair baselines. Phase 2 (Competitive): once a new creative proves viable against peers, run it against current champions with a controlled budget. Phase 3 (Scale): begin scaling immediately after validation — delay costs compounding performance gains. Each variant needs a minimum of 50 conversions or 1,000 impressions before drawing conclusions.

@@ -1,7 +1,10 @@
 ---
 name: SLO/SLI Error Budget Policy and Multi-Window Alerting Mechanics
 description: Four-week rolling error budgets with deploy-freeze policy and multi-burn-rate alerting reduce alert fatigue and enforce reliability accountability.
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://sre.google/workbook/implementing-slos/
   - https://sre.google/workbook/error-budget-policy/
@@ -13,7 +16,6 @@ related:
   - docs/context/blameless-postmortem-prerequisites-and-effectiveness-limits.context.md
   - docs/context/runbook-as-code-quality-criteria-and-automation-path.context.md
 ---
-
 # SLO/SLI Error Budget Policy and Multi-Window Alerting Mechanics
 
 The four-week rolling error budget with explicit policy consequences is the canonical SRE approach to reliability accountability. Multi-window multi-burn-rate alerting solves the false-positive problem inherent in single-threshold approaches.

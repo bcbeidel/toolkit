@@ -1,7 +1,10 @@
 ---
 name: "Ethical AI: Bias Toolkit Limitations and EU AI Act Requirements"
 description: "AIF360 is binary-classification-only. Fairness metrics are mathematically incompatible — you cannot satisfy all at once. The EU AI Act requires documenting the choice of fairness definition, not just running a toolkit."
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://ai-fairness-360.org/
   - https://www.modelop.com/ai-governance/ai-regulations-standards/eu-ai-act
@@ -12,7 +15,6 @@ related:
   - docs/context/data-governance-failure-modes-and-federated-model.context.md
   - docs/context/ml-vs-statistical-methods-sample-size-tradeoff.context.md
 ---
-
 # Ethical AI: Bias Toolkit Limitations and EU AI Act Requirements
 
 IBM's AIF360 — the most widely referenced open-source bias toolkit — is binary-classification-only. Most enterprise ML problems are not binary classification. Fairness metrics are mathematically incompatible: satisfying one typically precludes satisfying others. The EU AI Act requires documenting the choice of fairness definition, not just running a toolkit.

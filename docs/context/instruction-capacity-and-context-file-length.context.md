@@ -1,7 +1,10 @@
 ---
 name: "Instruction Capacity and Context File Length"
 description: "Instruction capacity is finite and model-dependent; shorter higher-signal context files strictly better"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://arxiv.org/abs/2507.11538
   - https://www.humanlayer.dev/blog/writing-a-good-claude-md
@@ -14,7 +17,6 @@ related:
   - docs/context/agent-context-file-quality-over-completeness.context.md
   - docs/context/prompt-design-principles-framing-and-emphasis.context.md
 ---
-
 Instruction capacity is finite, model-dependent, and already partially consumed before you write a single line. Shorter, higher-signal context files strictly outperform comprehensive ones because instruction quality degrades as count increases.
 
 ## The Capacity Ceiling

@@ -1,7 +1,10 @@
 ---
 name: "SEO Floor Constraints: CWV, EEAT, and Structured Data"
 description: "Core Web Vitals are a penalty floor not a ranking growth lever (LCP correlation −0.12); EEAT is a rater heuristic not an algorithmic score; JSON-LD structured data is required for rich results and AI citation"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://developers.google.com/search/docs/appearance/core-web-vitals
   - https://developers.google.com/search/docs/fundamentals/creating-helpful-content
@@ -11,7 +14,6 @@ sources:
 related:
   - docs/context/geo-and-ai-overviews-as-seo-context-shift.context.md
 ---
-
 Three commonly misunderstood SEO signals — Core Web Vitals, EEAT, and structured data — have fundamentally different relationships to ranking performance. Understanding the distinction prevents both over-investment in the wrong area and under-investment in what actually matters.
 
 Core Web Vitals (LCP <2.5s, INP <200ms, CLS <0.1) are a floor constraint, not a growth lever. Meeting the thresholds prevents ranking penalties; exceeding them does not generate additional ranking gains once competitors also meet them. Correlation analysis across 107,000+ pages found LCP correlation of only −0.12 to −0.18 with ranking position — a weak signal. Only 48% of mobile pages and 56% of desktop pages passed all three CWVs as of the 2025 Web Almanac, meaning many sites have penalty exposure. The correct investment framing: resolve CWV failures to avoid penalties, then redirect effort to higher-leverage ranking factors. Do not treat performance optimization as a growth lever once you clear the thresholds. LCP is the hardest to pass (only 62% of mobile pages achieve good LCP), making it the priority metric for sites with CWV gaps.

@@ -1,7 +1,10 @@
 ---
 name: "Knowledge Confidence Lifecycle and State Tracking"
 description: "Knowledge confidence is a lifecycle property (WIP → Not Validated → Validated → Archived), not binary; confidence degrades without explicit maintenance"
-type: context
+type: concept
+confidence: medium
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://library.serviceinnovation.org/KCS/KCS_v6/KCS_v6_Practices_Guide/030/040/010/030
   - https://gdt.gradepro.org/app/handbook/handbook.html
@@ -10,7 +13,6 @@ related:
   - docs/context/confidence-calibration-and-self-correction.context.md
   - docs/context/agent-context-file-quality-over-completeness.context.md
 ---
-
 Knowledge confidence is not binary. A document is not simply "correct" or "incorrect" — it occupies a state in a lifecycle, and that state can upgrade or downgrade over time as evidence accumulates, usage confirms, or conditions change. Treating confidence as a static property leads to stale documents being trusted without review.
 
 ## The KCS Four-State Model

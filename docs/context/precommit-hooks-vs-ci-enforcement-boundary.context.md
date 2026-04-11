@@ -1,7 +1,10 @@
 ---
 name: Pre-Commit Hooks vs CI Enforcement Boundary
 description: Fast checks belong in pre-commit (developer convenience); slow checks belong in CI (enforcement gate) — pre-commit.ci bridges the gap by running hooks on every PR without custom YAML.
-type: context
+type: comparison
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://pre-commit.ci/
   - https://motlin.medium.com/pre-commit-or-ci-cd-5779d3a0e566
@@ -13,7 +16,6 @@ related:
   - docs/context/agent-driven-ci-guardrails-and-confidence-routing.context.md
   - docs/context/hooks-deterministic-enforcement-vs-advisory.context.md
 ---
-
 # Pre-Commit Hooks vs CI Enforcement Boundary
 
 ## Key Insight

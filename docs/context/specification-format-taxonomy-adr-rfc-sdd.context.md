@@ -1,7 +1,10 @@
 ---
-name: Specification Format Taxonomy — ADR, RFC, Design Doc, SDD
-description: ADRs, RFCs, design docs, and SDDs serve distinct purposes — format choice depends on scope, audience, and whether the goal is recording a decision vs. building cross-team consensus.
-type: context
+name: "Specification Format Taxonomy — ADR, RFC, Design Doc, SDD"
+description: "ADRs, RFCs, design docs, and SDDs serve distinct purposes — format choice depends on scope, audience, and whether the goal is recording a decision vs. building cross-team consensus."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://martinfowler.com/bliki/ArchitectureDecisionRecord.html
   - https://newsletter.pragmaticengineer.com/p/rfcs-and-design-docs
@@ -15,7 +18,6 @@ related:
   - docs/context/diverge-converge-design-mode-switching.context.md
   - docs/context/mental-models-software-decisions-practitioner-vs-empirical.context.md
 ---
-
 # Specification Format Taxonomy — ADR, RFC, Design Doc, SDD
 
 ## Key Insight

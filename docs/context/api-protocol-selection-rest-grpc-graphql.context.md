@@ -1,7 +1,10 @@
 ---
-name: API Protocol Selection — REST, gRPC, GraphQL
+name: "API Protocol Selection — REST, gRPC, GraphQL"
 description: REST is the default for public APIs; gRPC for internal service communication; GraphQL only where UI teams need flexible projections — each additional protocol adds real operational cost.
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-design
   - https://dasroot.net/posts/2026/04/graphql-vs-rest-vs-grpc-api-architecture-comparison-2026/
@@ -14,7 +17,6 @@ related:
   - docs/context/oauth-2-1-pkce-and-rbac-abac-layering.context.md
   - docs/context/microservices-sizing-ddd-boundaries-and-default-monolith.context.md
 ---
-
 # API Protocol Selection — REST, gRPC, GraphQL
 
 REST, gRPC, and GraphQL solve different problems. Using the wrong protocol for a use case creates operational cost without architectural benefit. The 2025 consensus: REST + gRPC (internal) is the dominant hybrid pattern; GraphQL is added only where UI flexibility justifies the additional investment.

@@ -1,7 +1,10 @@
 ---
 name: Saga — Orchestration vs Choreography Default
 description: Default to orchestration for sagas with more than 3 steps or conditional branching — choreography's implicit distributed state makes debugging partially compensated sagas substantially harder.
-type: context
+type: comparison
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://microservices.io/patterns/data/saga.html
   - https://learn.microsoft.com/en-us/azure/architecture/patterns/saga
@@ -11,7 +14,6 @@ related:
   - docs/context/distributed-resilience-stack-circuit-breaker-retry-jitter.context.md
   - docs/context/microservices-sizing-ddd-boundaries-and-default-monolith.context.md
 ---
-
 # Saga — Orchestration vs Choreography Default
 
 The Saga pattern manages cross-service distributed transactions where each service owns its own database and two-phase commit is not viable. Choreography fits simple, stable workflows. Orchestration is structurally superior for anything with more than 3 steps or conditional branching. Default to orchestration.

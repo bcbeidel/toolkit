@@ -1,7 +1,10 @@
 ---
 name: Percentile Approximation Hazard and Histogram-Based SLO Metrics
-description: P95/P99 values are approximated from downsampled data at scale; aggregating percentiles across services without request-count weighting produces misleading composites. Histogram-based tools (Prometheus histograms, HDR Histogram) give accurate quantile data for SLOs.
-type: context
+description: "P95/P99 values are approximated from downsampled data at scale; aggregating percentiles across services without request-count weighting produces misleading composites. Histogram-based tools (Prometheus histograms, HDR Histogram) give accurate quantile data for SLOs."
+type: concept
+confidence: medium
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://sreschool.com/blog/p95-latency/
   - https://grafana.com/docs/k6/latest/testing-guides/automated-performance-testing/
@@ -11,7 +14,6 @@ related:
   - docs/context/slo-error-budget-policy-and-alerting-mechanics.context.md
   - docs/context/continuous-profiling-production-standard-and-tool-selection.context.md
 ---
-
 # Percentile Approximation Hazard and Histogram-Based SLO Metrics
 
 ## Key Insight

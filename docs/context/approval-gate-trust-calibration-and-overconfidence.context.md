@@ -1,7 +1,10 @@
 ---
 name: Approval Gate Trust Calibration and Overconfidence
-description: Confidence-threshold escalation only works if the AI's confidence is genuinely calibrated; neural networks are systematically overconfident, and passive transparency does not change human reliance bias.
-type: context
+description: "Confidence-threshold escalation only works if the AI's confidence is genuinely calibrated; neural networks are systematically overconfident, and passive transparency does not change human reliance bias."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://pmc.ncbi.nlm.nih.gov/articles/PMC7034851/
   - https://academic.oup.com/pnasnexus/article/4/5/pgaf133/8118889
@@ -15,7 +18,6 @@ related:
   - docs/context/agentic-fault-taxonomy-and-interface-mismatch-pattern.context.md
   - docs/context/skill-chain-handoff-signaling-and-evidence-packs.context.md
 ---
-
 # Approval Gate Trust Calibration and Overconfidence
 
 **Metacognitive sensitivity is the prerequisite for confidence-threshold HITL to function.** Confidence scores must genuinely distinguish correct from incorrect outputs before they can drive escalation routing. Neural networks are systematically overconfident, and simply displaying confidence values to reviewers does not change their reliance behavior.

@@ -1,7 +1,10 @@
 ---
 name: Technical Debt Prevention — Fitness Functions and Quality Gates
-description: Architectural rules as CI unit tests (ArchUnit, NetArchTest) and deployment-blocking quality gates on new code are the top debt-prevention mechanisms; explicit capacity allocation sustains them.
-type: context
+description: "Architectural rules as CI unit tests (ArchUnit, NetArchTest) and deployment-blocking quality gates on new code are the top debt-prevention mechanisms; explicit capacity allocation sustains them."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.thoughtworks.com/en-us/insights/articles/fitness-function-driven-development
   - https://www.infoq.com/articles/fitness-functions-architecture/
@@ -15,7 +18,6 @@ related:
   - docs/context/deterministic-vs-advisory-principle-enforcement.context.md
   - docs/context/ci-validation-for-llm-generated-code.context.md
 ---
-
 # Technical Debt Prevention — Fitness Functions and Quality Gates
 
 Prevention is cheaper than remediation. Two mechanisms have the strongest evidence base for stopping debt from entering a codebase at merge time: architectural fitness functions encoded as CI tests, and quality gates that block deployment on new code that fails minimum thresholds.

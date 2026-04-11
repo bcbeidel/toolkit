@@ -1,7 +1,10 @@
 ---
 name: Agent-Generated Code Security Patterns
-description: LLM-generated code has 12–65% vulnerability rates — secure-by-default prompting, supply chain verification, and layered sandboxing are the three primary defensive patterns.
-type: context
+description: "LLM-generated code has 12–65% vulnerability rates — secure-by-default prompting, supply chain verification, and layered sandboxing are the three primary defensive patterns."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.emergentmind.com/topics/security-of-llm-generated-code
   - https://socket.dev/blog/slopsquatting-how-ai-hallucinations-are-fueling-a-new-class-of-supply-chain-attacks
@@ -15,7 +18,6 @@ related:
   - docs/context/ci-validation-for-llm-generated-code.context.md
   - docs/context/llm-agent-sdl-maturity-and-best-practice-composite.context.md
 ---
-
 # Agent-Generated Code Security Patterns
 
 ## Key Insight

@@ -1,7 +1,10 @@
 ---
-name: RevOps Alignment, Pipeline Coverage, and CRM Hygiene
-description: RevOps aligns sales, marketing, and CS under shared KPIs and a single customer-data source; effective pipeline management requires 3-4x coverage with stage-gated qualification and weekly reviews; CRM hygiene failures cost 12-25% of revenue annually.
-type: context
+name: "RevOps Alignment, Pipeline Coverage, and CRM Hygiene"
+description: "RevOps aligns sales, marketing, and CS under shared KPIs and a single customer-data source; effective pipeline management requires 3-4x coverage with stage-gated qualification and weekly reviews; CRM hygiene failures cost 12-25% of revenue annually."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://pipeline.zoominfo.com/operations/revenue-operations-strategy-the-2025-revops-growth-playbook
   - https://www.highspot.com/blog/revenue-operations-framework/
@@ -12,7 +15,6 @@ sources:
 related:
   - docs/context/account-retention-nrr-and-expansion.context.md
 ---
-
 # RevOps Alignment, Pipeline Coverage, and CRM Hygiene
 
 Revenue Operations (RevOps) is the practice of aligning sales, marketing, and customer success under a unified data architecture, shared KPIs, and cross-functional processes to create predictable, scalable revenue. The core mechanism is not organizational restructuring but a shared source of truth for customer data and shared definitions for every handoff point: MQL, SQL, lead handoff criteria, and renewal triggers.

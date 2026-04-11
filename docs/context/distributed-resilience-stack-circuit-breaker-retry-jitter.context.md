@@ -1,7 +1,10 @@
 ---
-name: Distributed Resilience Stack — Circuit Breaker, Retry, Jitter
+name: "Distributed Resilience Stack — Circuit Breaker, Retry, Jitter"
 description: The resilience stack is bulkhead → circuit breaker → retry+jitter → DLQ; retry and circuit breaker must be tuned together or they create the retry storms they're meant to prevent.
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://calmops.com/software-engineering/circuit-breaker-pattern-resilience/
   - https://dev.to/andreparis/queue-based-exponential-backoff-a-resilient-retry-pattern-for-distributed-systems-37f3
@@ -12,7 +15,6 @@ related:
   - docs/context/opentelemetry-overhead-and-sampling-strategy-timing.context.md
   - docs/context/microservices-sizing-ddd-boundaries-and-default-monolith.context.md
 ---
-
 # Distributed Resilience Stack — Circuit Breaker, Retry, Jitter
 
 Four patterns form the distributed resilience stack. They are designed to compose, but the composition requires explicit tuning. Retry + circuit breaker without coordination creates retry storms — the exact failure mode the patterns exist to prevent.

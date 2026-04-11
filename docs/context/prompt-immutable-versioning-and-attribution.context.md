@@ -1,7 +1,10 @@
 ---
 name: Prompt Immutable Versioning and Attribution
-description: Prompts should be treated as immutable production artifacts with semantic versioning, no in-place edits, and version IDs logged with every output for full attribution.
-type: context
+description: "Prompts should be treated as immutable production artifacts with semantic versioning, no in-place edits, and version IDs logged with every output for full attribution."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://langfuse.com/docs/prompts/get-started
   - https://www.braintrust.dev/articles/best-prompt-versioning-tools-2025
@@ -14,7 +17,6 @@ related:
   - docs/context/eval-pipeline-ci-cd-integration-and-adoption-gap.context.md
   - docs/context/knowledge-confidence-lifecycle-and-state-tracking.context.md
 ---
-
 # Prompt Immutable Versioning and Attribution
 
 Every production prompt change should create a new version. No in-place edits. Every output should log the version ID that generated it. These three rules enable the same quality guarantees for prompts that version control provides for code.

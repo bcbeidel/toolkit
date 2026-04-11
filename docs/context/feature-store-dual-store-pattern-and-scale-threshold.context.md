@@ -1,7 +1,10 @@
 ---
 name: Feature Store Dual-Store Pattern and Scale Threshold
 description: Feature stores eliminate training-serving skew via offline/online dual-store architecture; value is proportional to feature reuse across teams — single-team deployments rarely justify the overhead.
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://feast.dev/blog/what-is-a-feature-store/
   - https://www.hopsworks.ai/dictionary/feature-store
@@ -10,7 +13,6 @@ related:
   - docs/context/mlops-maturity-levels-and-organizational-prerequisites.context.md
   - docs/context/ml-drift-detection-methods-and-retraining-trigger-hierarchy.context.md
 ---
-
 # Feature Store Dual-Store Pattern and Scale Threshold
 
 Feature stores solve a specific and serious problem: training-serving skew. When the feature definitions used at training time differ from those served at inference time, model performance degrades in production in ways that are "catastrophic and hard-to-debug." The feature store is the interface between ML models and data systems that prevents this.

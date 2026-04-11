@@ -1,7 +1,10 @@
 ---
 name: AI Pair Programming — Explore-Plan-Implement-Commit Workflow
 description: The Explore-Plan-Implement-Commit workflow is the highest-confidence structural pattern for AI coding; providing tests upfront is the single top quality lever.
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://code.claude.com/docs/en/best-practices
   - https://codescene.com/blog/agentic-ai-coding-best-practice-patterns-for-speed-with-quality
@@ -13,7 +16,6 @@ related:
   - docs/context/hitl-oversight-as-tuned-policy-and-reversibility-gate.context.md
   - docs/context/skill-chain-recovery-and-state-checkpointing.context.md
 ---
-
 # AI Pair Programming — Explore-Plan-Implement-Commit Workflow
 
 The Explore-Plan-Implement-Commit workflow is the most-cited high-leverage structural pattern for AI pair programming. It is documented in Anthropic's official Claude Code best practices and independently corroborated by multiple practitioner sources.

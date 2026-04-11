@@ -1,7 +1,10 @@
 ---
 name: "dbt Layered Architecture and Testing Patterns"
 description: "dbt's three-tier architecture (staging → intermediate → mart) is the canonical transformation pattern. Use dbt tests for schema contracts, Great Expectations for complex source quality. Dimensional modeling remains dominant in 90%+ of enterprise warehouses."
-type: context
+type: entity
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.datadoghq.com/blog/understanding-dbt/
   - https://www.sparvi.io/blog/great-expectations-vs-dbt-tests
@@ -11,7 +14,6 @@ related:
   - docs/context/semantic-layer-as-ai-analytics-infrastructure.context.md
   - docs/context/data-governance-failure-modes-and-federated-model.context.md
 ---
-
 # dbt Layered Architecture and Testing Patterns
 
 dbt's three-tier architecture (staging → intermediate → mart) is the canonical transformation pattern for analytics engineering, used in 8,200+ companies globally. dbt tests handle lightweight schema contracts; Great Expectations handles complex source data quality. Dimensional modeling remains the dominant paradigm in enterprise data warehouses, though wide-table patterns are gaining ground.

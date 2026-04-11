@@ -1,7 +1,10 @@
 ---
 name: Shift-Left Testing Durable Principle with Overstated Statistics
 description: Earlier defect detection costs less — this principle is robustly supported. The 10x–100x cost multipliers trace to Boehm (1981) via unlinked secondary attributions and should not be cited without a primary source.
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.virtuosoqa.com/post/shift-left-testing-early-with-the-sdlc
   - https://www.qasource.com/blog/shift-left-testing-a-beginners-guide-to-advancing-automation-with-generative-ai
@@ -10,7 +13,6 @@ related:
   - docs/context/ci-pipeline-test-layer-ordering-and-quality-gate-calibration.context.md
   - docs/context/test-strategy-architecture-driven-selection.context.md
 ---
-
 # Shift-Left Testing Durable Principle with Overstated Statistics
 
 ## Key Insight

@@ -1,7 +1,10 @@
 ---
 name: Agentic Fault Taxonomy and Interface Mismatch Pattern
-description: A 2026 empirical study of 13,602 issues across 40 repos identifies 37 fault types in 5 dimensions; the root cause pattern is probabilistic model outputs conflicting with deterministic interface constraints.
-type: context
+description: "A 2026 empirical study of 13,602 issues across 40 repos identifies 37 fault types in 5 dimensions; the root cause pattern is probabilistic model outputs conflicting with deterministic interface constraints."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://arxiv.org/abs/2603.06847
   - https://arxiv.org/abs/2512.07497
@@ -12,7 +15,6 @@ related:
   - docs/context/agentic-resilience-infrastructure-primitives.context.md
   - docs/context/agentic-failure-recovery-classify-retry-replan-abandon.context.md
 ---
-
 # Agentic Fault Taxonomy and Interface Mismatch Pattern
 
 **The most rigorous empirical grounding is the March 2026 arXiv fault taxonomy: 37 fault types across 5 dimensions, from 13,602 issues across 40 open-source agentic repositories, with 83.8% practitioner validation.** The core insight: "Many failures originate from mismatches between probabilistically generated artifacts and deterministic interface constraints."

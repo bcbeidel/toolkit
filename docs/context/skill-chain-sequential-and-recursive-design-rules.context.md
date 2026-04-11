@@ -1,7 +1,10 @@
 ---
 name: "Skill Chain Sequential and Recursive Design Rules"
 description: "Start simple — single agents match multi-agent under equal compute; validate every boundary; use error fields not exceptions; design for idempotency; recursive patterns additionally require layered termination guardrails where only budget and timeout are hard guarantees."
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.anthropic.com/research/building-effective-agents
   - https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/ai-agent-design-patterns
@@ -14,7 +17,6 @@ related:
   - docs/context/skill-handoff-contracts-and-state-design.context.md
   - docs/context/skill-chain-failure-modes-and-antipatterns.context.md
 ---
-
 # Skill Chain Sequential and Recursive Design Rules
 
 **Start simple. A 2026 empirical study (arXiv 2604.02460) found that single agents consistently match or outperform multi-agent systems on multi-hop reasoning tasks under equal compute budgets.** Multi-agent chaining is not automatically better for complex tasks — MAS advantages in prior literature frequently stem from unaccounted computation differences, not architectural benefit. Multi-agent is justified when a single agent's effective context genuinely degrades (deletion, masking, distraction injection) or when tasks are truly parallelizable.

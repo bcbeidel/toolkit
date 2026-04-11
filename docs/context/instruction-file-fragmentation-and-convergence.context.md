@@ -1,7 +1,10 @@
 ---
 name: "Instruction File Fragmentation and Convergence"
 description: "The AI coding tool instruction file ecosystem is fragmented across incompatible filenames, but converging toward AGENTS.md as the cross-platform baseline under AAIF/Linux Foundation governance"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://agents.md/
   - https://www.linuxfoundation.org/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation
@@ -12,7 +15,6 @@ related:
   - docs/context/instruction-capacity-and-context-file-length.context.md
   - docs/context/format-sensitivity-and-cross-model-defaults.context.md
 ---
-
 Every major AI coding tool uses a different primary instruction filename. As of 2026: `CLAUDE.md` (Claude Code), `AGENTS.md` (Codex, cross-platform target), `.github/copilot-instructions.md` (GitHub Copilot), `.cursor/rules/*.mdc` (Cursor), `.windsurf/rules/*.md` (Windsurf), `.clinerules/` (Cline), `CONVENTIONS.md` (Aider), `GEMINI.md` (Gemini CLI). All evolved from single files to directory-based structures between 2024 and 2026.
 
 The fragmentation creates a practical problem: teams using multiple tools must maintain duplicate instructions. AGENTS.md emerged as the convergence point — plain Markdown with no required fields, no frontmatter schema. Its simplicity is both its strength (zero migration cost) and weakness (no validation, no schema enforcement, quality depends entirely on the author).

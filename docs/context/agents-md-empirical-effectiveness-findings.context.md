@@ -1,7 +1,10 @@
 ---
 name: "AGENTS.md Empirical Effectiveness Findings"
 description: "Two 2026 studies on AGENTS.md effectiveness conflict in direction but measure different things: ETH Zurich finds accuracy decreases, arXiv 2601.20404 finds runtime efficiency improves — context files may make agents faster but not more correct"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://arxiv.org/abs/2602.11988
   - https://arxiv.org/abs/2601.20404
@@ -12,7 +15,6 @@ related:
   - docs/context/instruction-file-extraction-techniques.context.md
   - docs/context/instruction-file-authoring-anti-patterns.context.md
 ---
-
 # AGENTS.md Empirical Effectiveness Findings
 
 Two 2026 preprints study the same intervention — AGENTS.md context files for coding agents — and reach opposite conclusions. They do not contradict each other: they measure different things.

@@ -1,7 +1,10 @@
 ---
 name: "Composable Validators: Stateless Check Functions and Shared Accumulator"
 description: "The canonical validation pipeline pattern uses stateless check functions that return issue lists, composed via a shared result accumulator — not fail-fast chaining."
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://eslint.org/docs/latest/contribute/architecture/
   - https://fsharpforfunandprofit.com/rop/
@@ -12,7 +15,6 @@ related:
   - docs/context/validators-as-pure-queries-cqs-convention.context.md
   - docs/context/validation-severity-tiers-and-confidence-decoupling.context.md
 ---
-
 ## Key Insight
 
 Composable validation pipelines share a single design pattern across every mature tool: stateless check functions that return issue lists, merged into a shared result accumulator. This collects all errors rather than stopping at the first failure. ESLint, Railway Oriented Programming, and AutoChecklist (arXiv 2026) all independently converge on this pattern.

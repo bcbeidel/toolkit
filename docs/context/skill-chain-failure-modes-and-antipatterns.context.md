@@ -1,7 +1,10 @@
 ---
 name: "Skill Chain Failure Modes and Antipatterns"
 description: "Most skill chain failures are structural design failures, not prompt failures; error amplification reaches 17.2x only in uncoordinated architectures; the MASFT taxonomy documents 14 failure modes across 3 categories; observability is the primary debugging tool."
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://arxiv.org/html/2503.13657v1
   - https://galileo.ai/blog/why-multi-agent-systems-fail
@@ -14,7 +17,6 @@ related:
   - docs/context/skill-chain-sequential-and-recursive-design-rules.context.md
   - docs/context/skill-chain-handoff-signaling-and-evidence-packs.context.md
 ---
-
 # Skill Chain Failure Modes and Antipatterns
 
 **Most skill chain failures are design failures, not execution failures.** The MASFT academic study (arXiv 2503.13657) found that interventions at the prompt level — improved prompts, tactical fixes — yielded only +14% improvement in a studied system. Structural changes — standardized protocols, explicit contracts, comprehensive verification — are required to materially reduce failure rates.

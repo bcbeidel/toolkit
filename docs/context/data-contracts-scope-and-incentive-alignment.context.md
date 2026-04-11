@@ -1,7 +1,10 @@
 ---
 name: Data Contracts Scope and Incentive Alignment
-description: Data contracts govern the transformation output layer only; their success depends on organizational incentive alignment, not technical implementation.
-type: context
+description: "Data contracts govern the transformation output layer only; their success depends on organizational incentive alignment, not technical implementation."
+type: concept
+confidence: medium
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://docs.getdbt.com/docs/mesh/govern/model-contracts
   - https://www.elementary-data.com/post/data-contracts
@@ -10,7 +13,6 @@ related:
   - docs/context/data-quality-three-tier-model.context.md
   - docs/context/schema-evolution-expand-contract-pattern.context.md
 ---
-
 # Data Contracts Scope and Incentive Alignment
 
 Data contracts are a valid schema governance mechanism within the analytics transformation layer. They cannot intercept the upstream source changes that are the dominant cause of data quality failures. Organizational incentive alignment — not technical design — determines whether contracts succeed or become stale artifacts.

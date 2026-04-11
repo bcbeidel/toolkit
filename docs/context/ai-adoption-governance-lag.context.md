@@ -1,7 +1,10 @@
 ---
 name: AI Adoption and Governance Lag
 description: AI adoption in content production is near-universal (75%) but formal governance lags (<30%); the adoption-ahead-of-governance pattern appears across both content and AI product domains.
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://contently.com/2025/12/27/what-ai-governance-should-look-like-inside-a-content-team-top-10-platforms-for-2026/
   - https://knotch.com/content/content-marketing-institutes-2025-enterprise-content-marketing-benchmarks-budgets-and-trends
@@ -11,7 +14,6 @@ related:
   - docs/context/content-governance-scale-threshold.context.md
   - docs/context/ai-pm-eval-lifecycle-and-ownership.context.md
 ---
-
 # AI Adoption and Governance Lag
 
 A consistent pattern appears across both content strategy and AI product management: adoption of AI tools races ahead of governance infrastructure, producing quality dissatisfaction and accumulating risk. The gap is not a technology problem — it is a process and organizational design problem.

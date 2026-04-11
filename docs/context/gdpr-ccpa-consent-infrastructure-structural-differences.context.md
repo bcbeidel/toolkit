@@ -1,7 +1,10 @@
 ---
 name: "GDPR vs. CCPA: Consent Infrastructure Structural Differences"
 description: "GDPR opt-in and CCPA opt-out require structurally different implementations; Google Consent Mode v2 is mandatory for EU personalized ads since March 2024; anti-dark-pattern enforcement is tightening across jurisdictions"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://matomo.org/blog/2025/06/consent-management-platform/
   - https://www.emarketer.com/content/faq-on-identity-resolution-navigating-privacy-cookies-cross-channel-fragmentation-2026
@@ -9,7 +12,6 @@ sources:
 related:
   - docs/context/warehouse-native-activation-and-reverse-etl.context.md
 ---
-
 GDPR and CCPA are not different flavors of the same requirement — they require structurally different consent implementations. Building a single consent UX that tries to satisfy both produces a system that satisfies neither. Understanding the structural difference is the prerequisite for compliant infrastructure design.
 
 GDPR (European Union) requires explicit opt-in before any personal data collection or processing. Users must actively consent before cookies are set, before tracking fires, and before any behavioral data is captured. Consent must be freely given, specific, informed, and unambiguous — pre-ticked boxes, forced bundling of consent categories, and consent bundled with terms of service are non-compliant by design. Maximum fine exposure: €20 million or 4% of annual global revenue, whichever is greater. Meta received a €1.2 billion GDPR fine from Ireland's Data Protection Commission in May 2023.

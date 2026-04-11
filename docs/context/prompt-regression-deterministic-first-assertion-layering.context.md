@@ -1,7 +1,10 @@
 ---
 name: Prompt Regression — Deterministic-First Assertion Layering
-description: Regression pipelines should layer deterministic assertions (schema, regex, structure) before LLM-as-judge; judges have position bias, rubric order effects, and 100% instability on ambiguous items.
-type: context
+description: "Regression pipelines should layer deterministic assertions (schema, regex, structure) before LLM-as-judge; judges have position bias, rubric order effects, and 100% instability on ambiguous items."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.promptfoo.dev/docs/integrations/ci-cd/
   - https://github.com/promptfoo/promptfoo
@@ -14,7 +17,6 @@ related:
   - docs/context/llm-as-judge-biases-and-mitigations.context.md
   - docs/context/rubric-specificity-and-deterministic-first-evaluation.context.md
 ---
-
 # Prompt Regression — Deterministic-First Assertion Layering
 
 Prompt regression pipelines should run deterministic checks before semantic checks. This is not a preference — it is a reliability requirement. LLM-as-judge has documented systematic biases that make it unsafe as the foundation of a regression system.

@@ -1,7 +1,10 @@
 ---
 name: Agent Memory Tier Taxonomy and Implementation Gaps
-description: Five memory tiers (short-term through procedural) are taxonomically stable, but production implementations vary significantly across frameworks and memory beyond short-term/long-term remains experimental.
-type: context
+description: "Five memory tiers (short-term through procedural) are taxonomically stable, but production implementations vary significantly across frameworks and memory beyond short-term/long-term remains experimental."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://redis.io/blog/ai-agent-memory-stateful-systems/
   - https://dev.to/foxgem/ai-agent-memory-a-comparative-analysis-of-langgraph-crewai-and-autogen-31dp
@@ -12,7 +15,6 @@ related:
   - docs/context/multi-agent-shared-state-failure-mechanisms.context.md
   - docs/context/agentic-planning-hybrid-global-plan-local-react.context.md
 ---
-
 # Agent Memory Tier Taxonomy and Implementation Gaps
 
 **The standard taxonomy is stable; production implementations are not.** Five memory types are well-defined and widely cited, but frameworks implement them heterogeneously, and tiers beyond short-term and long-term remain experimental or framework-specific in production as of 2026.

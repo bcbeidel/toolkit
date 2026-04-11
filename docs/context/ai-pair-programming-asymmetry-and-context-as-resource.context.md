@@ -1,7 +1,10 @@
 ---
 name: AI Pair Programming — Asymmetry and Context as Resource
-description: Human-AI pair programming is structurally asymmetric (human permanent strategist, AI executor); the context window — not shared memory — is the binding resource with no analog in traditional pairing.
-type: context
+description: "Human-AI pair programming is structurally asymmetric (human permanent strategist, AI executor); the context window — not shared memory — is the binding resource with no analog in traditional pairing."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://code.claude.com/docs/en/best-practices
   - https://martinfowler.com/articles/reduce-friction-ai/knowledge-priming.html
@@ -14,7 +17,6 @@ related:
   - docs/context/hitl-oversight-as-tuned-policy-and-reversibility-gate.context.md
   - docs/context/agent-memory-tier-taxonomy-and-implementation-gaps.context.md
 ---
-
 # AI Pair Programming — Asymmetry and Context as Resource
 
 Traditional pair programming assumes two humans with comparable cognitive authority who alternate roles fluidly. Human-AI collaboration is structurally different in a way that does not change with better tooling: the human holds strategic authority, domain judgment, and verification responsibility permanently. The AI executes, explores, and generates. Role fluidity — the defining feature of human pairing — does not exist.

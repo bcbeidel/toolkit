@@ -1,7 +1,10 @@
 ---
 name: Test Strategy Architecture-Driven Selection
-description: No single test model is universally optimal; the Pyramid, Trophy, and Honeycomb each fit a specific architecture and team context — choose by system shape, not doctrine.
-type: context
+description: "No single test model is universally optimal; the Pyramid, Trophy, and Honeycomb each fit a specific architecture and team context — choose by system shape, not doctrine."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://web.dev/articles/ta-strategies
   - https://kentcdodds.com/blog/the-testing-trophy-and-testing-classifications
@@ -12,7 +15,6 @@ related:
   - docs/context/consumer-driven-contract-testing-scope-and-adoption-barriers.context.md
   - docs/context/agent-testing-pyramid-uncertainty-tolerance-layers.context.md
 ---
-
 # Test Strategy Architecture-Driven Selection
 
 ## Key Insight

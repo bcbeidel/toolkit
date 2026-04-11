@@ -1,7 +1,10 @@
 ---
 name: "Instruction File Hierarchy and Path Scoping"
 description: "All major AI coding tools load instruction files broad-to-specific via concatenation; path-scoping metadata exists in three tools but uses incompatible field names"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://code.claude.com/docs/en/memory
   - https://developers.openai.com/codex/guides/agents-md
@@ -13,7 +16,6 @@ related:
   - docs/context/instruction-file-fragmentation-and-convergence.context.md
   - docs/context/instruction-capacity-and-context-file-length.context.md
 ---
-
 Every major AI coding tool concatenates instruction files from broad scope to specific scope. Global/user instructions load first, then project root, then subdirectory instructions closest to the work. More specific files appear later in the context window, giving them higher effective priority. This pattern holds universally — though the mechanisms differ significantly across tools.
 
 **Claude Code** implements a 5-tier hierarchy: managed policy (cannot be excluded) → user global (`~/.claude/CLAUDE.md`) → project root → local gitignored override (`CLAUDE.md.local`) → subdirectory. Ancestor files load at session start; descendant files load on-demand when Claude accesses files in those directories. `.claude/rules/*.md` adds path-scoped rules loaded conditionally.

@@ -1,7 +1,10 @@
 ---
-name: Design Systems, Accessibility, and False Confidence
-description: Design systems are the most efficient path to accessible UI but create false confidence — 94.8% of pages still fail WCAG, component compliance doesn't guarantee page-level coverage, and automated tools catch only ~57% of violations.
-type: context
+name: "Design Systems, Accessibility, and False Confidence"
+description: "Design systems are the most efficient path to accessible UI but create false confidence — 94.8% of pages still fail WCAG, component compliance doesn't guarantee page-level coverage, and automated tools catch only ~57% of violations."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://webaim.org/projects/million/
   - https://www.deque.com/
@@ -10,7 +13,6 @@ related:
   - docs/context/continuous-discovery-jtbd-constraints.context.md
   - docs/context/ai-adoption-governance-lag.context.md
 ---
-
 # Design Systems, Accessibility, and False Confidence
 
 Design systems are the most scalable path to accessible UI — Atlassian resolved 6,000+ accessibility issues through design system work between 2024–2025 — but component-level compliance does not guarantee page-level accessibility. The gap between "our design system is WCAG-compliant" and "our product is accessible" is where teams are most routinely caught off-guard.

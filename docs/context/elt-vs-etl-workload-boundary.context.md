@@ -1,7 +1,10 @@
 ---
 name: ELT vs ETL Workload Boundary
-description: ELT is the analytics default; ETL remains correct for streaming, IoT, and regulated workloads — the two are not interchangeable.
-type: context
+description: "ELT is the analytics default; ETL remains correct for streaming, IoT, and regulated workloads — the two are not interchangeable."
+type: comparison
+confidence: medium
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.getdbt.com/blog/data-integration
   - https://www.startdataengineering.com/post/de_best_practices/
@@ -10,7 +13,6 @@ related:
   - docs/context/data-quality-three-tier-model.context.md
   - docs/context/schema-evolution-expand-contract-pattern.context.md
 ---
-
 # ELT vs ETL Workload Boundary
 
 ELT is the analytics engineering default for batch and BI workloads. ETL remains the correct choice for streaming, IoT, and regulated pipelines. Treating "ELT is the standard" as a universal claim overstates the consensus and leads teams astray on real-time or compliance-constrained projects.

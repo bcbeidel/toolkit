@@ -1,7 +1,10 @@
 ---
-name: Cloud-Native Security — Identity-First, Shift-Left, Runtime Detection
-description: Cloud-native security centers on three interlocking practices — identity-first zero trust (workload federation), shift-left IaC scanning and admission control, and runtime detection via Falco/eBPF.
-type: context
+name: "Cloud-Native Security — Identity-First, Shift-Left, Runtime Detection"
+description: "Cloud-native security centers on three interlocking practices — identity-first zero trust (workload federation), shift-left IaC scanning and admission control, and runtime detection via Falco/eBPF."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.cncf.io/blog/2025/12/15/kubernetes-security-2025-stable-features-and-2026-preview/
   - https://tag-security.cncf.io/community/resources/security-whitepaper/
@@ -14,7 +17,6 @@ related:
   - docs/context/iac-testing-pyramid-and-adoption-gap.context.md
   - docs/context/pull-based-gitops-security-model-and-tool-selection.context.md
 ---
-
 # Cloud-Native Security — Identity-First, Shift-Left, Runtime Detection
 
 The 2025–2026 cloud-native security posture centers on three interlocking practices: identity-first architecture that eliminates static credentials, shift-left controls that catch misconfigurations before production, and runtime detection that identifies anomalous behavior in running workloads.

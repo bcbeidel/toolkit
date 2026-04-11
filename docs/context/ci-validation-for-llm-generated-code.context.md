@@ -1,7 +1,10 @@
 ---
 name: CI Validation for LLM-Generated Code
-description: LLM-generated code requires non-functional CI checks beyond unit tests — CodeQL at repo scope, runtime/memory tracking (patches avg 64% slower, 89% higher peak memory), and weighted severity scoring.
-type: context
+description: "LLM-generated code requires non-functional CI checks beyond unit tests — CodeQL at repo scope, runtime/memory tracking (patches avg 64% slower, 89% higher peak memory), and weighted severity scoring."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://arxiv.org/html/2511.10271v1
   - https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/sarif-support-for-code-scanning
@@ -12,7 +15,6 @@ related:
   - docs/context/agent-driven-ci-guardrails-and-confidence-routing.context.md
   - docs/context/agent-generated-code-security-patterns.context.md
 ---
-
 # CI Validation for LLM-Generated Code
 
 ## Key Insight

@@ -1,7 +1,10 @@
 ---
 name: "BLUF and Progressive Disclosure as Document Architecture"
 description: "BLUF governs ordering within a document; progressive disclosure governs depth across tiers — complementary patterns that solve different problems"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://arxiv.org/abs/2307.03172
   - https://semanticinfrastructurelab.org/essays/progressive-disclosure-for-ai-agents
@@ -16,7 +19,6 @@ related:
   - docs/context/instruction-capacity-and-context-file-length.context.md
   - docs/context/atomic-file-granularity-and-frontmatter-navigation.context.md
 ---
-
 BLUF (Bottom Line Up Front) and progressive disclosure are complementary patterns that operate at different levels of document architecture. Conflating them leads to misapplication of both.
 
 **BLUF governs ordering within a single document.** Place the conclusion, decision, or key finding in the first 1-2 sentences. Supporting evidence, examples, and alternatives follow. This applies at the document level (BLUF opening + takeaway closing) and at the section level.

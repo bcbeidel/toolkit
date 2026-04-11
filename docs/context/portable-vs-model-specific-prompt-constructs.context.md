@@ -1,7 +1,10 @@
 ---
 name: "Portable vs. Model-Specific Prompt Constructs"
 description: "Portable constructs: clear objectives, few-shot examples, numbered steps; model-specific tuning stays separate"
-type: context
+type: comparison
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://arxiv.org/abs/2512.01420
   - https://www.prompthub.us/blog/one-size-does-not-fit-all-an-analaysis-of-model-specific-prompting-strategies
@@ -14,7 +17,6 @@ related:
   - docs/context/cot-and-self-consistency-tradeoffs.context.md
   - docs/context/prompt-design-principles-framing-and-emphasis.context.md
 ---
-
 Cross-model prompt transfer incurs a 10-30 percentage point performance drop between model families. PromptBridge (2025) found that transferring GPT-5's optimal prompt to Llama-3.1-70B yielded 68.7% versus the target model's own optimal of 79.5%. PromptHub confirmed "there wasn't a single prompt snippet that could be used across all models to increase performance." Portability is a spectrum, not a threshold.
 
 ## What Is Portable

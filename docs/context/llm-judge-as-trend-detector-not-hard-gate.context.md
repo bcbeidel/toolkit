@@ -1,7 +1,10 @@
 ---
 name: "LLM Judge as Trend Detector, Not Hard Gate"
 description: "LLM judges are reliable for detecting quality trends across many samples but not for individual binary CI gates — documented positional bias (60–69%), scale inconsistency, and rating indeterminacy make them unreliable as sole pass/fail arbiters."
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.evidentlyai.com/llm-guide/llm-as-a-judge
   - https://arxiv.org/html/2506.13639v1
@@ -13,7 +16,6 @@ related:
   - docs/context/eval-pipeline-ci-cd-integration-and-adoption-gap.context.md
   - docs/context/agent-feedback-loop-lifecycle-coverage-and-traces.context.md
 ---
-
 ## Key Insight
 
 LLM-as-judge is genuinely useful for evaluating semantic quality properties (coherence, tone, reasoning) across natural language variation. It is not reliable as a sole binary CI gate. Empirical research documents systematic biases severe enough to invert rankings and select worse systems. The right role is trend detection and directional signal, calibrated against periodic human annotation.

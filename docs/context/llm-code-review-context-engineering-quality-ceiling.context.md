@@ -1,7 +1,10 @@
 ---
 name: LLM Code Review — Context Engineering as Quality Ceiling
-description: PR intent, commit history, and cross-file dependencies are the highest-leverage variables in AI code review quality; without them, performance collapses to generic low-relevance comments.
-type: context
+description: "PR intent, commit history, and cross-file dependencies are the highest-leverage variables in AI code review quality; without them, performance collapses to generic low-relevance comments."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://arxiv.org/html/2505.20206v1
   - https://arxiv.org/html/2509.01494v1
@@ -13,7 +16,6 @@ related:
   - docs/context/llm-code-review-framing-bias-and-neutral-presentation.context.md
   - docs/context/context-rot-and-window-degradation.context.md
 ---
-
 # LLM Code Review — Context Engineering as Quality Ceiling
 
 All high-performing AI code review tools share one structural investment: contextualizing diffs against PR descriptions, tickets, commit history, and cross-file dependencies before generating findings. This is not a feature — it is the quality ceiling.

@@ -1,7 +1,10 @@
 ---
 name: LLM Token Cost Asymmetry and Agentic Accumulation
 description: Output tokens cost 5–8x input tokens for flagship models; multi-step agentic calls are the dominant cost driver via accumulated context re-sends on every step.
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://platform.claude.com/docs/en/build-with-claude/prompt-caching
   - https://intuitionlabs.ai/articles/llm-api-pricing-comparison-2025
@@ -13,7 +16,6 @@ related:
   - docs/context/context-rot-and-window-degradation.context.md
   - docs/context/agent-memory-tier-taxonomy-and-implementation-gaps.context.md
 ---
-
 # LLM Token Cost Asymmetry and Agentic Accumulation
 
 Output tokens cost 5–8x more than input tokens for flagship models. GPT-5.2 is 8x ($1.75 input / $14.00 output per million tokens), Claude Sonnet 4.6 is 5x ($3.00 / $15.00), Gemini 3.1 Pro is 6x ($2.00 / $12.00). The commonly cited "4–5x" understates the ratio for current flagship models.

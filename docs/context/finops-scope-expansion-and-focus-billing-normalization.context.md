@@ -1,7 +1,10 @@
 ---
 name: FinOps Scope Expansion and FOCUS Billing Normalization
 description: FinOps has expanded from cloud-only to unified technology spend management; FOCUS v1.3 normalizes billing schemas across providers; tagging is the foundational prerequisite.
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.finops.org/framework/
   - https://www.finops.org/insights/2025-finops-framework/
@@ -10,7 +13,6 @@ related:
   - docs/context/multi-cloud-strategy-patterns-and-hidden-complexity.context.md
   - docs/context/cloud-native-security-identity-first-shift-left-runtime.context.md
 ---
-
 # FinOps Scope Expansion and FOCUS Billing Normalization
 
 FinOps has matured from cloud cost optimization into a unified technology spend management discipline. The 2025 "Cloud+" expansion is the most significant structural change since the discipline was formalized.

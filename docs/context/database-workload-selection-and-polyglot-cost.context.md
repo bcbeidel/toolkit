@@ -1,7 +1,10 @@
 ---
 name: Database Workload Selection and Polyglot Persistence Cost
 description: Database selection is workload-driven; polyglot persistence is correct at scale for divergent access patterns but adds significant operational burden that small teams consistently underestimate.
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://learn.microsoft.com/en-us/azure/architecture/data-guide/technology-choices/understand-data-store-models
   - https://www.influxdata.com/blog/database-ecosystem-guide-2025/
@@ -12,7 +15,6 @@ related:
   - docs/context/composite-index-ordering-equality-first-rule.context.md
   - docs/context/schema-evolution-expand-contract-pattern.context.md
 ---
-
 # Database Workload Selection and Polyglot Persistence Cost
 
 Choose the database engine based on the actual access pattern and consistency requirements of the workload, not based on familiarity or recency. Polyglot persistence is correct when access patterns genuinely diverge, but each additional engine adds operational overhead — expertise, monitoring, backups, governance — that most teams underestimate.

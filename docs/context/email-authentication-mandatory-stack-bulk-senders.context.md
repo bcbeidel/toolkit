@@ -1,7 +1,10 @@
 ---
 name: "Email Authentication: Mandatory Stack for Bulk Senders"
 description: "SPF, DKIM, and DMARC are mandatory for bulk senders since 2024; BIMI is optional with meaningful prerequisites; IP warming on new domains is non-negotiable before volume sends"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.emailonacid.com/blog/article/email-deliverability/email-authentication-protocols/
   - https://www.braze.com/resources/articles/ip-warming
@@ -9,7 +12,6 @@ sources:
 related:
   - docs/context/lifecycle-marketing-behavioral-triggers-and-frequency-governance.context.md
 ---
-
 Email authentication is not optional infrastructure for bulk senders. Gmail, Yahoo, and Microsoft all mandated SPF, DKIM, and DMARC implementation in 2024-2025. Starting November 2025, Gmail actively rejects messages that fail authentication or come from senders with high spam complaint rates. The adoption gap reveals the compliance risk: as of the latest survey data, only 42.5% of senders had DMARC implemented, and 38.8% were unsure of their DMARC status. Non-compliant bulk senders are delivering to promotions folders or spam, not primary inboxes.
 
 The three-protocol stack has distinct roles that must each be implemented correctly. SPF (Sender Policy Framework) is a DNS record specifying which IP addresses are authorized to send email from a domain — it prevents unauthorized senders from spoofing your domain in the envelope-from field. DKIM (DomainKeys Identified Mail) adds a cryptographic signature to each message that receiving servers use to verify the message was sent by an authorized sender and was not modified in transit. DMARC (Domain-based Message Authentication, Reporting, and Conformance) builds on SPF and DKIM by specifying what happens when either check fails — none (take no action, report), quarantine (send to spam), or reject (block delivery) — and enables receiving servers to send alignment reports back to the sender.

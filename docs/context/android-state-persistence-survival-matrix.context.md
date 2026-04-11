@@ -1,7 +1,10 @@
 ---
 name: Android State Persistence Survival Matrix
 description: Android's onDestroy() is not called when the OS kills cached processes — use SavedStateHandle + WorkManager + DataStore for reliable state survival across process death.
-type: context
+type: concept
+confidence: medium
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://developer.android.com/guide/components/activities/process-lifecycle
 related:
@@ -9,7 +12,6 @@ related:
   - docs/context/mobile-mvvm-mvi-clean-architecture-selection.context.md
   - docs/context/offline-first-read-write-strategy-model.context.md
 ---
-
 # Android State Persistence Survival Matrix
 
 The most common Android state persistence mistake is relying on `onDestroy()` for critical state. The Android OS kills cached processes without calling `onDestroy()`. Understanding what survives which type of process end is required to build reliable Android apps.

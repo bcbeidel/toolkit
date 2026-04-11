@@ -1,7 +1,10 @@
 ---
 name: "Validation Severity Tiers and Confidence Decoupling"
 description: "Mature validation tools converge on three severity tiers (fail/warn/info), require active warn enforcement to prevent fatigue, and treat severity and confidence as separate dimensions — a conflation that causes fail-tier erosion."
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://rustc-dev-guide.rust-lang.org/diagnostics.html
   - https://docs.greatexpectations.io/docs/reference/api/core/expectationsuitevalidationresult_class/
@@ -13,7 +16,6 @@ related:
   - docs/context/composable-validators-stateless-accumulator-pattern.context.md
   - docs/context/validators-as-pure-queries-cqs-convention.context.md
 ---
-
 ## Key Insight
 
 Mature developer tools converge on three severity tiers: **fail** (blocks execution), **warn** (accumulates for report), **info/note** (context-only, no action required). The minimum viable model is fail + warn. A critical design distinction separates severity (how bad is this?) from confidence (how certain are we?) — conflating them is a documented cause of fail-tier erosion and trust loss.

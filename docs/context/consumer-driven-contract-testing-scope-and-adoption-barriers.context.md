@@ -1,7 +1,10 @@
 ---
 name: Consumer-Driven Contract Testing Scope and Adoption Barriers
-description: Pact is the mature standard for internal microservices API compatibility, but it requires bilateral team buy-in, a Pact Broker, and is scoped to services your team controls — not external APIs.
-type: context
+description: "Pact is the mature standard for internal microservices API compatibility, but it requires bilateral team buy-in, a Pact Broker, and is scoped to services your team controls — not external APIs."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://docs.pact.io/
   - https://docs.pact.io/pact_broker/can_i_deploy
@@ -12,7 +15,6 @@ related:
   - docs/context/ci-pipeline-test-layer-ordering-and-quality-gate-calibration.context.md
   - docs/context/shift-left-testing-durable-principle-overstated-statistics.context.md
 ---
-
 # Consumer-Driven Contract Testing Scope and Adoption Barriers
 
 ## Key Insight

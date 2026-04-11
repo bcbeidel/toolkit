@@ -1,7 +1,10 @@
 ---
 name: Multi-Cloud Strategy Patterns and Hidden Complexity
 description: Multi-cloud is near-universal by default; workload-segmented and active-active are the two intentional mature patterns — cloud-agnostic abstractions carry hidden complexity of their own.
-type: context
+type: concept
+confidence: medium
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.itconvergence.com/blog/multi-cloud-strategies-the-2025-2026-primer/
   - https://developer.hashicorp.com/terraform/tutorials/networking/multicloud-kubernetes
@@ -10,7 +13,6 @@ related:
   - docs/context/cloud-native-security-identity-first-shift-left-runtime.context.md
   - docs/context/iac-tool-selection-by-team-profile.context.md
 ---
-
 # Multi-Cloud Strategy Patterns and Hidden Complexity
 
 Multi-cloud is the default state for large enterprises — most organizations have multiple cloud providers through acquisitions, team preferences, or opportunistic adoption rather than deliberate strategy. The architecture challenge is not whether to use multiple clouds, but how to govern the resulting complexity.

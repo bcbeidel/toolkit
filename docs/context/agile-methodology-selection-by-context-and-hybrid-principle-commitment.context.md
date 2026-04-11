@@ -1,7 +1,10 @@
 ---
 name: Agile Methodology Selection by Context and Hybrid Principle Commitment
-description: Scrum, Kanban, Scrumban, and Shape Up each fit distinct organizational contexts; no single methodology works universally, and hybrids require explicit principle commitment to avoid creating overhead from both without benefits from either.
-type: context
+description: "Scrum, Kanban, Scrumban, and Shape Up each fit distinct organizational contexts; no single methodology works universally, and hybrids require explicit principle commitment to avoid creating overhead from both without benefits from either."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.altexsoft.com/whitepapers/agile-project-management-best-practices-and-methodologies/
   - https://basecamp.com/shapeup/0.3-chapter-01
@@ -13,7 +16,6 @@ related:
   - docs/context/team-topologies-coordination-and-dependency-visibility-mechanisms.context.md
   - docs/context/okr-co-creation-cascade-failure-and-structural-discipline.context.md
 ---
-
 # Agile Methodology Selection by Context and Hybrid Principle Commitment
 
 ## Key Insight

@@ -1,7 +1,10 @@
 ---
 name: "LLM-as-Judge Biases and Mitigations"
 description: "LLM-as-judge: 14+ bias types; binary per-criterion rubrics + position swapping + sampling aggregation are best mitigations"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://arxiv.org/html/2410.02736v1
   - https://arxiv.org/html/2411.15594v6
@@ -13,7 +16,6 @@ related:
   - docs/context/rubric-specificity-and-deterministic-first-evaluation.context.md
   - docs/context/confidence-calibration-and-self-correction.context.md
 ---
-
 LLM-as-judge has at least 14 distinct bias types, and no mitigation strategy fully removes any of them. The CALM framework's catalog of 12 biases misses two operationally critical ones discovered in subsequent research. The practical approach: design around the most severe biases with structural countermeasures, not trust.
 
 ## The 14+ Bias Types

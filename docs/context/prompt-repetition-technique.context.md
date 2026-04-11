@@ -1,14 +1,16 @@
 ---
 name: "Prompt Repetition Technique"
 description: "Prompt repetition: 47 wins vs. 0 losses across 70 benchmarks, no latency cost"
-type: context
+type: concept
+confidence: medium
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://arxiv.org/abs/2512.14982
 related:
   - docs/context/cot-and-self-consistency-tradeoffs.context.md
   - docs/context/prompt-design-principles-framing-and-emphasis.context.md
 ---
-
 Repeating the input query improves LLM performance with the strongest signal-to-noise ratio of any tested prompting technique: 47 statistically significant wins across 70 model-benchmark combinations with zero losses and no increase in latency.
 
 ## The Finding

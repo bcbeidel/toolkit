@@ -1,7 +1,10 @@
 ---
 name: "Skill Chain Human Control and Interruption Design"
 description: "HCI principles translate as motivating design goals not operational specs; never block the human; interrupt at skill boundaries not mid-skill; abort is insufficient — redirect without restart is required; wos sits at high-safety/low-autonomy end of the autonomy dial."
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.nngroup.com/articles/ten-usability-heuristics/
   - https://www.nngroup.com/articles/wizards/
@@ -19,7 +22,6 @@ related:
   - docs/context/skill-chain-hitl-patterns-and-cli-translation-gap.context.md
   - docs/context/hitl-oversight-as-tuned-policy-and-reversibility-gate.context.md
 ---
-
 # Skill Chain Human Control and Interruption Design
 
 **Classic HCI principles (Nielsen, Shneiderman) survive as motivating design goals but do not transfer operationally to LLM skill chains (MODERATE confidence).** They were designed for synchronous, deterministic GUI interactions; skill chains are asynchronous, probabilistic, and can execute irreversible side effects before a user reaches an "emergency exit." Use the heuristics to motivate design; expect that the implementations require original work.

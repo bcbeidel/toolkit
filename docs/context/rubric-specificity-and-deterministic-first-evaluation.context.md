@@ -1,7 +1,10 @@
 ---
 name: "Rubric Specificity and Deterministic-First Evaluation"
 description: "Rubric specificity has large effect (0.666 vs 0.487 correlation); exhaust deterministic checks before LLM judgment"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://arxiv.org/html/2412.05579v2
   - https://arxiv.org/html/2506.13639v1
@@ -13,7 +16,6 @@ related:
   - docs/context/llm-as-judge-biases-and-mitigations.context.md
   - docs/context/confidence-calibration-and-self-correction.context.md
 ---
-
 Rubric specificity has the largest measurable effect on LLM evaluation quality — larger than chain-of-thought, larger than reference answers. Exhausting deterministic checks before invoking LLM judgment is the structural principle that makes evaluation systems reliable.
 
 ## Rubric Specificity: The Dominant Variable

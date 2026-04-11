@@ -1,7 +1,10 @@
 ---
 name: "Agentic AI: Reliability Gap and Agent Washing"
 description: "LLM agents complete only 30–35% of complex multi-step tasks. Agents are viable only for narrow, well-defined workflows. 'Agent washing' — rebranding existing features as agentic — is widespread in 2025–2026 vendor marketing."
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://arxiv.org/html/2503.13657v2
   - https://www.bain.com/insights/building-the-foundation-for-agentic-ai-technology-report-2025/
@@ -12,7 +15,6 @@ related:
   - docs/context/data-communication-audience-modes.context.md
   - docs/context/semantic-layer-as-ai-analytics-infrastructure.context.md
 ---
-
 # Agentic AI: Reliability Gap and Agent Washing
 
 LLM agents complete 30–35% of complex multi-step tasks. The "production-ready for complex workflows" framing in analyst and vendor sources is aspirational, not descriptive. Agents are viable for narrow, well-defined workflows with clear success criteria and human-in-the-loop checkpoints.

@@ -1,7 +1,10 @@
 ---
 name: "CLV Model Selection: Contractual vs. Non-Contractual"
 description: "CLV model selection depends on business model. BG/NBD + Gamma-Gamma for non-contractual (retail/e-commerce); survival models (Weibull/Cox) for contractual (subscriptions). The contractual/non-contractual distinction is the fundamental fork."
-type: context
+type: comparison
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.pymc-marketing.io/en/stable/guide/clv/clv_intro.html
   - https://www.aliz.ai/en/blog/part-1-customer-lifetime-value-estimation-via-probabilistic-modeling
@@ -11,7 +14,6 @@ sources:
 related:
   - docs/context/churn-prediction-vs-uplift-modeling.context.md
 ---
-
 # CLV Model Selection: Contractual vs. Non-Contractual
 
 The fundamental decision in CLV modeling is not algorithm choice — it is business model type. Contractual settings (subscriptions) use survival models (Weibull, Cox). Non-contractual settings (retail, e-commerce) use BG/NBD + Gamma-Gamma. "We cannot use the same approaches to compute lifetime value" across these two contexts (PyMC-Marketing documentation).

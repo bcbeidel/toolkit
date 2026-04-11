@@ -1,7 +1,10 @@
 ---
-name: ORM N+1, Eager Loading, and DTO Projection
+name: "ORM N+1, Eager Loading, and DTO Projection"
 description: N+1 is the primary ORM anti-pattern; eager loading solves it for full object graphs; DTO projection is the superior alternative for narrow field selection.
-type: context
+type: concept
+confidence: medium
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.prisma.io/docs/orm/more/best-practices
   - https://blog.appsignal.com/2020/06/09/n-plus-one-queries-explained.html
@@ -10,7 +13,6 @@ related:
   - docs/context/composite-index-ordering-equality-first-rule.context.md
   - docs/context/schema-evolution-expand-contract-pattern.context.md
 ---
-
 # ORM N+1, Eager Loading, and DTO Projection
 
 N+1 queries are the default failure mode of lazy-loading ORMs. At scale, the difference between an N+1 query and a properly structured query is the difference between a working app and an unusable one. Eager loading solves N+1 for full object graphs; DTO projection is superior when only a subset of fields is needed.

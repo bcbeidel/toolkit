@@ -1,7 +1,10 @@
 ---
 name: "Skill Progressive Loading and Routing"
 description: "Skill descriptions (~100 tokens) stay in context permanently; full bodies load only on invocation — description quality is the routing signal and determines selection accuracy"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://code.claude.com/docs/en/skills
   - https://agentskills.io/specification
@@ -12,7 +15,6 @@ related:
   - docs/context/agent-context-file-quality-over-completeness.context.md
   - docs/context/instruction-capacity-and-context-file-length.context.md
 ---
-
 The core token-efficiency mechanism in skill ecosystems is progressive loading. Skill descriptions (~100 tokens each) are loaded into context at session start for every installed skill. The full `SKILL.md` body (~5,000 tokens) loads only when a skill is explicitly invoked. This design makes large skill ecosystems feasible without saturating the context window.
 
 **The description is the routing signal.** Claude Code's auto-invocation works by semantic matching: all descriptions are in context, Claude matches the user's message against them, and loads the relevant skill. The description is not supplementary metadata — it is the input to the classifier. Description quality directly determines whether the right skill gets selected.

@@ -1,7 +1,10 @@
 ---
 name: "Hooks: Deterministic Enforcement vs Advisory Guidance"
 description: "Hooks enforce deterministic behavior via exit code 2 (non-negotiable); CLAUDE.md is advisory and subject to context dilution; PreToolUse is the highest-leverage event; hooks config is attack surface (CVE-2025-59536)"
-type: context
+type: comparison
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://code.claude.com/docs/en/hooks
   - https://code.claude.com/docs/en/best-practices
@@ -14,7 +17,6 @@ related:
   - docs/context/llm-failure-modes-and-mitigations.context.md
   - docs/context/production-reliability-gap-and-multi-agent-failures.context.md
 ---
-
 CLAUDE.md instructions are advisory. Hooks are deterministic. This distinction is not a nuance — it is the architectural boundary between what Claude is asked to do and what Claude is physically prevented from doing.
 
 **Why advisory instructions fail as enforcement.** Three failure modes documented in production:

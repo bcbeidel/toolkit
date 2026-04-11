@@ -1,7 +1,10 @@
 ---
 name: Agent-Driven CI Guardrails and Confidence Routing
-description: Non-negotiable guardrails for agent-driven CI — tool allowlists, no auto-merge, branch protection, audit logging — plus confidence-based routing (0.60/0.75/0.90) for risk-proportionate action gating.
-type: context
+description: "Non-negotiable guardrails for agent-driven CI — tool allowlists, no auto-merge, branch protection, audit logging — plus confidence-based routing (0.60/0.75/0.90) for risk-proportionate action gating."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.elastic.co/search-labs/blog/ci-pipelines-claude-ai-agent
   - https://alexlavaee.me/blog/agent-operated-cicd-pipelines/
@@ -13,7 +16,6 @@ related:
   - docs/context/hitl-oversight-as-tuned-policy-and-reversibility-gate.context.md
   - docs/context/approval-gate-trust-calibration-and-overconfidence.context.md
 ---
-
 # Agent-Driven CI Guardrails and Confidence Routing
 
 ## Key Insight

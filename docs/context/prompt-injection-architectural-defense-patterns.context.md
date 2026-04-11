@@ -1,7 +1,10 @@
 ---
 name: Prompt Injection Architectural Defense Patterns
-description: Prompt injection is inevitable at the model level — effective defense requires architectural control/data separation via Dual LLM, Plan-Then-Execute, and Context-Minimization patterns.
-type: context
+description: "Prompt injection is inevitable at the model level — effective defense requires architectural control/data separation via Dual LLM, Plan-Then-Execute, and Context-Minimization patterns."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html
   - https://github.com/tldrsec/prompt-injection-defenses
@@ -13,7 +16,6 @@ related:
   - docs/context/mcp-security-annotations-and-limitations.context.md
   - docs/context/llm-context-credential-leakage-and-sanitization.context.md
 ---
-
 # Prompt Injection Architectural Defense Patterns
 
 ## Key Insight

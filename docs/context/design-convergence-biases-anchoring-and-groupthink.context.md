@@ -1,7 +1,10 @@
 ---
 name: Design Convergence Biases — Anchoring and Groupthink
 description: Anchoring and groupthink are the two primary convergence failure modes in software design; practitioners are more susceptible than students; LLM multi-agent homogenization (79% cosine similarity) replicates groupthink at scale.
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://arxiv.org/abs/2502.04011
   - https://ixdf.org/literature/topics/groupthink
@@ -13,7 +16,6 @@ related:
   - docs/context/llm-brainstorming-exploration-exploitation-patterns.context.md
   - docs/context/multi-agent-orchestration-patterns-and-selection-criteria.context.md
 ---
-
 # Design Convergence Biases — Anchoring and Groupthink
 
 ## Key Insight

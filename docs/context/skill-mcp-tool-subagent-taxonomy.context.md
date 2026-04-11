@@ -1,7 +1,10 @@
 ---
 name: "Skill, MCP, Tool, and Subagent Taxonomy"
 description: "Skills, MCP servers, tools, and subagents are orthogonal composable layers — one skill per coherent workflow, not per API endpoint"
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://agentskills.io/specification
   - https://code.claude.com/docs/en/skills
@@ -14,7 +17,6 @@ related:
   - docs/context/tool-description-quality-and-consolidation.context.md
   - docs/context/production-reliability-gap-and-multi-agent-failures.context.md
 ---
-
 Four layers compose the agentic tool stack. They are orthogonal and composable, not competing alternatives:
 
 | Layer | What it is | Context cost | Determinism | Primary use |

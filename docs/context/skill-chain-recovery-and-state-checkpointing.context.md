@@ -1,7 +1,10 @@
 ---
 name: "Skill Chain Recovery and State Checkpointing"
 description: "Checkpointing is necessary but not sufficient — LLM non-determinism means replay restores outputs not the reasoning chain; irreversible side effects require compensation not rollback; language-based re-entry is the right model for conversational interfaces."
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://developers.cloudflare.com/agents/concepts/human-in-the-loop/
   - https://www.inngest.com/blog/durable-execution-key-to-harnessing-ai-agents
@@ -14,7 +17,6 @@ related:
   - docs/context/skill-chain-human-control-and-interruption-design.context.md
   - docs/context/skill-handoff-contracts-and-state-design.context.md
 ---
-
 # Skill Chain Recovery and State Checkpointing
 
 **Checkpointing is necessary but not sufficient for human re-entry into a failed chain (HIGH confidence on "necessary"; MODERATE confidence on sufficiency).** LLMs are non-deterministic. Replay-based durability (Temporal's model, database-style rollback) restores intermediate outputs but cannot reproduce the reasoning that produced them — re-entry is an approximation, not a restoration.

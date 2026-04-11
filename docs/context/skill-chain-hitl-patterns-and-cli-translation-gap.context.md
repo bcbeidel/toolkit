@@ -1,7 +1,10 @@
 ---
 name: "Skill Chain HITL Patterns and CLI Translation Gap"
 description: "Five convergent HITL patterns across all platforms: propose-before-commit, structured evidence packs, audit trail, timeout with explicit fallback, binary approve/reject as primary; all surveyed evidence is GUI-native and every pattern requires translation to text."
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://zapier.com/blog/human-in-the-loop-guide/
   - https://blog.n8n.io/human-in-the-loop-automation/
@@ -15,7 +18,6 @@ related:
   - docs/context/skill-chain-human-control-and-interruption-design.context.md
   - docs/context/skill-chain-recovery-and-state-checkpointing.context.md
 ---
-
 # Skill Chain HITL Patterns and CLI Translation Gap
 
 **Five stable HITL patterns emerge across all surveyed platforms (HIGH confidence on the patterns; LOWER confidence that any specific implementation is a model of good UX).** The critical gap for wos: the entire evidence base is GUI-native. Every pattern requires translation to a conversational text interface — a translation the existing literature does not provide.

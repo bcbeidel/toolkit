@@ -1,7 +1,10 @@
 ---
 name: Platform Engineering as Load Reduction Discipline
-description: Platform engineering is load reduction, not tooling — distinct from DevOps and SRE; success is measured by absence of meetings, tickets, and escalations that used to exist.
-type: context
+description: "Platform engineering is load reduction, not tooling — distinct from DevOps and SRE; success is measured by absence of meetings, tickets, and escalations that used to exist."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://platformengineering.org/blog/platform-engineering-vs-devops-vs-sre
   - https://www.cncf.io/blog/2025/11/19/what-is-platform-engineering/
@@ -12,7 +15,6 @@ related:
   - docs/context/backstage-adoption-gap-and-build-vs-buy-framing.context.md
   - docs/context/pull-based-gitops-security-model-and-tool-selection.context.md
 ---
-
 # Platform Engineering as Load Reduction Discipline
 
 Platform engineering has a precise definition that separates it from DevOps and SRE. Getting this wrong leads to building platforms that add complexity rather than remove it.

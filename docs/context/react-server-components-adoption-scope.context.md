@@ -1,7 +1,10 @@
 ---
 name: React Server Components Adoption Scope
 description: React Server Components deliver real benefits but remain contested — scope RSC recommendations to Next.js 14+ and treat broad framework support as a 12–18 month horizon.
-type: context
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.patterns.dev/react/react-2026/
   - https://www.sachith.co.uk/react-server-components-what-to-adopt-now-best-practices-in-2025-practical-guide-mar-14-2026/
@@ -10,7 +13,6 @@ related:
   - docs/context/react-state-four-category-model.context.md
   - docs/context/vite-rolldown-vs-turbopack-framework-alignment.context.md
 ---
-
 # React Server Components Adoption Scope
 
 React Server Components (RSC) deliver measurable bundle size and load-time benefits. They are also the 3rd-most-disliked React feature in the 2025 State of React survey, with only 20% of respondents citing them as exciting. The honest position: RSC is the right direction, but meaningful framework support currently exists only in Next.js 14+. Treat "RSC everywhere" as a 12–18 month horizon, not a current default.

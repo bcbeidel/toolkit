@@ -1,7 +1,10 @@
 ---
 name: Design Spec as Trade-off Document
-description: A design spec's core function is recording WHAT and WHY a decision was made — alternatives considered, constraints accepted — not HOW to implement. Write only when triggered by irreversibility or genuine ambiguity.
-type: context
+description: "A design spec's core function is recording WHAT and WHY a decision was made — alternatives considered, constraints accepted — not HOW to implement. Write only when triggered by irreversibility or genuine ambiguity."
+type: comparison
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.industrialempathy.com/posts/design-docs-at-google/
   - https://ntietz.com/blog/reasons-to-write-design-docs/
@@ -12,7 +15,6 @@ related:
   - docs/context/diverge-converge-design-mode-switching.context.md
   - docs/context/mental-models-software-decisions-practitioner-vs-empirical.context.md
 ---
-
 # Design Spec as Trade-off Document
 
 ## Key Insight

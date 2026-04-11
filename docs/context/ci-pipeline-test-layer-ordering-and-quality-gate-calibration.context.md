@@ -1,7 +1,10 @@
 ---
 name: CI Pipeline Test Layer Ordering and Quality Gate Calibration
-description: CI pipeline structure is fast-to-slow with four layers — pre-commit linting, per-commit unit/fast-integration, pre-merge contract/security, scheduled E2E — and quality gates fail when implemented as untuned binary pass/fail.
-type: context
+description: "CI pipeline structure is fast-to-slow with four layers — pre-commit linting, per-commit unit/fast-integration, pre-merge contract/security, scheduled E2E — and quality gates fail when implemented as untuned binary pass/fail."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://www.virtuosoqa.com/post/shift-left-testing-early-with-the-sdlc
   - https://www.qodo.ai/blog/transformative-software-testing-trends/
@@ -12,7 +15,6 @@ related:
   - docs/context/consumer-driven-contract-testing-scope-and-adoption-barriers.context.md
   - docs/context/precommit-hooks-vs-ci-enforcement-boundary.context.md
 ---
-
 # CI Pipeline Test Layer Ordering and Quality Gate Calibration
 
 ## Key Insight

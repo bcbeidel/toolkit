@@ -1,7 +1,10 @@
 ---
 name: Runbook as Code — Quality Criteria and Automation Path
-description: Runbooks and playbooks serve distinct scopes; both are treated as code — Git-versioned, post-incident updated, and quarterly reviewed.
-type: context
+description: "Runbooks and playbooks serve distinct scopes; both are treated as code — Git-versioned, post-incident updated, and quarterly reviewed."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://rootly.com/blog/incident-response-runbook-template-2025-step-by-step-guide-real-world-examples
   - https://rootly.com/incident-response/runbooks
@@ -12,7 +15,6 @@ related:
   - docs/context/slo-error-budget-policy-and-alerting-mechanics.context.md
   - docs/context/toil-definition-measurement-and-automation-gate.context.md
 ---
-
 # Runbook as Code — Quality Criteria and Automation Path
 
 Runbooks and playbooks are distinct tools. Conflating them produces documents that do neither job well. Both must be treated as code: versioned, reviewed, and updated after every incident.

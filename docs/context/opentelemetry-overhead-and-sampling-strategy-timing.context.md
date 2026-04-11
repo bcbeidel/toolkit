@@ -1,7 +1,10 @@
 ---
 name: OpenTelemetry Overhead and Sampling Strategy Timing
-description: OTel is the correct observability standard, but untuned auto-instrumentation can reach 7–42% overhead — design sampling strategy before rollout, not after.
-type: context
+description: "OTel is the correct observability standard, but untuned auto-instrumentation can reach 7–42% overhead — design sampling strategy before rollout, not after."
+type: concept
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://opentelemetry.io/docs/concepts/signals/traces/
   - https://opentelemetry.io/docs/concepts/observability-primer/
@@ -11,7 +14,6 @@ related:
   - docs/context/distributed-resilience-stack-circuit-breaker-retry-jitter.context.md
   - docs/context/saga-orchestration-vs-choreography-default.context.md
 ---
-
 # OpenTelemetry Overhead and Sampling Strategy Timing
 
 OpenTelemetry (OTel) is the CNCF-standard observability framework — vendor-neutral, with broad language SDK support. The "1–5% overhead" claim widely cited in documentation reflects best-case, tuned deployments. Untuned auto-instrumentation in production can reach 7–42% CPU overhead and comparable latency increases. Sampling strategy must be designed before rollout.

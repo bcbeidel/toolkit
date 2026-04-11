@@ -1,7 +1,10 @@
 ---
 name: Vite + Rolldown vs Turbopack Framework Alignment
-description: Vite with Rolldown is dominant outside Next.js; Turbopack is the production default inside Next.js — the correct tool follows the framework choice, not a standalone comparison.
-type: context
+description: "Vite with Rolldown is dominant outside Next.js; Turbopack is the production default inside Next.js — the correct tool follows the framework choice, not a standalone comparison."
+type: comparison
+confidence: high
+created: 2026-04-10
+updated: 2026-04-10
 sources:
   - https://vite.dev/blog/announcing-vite8
   - https://dev.to/vishwark/vite-vs-turbopack-the-present-future-of-frontend-build-tools-2025-edition-1iom
@@ -11,7 +14,6 @@ related:
   - docs/context/react-state-four-category-model.context.md
   - docs/context/react-server-components-adoption-scope.context.md
 ---
-
 # Vite + Rolldown vs Turbopack Framework Alignment
 
 The question "Vite or Turbopack?" has a simple answer: use Vite for non-Next.js React projects; use Turbopack if you're on Next.js 16+. The tools are not alternatives to evaluate independently — they are bundled with different parts of the React ecosystem.
