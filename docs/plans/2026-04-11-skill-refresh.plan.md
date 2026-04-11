@@ -204,12 +204,12 @@ The five refresh dimensions (from issue #223):
 
 ### Task 6: Final validation and roadmap update
 
-- [ ] **Step 1:** `grep -L "## Anti-Pattern Guards" skills/*/SKILL.md` → empty output (all 14 have the section)
-- [ ] **Step 2:** `git diff main...HEAD --name-only | grep "SKILL.md" | wc -l` → 14 (all skills changed)
-- [ ] **Step 3:** `python scripts/lint.py --root . --no-urls` → no new warnings or failures vs. pre-change baseline
-- [ ] **Step 4:** Confirm no SKILL.md body exceeds 500 lines: review lint output's instruction density table — no skill should exceed 500 total lines
+- [x] **Step 1:** `grep -L "## Anti-Pattern Guards" skills/*/SKILL.md` → empty output (all 14 have the section)
+- [x] **Step 2:** `git diff main...HEAD --name-only | grep "SKILL.md" | wc -l` → 14 (all skills changed)
+- [x] **Step 3:** `python scripts/lint.py --root . --no-urls` → no new warnings or failures vs. pre-change baseline
+- [x] **Step 4:** Confirm no SKILL.md body exceeds 500 lines: review lint output's instruction density table — no skill should exceed 500 total lines
 - [ ] **Step 5:** Update roadmap Task 7 checkbox in `docs/plans/2026-04-10-roadmap-v036-v039.plan.md` with merge commit SHA once PR merges
-- [ ] **Step 6:** Commit: `git commit -m "chore: validate skill-refresh complete"`
+- [x] **Step 6:** Commit: `git commit -m "chore: validate skill-refresh complete"` <!-- sha:f486a71 -->
 
 ---
 
