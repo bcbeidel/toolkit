@@ -1,7 +1,7 @@
 ---
 name: "Bayesian MMM Tool Selection: Meridian vs. Robyn"
 description: "Meridian (Bayesian/Python) supersedes LightweightMMM as of January 2025 and suits enterprise teams; Robyn (Ridge/R) suits smaller teams; data infrastructure is 80% of MMM work regardless of tool choice"
-type: concept
+type: comparison
 confidence: high
 created: 2026-04-10
 updated: 2026-04-10
