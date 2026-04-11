@@ -7,6 +7,13 @@ references:
   - references/rule-format-guide.md
 ---
 
+> **Deprecated.** This skill is replaced by `/wos:build-rule`.
+> `/wos:build-rule` provides all extract-rules functionality plus multi-format support
+> (WOS `.rule.md`, Cursor `.mdc`, Claude Code CLAUDE.md), conflict detection, and
+> structural validation against LLM rule research (fix-safety, default-closed, start-narrow).
+>
+> Proceed with extract-rules anyway? (y/n) — if not, invoke `/wos:build-rule` instead.
+
 # /wos:extract-rules
 
 Extract codebase conventions into structured rule files in `docs/rules/`.

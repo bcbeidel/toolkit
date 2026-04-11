@@ -11,6 +11,12 @@ references:
   - references/hook-setup.md
 ---
 
+> **Deprecated.** This skill is replaced by `/wos:audit-rule`.
+> `/wos:audit-rule` provides all check-rules functionality plus conflict detection,
+> specificity checks, research grounding, staleness detection, and fix-safety validation.
+>
+> Proceed with check-rules anyway? (y/n) — if not, invoke `/wos:audit-rule` instead.
+
 # /wos:check-rules
 
 Evaluate files against project rules in `docs/rules/`. Each rule is
