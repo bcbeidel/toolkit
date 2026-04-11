@@ -130,5 +130,4 @@ self-improvement starts at `/wos:audit`. Chain design starts at
 `/wos:audit-chain`. Build anything new with the appropriate `/wos:build-*`
 skill; verify it with the matching `/wos:audit-*`.
 
-*Deprecated:* `/wos:retrospective` (use `/wos:finish-work` Step 6),
-`/wos:check-rules` and `/wos:extract-rules` (use `/wos:build-rule` and `/wos:audit-rule`).
+*Deprecated:* `/wos:retrospective` (use `/wos:finish-work` Step 6).

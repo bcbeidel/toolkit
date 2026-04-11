@@ -14,7 +14,6 @@ deterministically, then evaluates five semantic quality dimensions per rule
 using a locked rubric, then detects cross-rule conflicts.
 
 This skill evaluates the rules themselves — not files against rules.
-Use `/wos:check-rules` (deprecated) for file compliance checking.
 
 ## Workflow
 
