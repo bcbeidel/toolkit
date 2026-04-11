@@ -2,7 +2,7 @@
 name: Refresh All Skills Against v0.35.0 Research
 description: Review and update all 14 SKILL.md files against the v0.35.0 context base — adding anti-pattern guards, strengthening gate checks, and removing contraindicated approaches
 type: plan
-status: executing
+status: completed
 branch: feat/skill-refresh
 pr: TBD
 related:
