@@ -1002,7 +1002,7 @@ Follow the distillation rules from the Approach section:
   agentic planning/execution.
   Verify: context files exist with valid frontmatter, 200-800 words each.
 
-- [ ] **Task 21: Distill Cluster 5A — Quality & Validation.**
+- [x] **Task 21: Distill Cluster 5A — Quality & Validation.** <!-- sha:a9a1c76 -->
   Invoke `/wos:distill` with the 5 research documents from Task 6.
   Expected output: 6-10 context files covering validation, testing,
   decision frameworks, observability, and feedback loops.
