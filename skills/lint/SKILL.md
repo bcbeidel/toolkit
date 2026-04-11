@@ -176,6 +176,13 @@ Skill Evaluation: [skill-name]
 
 Only report issues — if a criterion passes, omit it.
 
+## Anti-Pattern Guards
+
+1. **Attributing pre-existing issues to recent changes** — a project may have accumulated failures before your work began. Establish a baseline before blaming new issues on recent changes. Run lint on the main branch first, then compare.
+2. **Dismissing warn-tier findings** — warns that are never enforced become noise that teams learn to ignore. Each warn represents degradation; a project with 50 active warns is not "clean." Address warns or explicitly accept them with a rationale.
+3. **Using --strict as a substitute for fixing root causes** — `--strict` promotes all warnings to failures, which is appropriate for CI gating. Using it to artificially block progress without fixing the underlying issues is not.
+4. **Skipping individual error messages** — lint output is not a pass/fail score; it is a diagnostic. Every issue entry specifies a file, line, and reason. Reading the summary number without reading the individual issues skips the diagnostic value entirely.
+
 ## Handoff
 
 **Receives:** Project root path (defaults to CWD); optional flags (--no-urls, --strict, --fix)

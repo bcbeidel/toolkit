@@ -242,6 +242,7 @@ Results:
 5. **Diagnosing without evidence** — when reporting failures, include
    command output, error messages, or specific observations. "It didn't
    work" is not a diagnosis.
+6. **Running quality judgment before structural checks pass** — if plan structure is malformed (missing status, wrong task count), quality checks produce meaningless results. Structural preconditions (Step 2) must pass before any judgment-based criterion runs. A malformed plan is not "mostly validated."
 
 ## Handoff
 

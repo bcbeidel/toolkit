@@ -184,6 +184,13 @@ Report what was done:
 
 If everything was already set up, confirm: "WOS is up to date. No changes needed."
 
+## Anti-Pattern Guards
+
+1. **Running setup with uncommitted changes in the repo** — setup writes AGENTS.md and CLAUDE.md. If the working tree has uncommitted changes, the pre-setup state is ambiguous and harder to recover from if something goes wrong. Check for a clean working tree before proceeding; ask the user if changes are present.
+2. **Silent layout selection** — if no layout hint exists, always present the four layout options and wait for explicit selection. Applying a default layout without asking embeds a structural decision that is costly to reverse once docs have been created.
+3. **Overwriting content outside WOS markers** — only the section between `<!-- wos:begin -->` and `<!-- wos:end -->` markers is WOS-managed. Content written by the user outside these markers must not be touched. A full AGENTS.md rewrite is always wrong.
+4. **Skipping the current-state check** — setup is idempotent, but it must check what already exists before writing. Presenting layout options when a layout hint already exists confuses the user; showing the current layout and asking if it should change is the correct flow.
+
 ## Handoff
 
 **Receives:** Project root path (new or existing); optional communication preferences
