@@ -21,3 +21,4 @@ Implementation plans for WOS features.
 | [2026-04-11-handoff-contracts.plan.md](2026-04-11-handoff-contracts.plan.md) | Add a standardized ## Handoff section (Receives / Produces / Chainable-to) to every existing SKILL.md — prerequisite for audit-chain |
 | [2026-04-11-ingest-skill.plan.md](2026-04-11-ingest-skill.plan.md) | Add skills/ingest/SKILL.md — universal source intake that updates 5–15 wiki pages per invocation with append-only semantics |
 | [2026-04-11-skill-refresh.plan.md](2026-04-11-skill-refresh.plan.md) | Review and update all 14 SKILL.md files against the v0.35.0 context base — adding anti-pattern guards, strengthening gate checks, and removing contraindicated approaches |
+| [2026-04-11-workflow-doc.plan.md](2026-04-11-workflow-doc.plan.md) | Create WORKFLOW.md at project root documenting the canonical WOS workflows — development lifecycle, knowledge management, self-improvement loop, skill chain design, and primitive taxonomy. |
