@@ -29,9 +29,13 @@ def _schema_md(
     if page_types is not None:
         lines += ["## Page Types"] + [f"- {t}" for t in page_types] + [""]
     if confidence_tiers is not None:
-        lines += ["## Confidence Tiers"] + [f"- {t}" for t in confidence_tiers] + [""]
+        lines += (
+            ["## Confidence Tiers"] + [f"- {t}" for t in confidence_tiers] + [""]
+        )
     if relationship_types is not None:
-        lines += ["## Relationship Types"] + [f"- {r}" for r in relationship_types] + [""]
+        lines += (
+            ["## Relationship Types"] + [f"- {r}" for r in relationship_types] + [""]
+        )
     return "\n".join(lines)
 
 
@@ -100,7 +104,9 @@ class TestParseSchemaValid:
 
         schema = parse_schema(schema_file)
 
-        assert set(schema.keys()) == {"page_types", "confidence_tiers", "relationship_types"}
+        assert set(schema.keys()) == {
+            "page_types", "confidence_tiers", "relationship_types"
+        }
 
 
 # ── test_parse_schema_missing_section ────────────────────────────
@@ -110,7 +116,10 @@ class TestParseSchemaMissingSection:
     def test_missing_confidence_tiers_raises(self, tmp_path: Path) -> None:
         from wos.wiki import parse_schema
 
-        content = "# SCHEMA.md\n\n## Page Types\n- concept\n\n## Relationship Types\n- related_to\n"
+        content = (
+            "# SCHEMA.md\n\n## Page Types\n- concept\n\n"
+            "## Relationship Types\n- related_to\n"
+        )
         schema_file = tmp_path / "SCHEMA.md"
         schema_file.write_text(content, encoding="utf-8")
 
@@ -120,7 +129,10 @@ class TestParseSchemaMissingSection:
     def test_missing_page_types_raises(self, tmp_path: Path) -> None:
         from wos.wiki import parse_schema
 
-        content = "# SCHEMA.md\n\n## Confidence Tiers\n- high\n\n## Relationship Types\n- related_to\n"
+        content = (
+            "# SCHEMA.md\n\n## Confidence Tiers\n- high\n\n"
+            "## Relationship Types\n- related_to\n"
+        )
         schema_file = tmp_path / "SCHEMA.md"
         schema_file.write_text(content, encoding="utf-8")
 
@@ -271,7 +283,8 @@ class TestValidateWikiClean:
         page_path = tmp_path / "my-concept.md"
         page_content = (
             "---\nname: My Concept\ndescription: A concept page\n"
-            "type: concept\nconfidence: high\ncreated: 2026-01-01\nupdated: 2026-01-01\n"
+            "type: concept\nconfidence: high\n"
+            "created: 2026-01-01\nupdated: 2026-01-01\n"
             "---\n# My Concept\n\nContent here.\n"
         )
         page_path.write_text(page_content, encoding="utf-8")
@@ -299,7 +312,8 @@ class TestValidateWikiWithViolations:
         page_path = tmp_path / "bad-page.md"
         page_content = (
             "---\nname: Bad Page\ndescription: Has wrong type\n"
-            "type: unknown-type\nconfidence: high\ncreated: 2026-01-01\nupdated: 2026-01-01\n"
+            "type: unknown-type\nconfidence: high\n"
+            "created: 2026-01-01\nupdated: 2026-01-01\n"
             "---\n# Bad Page\n"
         )
         page_path.write_text(page_content, encoding="utf-8")
@@ -318,7 +332,9 @@ class TestValidateWikiWithViolations:
         from wos.validators import validate_wiki
 
         schema_path = tmp_path / "SCHEMA.md"
-        schema_path.write_text("# SCHEMA.md\n\n## Page Types\n- concept\n", encoding="utf-8")
+        schema_path.write_text(
+            "# SCHEMA.md\n\n## Page Types\n- concept\n", encoding="utf-8"
+        )
 
         issues = validate_wiki(tmp_path, schema_path)
 
