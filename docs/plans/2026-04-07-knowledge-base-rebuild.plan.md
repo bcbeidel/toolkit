@@ -1071,20 +1071,15 @@ Follow the distillation rules from the Approach section:
   Present results to user. Fix any failures before cleanup.
   Verify: 0 audit failures related to context files.
 
-- [ ] **Task 31: Delete research docs, final audit.**
-  Delete all research documents created in Tasks 2-14 (their value is
-  captured in the distilled context files). Context files should have
-  no `related:` links to research docs (distillation rules prevent this),
-  so deletion should cause zero broken links. Run:
+- [ ] **Task 31: Final audit.**
+  Research documents are preserved (user decision). Run:
   ```
   python scripts/reindex.py --root .
   python scripts/audit.py --root . --no-urls
   python -m pytest tests/ -v
   ```
   If any audit issues arise, fix them (likely index sync only).
-  Verify: 0 audit failures related to new content. All tests pass.
-  No research documents remain in `docs/research/` (except `_index.md`).
-  `grep -r "docs/research/" docs/context/` returns no results.
+  Verify: 0 audit failures related to context files. All tests pass.
 
 ## Validation
 
