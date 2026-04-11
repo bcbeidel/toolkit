@@ -75,7 +75,7 @@ Skills that operate independently at any point in the lifecycle:
 
 - **Principles** — captures and maintains project principles in `PRINCIPLES.md`; detects drift over time
 - **Refine Prompt** — assesses and improves prompts (including SKILL.md files) using evidence-backed techniques
-- **Retrospective** — reviews the current session and submits structured feedback as a GitHub Issue
+- **Retrospective** *(deprecated — use `/wos:finish-work` Step 6)* — reviews the current session and submits structured feedback as a GitHub Issue
 - **Report Issue** — files bugs, feature requests, and feedback against the WOS repo
 
 ## Skills Reference
@@ -93,7 +93,7 @@ Skills that operate independently at any point in the lifecycle:
 | `/wos:finish-work` | Structured work integration (merge/PR/keep/discard) |
 | `/wos:principles` | Capture and maintain project principles |
 | `/wos:refine-prompt` | Assess and refine prompts using evidence-backed techniques |
-| `/wos:retrospective` | Session review and feedback submission |
+| `/wos:retrospective` | *(deprecated)* Session review and feedback submission |
 | `/wos:report-issue` | File GitHub issues against WOS repo |
 
 ### Commands
