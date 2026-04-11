@@ -82,6 +82,7 @@ Skills that operate independently at any point in the lifecycle:
 
 | Skill | Purpose |
 |-------|---------|
+| `/wos:audit` | Full project health check — orchestrates lint, audit-skill, audit-rule, audit-chain, and wiki validation into a prioritized report |
 | `/wos:setup` | Initialize or update WOS project context |
 | `/wos:lint` | Validate project health (8 checks + auto-fix) |
 | `/wos:research` | SIFT-based research with source verification |
