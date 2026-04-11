@@ -36,7 +36,7 @@ your-project/
     scripts/          → <wos-plugin>/scripts/
     skills/
       lint/      → <wos-plugin>/skills/lint/
-      brainstorm/     → <wos-plugin>/skills/brainstorm/
+      scope-work/     → <wos-plugin>/skills/scope-work/
       research/       → <wos-plugin>/skills/research/
       ...
 ```

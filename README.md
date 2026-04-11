@@ -26,7 +26,7 @@ an areas table, metadata format, and communication preferences.
 
 ## Skills
 
-WOS provides 12 active skills organized into four layers (plus 1 deprecated) — knowledge, delivery,
+WOS provides 13 active skills organized into four layers — knowledge, delivery,
 infrastructure, and feedback. See [OVERVIEW.md](OVERVIEW.md) for the full
 skill ecosystem diagram, lifecycle descriptions, and reference table.
 

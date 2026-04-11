@@ -10,7 +10,6 @@ argument-hint: "[plan file path]"
 user-invocable: true
 references:
   - references/option-execution.md
-  - references/retrospective-format.md
   - ../_shared/references/plan-format.md
 ---
 
@@ -55,7 +54,7 @@ If the user provided a plan path as an argument, use it. Otherwise, search
 for a plan file:
 
 ```bash
-python <plugin-skills-dir>/execute-plan/scripts/plan_assess.py --scan --root <project-root>
+python <plugin-skills-dir>/start-work/scripts/plan_assess.py --scan --root <project-root>
 ```
 
 Parse the JSON output to find plans with `status: executing` or
@@ -116,15 +115,12 @@ Summary:
 
 ### 6. Optional Retrospective
 
-Offer only if a plan file was found in Step 2:
+After integration completes, offer:
 
-> "Would you like to add a retrospective to the plan?"
+> "Work is integrated. Would you like to run a retrospective? Invoke `/wos:retrospective` to review this session."
 
-If yes, follow the format in
-[retrospective-format](references/retrospective-format.md) to append a
-`## Retrospective` section to the plan file.
-
-If no plan was found, skip this step entirely.
+Do not embed the retrospective workflow here — it lives in `/wos:retrospective`.
+If the user declines, close out without further action.
 
 ## Key Instructions
 

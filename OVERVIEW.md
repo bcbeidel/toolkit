@@ -15,14 +15,14 @@ flowchart TB
     distill --> context[("docs/context/\ndocs/research/")]
 
     subgraph Delivery["Delivery Layer"]
-        brainstorm["/wos:brainstorm"] --> writeplan["/wos:write-plan"]
-        writeplan --> executeplan["/wos:execute-plan"]
-        executeplan --> validatework["/wos:validate-work"]
-        validatework --> finishwork["/wos:finish-work"]
-        writeplan -."infeasibility\nfeedback".-> brainstorm
+        scopework["/wos:scope-work"] --> planwork["/wos:plan-work"]
+        planwork --> startwork["/wos:start-work"]
+        startwork --> checkwork["/wos:check-work"]
+        checkwork --> finishwork["/wos:finish-work"]
+        planwork -."infeasibility\nfeedback".-> scopework
     end
 
-    context --> brainstorm
+    context --> scopework
 
     subgraph Infrastructure["Infrastructure Layer"]
         init["/wos:setup"] -."creates".-> discovery["Frontmatter\n_index.md\nAGENTS.md"]
@@ -34,7 +34,7 @@ flowchart TB
     subgraph Feedback["Feedback Layer"]
         principles["/wos:principles"]
         refineprompt["/wos:refine-prompt"]
-        retrospective["/wos:retrospective"]
+        retrospective["/wos:retrospective (standalone)"]
         reportissue["/wos:report-issue"]
     end
 ```
@@ -51,11 +51,11 @@ Together they build the evidence-based substrate that planning draws from.
 
 A linear pipeline from idea to merged code:
 
-1. **Brainstorm** — divergent-then-convergent design dialogue; produces an approved design doc
-2. **Write Plan** — converts the design into a structured implementation plan with tasks, file changes, and validation criteria; includes an infeasibility check that can loop back to brainstorm
-3. **Execute Plan** — implements each task, commits with SHA-tracked checkboxes, supports multi-session resumption
-4. **Validate Work** — verifies completed work meets validation criteria, either from a plan's Validation section or ad-hoc (built from git diff, project config, and project docs); in plan mode, plan stays in `executing` until all criteria pass
-5. **Finish Work** — presents integration options (merge, PR, keep, discard) after tests pass
+1. **Scope Work** — divergent-then-convergent design dialogue; produces an approved design doc
+2. **Plan Work** — converts the design into a structured implementation plan with tasks, file changes, and validation criteria; includes an infeasibility check that can loop back to scope-work
+3. **Start Work** — implements each task, commits with SHA-tracked checkboxes, supports multi-session resumption
+4. **Check Work** — verifies completed work meets validation criteria, either from a plan's Validation section or ad-hoc (built from git diff, project config, and project docs); in plan mode, plan stays in `executing` until all criteria pass
+5. **Finish Work** — presents integration options (merge, PR, keep, discard) after tests pass; nudges `/wos:retrospective`
 
 ### Infrastructure Layer
 
@@ -75,26 +75,26 @@ Skills that operate independently at any point in the lifecycle:
 
 - **Principles** — captures and maintains project principles in `PRINCIPLES.md`; detects drift over time
 - **Refine Prompt** — assesses and improves prompts (including SKILL.md files) using evidence-backed techniques
-- **Retrospective** *(deprecated — use `/wos:finish-work` Step 6)* — reviews the current session and submits structured feedback as a GitHub Issue
+- **Retrospective** — reviews the current session and submits structured feedback as a GitHub Issue; offered as a nudge at the end of `/wos:finish-work`
 - **Report Issue** — files bugs, feature requests, and feedback against the WOS repo
 
 ## Skills Reference
 
 | Skill | Purpose |
 |-------|---------|
-| `/wos:audit` | Full project health check — orchestrates lint, audit-skill, audit-rule, audit-chain, and wiki validation into a prioritized report |
+| `/wos:audit` | Full project health check — orchestrates lint, check-skill, check-rule, check-skill-chain, and wiki validation into a prioritized report |
 | `/wos:setup` | Initialize or update WOS project context |
 | `/wos:lint` | Validate project health (8 checks + auto-fix) |
 | `/wos:research` | SIFT-based research with source verification |
 | `/wos:distill` | Convert research artifacts into focused context files |
-| `/wos:brainstorm` | Collaborative design dialogue before planning |
-| `/wos:write-plan` | Convert approved designs into implementation plans |
-| `/wos:execute-plan` | Execute plans with lifecycle enforcement |
-| `/wos:validate-work` | Verify completed work (plan-based or ad-hoc) |
+| `/wos:scope-work` | Collaborative design dialogue before planning |
+| `/wos:plan-work` | Convert approved designs into implementation plans |
+| `/wos:start-work` | Execute plans with lifecycle enforcement |
+| `/wos:check-work` | Verify completed work (plan-based or ad-hoc) |
 | `/wos:finish-work` | Structured work integration (merge/PR/keep/discard) |
 | `/wos:principles` | Capture and maintain project principles |
 | `/wos:refine-prompt` | Assess and refine prompts using evidence-backed techniques |
-| `/wos:retrospective` | *(deprecated)* Session review and feedback submission |
+| `/wos:retrospective` | Session review and feedback submission (standalone) |
 | `/wos:report-issue` | File GitHub issues against WOS repo |
 
 ### Commands

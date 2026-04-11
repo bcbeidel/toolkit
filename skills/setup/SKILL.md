@@ -106,11 +106,11 @@ After scaffolding is complete, ask:
 Based on the response, suggest a concrete WOS skill sequence:
 
 - **Research-oriented** (exploring a domain, comparing options, investigating):
-  `/wos:brainstorm` → `/wos:research` → `/wos:distill`
+  `/wos:research` → `/wos:distill`
 - **Implementation-oriented** (building a feature, fixing something, clear goal):
-  `/wos:brainstorm` → `/wos:write-plan` → `/wos:execute-plan`
+  `/wos:scope-work` → `/wos:plan-work` → `/wos:start-work`
 - **Exploratory / unsure**:
-  Start with `/wos:brainstorm` to clarify the problem space
+  Start with `/wos:scope-work` to clarify the problem space
 
 If the user declines or skips, move on without suggesting.
 

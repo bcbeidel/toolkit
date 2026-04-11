@@ -83,4 +83,4 @@ Confirm the path to the user:
 
 **Receives:** Command name, purpose description, optional argument hint
 **Produces:** `.claude/commands/<name>.md` ready for use as a Claude Code slash command
-**Chainable to:** audit-command (to review the command after creation)
+**Chainable to:** check-command (to review the command after creation)

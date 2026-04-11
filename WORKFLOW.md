@@ -9,23 +9,24 @@ use it to orient quickly without reading individual SKILL.md files.
 Primary pipeline from idea to merged code:
 
 ```
-/wos:consider → /wos:brainstorm → /wos:write-plan → /wos:execute-plan → /wos:validate-work → /wos:finish-work
+/wos:consider → /wos:scope-work → /wos:plan-work → /wos:start-work → /wos:check-work → /wos:finish-work
 ```
 
 | Step | Skill | Gate / Output |
 |------|-------|---------------|
 | Think it through | `/wos:consider` | Optional. Apply a mental model (16 available) before designing. Produces a framed problem statement. |
-| Design | `/wos:brainstorm` | Receives: topic or problem. **Gate:** user approves design doc. Produces: `docs/designs/*.design.md` |
-| Plan | `/wos:write-plan` | Receives: design doc or description. **Gate:** user approves plan. Produces: `docs/plans/*.plan.md` (`status: approved`) |
-| Execute | `/wos:execute-plan` | Receives: plan with `status: approved`. **Gate:** all tasks `[x]` with commit SHAs. Produces: implemented code on feature branch |
-| Validate | `/wos:validate-work` | Receives: plan (or ad-hoc). **Gate:** all validation criteria pass. Produces: pass/fail report per criterion |
+| Design | `/wos:scope-work` | Receives: topic or problem. **Gate:** user approves design doc. Produces: `docs/designs/*.design.md` |
+| Plan | `/wos:plan-work` | Receives: design doc or description. **Gate:** user approves plan. Produces: `docs/plans/*.plan.md` (`status: approved`) |
+| Execute | `/wos:start-work` | Receives: plan with `status: approved`. **Gate:** all tasks `[x]` with commit SHAs. Produces: implemented code on feature branch |
+| Validate | `/wos:check-work` | Receives: plan (or ad-hoc). **Gate:** all validation criteria pass. Produces: pass/fail report per criterion |
 | Integrate | `/wos:finish-work` | Receives: validated implementation on feature branch. **Gate:** tests pass. Produces: PR opened or merge completed |
 
 **Supporting skills at any stage:**
-- `/wos:research` — gather evidence before brainstorming; chains to `/wos:write-plan` with verified findings
+- `/wos:research` — gather evidence before scoping; chains to `/wos:plan-work` with verified findings
 - `/wos:refine-prompt` — improve a SKILL.md, plan task, or prompt before acting on it
+- `/wos:retrospective` — review the session and submit feedback; offered as a nudge at the end of `/wos:finish-work`
 
-If `/wos:write-plan` finds the design infeasible, it returns structured feedback to `/wos:brainstorm`
+If `/wos:plan-work` finds the design infeasible, it returns structured feedback to `/wos:scope-work`
 for revision. The plan's `status` field tracks position in the lifecycle:
 `draft → approved → executing → completed`.
 
@@ -59,30 +60,30 @@ frontmatter errors, broken URLs, and index drift before they accumulate.
 How WOS improves itself — or how you improve your own WOS configuration:
 
 ```
-/wos:audit → gaps identified → /wos:build-* → /wos:audit-* → /wos:audit-chain → clean
+/wos:audit → gaps identified → /wos:build-* → /wos:check-* → /wos:check-skill-chain → clean
 ```
 
 | Step | Skill | Gate / Output |
 |------|-------|---------------|
-| Diagnose | `/wos:audit` | Orchestrates lint + audit-skill + audit-rule + audit-chain + wiki validation. Produces: prioritized health report |
+| Diagnose | `/wos:audit` | Orchestrates lint + check-skill + check-rule + check-skill-chain + wiki validation. Produces: prioritized health report |
 | Build | `/wos:build-*` | Create the missing or broken primitive — skill, rule, subagent, command, or hook |
-| Verify primitive | `/wos:audit-*` | Audit the new primitive in isolation. **Gate:** no failing checks |
-| Verify chains | `/wos:audit-chain` | Confirm workflow chains remain well-formed after changes. **Gate:** "well-formed" confirmation |
+| Verify primitive | `/wos:check-*` | Check the new primitive in isolation. **Gate:** no failing checks |
+| Verify skill-chains | `/wos:check-skill-chain` | Confirm skill-chains remain well-formed after changes. **Gate:** "well-formed" confirmation |
 
-See [Primitive Taxonomy](#5-primitive-taxonomy) for the full build/audit pairing.
+See [Primitive Taxonomy](#5-primitive-taxonomy) for the full build/check pairing.
 
-## 4. Skill Chain Design
+## 4. Skill-Chain Design
 
 How to design multi-skill workflows and verify they're coherent:
 
-**Goal mode — design a new chain from scratch:**
+**Goal mode — design a new skill-chain from scratch:**
 ```
-workflow goal → /wos:audit-chain → *.chain.md manifest
+workflow goal → /wos:check-skill-chain → *.chain.md manifest
 ```
 
-**Manifest mode — audit and repair an existing chain:**
+**Manifest mode — check and repair an existing skill-chain:**
 ```
-*.chain.md → /wos:audit-chain → findings table → targeted edits → re-audit → clean
+*.chain.md → /wos:check-skill-chain → findings table → targeted edits → re-check → clean
 ```
 
 | Input | Mode | Output |
@@ -90,9 +91,9 @@ workflow goal → /wos:audit-chain → *.chain.md manifest
 | Free-text workflow goal | Goal mode | `docs/plans/YYYY-MM-DD-<name>.chain.md` manifest |
 | Path to `*.chain.md` | Manifest mode | Findings table; optionally, targeted edits to manifest or referenced SKILL.md files |
 
-**Goal mode** is design-only — `/wos:audit-chain` creates the manifest but
-never executes chain steps. The manifest is the deliverable; pass it to
-`/wos:execute-plan` to run the steps manually.
+**Goal mode** is design-only — `/wos:check-skill-chain` creates the manifest but
+never executes skill-chain steps. The manifest is the deliverable; pass it to
+`/wos:start-work` to run the steps manually.
 
 **Manifest mode** runs five structural checks: skills exist, contracts
 declared, gates on consequential steps, termination condition, no cycles.
@@ -101,34 +102,31 @@ are flagged as `warn` and the user decides what to fix.
 
 ## 5. Primitive Taxonomy
 
-The complete build/audit pairing for every WOS primitive:
+The complete build/check pairing for every WOS primitive:
 
-| Goal | Build | Audit |
+| Goal | Build | Check |
 |------|-------|-------|
-| Create or improve a skill | `/wos:build-skill` | `/wos:audit-skill` |
-| Create or improve a rule | `/wos:build-rule` | `/wos:audit-rule` |
-| Create or improve a subagent | `/wos:build-subagent` | `/wos:audit-subagent` |
-| Create or improve a command | `/wos:build-command` | `/wos:audit-command` |
-| Create or improve a hook | `/wos:build-hook` | `/wos:audit-hook` |
-| Design or audit a skill chain | — | `/wos:audit-chain` |
+| Create or improve a skill | `/wos:build-skill` | `/wos:check-skill` |
+| Create or improve a rule | `/wos:build-rule` | `/wos:check-rule` |
+| Create or improve a subagent | `/wos:build-subagent` | `/wos:check-subagent` |
+| Create or improve a command | `/wos:build-command` | `/wos:check-command` |
+| Create or improve a hook | `/wos:build-hook` | `/wos:check-hook` |
+| Design or check a skill-chain | — | `/wos:check-skill-chain` |
 | Project-wide health check | — | `/wos:audit` |
 | Content quality validation | — | `/wos:lint` |
 
 **Build** skills scaffold a new primitive from a description and I/O contract.
-**Audit** skills surface quality issues in existing primitives — structure,
+**Check** skills surface quality issues in existing primitives — structure,
 coverage, anti-patterns, and specificity.
 
-Chain each build step directly into the matching audit: create with
-`/wos:build-*`, verify with `/wos:audit-*`, confirm chains are clean
-with `/wos:audit-chain`, then confirm project health with `/wos:audit`.
+Chain each build step directly into the matching check: create with
+`/wos:build-*`, verify with `/wos:check-*`, confirm skill-chains are clean
+with `/wos:check-skill-chain`, then confirm project health with `/wos:audit`.
 
 ---
 
-**Quick reference:** Development work starts at `/wos:brainstorm`. Knowledge
+**Quick reference:** Development work starts at `/wos:scope-work`. Knowledge
 capture starts at `/wos:ingest` (fast) or `/wos:research` (rigorous). WOS
-self-improvement starts at `/wos:audit`. Chain design starts at
-`/wos:audit-chain`. Build anything new with the appropriate `/wos:build-*`
-skill; verify it with the matching `/wos:audit-*`.
-
-*Deprecated:* `/wos:retrospective` (use `/wos:finish-work` Step 6),
-`/wos:check-rules` and `/wos:extract-rules` (use `/wos:build-rule` and `/wos:audit-rule`).
+self-improvement starts at `/wos:audit`. Skill-chain design starts at
+`/wos:check-skill-chain`. Build anything new with the appropriate `/wos:build-*`
+skill; verify it with the matching `/wos:check-*`.

@@ -192,4 +192,4 @@ Validates all 9 criteria — passes. Presents for approval. On approval, writes 
 
 **Receives:** Code pattern, behavior description, or existing rule draft to formalize
 **Produces:** Rule file written to the correct location for the detected project format
-**Chainable to:** audit-rule (verify the new rule fits the existing library without conflicts)
+**Chainable to:** check-rule (verify the new rule fits the existing library without conflicts)

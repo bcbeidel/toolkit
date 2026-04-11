@@ -94,7 +94,7 @@ python scripts/reindex.py --root <project-root>
 
 **Receives:** Skill name, description, I/O contract, and won't-haves from the user (via conversation or argument)
 **Produces:** `skills/<name>/SKILL.md` that passes `scripts/lint.py` quality checks
-**Chainable to:** audit-skill, execute-plan
+**Chainable to:** check-skill, start-work
 
 ## Key Instructions
 

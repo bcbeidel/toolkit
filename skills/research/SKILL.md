@@ -351,4 +351,4 @@ loop itself remains single-threaded (HIGH).
 
 **Receives:** Topic or question to investigate; optional scope constraints or prior context files
 **Produces:** Verified research document saved to `docs/research/` with sources, findings, and confidence ratings
-**Chainable to:** distill, ingest, write-plan
+**Chainable to:** distill, ingest, plan-work

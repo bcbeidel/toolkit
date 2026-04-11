@@ -107,8 +107,8 @@ internal phases, transitions don't require handoff confirmation — this applies
 to cross-skill boundaries only.
 **Verification:** All scripts in `scripts/` have PEP 723 inline metadata and
 run via `python`. No skill documentation requires external runtime dependencies.
-Delivery pipeline skills (brainstorm → write-plan → execute-plan →
-validate-work → finish-work) end with explicit handoff naming the next skill
+Delivery pipeline skills (scope-work → plan-work → start-work →
+check-work → finish-work) end with explicit handoff naming the next skill
 before invocation.
 
 ## How WOS operates

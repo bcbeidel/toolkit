@@ -146,4 +146,4 @@ same thread. This differs from threading...
 
 **Receives:** Path to one or more research artifacts in `docs/research/`
 **Produces:** Focused context documents saved to `docs/context/`
-**Chainable to:** ingest, write-plan
+**Chainable to:** ingest, plan-work

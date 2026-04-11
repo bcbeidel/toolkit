@@ -183,4 +183,4 @@ should not be overwritten.
 
 **Receives:** Hook event, handler type, enforcement goal
 **Produces:** Hook script at `.claude/hooks/<name>.sh` and a settings.json entry snippet
-**Chainable to:** audit-hook (to verify the hook configuration after creation)
+**Chainable to:** check-hook (to verify the hook configuration after creation)

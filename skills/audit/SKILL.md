@@ -1,8 +1,8 @@
 ---
 name: audit
 description: >
-  Full project health check — orchestrates lint, audit-skill, audit-rule,
-  audit-chain, and wiki validation into a single prioritized report. Use
+  Full project health check — orchestrates lint, check-skill, check-rule,
+  check-skill-chain, and wiki validation into a single prioritized report. Use
   when the user wants to "audit the project", "run a health check", "check
   project quality", "find all issues", "what's wrong with this project", or
   "get a full quality report".
@@ -23,9 +23,9 @@ findings into a single prioritized report.
 | Tier | What goes here |
 |------|---------------|
 | **Critical** | `scripts/lint.py` `fail` findings — broken structure, missing required fields, unreachable URLs |
-| **High** | `scripts/lint.py` `warn` findings; `fail` findings from audit-skill and audit-rule |
-| **Medium** | `warn` findings from audit-skill, audit-rule, and audit-chain; `fail` findings from wiki validation |
-| **Low** | `warn` findings from audit-chain and wiki validation |
+| **High** | `scripts/lint.py` `warn` findings; `fail` findings from check-skill and check-rule |
+| **Medium** | `warn` findings from check-skill, check-rule, and check-skill-chain; `fail` findings from wiki validation |
+| **Low** | `warn` findings from check-skill-chain and wiki validation |
 
 ## Workflow
 
@@ -43,7 +43,7 @@ about reliably.
 
 ### Step 2 — Skill Quality (always runs)
 
-Invoke `/wos:audit-skill` with no argument to audit all skills. Collect
+Invoke `/wos:check-skill` with no argument to check all skills. Collect
 all findings from the findings table it produces.
 
 Tag skill `fail` → High, skill `warn` → Medium.
@@ -61,7 +61,7 @@ Discover rules:
 | Cursor | `.cursor/rules/*.mdc` |
 | Claude Code | `## Rule:` sections in `CLAUDE.md` |
 
-If any rules exist: invoke `/wos:audit-rule` with no argument. Collect
+If any rules exist: invoke `/wos:check-rule` with no argument. Collect
 all findings. Tag rule `fail` → High, rule `warn` → Medium.
 
 If no rules found: note "No rules found — skipping rule audit."
@@ -69,10 +69,10 @@ If no rules found: note "No rules found — skipping rule audit."
 ### Step 4 — Chain Health (conditional)
 
 Check for `*.chain.md` files anywhere in the project. If any exist:
-invoke `/wos:audit-chain` on each, in manifest mode. Collect all findings.
-Tag chain `fail` → High, chain `warn` → Medium.
+invoke `/wos:check-skill-chain` on each, in manifest mode. Collect all findings.
+Tag skill-chain `fail` → High, skill-chain `warn` → Medium.
 
-If no chain files found: note "No chain manifests found — skipping chain audit."
+If no chain files found: note "No skill-chain manifests found — skipping skill-chain audit."
 
 ### Step 5 — Wiki Health (conditional)
 
@@ -121,9 +121,9 @@ repair loop for each tier in order (Critical → High → Medium → Low).
 
 - Critical findings: walk through each `scripts/lint.py` finding with the
   user; offer targeted fixes via the lint skill's cleanup actions
-- High/Medium findings from skill audit: invoke `/wos:audit-skill` repair loop
-- High/Medium findings from rule audit: invoke `/wos:audit-rule` repair loop
-- Medium/Low findings from chain audit: invoke `/wos:audit-chain` repair loop
+- High/Medium findings from skill audit: invoke `/wos:check-skill` repair loop
+- High/Medium findings from rule audit: invoke `/wos:check-rule` repair loop
+- Medium/Low findings from skill-chain audit: invoke `/wos:check-skill-chain` repair loop
 
 Do not apply any fix without per-finding user confirmation.
 
@@ -139,7 +139,7 @@ Do not apply any fix without per-finding user confirmation.
    artifacts produces noise and wastes context.
 4. **Omitting sub-check attribution** — every finding in the consolidated
    report must identify which sub-check produced it. "Missing ## Handoff"
-   without "source: audit-skill" is not actionable.
+   without "source: check-skill" is not actionable.
 5. **Treating a clean lint as a clean audit** — structural validity does not
    imply quality. Steps 2–5 add LLM-judgment on top of deterministic checks.
 
@@ -149,5 +149,5 @@ Do not apply any fix without per-finding user confirmation.
 **Produces:** Prioritized health report with Critical/High/Medium/Low tiers,
 sub-check attribution on each finding, and summary line; optionally triggers
 sub-skill repair loops on user confirmation
-**Chainable to:** lint (structural repair), audit-skill (skill repair loop),
-audit-rule (rule repair loop), audit-chain (chain repair loop)
+**Chainable to:** lint (structural repair), check-skill (skill repair loop),
+check-rule (rule repair loop), check-skill-chain (skill-chain repair loop)

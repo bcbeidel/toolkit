@@ -1,14 +1,14 @@
 ---
 name: Feedback Loop
 description: >
-  Shared contract between write-plan and brainstorm for structured
+  Shared contract between plan-work and scope-work for structured
   infeasibility feedback — format, user options, and revision-vs-supersede
   decision tree.
 ---
 
 # Feedback Loop
 
-When write-plan discovers that a design cannot be implemented as specified,
+When plan-work discovers that a design cannot be implemented as specified,
 it produces structured feedback rather than silently modifying scope. This
 reference defines the feedback format, user options, and the decision tree
 for how to proceed.
@@ -32,8 +32,8 @@ sufficient context for unambiguous interpretation.
 
 Present three choices when infeasibility is detected:
 
-1. **Return to brainstorm** — invoke `wos:brainstorm` with the plan file
-   path as input. Brainstorm reads the `## Feedback` section and revises
+1. **Return to scope-work** — invoke `wos:scope-work` with the plan file
+   path as input. Scope-work reads the `## Feedback` section and revises
    the design through its normal workflow. **Recommend this for
    design-level problems** (wrong approach, missing capability, incorrect
    assumptions about the system).
@@ -51,7 +51,7 @@ Present three choices when infeasibility is detected:
 
 The change mechanism depends on which artifact type has the problem:
 
-- **Design problem** → return to brainstorm → create a **new** design
+- **Design problem** → return to scope-work → create a **new** design
   doc with a `related:` link to the original. Do not modify the approved
   original. This is the "supersede, don't edit" pattern.
 

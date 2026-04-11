@@ -167,7 +167,7 @@ was written.
   describing what "done" looks like. Agents without stopping conditions fail
   in production.
 - **Missing handoff contract** — no `## Handoff` section means the agent
-  cannot participate in chain design or `audit-chain` verification.
+  cannot participate in skill-chain design or `check-skill-chain` verification.
 
 ## Handoff
 
@@ -176,4 +176,4 @@ tool requirements from user
 **Produces:** `.claude/agents/<name>.md` definition file with validated
 frontmatter, capability description, when-to-invoke guidance, workflow with
 completion condition, and handoff contract
-**Chainable to:** audit-subagent
+**Chainable to:** check-subagent
