@@ -9,6 +9,7 @@ Implementation plans for WOS features.
 | [2026-04-10-roadmap-v036-v039.plan.md](2026-04-10-roadmap-v036-v039.plan.md) | Execute 15 feature issues across 4 releases — wiki foundation, skill refresh, audit-chain and build/audit family, and orchestrator |
 | [2026-04-10-skill-script-renames.plan.md](2026-04-10-skill-script-renames.plan.md) | Rename audit-wos→lint, init-wos→setup, audit.py→lint.py, and update all cross-references |
 | [2026-04-10-wiki-schema-infrastructure.plan.md](2026-04-10-wiki-schema-infrastructure.plan.md) | Add wos/wiki.py validators, validate_wiki() in validators.py, wiki auto-detection in scripts/lint.py, and a default SCHEMA.md template — Python foundation for the wiki feature. |
+| [2026-04-11-build-audit-subagent.plan.md](2026-04-11-build-audit-subagent.plan.md) | Add /wos:build-subagent and /wos:audit-subagent skills to scaffold and audit Claude Code custom subagent definitions in .claude/agents/<name>.md |
 | [2026-04-11-context-migration.plan.md](2026-04-11-context-migration.plan.md) | Add confidence, created, updated, and wiki-compatible type fields to all 190 docs/context/*.context.md files — closes bcbeidel/wos#220 |
 | [2026-04-11-handoff-contracts.plan.md](2026-04-11-handoff-contracts.plan.md) | Add a standardized ## Handoff section (Receives / Produces / Chainable-to) to every existing SKILL.md — prerequisite for audit-chain |
 | [2026-04-11-ingest-skill.plan.md](2026-04-11-ingest-skill.plan.md) | Add skills/ingest/SKILL.md — universal source intake that updates 5–15 wiki pages per invocation with append-only semantics |
