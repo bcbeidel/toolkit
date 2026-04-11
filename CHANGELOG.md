@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.37.0] - 2026-04-11
+
+### Added
+
+- **`## Handoff` contracts on all skills.** Every SKILL.md now declares
+  `Receives`, `Produces`, and `Chainable-to` fields, making skill chains
+  inspectable and auditable.
+
+### Changed
+
+- **All 14 skills refreshed against v0.35.0 research and context base.**
+  Anti-pattern guards added, gate checks strengthened, and examples updated
+  across brainstorm, check-rules, distill, execute-plan, extract-rules,
+  finish-work, ingest, lint, refine-prompt, research, retrospective, setup,
+  validate-work, and write-plan.
+
 ## [0.36.0] - 2026-04-11
 
 ### Added

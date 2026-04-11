@@ -12,7 +12,7 @@
         "repo": "bcbeidel/wos"
       },
       "description": "Claude Code plugin for building and maintaining structured project context",
-      "version": "0.36.0",
+      "version": "0.37.0",
       "license": "MIT"
     }
   ]
