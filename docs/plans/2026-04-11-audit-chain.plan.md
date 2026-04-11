@@ -2,7 +2,7 @@
 name: audit-chain
 description: Single skill for designing and auditing skill chains — goal-to-manifest design mode and manifest repair loop mode.
 type: plan
-status: executing
+status: completed
 branch: feat/audit-chain
 pr: ~
 related:
