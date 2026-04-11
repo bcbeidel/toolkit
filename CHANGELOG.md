@@ -7,7 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.36.0] - 2026-04-10
+## [0.36.0] - 2026-04-11
+
+### Added
+
+- **`wos/wiki.py` — wiki schema infrastructure.** Four validator functions:
+  `parse_schema()` reads `wiki/SCHEMA.md` for page types, confidence tiers, and
+  relationship types; `check_wiki_orphans()` detects pages missing from
+  `_index.md`; `check_wiki_schema_violations()` enforces schema-defined type and
+  confidence values; `check_wiki_frontmatter()` warns on missing `confidence`,
+  `created`, `updated` fields.
+
+- **`validate_wiki()` in `wos/validators.py`.** Orchestrates all wiki checks
+  against a directory; auto-activated in `scripts/lint.py` when `wiki/SCHEMA.md`
+  is present (no new flag required).
+
+- **Default `wiki/SCHEMA.md` template** in `skills/setup/references/`. Defines
+  page types (`concept`, `entity`, `source-summary`, `comparison`), confidence
+  tiers with source-count definitions, relationship types, and lint rules.
+
+- **`/wos:ingest` skill.** Universal source intake — accepts URLs, file paths,
+  pasted text, research documents, or notes and updates 5–15 wiki pages per
+  invocation. Append-only constraint: existing prose is never removed. Post-ingest
+  lint and reindex run automatically.
+
+- **Wiki schema fields on context files.** All ~170 `docs/context/*.context.md`
+  files now carry `confidence`, `created`, and `updated` frontmatter fields,
+  making them first-class wiki pages.
+
+- **`meta` field on `Document` dataclass.** Exposes unknown frontmatter fields
+  (e.g. `confidence`, `created`) to validators without breaking existing code.
 
 ### Changed
 
@@ -16,11 +45,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   updated throughout.
 
 - **Renamed `/wos:init-wos` to `/wos:setup`.** Skill directory renamed from
-  `skills/init-wos/` to `skills/setup/`. All references updated throughout.
+  `skills/init-wos/` to `skills/setup/`. Added wiki scaffold step: when user
+  opts in, `/wos:setup` creates `wiki/SCHEMA.md` from the default template.
 
 - **Renamed `scripts/audit.py` to `scripts/lint.py`.** Test file renamed from
   `tests/test_audit.py` to `tests/test_lint.py`. All import paths and argv
-  references updated.
+  references updated. All existing CLI flags preserved.
 
 ## [0.35.0] - 2026-04-07
 
