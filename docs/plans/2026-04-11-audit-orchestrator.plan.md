@@ -2,7 +2,7 @@
 name: /wos:audit Orchestrator
 description: Create the /wos:audit skill as the top-level project health orchestrator combining lint, audit-skill, audit-rule, audit-chain, and wiki validation into a prioritized report
 type: plan
-status: executing
+status: completed
 branch: feat/audit-orchestrator
 pr: TBD
 related:
