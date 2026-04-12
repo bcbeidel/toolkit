@@ -10,10 +10,14 @@ sources:
   - https://github.com/mlflow/mlflow/issues/20827
   - https://arxiv.org/html/2601.18827
   - https://openai.github.io/openai-agents-python/guardrails/
+  - https://deepchecks.com/llm-production-challenges-prompt-update-incidents/
+  - https://dev.to/stuartp/testing-llm-prompts-in-production-pipelines-a-practical-approach-349b
 related:
   - docs/context/composable-validators-stateless-accumulator-pattern.context.md
   - docs/context/validation-severity-tiers-and-confidence-decoupling.context.md
   - docs/context/validators-as-pure-queries-cqs-convention.context.md
+  - docs/context/skill-behavioral-testing-layer-gap.context.md
+  - docs/research/2026-04-11-llm-skill-behavioral-testing.research.md
 ---
 ## Key Insight
 
@@ -41,6 +45,18 @@ The structural-first rule holds for single-schema output validation. It inverts 
 - **OpenAI Agents SDK**: Input guardrails gate output guardrails. Structural checks prevent downstream semantic evaluators from running on invalid inputs.
 - **ESLint**: Parse errors short-circuit rule-level checks. If the AST cannot be built, no linting rules run.
 
+## What Structural Linting Cannot Detect
+
+Structural checking is architecturally unable to catch five failure classes. These failures pass all structural gates while silently degrading skill quality:
+
+1. **Tone and style regression** — a rewording passes format checks while silently shifting from concise to verbose, or from technically precise to superficially correct. A practitioner's documented production case: updating a recommendation function added the right metrics, but "what was previously clear, actionable technical advice became overly dramatic and superficial" — all structural tests passed.
+2. **Silent factual drift** — outputs remain structurally valid while asserting incorrect facts. Frontmatter is present; sources are listed; content is wrong.
+3. **Brittle parsing failures** — structured outputs (JSON, YAML) deviate unpredictably under specific input phrasings, causing downstream crashes. The output structure is formally correct for common inputs but breaks on edge cases.
+4. **Multi-agent cascade failures** — a skill-level quality reduction (weaker routing signal, degraded output precision) that appears minor in isolation causes compounding errors when downstream agents depend on the output.
+5. **Cohort-specific failures** — failures appearing only for multilingual inputs, adversarial phrasings, or specific user populations that are absent from structural test cases.
+
+These are the failure modes that motivate Layer 2–3 behavioral testing (see `skill-behavioral-testing-layer-gap.context.md`). The structural gate is necessary but not sufficient.
+
 ## Takeaway
 
-Design validation pipelines as two tiers with an explicit gate. Invest in complete Tier 1 coverage before adding LLM evaluators. A 20% structural failure rate caught before LLM evaluation reduces both cost and noise in quality signals. The gate is a correctness mechanism as much as a cost mechanism — LLM judges on malformed output produce unreliable results regardless of their calibration.
+Design validation pipelines as two tiers with an explicit gate. Invest in complete Tier 1 coverage before adding LLM evaluators. A 20% structural failure rate caught before LLM evaluation reduces both cost and noise in quality signals. The gate is a correctness mechanism as much as a cost mechanism — LLM judges on malformed output produce unreliable results regardless of their calibration. But recognize that Tier 1 structural coverage has a hard ceiling: it cannot detect semantic regressions, tone drift, cascade failures, or cohort-specific issues.

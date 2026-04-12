@@ -11,10 +11,14 @@ sources:
   - https://www.getmaxim.ai/articles/building-a-golden-dataset-for-ai-evaluation-a-step-by-step-guide/
   - https://www.anthropic.com/research/statistical-approach-to-model-evals
   - https://www.langchain.com/state-of-agent-engineering
+  - https://developers.openai.com/blog/eval-skills
+  - https://arxiv.org/html/2508.13144v1
 related:
   - docs/context/agent-testing-pyramid-uncertainty-tolerance-layers.context.md
   - docs/context/llm-judge-as-trend-detector-not-hard-gate.context.md
   - docs/context/record-replay-fixture-drift-and-metadata-verification.context.md
+  - docs/context/behavioral-testing-roi-and-investment-threshold.context.md
+  - docs/research/2026-04-11-llm-skill-behavioral-testing.research.md
 ---
 ## Key Insight
 
@@ -62,6 +66,18 @@ Prefer **pass^k** (all k trials succeed) over pass@1 for production agents — u
 
 LLM capabilities change fast enough that eval thresholds have a "limited shelf life" (arXiv 2025). Thresholds require ongoing reassessment as model versions improve, not one-time calibration. Avoid generic pre-built metrics (hallucination scores, helpfulness scores) — they do not correlate with user satisfaction and become gaming targets disconnected from reality.
 
+## The "10–20 Prompts" Floor Problem
+
+OpenAI's recommendation to start with "10–20 prompts" is a floor for surfacing obvious regressions, not a steady-state target. It is not sufficient to detect distribution-specific failures. Three failure classes require scale to surface that 10–20 examples systematically miss:
+
+- **Novel phrasings and edge cases** — a curated 10–20 set under-represents the long tail of real user inputs. Failures on unusual but valid phrasings are invisible to small golden sets.
+- **Cohort-specific failures** — issues appearing only for multilingual inputs, adversarial phrasings, or specific user populations require representation of those populations in the test corpus.
+- **Cascade failures** — multi-agent failures that compound across pipeline steps only emerge when the full pipeline is exercised at volume, not from isolated single-skill golden examples.
+
+A minimum viable test suite size is empirically undefined — no source reviewed provides a principled methodology for sizing. The actionable approach: start at 10–20, then grow the test suite from production failures and discovered edge cases, not from a fixed target number.
+
+Allen AI research (Signal and Noise, 2025) provides a related insight: selecting high-SNR test subsets (sometimes <50% of original cases) improved evaluation decision accuracy by 2–5% — meaning 40 well-chosen examples outperforms 100 noisy ones. The emphasis should be on case quality and diversity, not case count.
+
 ## Takeaway
 
-Build eval pipelines as three components (dataset → runner → evaluator). Instrument golden datasets from production logs with diversity and decontamination. Use Promptfoo or Braintrust for the most complete CI/CD gate support. Apply statistical rigor to score comparison. Accept that eval thresholds need periodic reassessment as model capabilities shift. Do not assume your organization is the 52% that has evals — verify before claiming continuous regression detection.
+Build eval pipelines as three components (dataset → runner → evaluator). Instrument golden datasets from production logs with diversity and decontamination. Use Promptfoo or Braintrust for the most complete CI/CD gate support. Apply statistical rigor to score comparison. Accept that eval thresholds need periodic reassessment as model capabilities shift. Treat the 10–20 starting size as a regression floor, not a ceiling — grow from production failures and edge cases. Do not assume your organization is the 52% that has evals — verify before claiming continuous regression detection.

@@ -4,7 +4,6 @@
 ## Context Navigation
 
 Each directory has an `_index.md` listing all files with descriptions.
-- `./_index.md` -- wos-workflow-doc
 - `docs/context/_index.md` -- Project context documents covering domain knowledge, patterns, and conventions.
 - `docs/plans/_index.md` -- Implementation plans for WOS features.
 - `docs/prompts/_index.md` -- prompts
@@ -17,7 +16,6 @@ Documents put key insights first and last; supplemental detail in the middle.
 ### Areas
 | Area | Path |
 |------|------|
-| wos-workflow-doc | . |
 | Project context documents covering domain knowledge, patterns, and conventions. | docs/context |
 | Implementation plans for WOS features. | docs/plans |
 | prompts | docs/prompts |

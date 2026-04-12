@@ -16,6 +16,7 @@ related:
   - docs/context/agent-facing-document-structure.context.md
   - docs/context/agent-context-file-quality-over-completeness.context.md
   - docs/context/prompt-design-principles-framing-and-emphasis.context.md
+  - docs/research/2026-04-11-prompting-techniques-model-tiers.research.md
 ---
 Instruction capacity is finite, model-dependent, and already partially consumed before you write a single line. Shorter, higher-signal context files strictly outperform comprehensive ones because instruction quality degrades as count increases.
 
@@ -59,3 +60,7 @@ The creator of Claude Code uses approximately 100 lines. HumanLayer's production
 ## Progressive Disclosure
 
 Skill and instruction files beyond ~500 lines should split into reference files loaded on demand. Every token competes with conversation history. Reference files should link directly from the main file (one level deep) to ensure complete reads. This is the structural solution to the capacity ceiling: don't front-load everything, load it just-in-time.
+
+## Evidence Grounding for the Key Thresholds
+
+The 200–300 line threshold for CLAUDE.md/skill instruction files is T4 practitioner consensus — derived from production observation, not controlled study. No academic paper establishes tier-differentiated instruction line count thresholds; the research literature addresses context length in tokens, not instruction lines as a discrete unit. The directional finding that smaller models degrade faster than larger ones is research-supported (Chroma Context Rot study, 18 models), but specific per-tier instruction counts ("Haiku can follow 100 instructions, Sonnet 150") are not grounded in T1 or T2 evidence. By contrast, Anthropic's 500-line SKILL.md limit is the only T2-grounded hard bound on skill instruction length. When presenting these thresholds, the 200–300 line heuristic should be described as conservative practitioner guidance; the 500-line limit should be described as the published official ceiling.

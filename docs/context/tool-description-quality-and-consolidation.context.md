@@ -4,18 +4,23 @@ description: "Tool description quality is the single biggest lever for selection
 type: concept
 confidence: high
 created: 2026-04-10
-updated: 2026-04-10
+updated: 2026-04-11
 sources:
   - https://www.anthropic.com/engineering/writing-tools-for-agents
   - https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools
+  - https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
   - https://agentskills.io/specification
   - https://arxiv.org/html/2602.12430v3
+  - https://arxiv.org/abs/2602.20426
+  - https://achan2013.medium.com/how-many-tools-functions-can-an-ai-agent-has-21e0a82b7847
+  - https://arxiv.org/html/2510.02554v1
 related:
   - docs/context/skill-progressive-loading-and-routing.context.md
   - docs/context/skill-mcp-tool-subagent-taxonomy.context.md
   - docs/context/cli-dual-mode-design-for-agents.context.md
   - docs/context/mcp-vs-function-calling-tradeoffs.context.md
   - docs/context/agent-context-file-quality-over-completeness.context.md
+  - docs/research/2026-04-11-skill-description-routing.research.md
 ---
 Detailed tool descriptions are the single most important factor for tool selection accuracy. This holds across Claude Code skills, MCP tools, and function calling definitions. The description is the input the model uses to decide which tool to invoke. Schema completeness matters far less than description clarity.
 
@@ -39,6 +44,8 @@ Excessive tools distract agents. The arxiv 2026 skill survey identifies a phase 
 **Naming conventions.** Namespace by service or resource: `asana_search`, `jira_search`, or `asana_projects_search`. Use semantic identifiers in tool names and responses — `user_slug` not `user_id`, slugs not UUIDs. Claude's tool name constraint: `^[a-zA-Z0-9_-]{1,64}$`.
 
 **Response design matters too.** Return only high-signal information. Strip opaque internal IDs. Implement a `response_format` parameter for `"concise"` vs `"detailed"` — agents control their context budget. Unfiltered large responses degrade downstream reasoning quality because agents pay per token of context consumed.
+
+**Description quality becomes more important at scale, not less.** As skill count grows, Claude Code's per-skill character budget shrinks dynamically — the budget is 1% of the context window (fallback 8,000 characters total), divided across all installed skills. Each additional skill competes for a share of that fixed pool. Descriptions are shortened to fit the budget, which can strip the keywords Claude needs to match requests (S1). Adversarial research (ToolTweak, S14) confirms that in crowded tool ecosystems, description quality strongly determines selection share. The practical implication: as a WOS skill library grows, description precision becomes the primary scaling lever. Every vague word in a description is a routing liability that compounds with library size.
 
 **Anti-patterns:**
 - Tool proliferation: overlapping tools with similar descriptions cause selection ambiguity

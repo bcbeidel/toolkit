@@ -9,11 +9,16 @@ sources:
   - https://www.virtuosoqa.com/post/shift-left-testing-early-with-the-sdlc
   - https://www.qodo.ai/blog/transformative-software-testing-trends/
   - https://blog.qatestlab.com/2025/12/24/software-quality-trends-in-2026-key-changes-shaping-modern-qa/
+  - https://www.promptfoo.dev/docs/integrations/ci-cd/
+  - https://dev.to/stuartp/testing-llm-prompts-in-production-pipelines-a-practical-approach-349b
+  - https://www.braintrust.dev/articles/llm-evaluation-guide
 related:
   - docs/context/test-strategy-architecture-driven-selection.context.md
   - docs/context/shift-left-testing-durable-principle-overstated-statistics.context.md
   - docs/context/consumer-driven-contract-testing-scope-and-adoption-barriers.context.md
   - docs/context/precommit-hooks-vs-ci-enforcement-boundary.context.md
+  - docs/context/llm-judge-as-trend-detector-not-hard-gate.context.md
+  - docs/research/2026-04-11-llm-skill-behavioral-testing.research.md
 ---
 # CI Pipeline Test Layer Ordering and Quality Gate Calibration
 
@@ -50,6 +55,16 @@ Quality gates — automated thresholds on coverage, security findings, and build
 
 Security scanning is increasingly part of baseline CI/CD configuration. Tools: OWASP ZAP (dynamic application security testing), SonarQube (static analysis), Snyk (dependency scanning), Checkmarx (SAST). The directional trend is clear from multiple T2 sources; specific adoption percentages attributed to Gartner in some research sources could not be independently verified and should not be cited.
 
+## Two-Tier LLM Eval Pattern in CI
+
+For LLM behavioral testing, the validated production pattern is a two-tier split rather than a single hard-blocking gate:
+
+**Tier 1 (every PR):** Cheap deterministic checks — structural linting, code-based behavioral assertions, regex pattern matching. These run as hard-blocking gates. A PR with a structural linting failure does not merge.
+
+**Tier 2 (trend monitoring):** LLM-as-judge scores tracked as metrics in a dashboard. These trigger human review alerts on threshold degradation but do not produce automated merge blocks. Using LLM-as-judge as a hard-blocking gate compounds non-determinism: the same skill change can fail on one evaluation run and pass on the next, producing flaky test results that erode team trust and lead teams to merge despite failures — the opposite of the intended outcome.
+
+The correct framing for LLM quality scores: they measure whether output quality is within the acceptable distribution over time, not whether a single run passed a threshold. Dashboard trend monitoring surfaces this; per-run binary gates do not.
+
 ## Takeaway
 
-Structure your pipeline by feedback speed: pre-commit linting → per-commit unit tests → pre-merge integration/contract/security → scheduled E2E. Implement quality gates, then tune them by severity and scope — an untuned gate is worse than no gate, because it teaches engineers to ignore or bypass the enforcement mechanism.
+Structure your pipeline by feedback speed: pre-commit linting → per-commit unit tests → pre-merge integration/contract/security → scheduled E2E. Implement quality gates, then tune them by severity and scope — an untuned gate is worse than no gate, because it teaches engineers to ignore or bypass the enforcement mechanism. For LLM behavioral evaluation specifically, treat quality scores as trend signals requiring human review, not as binary blocking criteria.
