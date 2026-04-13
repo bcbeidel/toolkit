@@ -8,8 +8,7 @@ description: >
   "check freshness", "run health check", or "what needs attention".
 argument-hint: "[lint|check|review|coverage|freshness]"
 user-invocable: true
-references:
-  - references/skill-authoring-guide.md
+references: []
 ---
 
 # Audit Skill
@@ -144,37 +143,19 @@ After presenting audit results, offer to help resolve actionable warnings:
 
 ## Skill Evaluation
 
-When audit encounters a skill directory (a directory containing `SKILL.md`),
-it runs two layers of checks:
+When the audit encounters skill directories, the automated Python checks (name
+format, description length/voice, body size, instruction density) appear in the
+standard issue table as usual.
 
-1. **Automated checks** (Python) — name format, description length/voice,
-   body size, instruction density. These appear in the standard issue table.
+For LLM-level quality evaluation, invoke `/wos:check-skill` on each skill
+directory found and incorporate its findings into the report. Do not perform
+independent skill quality judgment here — `check-skill` is the single source of
+truth for what good looks like. Delegating keeps criteria consistent and prevents
+drift between the two skills.
 
-2. **Judgment checks** (guided by this section) — evaluate the skill against
-   the criteria in [skill-authoring-guide.md](references/skill-authoring-guide.md).
-
-For judgment checks, read the target skill's SKILL.md and references, then
-evaluate against the "Judgment" criteria table in the guide. Report findings
-with explanations that reference the relevant guide section.
-
-Present judgment findings as a narrative after the automated results:
-
-```
-Skill Evaluation: [skill-name]
-
-- **Description triggers:** [finding + explanation]
-- **Description breadth:** [finding + explanation]
-- **Freedom ↔ fragility:** [finding + explanation]
-- **Rationale over rigidity:** [finding + explanation]
-- **Unnecessary context:** [finding + explanation]
-- **Token-earning:** [finding + explanation]
-- **Generality:** [finding + explanation]
-- **Examples:** [finding + explanation]
-- **Terminology:** [finding + explanation]
-- **Reference depth:** [finding + explanation]
-```
-
-Only report issues — if a criterion passes, omit it.
+If the user ran lint on a specific skill path, pass that path to `check-skill`.
+If lint ran across the full project, offer: "Found N skill(s) — run
+`/wos:check-skill` to evaluate quality?"
 
 ## Anti-Pattern Guards
 
