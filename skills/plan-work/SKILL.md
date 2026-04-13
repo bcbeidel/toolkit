@@ -1,7 +1,7 @@
 ---
 name: plan-work
 description: >
-  Use when you have a spec or requirements for a multi-step task,
+  Use when the user has a spec or requirements for a multi-step task,
   before touching code. Creates structured implementation plans with
   explicit lifecycle management and verification criteria. Use when
   the user wants to "plan", "make an implementation plan", "break
@@ -108,6 +108,8 @@ ready for execution by an agent with zero prior context.
 
 ## Key Instructions
 
+- **Won't write code, modify files, or invoke execution skills** — the plan is the
+  deliverable; implementation is `start-work`'s job.
 - **Plans are files, not chat.** Save to disk with frontmatter. Plans that
   exist only in conversation are lost on context reset.
 - **Plans survive context resets.** A new session resumes by reading

@@ -23,8 +23,8 @@ findings into a single prioritized report.
 | Tier | What goes here |
 |------|---------------|
 | **Critical** | `scripts/lint.py` `fail` findings — broken structure, missing required fields, unreachable URLs |
-| **High** | `scripts/lint.py` `warn` findings; `fail` findings from check-skill and check-rule |
-| **Medium** | `warn` findings from check-skill, check-rule, and check-skill-chain; `fail` findings from wiki validation |
+| **High** | `scripts/lint.py` `warn` findings; `fail` findings from check-skill, check-rule, and check-hook |
+| **Medium** | `warn` findings from check-skill, check-rule, check-hook, and check-skill-chain; `fail` findings from wiki validation |
 | **Low** | `warn` findings from check-skill-chain and wiki validation |
 
 ## Workflow
@@ -74,7 +74,15 @@ Tag skill-chain `fail` → High, skill-chain `warn` → Medium.
 
 If no chain files found: note "No skill-chain manifests found — skipping skill-chain audit."
 
-### Step 5 — Wiki Health (conditional)
+### Step 5 — Hook Quality (conditional)
+
+Check for a `hooks:` key in `.claude/settings.json` or `.claude/settings.local.json`.
+If hooks are configured: invoke `/wos:check-hook` with no argument. Collect all findings.
+Tag hook `fail` → High, hook `warn` → Medium.
+
+If no hooks configured: note "No hooks configured — skipping hook audit."
+
+### Step 6 — Wiki Health (conditional)
 
 Check for `wiki/SCHEMA.md`. If it exists, wiki validation runs automatically
 as part of Step 1's `scripts/lint.py` output — parse out any wiki-tagged
@@ -82,7 +90,7 @@ findings and re-tag them: wiki `fail` → Medium, wiki `warn` → Low.
 
 If `wiki/SCHEMA.md` does not exist: note "No wiki schema found — skipping wiki audit."
 
-### Step 6 — Consolidated Report
+### Step 7 — Consolidated Report
 
 Emit the health report. Print each tier only when it has findings. Print
 sources (the sub-check and file) alongside each finding.
@@ -110,7 +118,7 @@ When all four tiers are empty: print only: "All checks passed."
 Print a summary line at the bottom:
 `N findings: X critical, X high, X medium, X low | across N sub-checks`
 
-### Step 7 — Repair Offer
+### Step 8 — Repair Offer
 
 After the report, ask:
 
@@ -123,6 +131,7 @@ repair loop for each tier in order (Critical → High → Medium → Low).
   user; offer targeted fixes via the lint skill's cleanup actions
 - High/Medium findings from skill audit: invoke `/wos:check-skill` repair loop
 - High/Medium findings from rule audit: invoke `/wos:check-rule` repair loop
+- High/Medium findings from hook audit: invoke `/wos:check-hook` repair loop
 - Medium/Low findings from skill-chain audit: invoke `/wos:check-skill-chain` repair loop
 
 Do not apply any fix without per-finding user confirmation.
@@ -134,8 +143,8 @@ Do not apply any fix without per-finding user confirmation.
    produce misleading LLM findings.
 2. **Auto-applying fixes** — the repair offer is opt-in and per-finding.
    Never modify files without explicit user confirmation.
-3. **Running chain or wiki checks unconditionally** — these steps are
-   conditional on file existence. Running them on projects without those
+3. **Running conditional checks unconditionally** — chain, hook, and wiki steps are
+   conditional on file/config existence. Running them on projects without those
    artifacts produces noise and wastes context.
 4. **Omitting sub-check attribution** — every finding in the consolidated
    report must identify which sub-check produced it. "Missing ## Handoff"
@@ -150,4 +159,4 @@ Do not apply any fix without per-finding user confirmation.
 sub-check attribution on each finding, and summary line; optionally triggers
 sub-skill repair loops on user confirmation
 **Chainable to:** lint (structural repair), check-skill (skill repair loop),
-check-rule (rule repair loop), check-skill-chain (skill-chain repair loop)
+check-rule (rule repair loop), check-hook (hook repair loop), check-skill-chain (skill-chain repair loop)

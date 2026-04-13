@@ -3,4 +3,5 @@
 
 | File | Description |
 | --- | --- |
-| [skill-curation-comparative-analysis.prompt.md](skill-curation-comparative-analysis.prompt.md) | Comparative analysis of skill authoring and curation approaches across Anthropic, OpenAI, GitHub Copilot, and open-source frameworks, benchmarked against WOS with a prioritized gap analysis targeting concrete improvements to the WOS skill curation system (build-skill, check-skill, skill-authoring-guide, and related context documents). |
+| [update-build-hook-skill.prompt.md](update-build-hook-skill.prompt.md) | "Full alignment pass on skills/build-hook/SKILL.md against the complete hook and shell-script context corpus — read all sources, identify gaps, make targeted additions" |
+| [update-check-hook-skill.prompt.md](update-check-hook-skill.prompt.md) | "Full alignment pass on skills/check-hook/SKILL.md against the complete hook and shell-script context corpus — read all sources, identify gaps, make targeted additions to the audit rubric" |

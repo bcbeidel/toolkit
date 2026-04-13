@@ -109,7 +109,6 @@ The complete build/check pairing for every WOS primitive:
 | Create or improve a skill | `/wos:build-skill` | `/wos:check-skill` |
 | Create or improve a rule | `/wos:build-rule` | `/wos:check-rule` |
 | Create or improve a subagent | `/wos:build-subagent` | `/wos:check-subagent` |
-| Create or improve a command | `/wos:build-command` | `/wos:check-command` |
 | Create or improve a hook | `/wos:build-hook` | `/wos:check-hook` |
 | Design or check a skill-chain | — | `/wos:check-skill-chain` |
 | Project-wide health check | — | `/wos:audit` |
