@@ -7,6 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.41.0] - 2026-04-13
+
+### Added
+
+- **`/wos:build-hook` — hook authoring skill.** Full authoring workflow with
+  primitive routing (hook vs `permissions.deny` vs CLAUDE.md), structured
+  elicitation, script drafting with a 16-check safety gate, a review gate
+  before any file is written, and a three-layer test procedure. Offers
+  `/wos:check-hook` after testing completes.
+
+- **`/wos:check-hook` — hook audit skill.** 16-check audit covering event
+  coverage, script safety, async/blocking contradictions, Stop hook loop
+  guards, stdin correctness, matcher casing, enforcement intent, rule overlap,
+  idempotency, latency, safety preamble, injection safety, jq availability,
+  ShellCheck, style conventions, and `settings.json` attack surface. Includes
+  primitive routing scan of CLAUDE.md and cross-platform gap reporting.
+
+- **Hook domain context corpus (37 context files, 4 research docs).** Complete
+  knowledge base for Claude Code hooks: event payload schemas, matcher syntax,
+  output/decision control, handler type comparison, path expansion quirks,
+  platform coverage (Claude Code, Cursor, Copilot, Cline, Codex CLI,
+  Windsurf), script authoring safety (preamble, injection prevention, JSON
+  handling, ShellCheck, bash style conventions, testing strategies), hook
+  quality criteria, and primitive routing guidance.
+
+### Removed
+
+- **`/wos:build-command` and `/wos:check-command`** — superseded by the hook
+  skill pair.
+
 ## [0.40.0] - 2026-04-12
 
 ### Changed
