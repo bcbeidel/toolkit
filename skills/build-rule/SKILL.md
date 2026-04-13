@@ -5,6 +5,7 @@ argument-hint: A code pattern, behavior description, or existing rule draft to f
 user-invocable: true
 references:
   - references/rule-format-guide.md
+  - references/rule-testing-guide.md
 ---
 
 # /wos:build-rule
@@ -29,7 +30,27 @@ Check the project structure to determine rule format:
 Report the detected format: "Detected format: **[format]** — proceed with this
 or override?" Wait for confirmation before drafting.
 
-### 2. Elicit Pattern
+### 2. Classify Rule Type
+
+Before eliciting the pattern, determine the rule category. Present the eight categories and ask which best describes the rule:
+
+| Category | What it enforces |
+|----------|-----------------|
+| **Correctness** | Code that will behave incorrectly or produce errors |
+| **Suspicious** | Code that is probably wrong but not guaranteed |
+| **Security** | Code that creates vulnerabilities or exposes sensitive data |
+| **Complexity** | Code that is too complex to maintain safely |
+| **Performance** | Code patterns with measurable performance cost |
+| **Convention/Style** | Project-specific naming, structure, or formatting conventions |
+| **Accessibility** | Code that creates accessibility barriers |
+| **LLM Directive** | AI response-generation behavior (not code correctness) |
+
+Use the category to set structural defaults before drafting:
+- **Fix-safety default:** `auto-remediable` for Correctness and Convention/Style only; `requires-review` for all others
+- **Framing:** binary PASS/FAIL for Correctness, Suspicious, Security, Accessibility, LLM Directive; warn-first (default severity `warn`) for Complexity, Performance, Convention/Style
+- **Severity default:** `fail` is appropriate only for Correctness and Security; use `warn` for all others unless the user explicitly requests fail
+
+### 3. Elicit Pattern
 
 Determine the intake mode from the user's input:
 
@@ -56,7 +77,7 @@ Determine the intake mode from the user's input:
 If the user describes something a traditional linter handles (syntax, formatting,
 import ordering), recommend the appropriate linter tool instead.
 
-### 3. Check for Conflicts
+### 4. Check for Conflicts
 
 Before drafting, read existing rules in the project:
 - Check for rules with overlapping scope globs
@@ -66,26 +87,34 @@ Before drafting, read existing rules in the project:
 Do not skip this step. Undetected conflicts create contradiction in the rule
 library and degrade enforcement reliability.
 
-### 4. Draft Rule
+### 5. Draft Rule
 
 Compose the rule following the [Rule Format Guide](references/rule-format-guide.md)
 for the detected format.
 
 Required in all formats:
-- **Intent** — WHY this rule exists (not what it checks)
+- **Intent** — WHY this rule exists; must contain all five components (see below)
 - **Non-compliant example** — shown FIRST; drawn from actual codebase code
 - **Compliant example** — what correct code looks like
-- **Fix-safety** — `auto-remediable` or `requires-review`
+- **Fix-safety** — use the category default from Step 2
+
+**Intent five-component requirement.** The Intent section must contain:
+1. **Violation** — what pattern does this rule catch?
+2. **Failure cost** — what specifically goes wrong, and who bears it? (load-bearing — do not omit)
+3. **Principle** — what underlying value does this enforce (type safety, security, maintainability)?
+4. **Exception policy** — when is disabling legitimate? Name at least one case. (load-bearing — do not omit)
+5. **Fix-safety signal** — is the auto-fix always safe, or does it require human review?
 
 Non-compliant before compliant: listing exclusions first improves classification
-accuracy. Use actual code snippets — synthetic examples produce weaker anchors.
+accuracy. Use actual code snippets with file path comments — synthetic examples
+with generic identifiers (foo, bar, myFunction) produce weaker anchors.
 
-Default severity: `warn`. Use `fail` only when the user explicitly requests it
-or the constraint is a hard correctness boundary.
+Default severity: `warn`. Use `fail` only when the category is Correctness or Security,
+or the user explicitly requests it.
 
-### 5. Validate Structure
+### 6. Validate Structure
 
-Before presenting, self-check against all nine criteria. Fix any gap before presenting.
+Before presenting, self-check against all twelve criteria. Fix any gap before presenting.
 
 **Four structural requirements** (`llm-rule-structural-characteristics.context.md`):
 1. **Specificity** — all key terms have explicit behavioral definitions; no vague words like "good", "clean", "clear", "appropriate"
@@ -100,22 +129,30 @@ Before presenting, self-check against all nine criteria. Fix any gap before pres
 8. **Fix-safety classification** — `fix-safety` field is set to `auto-remediable` or `requires-review`
 9. **Concern-prefix** (if library has >5 rules) — rule name prefixed by domain (e.g., `quality-`, `safety-`, `compliance-`, `style-`)
 
-### 6. Present for Approval
+**Three new quality checks** (from this session's research):
+10. **Intent completeness** — Intent section contains all five components: violation, failure cost, principle, exception policy, fix-safety signal; no weak signals present (hedging language, prohibition-without-consequence, no exception policy)
+11. **Single canonical example** — primary example is one canonical instance; flag if multiple examples risk introducing conflicting signals
+12. **Example realism** — examples have file path comments or domain-specific identifiers; flag if synthetic (generic `foo`/`bar` identifiers, no file path context)
+
+### 7. Present for Approval
 
 Show the complete rule file to the user. Iterate on feedback. Do not write until approved.
 
-### 7. Write the Rule
+### 8. Write the Rule
 
 - Create the parent directory if it doesn't exist
-- Write the file at the correct path for the detected format
-- Report the file path
+- Write the rule file at the correct path for the detected format
+- Write a co-located test file at `<same-dir>/<slug>.tests.md` with at minimum 3 PASS cases and 3 FAIL cases, each with a rationale note. Reference the [Rule Testing Guide](references/rule-testing-guide.md) for format. Test cases must use different code than the rule's own examples.
+- Report both file paths
 
 ## Example
 
 <example>
 User: "I want staging models to only do casts, renames, and deduplication"
 
-Assistant detects WOS format (docs/rules/ exists). Asks: "Which files should this apply to?"
+Assistant detects WOS format (docs/rules/ exists). Classifies rule type: Convention/Style
+(enforcing architectural layer purity). Fix-safety default: requires-review. Framing: warn-first.
+Asks: "Which files should this apply to?"
 User: "models/staging/**/*.sql". Asks: "Should violations block (fail) or just warn?"
 User: "warn". Checks existing rules — no overlap found.
 
@@ -135,10 +172,15 @@ fix-safety: requires-review
 ```markdown
 ## Intent
 
-Staging models provide a clean interface over raw source data. Business
-logic here couples source schema changes to business definitions, making
-both harder to maintain independently. When evidence is borderline, prefer
-WARN over PASS.
+Staging models that include business logic (revenue calculations, tier
+classifications) couple source schema changes to business definitions,
+requiring coordinated updates across both layers when either changes.
+This enforces the principle that staging models are a clean interface
+over raw sources — not a transformation layer. Exception: calculated
+fields that are pure data-type normalization (e.g., parsing a date
+string to a date type) are permitted. Fix-safety: requires-review —
+violations involve architectural decisions. When evidence is borderline,
+prefer WARN over PASS.
 
 ## Non-Compliant Example
 
@@ -164,19 +206,22 @@ qualify row_number() over (partition by id order by _loaded_at desc) = 1
 Only casts, renames, and deduplication.
 ```
 
-Validates all 9 criteria — passes. Presents for approval. On approval, writes to
-`docs/rules/staging-layer-purity.rule.md`.
+Validates all 12 criteria — passes. Presents for approval. On approval, writes rule to
+`docs/rules/staging-layer-purity.rule.md` and test file to
+`docs/rules/staging-layer-purity.tests.md`.
 </example>
 
 ## Key Instructions
 
 - Every rule MUST have both a non-compliant and compliant example. Refuse to write without both.
+- Intent must contain all five components. Missing failure cost (component 2) or exception policy (component 4) — stop and require them before drafting.
 - Default severity is `warn`. False positives from `fail` rules erode trust faster than missed violations from `warn` rules.
 - Start narrow: scope targets the specific known-failure pattern. Broaden only after validating negative examples.
 - Default-closed: every rule declares how uncertain cases resolve. Rules without this default to PASS, hiding violations.
 - Fix-safety is mandatory: always declare `auto-remediable` or `requires-review`.
 - Never skip the conflict check. Undetected contradictions degrade the entire rule library.
 - Do not write the file until the user approves the drafted rule.
+- Always write the co-located test file. A rule without test cases cannot be validated before deployment.
 
 ## Anti-Pattern Guards
 
@@ -187,6 +232,8 @@ Validates all 9 criteria — passes. Presents for approval. On approval, writes 
 5. **Missing default-closed stance** — rules without uncertainty handling default to PASS; always require a declaration
 6. **Skipping conflict check** — contradictions in the rule library produce unpredictable enforcement
 7. **Missing fix-safety** — without this, automated tools cannot safely apply fixes
+8. **Incomplete Intent section** — an Intent that states only what the rule catches (not why it matters, not when to disable it) produces enforcement-without-education and workaround behavior
+9. **Missing test file** — a rule without a co-located `.tests.md` file cannot be validated before deployment; this is a delivery failure, not optional polish
 
 ## Handoff
 

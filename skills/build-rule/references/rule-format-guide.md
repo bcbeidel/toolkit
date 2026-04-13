@@ -9,6 +9,25 @@ Rules are semantic enforcement documents evaluated by an LLM — they capture
 patterns too nuanced for traditional linters. Three formats are in common use
 depending on project tooling. This guide covers all three.
 
+## Rule Categories
+
+Classify the rule before drafting to set the right structural defaults.
+
+| Category | ESLint analog | Fix-safety default | Binary/Ordinal |
+|----------|--------------|-------------------|----------------|
+| Correctness | problem | auto-remediable | Binary |
+| Suspicious | problem | requires-review | Binary |
+| Security | problem | requires-review | Binary |
+| Complexity | suggestion | requires-review | Ordinal |
+| Performance | suggestion | requires-review | Ordinal |
+| Convention/Style | layout + suggestion | auto-remediable | Ordinal |
+| Accessibility | problem | requires-review | Binary |
+| LLM Directive | — | n/a | Binary |
+
+**LLM Directive** targets AI response-generation behavior, not code correctness. It applies to Cursor rules and Claude Code rules that instruct the AI on workflow or output format.
+
+---
+
 ## Format Detection
 
 Detect the project's rule format automatically before drafting:
@@ -199,17 +218,46 @@ model and prevents automated tools from applying unsafe changes.
 | `auto-remediable` | The fix preserves behavior and can be applied automatically | Formatting, import ordering, pure renames with no semantic change |
 | `requires-review` | The fix may alter behavior, remove logic, or require design judgment | Business logic violations, architectural boundary crossings, security issues |
 
+**Category defaults:** `auto-remediable` for Correctness and Convention/Style rules only. All other categories (Suspicious, Security, Complexity, Performance, Accessibility) default to `requires-review`. When in doubt, use `requires-review`.
+
 **Default to `requires-review`.** Only use `auto-remediable` when you can guarantee the fix preserves all observable behavior.
+
+---
+
+## Intent Section Template
+
+Every rule's Intent section must contain five components. Use this template:
+
+```markdown
+## Intent
+
+[VIOLATION: what pattern does this rule catch?]
+[FAILURE COST: what specifically goes wrong when this pattern occurs, and who bears it?]
+[PRINCIPLE: what underlying value does this enforce — type safety, security, maintainability?]
+Exception: [EXCEPTION POLICY: name at least one case where disabling this rule is legitimate].
+Fix-safety: [FIX-SAFETY SIGNAL: auto-remediable | requires-review — and why].
+When evidence is borderline, prefer WARN over PASS.
+```
+
+**Weak Intent (do not publish):**
+> "Avoid using `console.log` in production code. It creates noise."
+
+Problems: names violation only, no failure cost, no principle, no exception policy, no fix-safety signal.
+
+**Strong Intent:**
+> "`console.log` in production builds exposes internal state to end users via browser developer tools, and adds measurable latency in high-frequency call paths. This enforces the principle that production code does not leak implementation details. Exception: `console.error` for critical runtime errors where structured logging is unavailable. Fix-safety: auto-remediable — removes statement without semantic change. When evidence is borderline, prefer WARN over PASS."
 
 ---
 
 ## Writing Effective Rules
 
+**Classify before drafting.** Use the Rule Categories table to set fix-safety default, binary/ordinal framing, and severity default before writing.
+
 **Start narrow, add exclusions.** Draft the rule to match your known failure case. Broaden only after validating against known negative examples. A rule that fires twice with 100% accuracy is more valuable than one that fires 200 times with 50%.
 
 **One convention per rule.** If the description contains "and", it's probably two rules. Split them.
 
-**Examples from real code.** When extracting from exemplary files, use actual code snippets. Synthetic examples are weaker anchors.
+**Examples from real code.** Use actual code snippets with file path comments (`// path/to/file.ext`). Synthetic examples with generic identifiers (foo, bar, myFunction) are weaker anchors.
 
 **Default-closed stance.** Every rule must define how uncertain or borderline cases resolve. "When evidence is borderline, surface as WARN rather than PASS." If this isn't specified, models default to PASS, hiding real violations.
 
