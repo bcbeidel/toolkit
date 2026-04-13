@@ -5,6 +5,7 @@ argument-hint: "[path to rule file or directory — scans project if omitted]"
 user-invocable: true
 references:
   - references/audit-dimensions.md
+  - references/repair-playbook.md
 ---
 
 # /wos:check-rule
