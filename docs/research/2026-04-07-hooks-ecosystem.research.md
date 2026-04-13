@@ -24,6 +24,10 @@ sources:
 related:
   - docs/research/2026-04-07-instruction-file-conventions.research.md
   - docs/research/2026-04-07-cli-tool-design.research.md
+  - docs/context/hook-event-payload-schemas.context.md
+  - docs/context/hook-matcher-syntax.context.md
+  - docs/context/hook-output-and-decision-control.context.md
+  - docs/context/hook-quality-criteria.context.md
 ---
 
 ## Research Question

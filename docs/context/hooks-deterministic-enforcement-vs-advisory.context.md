@@ -16,6 +16,10 @@ related:
   - docs/context/instruction-file-fragmentation-and-convergence.context.md
   - docs/context/llm-failure-modes-and-mitigations.context.md
   - docs/context/production-reliability-gap-and-multi-agent-failures.context.md
+  - docs/context/hook-event-payload-schemas.context.md
+  - docs/context/hook-matcher-syntax.context.md
+  - docs/context/hook-output-and-decision-control.context.md
+  - docs/context/hook-quality-criteria.context.md
 ---
 CLAUDE.md instructions are advisory. Hooks are deterministic. This distinction is not a nuance — it is the architectural boundary between what Claude is asked to do and what Claude is physically prevented from doing.
 
