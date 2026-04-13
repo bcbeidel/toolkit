@@ -62,6 +62,10 @@ produce consistent verdicts across evaluators.
 - All terms in the criterion have observable behavioral definitions
 - The compliant and non-compliant examples unambiguously illustrate the criterion
 
+**Canonical Repair:**
+- *Broad scope:* Replace `**/*.ext` with `<directory>/**/*.ext` where `<directory>` is the specific architectural layer named in the Intent section. If uncertain, use the directory where the known failure occurred.
+- *Vague criterion:* Replace each anchor-free term with a behavioral definition. Example: instead of "well-structured Intent section" → "Intent section contains all five required components: violation, failure cost, principle, exception policy, fix-safety signal."
+
 ### Dimension 2: Research Grounding
 
 **What it checks:** Whether the rule's design violates known best practices for
@@ -78,6 +82,11 @@ LLM evaluation rules.
 - Non-compliant example appears before compliant
 - Default-closed stance is explicitly declared
 - Language is categorical, not probabilistic
+
+**Canonical Repair:**
+- *Wrong example order:* Swap Non-Compliant and Compliant Example sections — non-compliant must appear first.
+- *Missing default-closed stance:* Add to Intent section: "When evidence is borderline, prefer WARN over PASS."
+- *Multiple dimensions:* Split into two rules — one criterion per rule. If the description contains "and," it encodes two rules.
 
 ### Dimension 3: Staleness
 
@@ -99,6 +108,13 @@ do those paths exist? Do those tools appear in dependencies?
 - All referenced tools are present in dependencies
 - Examples match current code patterns
 
+**Canonical Repair (staleness decision tree, in preference order):**
+1. **Update examples** — if the convention still applies but code has changed: replace examples with current code, update file path comments.
+2. **Archive** — if the convention still applies but the specific implementation it targets is gone: add `status: archived` to frontmatter with a reason note.
+3. **Delete** — if the convention itself is definitively retired: remove the file and document the reason in the commit message.
+
+Do not delete unless the convention is definitively retired — archive preserves the historical record.
+
 ### Dimension 4: Fix-Safety Classification
 
 **What it checks:** Whether the rule declares whether its findings are
@@ -112,6 +128,10 @@ auto-remediable or require human judgment.
 
 **Pass signals:**
 - `fix-safety` is declared as `auto-remediable` or `requires-review`
+
+**Canonical Repair:** Mechanical — no intent-preservation risk.
+- Add `fix-safety: requires-review` to frontmatter (default when uncertain).
+- Downgrade to `auto-remediable` only when the fix provably preserves all observable behavior (formatting, pure renames, import ordering).
 
 ### Dimension 5: Rubric Instability Risk
 
@@ -128,6 +148,81 @@ to produce consistent evaluations over time.
 - Examples include file path comments indicating origin in real code
 - Language is categorical and unambiguous
 - Borderline case handling is explicitly specified
+
+**Canonical Repair:**
+- *Synthetic examples:* Replace with real codebase code. Add file path comment (`// path/to/actual-file.ext`). Use domain-specific identifiers, not `foo`/`bar`.
+- *Hedging language:* Replace "usually should" → "must"; "might cause" → "causes". If "usually" was intentional (acknowledging exceptions), move the exception to the Intent section's exception policy and use categorical language in the criterion.
+- *Missing borderline declaration:* Add to Intent section: "When evidence is borderline, prefer WARN over PASS."
+
+---
+
+## Evaluation Prompt Template
+
+Use this skeleton for every Tier 2 LLM evaluation call. The criterion statement and anchor examples must come from the locked rubric above — do not generate them per-audit.
+
+```
+You are auditing a rule file for quality. Evaluate all five dimensions below in a single response.
+
+For each dimension:
+1. Quote the specific text from the rule that is most relevant (evidence)
+2. Explain your reasoning
+3. State your verdict: WARN or PASS
+4. Give a specific Recommendation if WARN (name the exact change)
+
+When evidence is borderline, surface as WARN, not PASS.
+
+---
+
+## Dimension 1: Specificity
+Criterion: Does the scope glob include a directory prefix targeting a specific architectural
+layer rather than matching all files of an extension? Do all criterion terms have observable
+behavioral definitions (no anchor-free terms: "good", "clean", "clear", "appropriate")?
+
+PASS anchor: scope is `models/staging/**/*.sql`; criterion says "no SQL expressions that multiply, divide, or aggregate column values"
+FAIL anchor: scope is `**/*.py`; criterion says "handlers should be well-structured and clear"
+
+## Dimension 2: Research Grounding
+Criterion: Does the rule have exactly one criterion? Does non-compliant appear before compliant?
+Is a default-closed stance explicitly declared? Is language categorical (no "might", "usually", "generally")?
+
+PASS anchor: one criterion, non-compliant first, contains "When evidence is borderline, prefer WARN over PASS"
+FAIL anchor: description contains "and"; compliant example appears before non-compliant; uses "usually should avoid"
+
+## Dimension 3: Staleness
+Criterion: Do the scope glob paths exist in the current codebase? Do examples reference
+functions, imports, or modules present in the current codebase? Does Intent reference
+dependencies present in the project manifest?
+
+PASS anchor: scope path `src/api/` exists, examples use current framework imports
+FAIL anchor: scope references `app/legacy/` which does not exist; examples use deprecated import
+
+## Dimension 4: Fix-Safety Classification
+Criterion: Is `fix-safety` declared as `auto-remediable` or `requires-review`?
+For WOS: frontmatter field. For Cursor: `**Fix-safety:**` line in body. For CLAUDE.md: `**Fix-safety:**` line.
+
+PASS anchor: frontmatter contains `fix-safety: requires-review`
+FAIL anchor: no `fix-safety` field anywhere in the rule
+
+## Dimension 5: Rubric Instability Risk
+Criterion: Do examples have file path comments or domain-specific identifiers (not foo/bar)?
+Does Intent use categorical language? Is borderline case handling explicitly specified?
+
+PASS anchor: example has `// src/api/handlers/users.py`, uses `user_id`/`order_total`; Intent says "When evidence is borderline, prefer WARN over PASS"
+FAIL anchor: examples use `foo`/`bar`, no file path comment; Intent says "might cause issues"
+
+---
+
+<rule file verbatim>
+
+---
+
+Output format (one block per dimension):
+## Dimension N: [Name]
+Evidence: "[quoted text from rule]"
+Reasoning: [your reasoning]
+Verdict: WARN | PASS
+Recommendation: [specific change if WARN, else "None"]
+```
 
 ---
 
