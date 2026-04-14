@@ -54,6 +54,8 @@ Gather four inputs, one at a time:
 
 ### 3. Apply Least-Privilege
 
+#### Tool selection — always
+
 For each tool the user requests, verify: does the workflow *require* this
 tool, or is it "nice to have"?
 
@@ -66,11 +68,59 @@ For tools not requested but clearly needed, suggest them and explain why:
 > "You'll need `Read` to inspect files, but I don't see it in your list."
 
 **Common over-permissioning traps:**
-
 - `Bash` when only file reads are needed
 - `Write`/`Edit` when the agent only produces reports
 - `WebFetch`/`WebSearch` for internal-only workflows
-- `Agent` when the agent doesn't orchestrate sub-agents
+- `Agent` listed in tools — subagents cannot spawn other subagents; the
+  Agent tool is filtered out at the platform level. Listing it has no effect.
+
+**`tools` allowlist vs `disallowedTools` denylist:**
+Use `tools` when the agent needs only a small, specific set. Use
+`disallowedTools` when the agent should inherit most tools but block
+specific ones. If both are set, `disallowedTools` is applied first.
+
+#### Advanced configuration — conditional
+
+Do not present these as a menu. Surface each only when the described
+workflow signals it:
+
+**`permissionMode`** — raise only if the agent makes broad or irreversible
+changes:
+- `plan`: proposes changes for user approval before acting
+- `acceptEdits`: accepts file edits without prompting (fully automated writes)
+- Note: if the parent uses `bypassPermissions`, this field is overridden —
+  the subagent cannot restrict its own permissions below the parent's level.
+
+**`maxTurns`** — raise only if the workflow is multi-step or recursive:
+> "This workflow has several steps — add `maxTurns: N` as a safety net.
+> Agents without a turn limit can loop indefinitely on unexpected input."
+
+**`background`** — raise only if parallelism was cited as the justification
+in Step 1:
+> "Since parallelism is the reason for this subagent, `background: true`
+> lets it run concurrently while the parent continues."
+
+**`isolation: worktree`** — raise only if the agent makes git changes:
+> "Since this agent modifies versioned files, `isolation: worktree` runs
+> it in a temporary branch for safety."
+
+**`skills`** — raise only if the workflow implies needing project-specific
+context or WOS procedures:
+> "Parent session skills aren't inherited. If this agent needs [skill]
+> procedures, list it explicitly in the `skills` field."
+
+**Portability** — raise only if the user mentions Copilot, Cursor, or
+cross-platform use:
+
+| Platform | Compatibility | What transfers |
+|---|---|---|
+| Cursor | Direct — reads `.claude/agents/` natively | All fields; unknown fields ignored |
+| GitHub Copilot | Structural — move to `.github/agents/<name>.md` | `name`, `description`, Markdown body; Claude Code-specific fields stripped |
+| Codex CLI | Format conversion required | Rebuild as TOML in `.codex/agents/` |
+| Windsurf | Different primitive | Not applicable |
+
+If Copilot compatibility is needed, avoid `permissionMode`, `maxTurns`,
+`background`, `isolation`, `memory`, and `hooks`.
 
 ### 4. Check for Overlap
 
@@ -88,12 +138,13 @@ Present overlap findings and confirm with the user before proceeding.
 
 ### 5. Draft the Definition
 
-Produce a `.claude/agents/<name>.md` draft:
+Produce a `.claude/agents/<name>.md` draft using only the fields confirmed
+in Steps 2 and 3. Start from the minimum and add only what applies:
 
 ```markdown
 ---
 name: <slug>
-description: <one-sentence routing description>
+description: <routing description — write as a routing rule, not a capability summary>
 tools:
   - <Tool1>
   - <Tool2>
@@ -124,15 +175,33 @@ what "done" looks like and what the agent returns to the parent.>
 **Returns to:** <parent agent or orchestrator>
 ```
 
+Add fields only when they were raised and confirmed in Step 3:
+
+| Field | Add when |
+|---|---|
+| `disallowedTools` | denylist approach was chosen over allowlist |
+| `model` | specific model was justified for this workflow |
+| `permissionMode` | agent makes broad or irreversible changes |
+| `maxTurns` | multi-step or recursive workflow |
+| `background` | parallelism was the Step 1 justification |
+| `isolation: worktree` | agent modifies versioned files |
+| `skills` | workflow needs project-specific procedures |
+
+Do not include fields that were not discussed. Do not include commented-out
+placeholders. The output file contains only what applies.
+
 **Description quality checklist** — before presenting for approval, verify
 the description covers:
 
 - What the agent does (primary function)
-- When to invoke it (specific trigger conditions)
+- When to invoke it (specific trigger conditions, written as routing rules)
 - When NOT to invoke it (at least one exclusion)
 - What it returns (output format or location)
+- "use proactively" — include this phrase if the agent should be invoked automatically without being asked
 
-A one-liner with no exclusions and no output format is insufficient.
+A one-liner with no exclusions and no output format is insufficient. A description that reads as a capability summary rather than a routing rule will produce unreliable auto-delegation.
+
+**Skills are not inherited.** The parent session's active skills do not carry over to subagents. If the workflow requires project-specific procedures, list them explicitly in the `skills` field. If omitted, the subagent starts with no skill context beyond its own system prompt.
 
 ### 6. Present for Approval
 
@@ -157,9 +226,19 @@ was written.
   justification. Every tool must be required by the workflow description.
 - **Under-permissioning** — missing tools the workflow actually requires
   (e.g., no `Read` for a file-analysis agent, no `Bash` for a code executor).
-- **Vague description** — a description that doesn't specify when to invoke
-  prevents correct routing. Route ambiguity causes missed invocations and
-  incorrect handoffs.
+- **`Agent` tool listed in subagent tools** — subagents cannot spawn other
+  subagents; the Agent tool is filtered out at the platform level. Listing it
+  has no effect and misleads readers.
+- **Vague description** — a description that reads as a capability summary
+  rather than a routing rule will produce unreliable auto-delegation. Route
+  ambiguity causes missed invocations and incorrect handoffs.
+- **Relying on auto-delegation** — auto-delegation by description matching is
+  documented but frequently unreliable in practice. Design workflows around
+  explicit invocation (@-mention). Do not tell users their agent "will
+  automatically run" — it may not.
+- **Missing `maxTurns` on complex workflows** — agents with multi-step or
+  recursive patterns and no turn limit can loop indefinitely on unexpected
+  input. Add `maxTurns` as a safety net for any non-trivial workflow.
 - **Skill duplication** — a subagent that replicates an existing skill with
   no parallelism, isolation, or permission benefit. Use a skill instead.
 - **Missing completion condition** — a workflow with no explicit final step
