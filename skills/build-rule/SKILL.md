@@ -214,6 +214,7 @@ Validates all 12 criteria — passes. Presents for approval. On approval, writes
 ## Key Instructions
 
 - Every rule MUST have both a non-compliant and compliant example. Refuse to write without both.
+- Won't replace a traditional linter: if the user's request is syntax, formatting, import ordering, or naming case, recommend the appropriate linter tool instead and stop.
 - Intent must contain all five components. Missing failure cost (component 2) or exception policy (component 4) — stop and require them before drafting.
 - Default severity is `warn`. False positives from `fail` rules erode trust faster than missed violations from `warn` rules.
 - Start narrow: scope targets the specific known-failure pattern. Broaden only after validating negative examples.
