@@ -136,6 +136,11 @@ repair loop for each tier in order (Critical → High → Medium → Low).
 
 Do not apply any fix without per-finding user confirmation.
 
+## Key Instructions
+
+- **Won't apply fixes automatically** — every repair is opt-in and per-finding; the repair offer in Step 8 requires explicit user confirmation before any file is modified
+- **Won't run conditional checks unconditionally** — chain, hook, and wiki steps are skipped when the relevant artifacts don't exist
+
 ## Anti-Pattern Guards
 
 1. **Running LLM checks before `scripts/lint.py`** — structural checks are

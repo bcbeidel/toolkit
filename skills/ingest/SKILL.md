@@ -46,6 +46,21 @@ Identify **5–15 wiki pages** that this source meaningfully informs — both:
 
 If the source is narrow and fewer than 5 pages genuinely apply, proceed with what applies. Do not pad.
 
+### Step 1b: Confirm Before Writing
+
+Present the proposed changes to the user before modifying any file:
+
+```
+Ready to ingest into N pages:
+- UPDATE wiki/existing-page.md — adding [summary of additions]
+- CREATE wiki/new-topic.md — [description of new page]
+...
+
+Proceed? (yes / edit list / cancel)
+```
+
+Wait for explicit confirmation. If the user edits the list, revise accordingly. Do not modify any wiki files until confirmed.
+
 ### Step 2: Update Each Page
 
 For each affected page, apply all changes that are warranted:
@@ -122,6 +137,13 @@ The high-rigor path is never required. It is appropriate when the user wants to 
 > "Ingest this: [user pastes a block of notes]"
 → Use pasted text as source → read wiki context → proceed
 
+## Key Instructions
+
+- **Won't overwrite existing prose** — ingest is append-only; every `git diff` should show only additions
+- **Won't write until confirmed** — Step 1b gate is non-negotiable; present the full list and wait for approval
+- **Won't ingest without reading wiki context first** — `wiki/_index.md` and `wiki/SCHEMA.md` must be read before any changes
+- **Recovery:** if an ingest produces unwanted changes, use `git diff` to review and `git checkout -- wiki/` to revert; all writes are isolated to the `wiki/` directory
+
 ## Anti-Pattern Guards
 
 1. **Overwriting existing prose** — every `git diff` after ingest should show only additions. Rewriting existing content destroys the provenance trail and may silently lose validated information. If existing content is wrong, flag a contradiction marker instead.
@@ -133,5 +155,5 @@ The high-rigor path is never required. It is appropriate when the user wants to 
 ## Handoff
 
 **Receives:** URL, file path, or pasted text representing an external source
-**Produces:** One or more wiki context pages added or updated under `docs/context/`
+**Produces:** One or more wiki pages added or updated under `wiki/`
 **Chainable to:** lint

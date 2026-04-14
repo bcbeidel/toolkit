@@ -21,14 +21,32 @@ to the WOS source repository via GitHub Issues.
 
 Follow the steps in `references/retrospective-workflow.md`.
 
+## Example
+
+<example>
+A completed session used `/wos:research` → `/wos:distill` → `/wos:plan-work`.
+
+Retrospective observations:
+- The research framing brief required two revision rounds before it was approved — the framer kept proposing sub-questions that were too broad. Friction point: ~15 min lost.
+- The distill mapping was approved on first pass — no friction.
+- plan-work caught an infeasibility in the design that scope-work had missed; the structured feedback loop to scope-work worked as designed.
+
+Submitted issue title: "research framer: sub-questions too broad on first pass — narrowing heuristic needed"
+</example>
+
+## Key Instructions
+
+- **Won't submit without explicit user approval** — show the full issue draft and wait for confirmation before calling `gh issue create`; this is the only GitHub write action in this skill
+- **Won't fabricate session observations** — every item must reference a specific moment in this session; hypothetical or prior-session observations are excluded
+
 ## Key Rules
 
+- **Never submit without approval.** Show the full draft and get explicit
+  confirmation before filing.
 - **Session-grounded.** Base observations on what actually happened in
   this session, not hypothetical scenarios.
 - **User-driven.** The user decides what to include. Ask questions to
   prompt reflection, but don't invent observations.
-- **Never submit without approval.** Show the full draft and get explicit
-  confirmation before filing.
 - **Target repo is hardcoded:** `bcbeidel/wos`
 - **One issue per retrospective.** Don't split into multiple issues.
 

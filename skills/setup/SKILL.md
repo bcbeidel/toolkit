@@ -5,7 +5,7 @@ description: >
   with WOS, setting up context structure, configuring project documentation,
   or re-run to verify and repair an existing setup. Idempotent — safe to
   run multiple times.
-argument-hint: ""
+argument-hint: "[project root — defaults to CWD]"
 user-invocable: true
 references:
   - references/capture-workflow.md
@@ -183,6 +183,11 @@ Report what was done:
 - **Already present:** note anything that was already in place
 
 If everything was already set up, confirm: "WOS is up to date. No changes needed."
+
+## Key Instructions
+
+- **Won't overwrite content outside WOS markers** — only the section between `<!-- wos:begin -->` / `<!-- wos:end -->` is managed; content the user wrote outside these markers is never touched
+- **Won't silently select a layout** — layout choice requires explicit user confirmation; no default is applied without asking
 
 ## Anti-Pattern Guards
 

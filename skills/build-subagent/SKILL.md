@@ -146,6 +146,11 @@ Do not write the file until approved.
 Write to `.claude/agents/<name>.md`. Confirm the path and that the file
 was written.
 
+## Key Instructions
+
+- **Won't write the definition file until the user explicitly approves the draft** — Step 6 is a hard gate; no file is written before it passes
+- **Won't proceed to intake if a skill would suffice** — Step 1 justification check is mandatory; redirect to `/wos:build-skill` if none of the three justification conditions hold
+
 ## Anti-Pattern Guards
 
 - **Over-permissioning** — requesting tools "to be safe" without per-tool

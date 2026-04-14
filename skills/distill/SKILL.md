@@ -134,6 +134,11 @@ same thread. This differs from threading...
 - **Bidirectional linking.** New files link to research via `related:`.
   Research links to new files via `related:`. Ask before modifying.
 
+## Key Instructions
+
+- **Won't write context files without mapping approval** — the Step 3 mapping gate is non-negotiable; no files are written until the user confirms the mapping
+- **Won't merge multiple distinct findings** — one concept per context file; if two findings share a theme but have different decision implications, they remain separate
+
 ## Anti-Pattern Guards
 
 1. **Proceeding without mapping approval** — the mapper's output is a proposal, not a plan. Writing context files without explicit user approval of the mapping wastes work if the user has a different granularity in mind. The approval gate is non-negotiable.

@@ -8,6 +8,7 @@ description: >
   or after completing all tasks and validation in a plan.
 argument-hint: "[plan file path]"
 user-invocable: true
+disable-model-invocation: true
 references:
   - references/option-execution.md
   - ../_shared/references/plan-format.md
@@ -124,6 +125,8 @@ If the user declines, close out without further action.
 
 ## Key Instructions
 
+- **Won't present integration options until tests pass** — the hard gate in Step 1 enforces this; failing tests must be fixed before continuing
+- **Won't discard without typed "discard" confirmation** — Option 4 is irreversible; no shortcut, no yes/no prompt
 - **Tests must pass before presenting options.** The hard gate in Step 1
   enforces this. Shipping broken work is worse than delaying integration.
 - **Plan is optional.** The skill works for both plan-backed branches and
