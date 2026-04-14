@@ -5,93 +5,71 @@ description: Decision framework for choosing the right Claude Code primitive —
 
 # Primitive Routing Guide
 
-Wrong primitive = reliability failure. The six Claude Code primitives are largely capability-equivalent for expressing many constraints. The failure is in the reliability guarantee each provides, not in what it can express.
+## The Right Question
 
-## The Two Reliability Tiers
+When someone wants to enforce a convention, the instinct is to ask "which primitive can express this?" All of them are expressive — most rules can be written as a CLAUDE.md entry, a hook, a skill, or a semantic rule. The question that actually matters is: **what guarantee do you need?**
 
-**Deterministic tier** — fires regardless of LLM judgment:
-- **Hooks** — lifecycle-event triggered, no LLM decision-making
-- **User-invoked skills** — fires when user explicitly types `/skill-name`
-- **`permissions.deny`** — unconditional firewall, no runtime logic
+Some goals need to happen every single time, regardless of what Claude thinks. Others benefit from Claude's judgment — knowing when the convention applies, how it interacts with other context, when an exception is warranted. Building a mandatory enforcement mechanism on the probabilistic tier, or burying a nuanced convention in a deterministic one, produces the same outcome: technically correct, behaviorally wrong.
 
-**Probabilistic tier** — Claude decides whether and when to apply:
-- **CLAUDE.md** — always-on context, advisory; Claude judges relevance per-turn
-- **Model-invoked skills** — Claude matches description to task; may skip
-- **Subagents** — Claude decides when to fork; isolated context window
-- **Rules** — LLM evaluates file content for compliance; judgment required
+## The Two Tiers
 
-**Core principle:** Use the deterministic tier for enforcement. Use the probabilistic tier for guidance and procedures where Claude's judgment adds value.
+**Deterministic tier — fires regardless of LLM judgment:**
 
----
+These primitives don't consult Claude. They run because an event happened, a user typed a command, or a setting says never. Use this tier when "usually" isn't good enough.
 
-## Decision Matrix
+- **Hooks** — shell scripts at lifecycle events (before a tool call, after a commit, at session start). Claude never decides whether to run them.
+- **User-invoked skills** — fires exactly when the user types `/skill-name`. No ambiguity about whether Claude matched the right trigger.
+- **`permissions.deny`** — a static firewall in `settings.json`. No logic, no exceptions, no override path.
 
-| Primitive | Right when | Wrong when | Suggest instead |
-|-----------|-----------|------------|-----------------|
-| **Rule** | Enforcement requires LLM judgment on static file content; convention is too nuanced for grep or AST linter | Check is shell-expressible; must fire at a lifecycle event; it's procedural workflow guidance | Hook (lifecycle), linter (mechanical), Skill (procedural) |
-| **Hook** | Must fire at a specific lifecycle event regardless of LLM judgment; enforcement is shell-expressible | Goal is advisory preference; block is unconditional with no exceptions ever | CLAUDE.md (advisory), Skill (procedural), permissions.deny (unconditional) |
-| **Skill** | Multi-step procedural workflow invoked on demand; repeatable procedure with judgment steps | Must always fire at an event; needs context isolation; is advisory always-on content | Hook (always-fire), CLAUDE.md (always-on advisory), Subagent (isolated context) |
-| **Subagent** | Work is genuinely isolated; different tool permissions required; intermediate work would clutter main context | Sequential dependent work where step N+1 needs full step N output; task fits naturally in main conversation | Skill (same-context procedure) |
-| **CLAUDE.md** | Architectural context; implicit knowledge; conventions Claude should weigh contextually | Behavioral rule that must always fire; file exceeds ~150–200 lines (instruction density degrades uniformly) | Hook (always-enforce), Skill (demand-loaded procedure) |
-| **permissions.deny** | Unconditional permanent block; no conditions, no exceptions, no logic | Block needs conditional logic; behavior is sometimes legitimate | Hook (conditional block) |
+**Probabilistic tier — Claude decides whether and when to apply:**
 
----
+These primitives benefit from judgment. Claude reads context, assesses relevance, adapts. Use this tier when you want Claude's interpretation, not unconditional execution.
 
-## Routing Tests
+- **CLAUDE.md** — always loaded, but Claude weighs each instruction against the situation. Advisory, not mandatory.
+- **Model-invoked skills** — Claude matches the task to the skill description. May skip if the match is uncertain.
+- **Subagents** — Claude decides when to fork context. Judgment-driven delegation.
+- **Rules** — Claude evaluates file content against the criterion. The LLM judgment is the entire mechanism.
 
-### Two questions that route most goals
+## What Each Primitive Was Designed For
 
-1. **Must this fire at a specific lifecycle event (before/after a tool call, session start/stop) regardless of LLM judgment?** → Hook
-2. **Should Claude decide whether this applies to the current task?** → Skill or CLAUDE.md
+**Rules** exist for conventions that are semantically nuanced — the kind where two files could look identical to grep but mean different things to a careful developer. The LLM judgment isn't a limitation; it's the point. Rules are the wrong choice when the check is mechanical (use a linter instead) or when it must fire unconditionally at a lifecycle event (use a hook instead).
+
+**Hooks** exist for invariants. Things that must happen at a specific moment, without exception, regardless of what Claude thinks about the situation. A hook that enforces a preference instead of an invariant spends its authority on false positives — one bypass event normalizes the pattern, and once bypass is cultural, the hook provides no protection.
+
+**Skills** exist for repeatable procedures that benefit from Claude's judgment about when and how to apply them. A skill is a procedure you invoke; CLAUDE.md is context you carry. If you find yourself writing "always follow these conventions" inside a skill body, that content belongs in CLAUDE.md instead. If the procedure must fire at a specific lifecycle event, it belongs in a hook.
+
+**Subagents** exist for work that would pollute the main context — broad searches, large file reads, parallel workstreams with independent outputs. The isolation is the feature. For sequential work where step N+1 needs full step N output, the isolation becomes a liability: you're paying the context fork cost without getting the benefit.
+
+**CLAUDE.md** exists for background knowledge — the architectural context Claude needs to make good decisions across all tasks. It degrades under load: every line you add reduces the compliance probability of every other line equally. Rules that are shell-expressible don't belong here; moving them to hooks removes them from the advisory budget and improves compliance for everything that remains.
+
+**`permissions.deny`** exists for unconditional blocks with no exceptions, ever. If the block is sometimes legitimate, use a hook with conditional logic instead.
+
+## Routing Test
+
+Two questions route most decisions:
+
+1. **Must this fire at a specific lifecycle event, regardless of LLM judgment?** → Hook
+2. **Should Claude decide whether this applies to the current situation?** → Skill or CLAUDE.md
 
 If neither resolves it:
-- Is the target **static file content evaluated for semantic compliance**? → Rule
-- Does the task need **context isolation or different tool permissions**? → Subagent
-- Is this **advisory context Claude should always carry**? → CLAUDE.md
-- Is this **unconditional with no exceptions, ever**? → `permissions.deny`
+- Static file content evaluated for semantic compliance → **Rule**
+- Task needs context isolation or different tool permissions → **Subagent**
+- Unconditional, no exceptions, no override path → **`permissions.deny`**
 
-### Rule routing test
+## When You've Chosen the Wrong Primitive
 
-Use a rule when ALL hold:
-- The check requires LLM judgment to evaluate (meaning, intent, architecture — not grep)
-- The target is static file content that exists independently of any workflow step
-- The convention is too nuanced for a grep or AST-level linter
+Wrong-primitive failures don't announce themselves as configuration errors. They look like behavioral inconsistency — a convention that mostly works, sometimes doesn't.
 
-Do NOT use a rule when:
-- The check is shell-expressible → use a hook or linter
-- Enforcement must fire at a lifecycle event → use a hook
-- The convention is procedural guidance (multi-step workflow) → use a skill or CLAUDE.md
+**CLAUDE.md for enforcement** — Claude follows the rule most of the time, then violates it in long sessions or under context pressure. This isn't a rule quality problem; CLAUDE.md is advisory by design. Convert to a PreToolUse hook and the problem disappears.
 
-### Hook routing test
+**Hooks for advisory guidance** — One false positive per session is enough to generate bypass culture. Once users normalize running with `--no-verify`, the hook provides zero protection. Reserve exit-2 blocks for genuine invariants. Advisory output (exit 1 = warning) is more durable than blocking for preferences.
 
-Use a hook when ALL hold:
-- There is a specific lifecycle event (PreToolUse, PostToolUse, SessionStart…) that triggers it
-- The enforcement must fire regardless of LLM judgment
-- The check is expressible as a shell script (or HTTP/LLM prompt for complex cases)
+**Skills for always-on context** — Skill content enters the conversation as a message when invoked and stays in a shared token budget. After auto-compaction, early-invoked skills are candidates for eviction. If behavior changes mid-session, the content belongs in CLAUDE.md, not a skill.
 
-Do NOT use a hook when:
-- The goal is advisory ("prefer X") → CLAUDE.md or skill
-- The block is unconditional with zero legitimate exceptions → `permissions.deny`
+**CLAUDE.md past ~150–200 lines** — Instruction density degrades uniformly. Adding a new rule reduces compliance for every existing rule by roughly the same amount, with no way to prioritize. Shell-expressible rules moved to hooks free up advisory budget for the conventions that genuinely need judgment.
 
-### Subagent routing test
-
-A subagent is justified when at least one holds:
-- **Parallelism or scope** — the task is genuinely isolated and the full context fork is justified by workstream size
-- **Permission isolation** — the task requires tool access the parent agent should not hold
-- **Context pressure** — intermediate work (search results, large file reads) would degrade the parent's reasoning quality
-
-If none hold → recommend a skill instead.
+**Subagents for sequential dependent work** — Each step requires a new context fork, round-trip latency accumulates, and the isolation benefit (discarding intermediate work) doesn't apply when the next step needs the full previous output. Sequential work belongs in the main conversation or a skill.
 
 ---
 
-## Wrong-Primitive Failure Modes
-
-| Primitive | Failure pattern | Signal |
-|-----------|----------------|--------|
-| CLAUDE.md for enforcement | Rule followed most of the time; violated under context pressure or in long sessions | "Claude keeps violating this even though it's in CLAUDE.md" |
-| Skills for always-on context | Behavior changes after auto-compaction | "This worked at session start but stopped working" |
-| Hooks for advisory guidance | False positives generate bypass culture; users run with `--no-verify` | "Users are bypassing the hook" |
-| Subagents for sequential dependent work | Latency grows; isolation provides no benefit | "The subagent approach is slow and hard to chain" |
-| CLAUDE.md bloat >150–200 lines | Compliance degrades silently for all rules equally | "Rules that used to work are getting inconsistent" |
-
-**Diagnostic:** Paste the failing rule as the first message (outside CLAUDE.md). If Claude follows it there but not in CLAUDE.md → primitive problem, change the primitive. If Claude still doesn't follow it → rule quality problem, rewrite the rule.
+**Diagnostic for existing failures:** Paste the failing rule as the first message (outside CLAUDE.md). If Claude follows it there but not in CLAUDE.md — the issue is primitive delivery, change the primitive. If Claude still doesn't follow it — the issue is the rule itself, rewrite it. This isolates whether you have a delivery problem or a quality problem.
