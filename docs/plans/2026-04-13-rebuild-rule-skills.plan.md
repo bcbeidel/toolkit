@@ -60,9 +60,9 @@ Won't have:
 **Files:**
 - Create: `docs/context/rule-type-taxonomy-and-structural-properties.context.md`
 
-- [ ] Create context doc distilling Part A of `docs/research/2026-04-13-rule-taxonomy-intent-quality.research.md` into a standalone context document. Cover: the 8-category taxonomy (correctness, suspicious, security, complexity, performance, convention/style, accessibility, LLM directive); structural properties per category (binary vs. ordinal framing, fix-safety default, scope strategy); the finding that categorization benefit for LLMs is unvalidated assumption — value is authoring clarity. Target 300–500 words.
-- [ ] Verify: `python scripts/lint.py --root docs/context/rule-type-taxonomy-and-structural-properties.context.md --no-urls` — no failures
-- [ ] Commit: `chore: add rule-type-taxonomy context doc`
+- [x] Create context doc distilling Part A of `docs/research/2026-04-13-rule-taxonomy-intent-quality.research.md` into a standalone context document. Cover: the 8-category taxonomy (correctness, suspicious, security, complexity, performance, convention/style, accessibility, LLM directive); structural properties per category (binary vs. ordinal framing, fix-safety default, scope strategy); the finding that categorization benefit for LLMs is unvalidated assumption — value is authoring clarity. Target 300–500 words.
+- [x] Verify: `python scripts/lint.py --root docs/context/rule-type-taxonomy-and-structural-properties.context.md --no-urls` — no failures
+- [x] Commit: `chore: add rule-type-taxonomy context doc` <!-- sha:c8f97a2 -->
 
 ---
 
@@ -71,9 +71,9 @@ Won't have:
 **Files:**
 - Create: `docs/context/rule-intent-section-quality.context.md`
 
-- [ ] Create context doc distilling Part B of `docs/research/2026-04-13-rule-taxonomy-intent-quality.research.md`. Cover: the 5-component model (violation, failure cost, principle, exception policy, fix-safety); weak Intent signals (violation-only, hedging language, no exception policy, prohibition without consequence); the enforcement-without-education failure mode and its four preventions; the worked strong/weak example. Target 300–500 words.
-- [ ] Verify: lint passes, file is 200–800 words (`wc -w docs/context/rule-intent-section-quality.context.md`)
-- [ ] Commit: `chore: add rule-intent-section-quality context doc`
+- [x] Create context doc distilling Part B of `docs/research/2026-04-13-rule-taxonomy-intent-quality.research.md`. Cover: the 5-component model (violation, failure cost, principle, exception policy, fix-safety); weak Intent signals (violation-only, hedging language, no exception policy, prohibition without consequence); the enforcement-without-education failure mode and its four preventions; the worked strong/weak example. Target 300–500 words.
+- [x] Verify: lint passes, file is 200–800 words (`wc -w docs/context/rule-intent-section-quality.context.md`)
+- [x] Commit: `chore: add rule-intent-section-quality context doc` <!-- sha:c8f97a2 -->
 
 ---
 
@@ -82,9 +82,9 @@ Won't have:
 **Files:**
 - Create: `docs/context/rule-example-construction-methodology.context.md`
 
-- [ ] Create context doc from `docs/research/2026-04-13-rule-example-construction.research.md`. Cover: single canonical example outperforms multiple for LLM anchoring (introducing conflicting signals risk); real code outperforms synthetic (evidence-anchored rubrics +0.17 QWK over pure-inference); what makes an example "real enough" (file path comment, non-generic identifiers, surrounding context); non-compliant before compliant and why; what to do when no real violating code exists yet (craft to realistic density, add file path comment). Target 300–500 words.
-- [ ] Verify: lint passes
-- [ ] Commit: `chore: add rule-example-construction-methodology context doc`
+- [x] Create context doc from `docs/research/2026-04-13-rule-example-construction.research.md`. Cover: single canonical example outperforms multiple for LLM anchoring (introducing conflicting signals risk); real code outperforms synthetic (evidence-anchored rubrics +0.17 QWK over pure-inference); what makes an example "real enough" (file path comment, non-generic identifiers, surrounding context); non-compliant before compliant and why; what to do when no real violating code exists yet (craft to realistic density, add file path comment). Target 300–500 words.
+- [x] Verify: lint passes
+- [x] Commit: `chore: add rule-example-construction-methodology context doc` <!-- sha:c8f97a2 -->
 
 ---
 
@@ -93,9 +93,9 @@ Won't have:
 **Files:**
 - Create: `docs/context/rule-testing-and-validation-methodology.context.md`
 
-- [ ] Create context doc from `docs/research/2026-04-13-rule-testing-validation.research.md`. Cover: two-polarity test structure (PASS / FAIL cases, rationale note per case); project-scale sample size (10–20 initial, 20–35 pre-deployment); temperature=0 + 3-run majority vote, pass^k vs pass@k; two-gate criteria (Gate 1 warn: ≥90% TP, ≥85% TN, ≥80% consistency; Gate 2 fail: ≥95% TP, ≥90% TN, ≥90% + CoT spot-check); evaluator-first failure triage. Target 400–600 words.
-- [ ] Verify: lint passes
-- [ ] Commit: `chore: add rule-testing-and-validation-methodology context doc`
+- [x] Create context doc from `docs/research/2026-04-13-rule-testing-validation.research.md`. Cover: two-polarity test structure (PASS / FAIL cases, rationale note per case); project-scale sample size (10–20 initial, 20–35 pre-deployment); temperature=0 + 3-run majority vote, pass^k vs pass@k; two-gate criteria (Gate 1 warn: ≥90% TP, ≥85% TN, ≥80% consistency; Gate 2 fail: ≥95% TP, ≥90% TN, ≥90% + CoT spot-check); evaluator-first failure triage. Target 400–600 words.
+- [x] Verify: lint passes
+- [x] Commit: `chore: add rule-testing-and-validation-methodology context doc` <!-- sha:c8f97a2 -->
 
 ---
 
@@ -104,9 +104,9 @@ Won't have:
 **Files:**
 - Create: `docs/context/rule-repair-strategies-by-failure-mode.context.md`
 
-- [ ] Create context doc from `docs/research/2026-04-13-rule-repair-eval-prompts.research.md`. Cover canonical repair per failure mode: specificity (narrow scope or add behavioral definitions); staleness (update examples, archive, or delete based on whether the convention itself still applies); rubric instability (replace hedging language with categorical directives, swap synthetic examples for real); conflict (merge, narrow scope, deprecate one, or add explicit caveats); research grounding (fix example ordering, add default-closed stance declaration). Include intent-preservation constraint: repair must preserve the rule's original criterion. Target 400–600 words.
-- [ ] Verify: lint passes
-- [ ] Commit: `chore: add rule-repair-strategies context doc`
+- [x] Create context doc from `docs/research/2026-04-13-rule-repair-eval-prompts.research.md`. Cover canonical repair per failure mode: specificity (narrow scope or add behavioral definitions); staleness (update examples, archive, or delete based on whether the convention itself still applies); rubric instability (replace hedging language with categorical directives, swap synthetic examples for real); conflict (merge, narrow scope, deprecate one, or add explicit caveats); research grounding (fix example ordering, add default-closed stance declaration). Include intent-preservation constraint: repair must preserve the rule's original criterion. Target 400–600 words.
+- [x] Verify: lint passes
+- [x] Commit: `chore: add rule-repair-strategies context doc` <!-- sha:c8f97a2 -->
 
 ---
 
@@ -115,9 +115,9 @@ Won't have:
 **Files:**
 - Create: `docs/context/llm-audit-prompt-anatomy.context.md`
 
-- [ ] Create context doc from `docs/research/2026-04-13-rule-repair-eval-prompts.research.md`. Cover: the 6-element prompt anatomy (criterion statement, scale declaration, anchor examples, CoT requirement, output format schema, default-closed instruction); evidence-before-verdict ordering and why it prevents confirmation bias; locked rubric (evaluation call) vs. open generation (repair call) — these must be separate calls; criterion statement as highest-leverage element (removing it drops human correlation from 0.666 to 0.487). Target 350–500 words.
-- [ ] Verify: lint passes
-- [ ] Commit: `chore: add llm-audit-prompt-anatomy context doc`
+- [x] Create context doc from `docs/research/2026-04-13-rule-repair-eval-prompts.research.md`. Cover: the 6-element prompt anatomy (criterion statement, scale declaration, anchor examples, CoT requirement, output format schema, default-closed instruction); evidence-before-verdict ordering and why it prevents confirmation bias; locked rubric (evaluation call) vs. open generation (repair call) — these must be separate calls; criterion statement as highest-leverage element (removing it drops human correlation from 0.666 to 0.487). Target 350–500 words.
+- [x] Verify: lint passes
+- [x] Commit: `chore: add llm-audit-prompt-anatomy context doc` <!-- sha:c8f97a2 -->
 
 ---
 
