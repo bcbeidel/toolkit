@@ -1,6 +1,6 @@
 ---
 name: check-rule
-description: Check a rule library for quality issues — conflicts, specificity, staleness, fix-safety, and rubric instability. Use when the user wants to "audit rules", "check rule quality", "find conflicting rules", "review my rules", or "are my rules well-formed".
+description: Check a rule library for quality issues — conflicts, specificity, staleness, fix-safety, rubric instability, and Intent completeness. Use when the user wants to "audit rules", "check rule quality", "find conflicting rules", "review my rules", or "are my rules well-formed".
 argument-hint: "[path to rule file or directory — scans project if omitted]"
 user-invocable: true
 references:
@@ -11,7 +11,7 @@ references:
 # /wos:check-rule
 
 Evaluate the quality of an existing rule library. Checks format validity
-deterministically, then evaluates five semantic quality dimensions per rule
+deterministically, then evaluates six semantic quality dimensions per rule
 using a locked rubric, then detects cross-rule conflicts.
 
 This skill evaluates the rules themselves — not files against rules.
@@ -47,7 +47,7 @@ This step requires no LLM call. Use grep and read operations only.
 
 ### 3. Semantic Audit (One LLM Call per Rule)
 
-For each structurally valid rule, construct one LLM evaluation call with all six required elements:
+For each structurally valid rule, construct one LLM evaluation call with all six required elements (evaluating six semantic dimensions simultaneously):
 
 1. **Criterion statement** — for each dimension, a single precise behavioral definition of what is being evaluated (drawn from the locked rubric in [audit-dimensions.md](references/audit-dimensions.md), not generated per-audit)
 2. **PASS/FAIL scale declaration** — binary with behavioral definitions of what PASS and WARN mean in observable terms; no 1–5 or percentage scales
@@ -56,7 +56,7 @@ For each structurally valid rule, construct one LLM evaluation call with all six
 5. **Structured output format** — constrain output to: `Dimension | Evidence (quoted from rule) | Reasoning | Verdict (WARN or PASS) | Recommendation`; evidence must appear before verdict
 6. **Default-closed instruction** — "When evidence is borderline, surface as WARN, not PASS"
 
-Include the full rule file verbatim (never summarize). Present all five dimension rubrics simultaneously — never split into per-dimension calls. Per-criterion separate calls score 11.5 points lower on average.
+Include the full rule file verbatim (never summarize). Present all six dimension rubrics simultaneously — never split into per-dimension calls. Per-criterion separate calls score 11.5 points lower on average.
 
 The output format enforces evidence-before-verdict ordering: `evidence → reasoning → verdict → recommendation`. If the LLM emits a verdict in the first sentence, the prompt is not enforcing evidence-first ordering — revise the output schema.
 
@@ -100,7 +100,7 @@ Close with a summary line:
 ## Key Instructions
 
 - Run deterministic checks before invoking the LLM — do not send malformed rules to LLM evaluation
-- Present all five semantic dimensions as a locked rubric in one call per rule; never make per-dimension calls
+- Present all six semantic dimensions as a locked rubric in one call per rule; never make per-dimension calls
 - Include the full rule file verbatim in every LLM evaluation — never summarize
 - Only compare rules with overlapping scope globs for conflict detection
 - Default-closed: borderline evidence surfaces as WARN, never silently PASS
@@ -128,19 +128,21 @@ Step 2 — Deterministic check:
 - naming-conventions.rule.md: missing `## Intent` → FAIL (excluded from LLM step)
 
 Step 3 — Semantic audit on 2 rules:
-- staging-layer-purity.rule.md: all 5 dimensions PASS
-- api-input-validation.rule.md: Dimension 4 WARN (fix-safety missing, confirmed by LLM too)
+- staging-layer-purity.rule.md: all 6 dimensions PASS
+- api-input-validation.rule.md: Dimension 4 WARN (fix-safety missing), Dimension 6 WARN (Intent lacks failure cost and exception policy)
 
 Step 4 — Conflict detection: staging-layer-purity and api-input-validation have non-overlapping scopes → no comparison needed
 
 Output:
 ```
 FAIL  docs/rules/naming-conventions.rule.md — Missing required section: ## Intent
-  Recommendation: Add ## Intent section explaining why the rule exists, failure cost, and exception policy
+  Recommendation: Add ## Intent section covering all five components: violation, failure cost, principle, exception policy, fix-safety signal
 WARN  docs/rules/api-input-validation.rule.md — Fix-safety classification missing
   Recommendation: Add `fix-safety: requires-review` to frontmatter (default for security rules)
+WARN  docs/rules/api-input-validation.rule.md — Intent completeness: missing failure cost and exception policy
+  Recommendation: Add sentence naming what breaks and who bears the cost; add "Exception: [case]" line
 
-2 rules audited (1 excluded — structural failure), 2 findings (1 fail, 1 warn)
+2 rules audited (1 excluded — structural failure), 3 findings (1 fail, 2 warn)
 ```
 </example>
 

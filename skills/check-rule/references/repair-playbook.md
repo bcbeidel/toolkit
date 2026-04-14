@@ -149,6 +149,55 @@ If no real violating code exists yet, craft a realistic example using actual fil
 **FROM:** Intent section with no uncertainty handling
 **TO:** Append: "When evidence is borderline, prefer WARN over PASS."
 
+### Multiple Examples
+
+**Signal:** Multiple code snippets in a single Non-Compliant or Compliant example section
+
+**CHANGE:** Reduce to one canonical example per section; relocate extras to test file
+**FROM:** Non-Compliant Example section with three different code snippets showing different violation patterns
+**TO:** Keep the single most clear-cut instance. Add the remaining snippets as FAIL cases in `<slug>.tests.md`.
+**REASON:** Multiple examples risk encoding subtly different behavioral patterns. A single canonical example produces a stronger, less ambiguous anchor.
+
+---
+
+## Dimension 6: Intent Completeness
+
+**Signal:** Intent section is missing one or more of the five required components
+
+### Missing Failure Cost (Component 2 — load-bearing)
+
+**CHANGE:** Add a sentence naming the specific consequence and who bears it
+**FROM:** "Avoid using `console.log` in production code. It creates noise."
+**TO:** "`console.log` in production builds exposes internal state to end users via browser developer tools and adds measurable latency in high-frequency call paths."
+**REASON:** Without failure cost, developers weigh the rule as bureaucratic overhead rather than a real risk. Rules without failure cost have higher disable rates.
+
+### Missing Exception Policy (Component 4 — load-bearing)
+
+**CHANGE:** Add an Exception: line naming at least one legitimate bypass case
+**FROM:** Intent section with no exception language
+**TO:** Append: "Exception: [name at least one legitimate case — e.g., 'Exception: test files', 'Exception: scripts in `tools/` that are never bundled for production']."
+**REASON:** A rule with no named exception appears to admit no flexibility, which causes developers to disable it entirely rather than follow it in the 95% case.
+
+### Missing Fix-Safety Explanation (Component 5)
+
+**CHANGE:** Add Fix-safety reasoning to Intent (not just the frontmatter field)
+**FROM:** Intent section with no fix-safety mention; only `fix-safety: requires-review` in frontmatter
+**TO:** Append to Intent: "Fix-safety: requires-review — violations involve architectural decisions that may change observable behavior."
+**REASON:** The frontmatter field is machine-readable; the Intent explanation is human-readable. Both serve different consumers.
+
+### Missing Principle (Component 3)
+
+**CHANGE:** Add a sentence naming the underlying value being enforced
+**FROM:** Intent names what the rule catches and what goes wrong, but not why the underlying value matters
+**TO:** Add: "This enforces the principle that [value — e.g., 'production code does not leak implementation details', 'staging models are a clean interface over raw sources, not a transformation layer']."
+
+### Intent Too Short (All Components)
+
+**CHANGE:** Expand to cover all five components
+**FROM:** Single-sentence Intent: "Avoid X."
+**TO:** 3–6 sentence Intent covering: violation → failure cost → principle → exception policy → fix-safety signal → default-closed stance
+**REASON:** A single sentence cannot carry all five required components. Check each component in order and add the missing ones.
+
 ---
 
 ## Conflicts
