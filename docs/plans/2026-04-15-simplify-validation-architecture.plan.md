@@ -219,7 +219,7 @@ does not call reindex.
 
 ### Chunk 4: Work chain shell validation
 
-- [x] Task 11: Create `skills/start-work/scripts/validate_plan.sh`. Checks that <!-- sha:pending -->
+- [x] Task 11: Create `skills/start-work/scripts/validate_plan.sh`. Checks that <!-- sha:4811674 -->
   all 6 required headings exist (Goal, Scope, Approach, File Changes, Tasks,
   Validation) and that a `status:` field is in the frontmatter. Prints each
   missing item with "MISSING:" prefix. Exit 1 if any fail; exit 0 with
@@ -227,18 +227,18 @@ does not call reindex.
   **Verify:** Run against this plan file → exit 0;
   run against a file missing `## Validation` → exit 1 with "MISSING: Validation"
 
-- [x] Task 12: Create `skills/start-work/scripts/check_tasks_complete.sh`. <!-- sha:pending -->
+- [x] Task 12: Create `skills/start-work/scripts/check_tasks_complete.sh`. <!-- sha:4811674 -->
   Counts `^- \[ \]` lines. Exit 0 with "OK: all tasks complete" if count is 0.
   Exit 1 with the count and each open task line if any remain. Make executable.
   **Verify:** Run against this plan file → exit 1 with open task list;
   run against a file with all `[x]` boxes → exit 0
 
-- [ ] Task 13: Update `skills/plan-work/SKILL.md` step 5 (Review with User) —
+- [x] Task 13: Update `skills/plan-work/SKILL.md` step 5 (Review with User) — <!-- sha:pending -->
   add a pre-check: "Run `bash <plugin-skills-dir>/start-work/scripts/validate_plan.sh
   <plan-file>` to confirm all required sections are present before presenting."
   **Verify:** `grep -q "validate_plan.sh" skills/plan-work/SKILL.md`
 
-- [ ] Task 14: Update `skills/check-work/SKILL.md` step 2 (Plan Preconditions) —
+- [x] Task 14: Update `skills/check-work/SKILL.md` step 2 (Plan Preconditions) — <!-- sha:pending -->
   replace the `plan_assess.py` call with:
   ```bash
   bash <plugin-skills-dir>/start-work/scripts/check_tasks_complete.sh <path>
