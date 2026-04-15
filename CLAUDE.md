@@ -34,7 +34,7 @@ Versioning policy and version bump process: see [CONTRIBUTING.md](CONTRIBUTING.m
 ## Design Principles
 
 1. **Convention over configuration** — document patterns, don't enforce them
-2. **Structure in code, quality in skills** — deterministic checks in Python, judgment in LLMs
+2. **Structure in code, quality in skills** — deterministic checks in Python or shell scripts, judgment in LLMs
 3. **Single source of truth** — navigation is derived from disk, never hand-curated
 4. **Keep it simple** — no hierarchies, no frameworks, no indirection
 5. **When in doubt, leave it out** — every field, abstraction, and feature must justify itself

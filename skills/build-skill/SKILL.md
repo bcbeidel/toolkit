@@ -271,7 +271,7 @@ The references/ directory has additional documentation:
 
 **Receives:** Skill name and intent (or path to existing SKILL.md for improvement); or no argument if the user wants to capture the current conversation as a skill
 **Produces:** SKILL.md written to `skills/<name>/SKILL.md`; optionally: evals.json, eval workspace with benchmark and grading results, optimized description
-**Chainable to:** check-skill (to audit quality after writing), distill (to extract workflow context before drafting)
+**Chainable to:** check-skill (to audit quality after writing)
 
 ## Key Instructions
 

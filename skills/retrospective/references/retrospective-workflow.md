@@ -51,10 +51,9 @@ to that area instead of using the generic three.
 
 Auto-gather (do not ask the user for these):
 
-```bash
-# wos version
-python <plugin-scripts-dir>/get_version.py
+- **wos version:** Read `<plugin-root>/plugin.json` and extract the `version` field.
 
+```bash
 # Python version
 python3 --version
 

@@ -34,54 +34,88 @@ If the directory does not exist or contains no `.md` files:
 
 Exit after reporting.
 
-### 2. Run Seven Checks
+### 2. Run Ten Checks
 
-For each definition file, run all seven checks in order.
+For each definition file, run all ten checks in order.
 
 #### Check 1 — Tool Over-Permissioning
 
-Does the tool set include capabilities the description does not support?
+Does the effective tool set include capabilities the description does not
+support?
+
+**Determining the effective tool set:**
+- If `tools` is set: effective set = listed tools only
+- If only `disallowedTools` is set: effective set = all tools minus the
+  denylist (potentially broad — check against workflow scope)
+- If both are set: `disallowedTools` applied first, then `tools` resolves
+  against the remainder
+- If neither is set: effective set = all tools (flag unless workflow
+  genuinely requires unrestricted access)
 
 Flag when:
-- `Bash` is listed but the description has no mention of command execution,
-  shell operations, or running processes
-- `Write` or `Edit` are listed but the description only involves reading
-  or reporting
-- `WebFetch` or `WebSearch` are listed but the agent is described as
-  internal-only
-- `Agent` is listed but the description shows no evidence of orchestrating
-  sub-agents
-- More than 6 tools are listed for a narrowly-scoped agent (description
-  covers a single workflow step)
+- `Bash` is in the effective set but the description has no mention of
+  command execution, shell operations, or running processes
+- `Write` or `Edit` are in the effective set but the description only
+  involves reading or reporting
+- `WebFetch` or `WebSearch` are in the effective set but the agent is
+  described as internal-only
+- `Agent` is listed in `tools` — subagents cannot spawn other subagents;
+  the Agent tool is filtered out at the platform level; listing it has
+  no effect and is misleading
+- Only `disallowedTools` is set for a narrowly-scoped agent — the agent
+  inherits all tools except the denylisted ones; verify the inherited set
+  is not broader than the workflow requires
+- More than 6 tools in the effective set for a narrowly-scoped agent
+  (description covers a single workflow step)
 
 Severity: **warn**
 
 #### Check 2 — Tool Under-Permissioning
 
-Does the description imply capabilities not covered by the tool set?
+Does the description imply capabilities not covered by the effective tool
+set? Apply the same effective-set logic as Check 1 — a tool removed via
+`disallowedTools` is absent even if not explicitly missing from `tools`.
 
 Flag when:
 - Description says "writes", "creates", or "generates files" but `Write`
-  is absent
-- Description says "reads" or "analyzes" files but `Read` is absent
-- Description mentions "runs" or "executes" but `Bash` is absent
+  is absent from the effective set (not listed in `tools`, or listed in
+  `disallowedTools`)
+- Description says "reads" or "analyzes" files but `Read` is absent from
+  the effective set
+- Description mentions "runs" or "executes" but `Bash` is absent from
+  the effective set
 - Description mentions "searches the web" or "fetches" external content
-  but `WebFetch`/`WebSearch` are absent
+  but `WebFetch`/`WebSearch` are absent from the effective set
 
 Severity: **warn**
 
-#### Check 3 — Description Quality
+#### Check 3 — Description Quality and Invocation Guidance
 
-A well-formed description covers four things: what the agent does, when
-to invoke it, when NOT to invoke it, and what it returns.
+A well-formed definition has two routing artifacts: a `description`
+frontmatter field that reads as a routing rule, and a `## When to invoke`
+body section with concrete examples including at least one negative case.
 
-Flag when the description:
+**On the `description` field — flag when:**
 - Is a single short phrase with no invocation conditions ("handles data
   tasks", "processes files")
 - Contains no exclusion or "when not to use" boundary
 - Does not mention what the agent returns or produces
 - Could apply equally well to a skill (no parallelism, isolation, or
   permission benefit stated)
+- Reads as a capability list rather than a routing rule — no specific
+  trigger phrases, no problem patterns named
+- Is intended for proactive use but contains no "use proactively" signal
+  or equivalent routing language (auto-delegation by description matching
+  is unreliable; without explicit routing language, the agent will rarely
+  be invoked automatically)
+- Exceeds 1,024 characters — descriptions over this limit are silently
+  truncated without warning
+
+**On the `## When to invoke` body section — flag when:**
+- The section is absent entirely — this section is required; it should
+  contain at least one positive trigger example and one negative example
+- The section exists but contains no negative example (a request type
+  that should NOT route to this agent and should go to a skill instead)
 
 Severity: **warn**
 
@@ -105,7 +139,10 @@ fault in production agentic systems.
 
 Flag when the `## Workflow` section (or equivalent) has no step that
 describes what "done" looks like, what the agent returns to the parent on
-completion, or under what conditions the agent should stop.
+completion, or under what conditions the agent should stop, AND `maxTurns`
+is not set in the frontmatter. A workflow completion condition and a
+`maxTurns` limit serve as complementary guardrails — agents with neither
+are runaway risks.
 
 Severity: **warn**
 
@@ -130,6 +167,42 @@ subagent is preferable (parallelism, tool isolation, or context pressure).
 
 To check: list `skills/*/SKILL.md` names and compare against the agent's
 described primary capability.
+
+Severity: **warn**
+
+#### Check 8 — Skills Inheritance Gap
+
+Parent session skills are NOT inherited by subagents. Skills must be listed
+explicitly in the `skills` frontmatter field.
+
+Flag when:
+- The description or workflow implies the agent needs project-specific
+  procedures or plugin skill behavior, but the `skills` field is absent
+  or empty
+
+Severity: **warn**
+
+#### Check 9 — Permission Mode and Parent Propagation
+
+Flag when:
+- `permissionMode: bypassPermissions` is set — this grants the subagent
+  unrestricted access regardless of the user's session settings. Flag
+  for explicit justification review.
+- `permissionMode` is set to any value but the agent is loaded from a
+  plugin (`agents/` in a plugin directory) — plugin subagents have
+  `permissionMode` silently ignored; the field is a no-op and misleading.
+
+Severity: **warn** (bypassPermissions) / **warn** (plugin no-op)
+
+#### Check 10 — Parallel Write Conflict Risk
+
+Flag when:
+- `background: true` is set AND the effective tool set includes `Write`
+  or `Edit`, AND `isolation: worktree` is absent — background agents with
+  write access running concurrently will conflict on shared files. From the
+  official blog: "Two subagents editing the same file in parallel is a
+  recipe for conflict." `isolation: worktree` gives each subagent a clean
+  working copy.
 
 Severity: **warn**
 
@@ -170,6 +243,12 @@ If any issues were found, add a one-sentence recommendation, e.g.:
 - **Flagging every broad tool set** — some agents genuinely need many tools.
   Anchor the over-permissioning check to the description, not an absolute
   tool count.
+- **Missing the `Agent` tool trap** — `Agent` in a subagent's tools list
+  is always a warn; it cannot work. Do not skip this even if the rest of
+  the tool set looks reasonable.
+- **Skipping Check 8 for short definitions** — a one-page agent definition
+  with no `skills` field is not automatically clean; if the description
+  implies project context, the omission is a gap regardless of file length.
 
 ## Handoff
 

@@ -106,7 +106,7 @@ After scaffolding is complete, ask:
 Based on the response, suggest a concrete WOS skill sequence:
 
 - **Research-oriented** (exploring a domain, comparing options, investigating):
-  `/wos:research` → `/wos:distill`
+  `/wos:research` → `/wos:ingest`
 - **Implementation-oriented** (building a feature, fixing something, clear goal):
   `/wos:scope-work` → `/wos:plan-work` → `/wos:start-work`
 - **Exploratory / unsure**:

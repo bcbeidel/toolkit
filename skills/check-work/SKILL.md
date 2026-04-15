@@ -83,18 +83,17 @@ or project doc). Wait for user confirmation before executing.
 
 ### 2. Plan Preconditions (plan mode only)
 
-Run the entry script:
+Check that all task checkboxes are complete:
 
 ```bash
-python <plugin-skills-dir>/start-work/scripts/plan_assess.py --file <path>
+bash <plugin-skills-dir>/start-work/scripts/check_tasks_complete.sh <path>
 ```
 
-Parse the JSON output. All task checkboxes must be checked
-(`tasks.completed == tasks.total`). If unchecked tasks remain, report
-them and stop:
+The script exits 0 with "OK: all tasks complete" if all boxes are checked.
+It exits 1 and prints the open task lines if any remain. If tasks remain,
+report them and stop:
 
-> "[N] of [total] tasks incomplete. Complete all tasks before validating.
-> Remaining: [list unchecked tasks]"
+> "[N] task(s) incomplete. Complete all tasks before validating."
 
 Do not proceed with partial validation.
 

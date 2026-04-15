@@ -12,7 +12,7 @@ agent's exit condition in the research pipeline.
 from __future__ import annotations
 
 import os
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Tuple
 
 from wos.document import parse_document
 
@@ -246,35 +246,20 @@ def check_single_gate(path: str, gate_name: str) -> dict:
 # --- Individual gate checks -----------------------------------------------
 
 def _check_gatherer_exit(content: str, doc: object, sections: Dict[str, bool]) -> dict:
-    """Gatherer exit: DRAFT exists, sources table present, URLs present."""
-    sources_table = _find_table_under_heading(content, "sources")
-    has_urls = False
-    if sources_table is not None:
-        columns = _table_columns(sources_table)
-        has_urls = any("url" in c.lower() for c in columns)
-
+    """Gatherer exit: Sources section exists, URLs in file, extracts present."""
     checks = {
-        "draft_exists": True,  # file exists (checked before calling)
-        "sources_table_present": sources_table is not None,
-        "sources_have_urls": has_urls,
+        "sources_section_present": sections.get("sources", False),
+        "sources_have_urls": "http" in content,
         "extracts_present": _has_extracts(content),
     }
     return {"pass": all(checks.values()), "checks": checks}
 
 
 def _check_evaluator_exit(content: str) -> dict:
-    """Evaluator exit: sources table has Tier column with values."""
-    sources_table = _find_table_under_heading(content, "sources")
-    has_tier = False
-    has_status = False
-    if sources_table is not None:
-        columns = _table_columns(sources_table)
-        has_tier = any("tier" in c.lower() for c in columns)
-        has_status = any("status" in c.lower() for c in columns)
-
+    """Evaluator exit: document contains 'Tier' and 'Status' text."""
     checks = {
-        "sources_have_tier": has_tier,
-        "sources_have_status": has_status,
+        "sources_have_tier": "Tier" in content,
+        "sources_have_status": "Status" in content,
     }
     return {"pass": all(checks.values()), "checks": checks}
 
@@ -292,33 +277,10 @@ def _check_synthesizer_exit(sections: Dict[str, bool]) -> dict:
 
 
 def _check_verifier_exit(content: str, sections: Dict[str, bool]) -> dict:
-    """Verifier exit: Claims section with rows, no 'unverified' in Status column."""
-    has_claims = sections.get("claims", False)
-    claims_table = _find_table_under_heading(content, "claims")
-    has_rows = False
-    no_unverified = True
-    if claims_table is not None:
-        rows = _table_data_rows(claims_table)
-        has_rows = len(rows) > 0
-        columns = _table_columns(claims_table)
-        status_idx = next(
-            (i for i, c in enumerate(columns) if "status" in c.lower()), None
-        )
-        for row in rows:
-            # Check only the Status column if found, else fall back to all cells.
-            cells_to_check = (
-                [row[status_idx]] if status_idx is not None and status_idx < len(row)
-                else row
-            )
-            for cell in cells_to_check:
-                if "unverified" in cell.lower():
-                    no_unverified = False
-                    break
-
+    """Verifier exit: Claims section exists, no 'unverified' anywhere in document."""
     checks = {
-        "claims_section_exists": has_claims,
-        "claims_table_has_rows": has_rows,
-        "no_unverified_claims": no_unverified,
+        "claims_section_exists": sections.get("claims", False),
+        "no_unverified_claims": "unverified" not in content.lower(),
     }
     return {"pass": all(checks.values()), "checks": checks}
 
@@ -331,90 +293,6 @@ def _check_finalizer_exit(content: str, doc: object) -> dict:
         "sources_non_empty": len(getattr(doc, "sources", [])) > 0,
     }
     return {"pass": all(checks.values()), "checks": checks}
-
-
-# --- Table parsing helpers -------------------------------------------------
-
-def _find_table_under_heading(content: str, keyword: str) -> Optional[str]:
-    """Find the first markdown table under a heading containing keyword.
-
-    Returns the full table text (header + separator + data rows), or
-    None if not found.
-    """
-    lines = content.split("\n")
-    in_section = False
-    section_level = 0
-    table_lines: List[str] = []
-    collecting = False
-
-    for line in lines:
-        stripped = line.strip()
-
-        # Detect headings.
-        if stripped.startswith("#"):
-            heading_level = len(stripped) - len(stripped.lstrip("#"))
-            heading_text = stripped.lstrip("#").strip().lower()
-            if keyword in heading_text:
-                in_section = True
-                section_level = heading_level
-                collecting = False
-                table_lines = []
-                continue
-            elif in_section:
-                # Sub-headings (deeper level) stay within the section.
-                if heading_level > section_level:
-                    continue
-                # Same or higher level heading ends the section.
-                if collecting and table_lines:
-                    return "\n".join(table_lines)
-                in_section = False
-                collecting = False
-                table_lines = []
-                continue
-
-        if not in_section:
-            continue
-
-        # Collect table rows (lines starting with |).
-        if stripped.startswith("|"):
-            collecting = True
-            table_lines.append(stripped)
-        elif collecting:
-            # Non-table line ends the table.
-            if table_lines:
-                return "\n".join(table_lines)
-            collecting = False
-
-    # End of file while collecting.
-    if collecting and table_lines:
-        return "\n".join(table_lines)
-    return None
-
-
-def _table_columns(table_text: str) -> List[str]:
-    """Extract column names from a markdown table header row."""
-    lines = table_text.split("\n")
-    if not lines:
-        return []
-    header = lines[0]
-    cells = [c.strip() for c in header.split("|")]
-    # Split on | gives empty strings at start/end.
-    return [c for c in cells if c]
-
-
-def _table_data_rows(table_text: str) -> List[List[str]]:
-    """Extract data rows from a markdown table (skip header + separator)."""
-    lines = table_text.split("\n")
-    rows: List[List[str]] = []
-    for line in lines[2:]:  # Skip header and separator.
-        stripped = line.strip()
-        if not stripped.startswith("|"):
-            continue
-        cells = [c.strip() for c in stripped.split("|")]
-        cells = [c for c in cells if c]
-        if cells:
-            rows.append(cells)
-    return rows
 
 
 def _has_extracts(content: str) -> bool:

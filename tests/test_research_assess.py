@@ -507,7 +507,7 @@ class TestCheckGates:
         verifier = result["gates"]["verifier_exit"]
         assert verifier["pass"] is False
         assert verifier["checks"]["no_unverified_claims"] is False
-        assert verifier["checks"]["claims_table_has_rows"] is True
+        assert verifier["checks"]["claims_section_exists"] is True
 
     def test_nonexistent_file_fails_all_gates(self) -> None:
         """Non-existent file fails every gate, current_phase is gatherer."""
@@ -571,8 +571,8 @@ class TestCheckGates:
 
         gatherer = result["gates"]["gatherer_exit"]
         assert gatherer["pass"] is False
-        assert gatherer["checks"]["draft_exists"] is True
-        assert gatherer["checks"]["sources_table_present"] is False
+        assert gatherer["checks"]["sources_section_present"] is False
+        assert gatherer["checks"]["sources_have_urls"] is False
         assert gatherer["checks"]["extracts_present"] is False
 
 

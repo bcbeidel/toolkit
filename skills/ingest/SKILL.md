@@ -102,8 +102,8 @@ Existing prose in wiki pages is never removed or overwritten. Every `git diff` a
 After all page updates and creations, run both commands unconditionally:
 
 ```bash
-python scripts/lint.py --root <project-root> --no-urls
-python scripts/reindex.py --root <project-root>
+python <plugin-scripts-dir>/lint.py --root <project-root> --no-urls
+python <plugin-scripts-dir>/reindex.py --root <project-root>
 ```
 
 Report results to the user:

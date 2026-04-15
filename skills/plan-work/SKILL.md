@@ -86,6 +86,14 @@ Present the user with three options:
 
 ### 5. Review with User
 
+Before presenting, confirm all required sections are present:
+
+```bash
+bash <plugin-skills-dir>/start-work/scripts/validate_plan.sh <plan-file>
+```
+
+If the script exits 1, fix the missing sections before presenting.
+
 Present a summary:
 - Goal (1 sentence)
 - Task count and estimated file changes

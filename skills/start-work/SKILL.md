@@ -2,23 +2,16 @@
 name: start-work
 description: >
   Use when you have an approved implementation plan to execute.
-  Handles sequential execution, parallel subagent dispatch, progress
-  tracking, and recovery. Enforces the approval gate. Use when the
+  Handles sequential execution, progress tracking, and recovery.
+  Enforces the approval gate. Use when the
   user wants to "execute the plan", "run the plan", "implement this
   plan", "start work", or "start building".
 argument-hint: "[plan file path]"
 user-invocable: true
 references:
   - references/execution-guide.md
-  - references/parallel-dispatch.md
   - references/recovery-patterns.md
   - references/multi-session-resumption.md
-  - references/research-distill-pipeline.md
-  - ../_shared/references/research/frame.md
-  - ../_shared/references/research/research-modes.md
-  - ../_shared/references/research/cli-commands.md
-  - ../_shared/references/distill/distillation-guidelines.md
-  - ../_shared/references/distill/mapping-guide.md
 ---
 
 # Start Work
@@ -84,24 +77,10 @@ Before executing tasks, ensure work happens on a feature branch.
 
 ### 4. Choose Execution Mode
 
-**Sequential** (default) — execute tasks in order.
+Execute tasks sequentially in the order listed.
 
-**Parallel** (opt-in) — requires ALL of these conditions:
-- 3+ pending tasks
-- No file overlap (entry script's `overlapping_tasks` is empty)
-- User explicitly opts in when asked
-
-If the entry script reports `parallel_eligible: true`, present the option:
-
-> "This plan has [N] independent tasks with no file overlap.
-> Execute sequentially (default) or in parallel?"
-
-If not eligible, state why and proceed sequentially. Consult
-[parallel dispatch](references/parallel-dispatch.md) for the full protocol.
-
-If the plan contains research→distill workstreams, consult the
-[research-distill pipeline](references/research-distill-pipeline.md)
-for the phased orchestration pattern.
+For research tasks, invoke `/wiki:research` per task; the skill manages
+its own pipeline and validation internally.
 
 ### 5. Execute Tasks
 

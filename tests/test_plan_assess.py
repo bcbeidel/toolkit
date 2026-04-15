@@ -76,8 +76,8 @@ class TestParseTasks:
         tasks = _parse_tasks(content)
         assert len(tasks) == 2
 
-    def test_non_task_heading_closes_gate(self) -> None:
-        """Checkboxes after a non-task heading are excluded."""
+    def test_validation_heading_closes_gate(self) -> None:
+        """Checkboxes after Validation heading are excluded."""
         from wos.plan.assess_plan import _parse_tasks
 
         content = (
@@ -94,8 +94,32 @@ class TestParseTasks:
         tasks = _parse_tasks(content)
         assert len(tasks) == 2
 
-    def test_non_task_non_validation_heading_closes_gate(self) -> None:
-        """Headings like 'File Changes' after Tasks close the task gate."""
+    def test_chunk_headings_preserved(self) -> None:
+        """Chunk sub-headings inside Tasks section do not close the gate."""
+        from wos.plan.assess_plan import _parse_tasks
+
+        content = (
+            "## Tasks\n"
+            "\n"
+            "### Chunk 1: First work\n"
+            "\n"
+            "- [ ] Task 1: Do the first thing\n"
+            "\n"
+            "### Chunk 2: Second work\n"
+            "\n"
+            "- [ ] Task 2: Do the second thing\n"
+            "\n"
+            "## Validation\n"
+            "\n"
+            "- [ ] Not a task\n"
+        )
+        tasks = _parse_tasks(content)
+        assert len(tasks) == 2
+        assert tasks[0]["title"] == "Do the first thing"
+        assert tasks[1]["title"] == "Do the second thing"
+
+    def test_non_task_non_chunk_heading_closes_gate(self) -> None:
+        """Non-task, non-chunk headings after Tasks section close the gate."""
         from wos.plan.assess_plan import _parse_tasks
 
         content = (
@@ -196,187 +220,10 @@ class TestDetectSections:
         assert all(v is False for k, v in result.items() if k != "all_present")
 
 
-class TestExtractFileChanges:
-    """Tests for _extract_file_changes() — file path extraction."""
-
-    def test_extracts_paths_from_file_changes_section(self) -> None:
-        """Paths extracted from Create/Modify/Delete/Test lines."""
-        from wos.plan.assess_plan import _extract_file_changes
-
-        content = (
-            "## File Changes\n"
-            "- Create: `wos/plan/__init__.py`\n"
-            "- Create: `wos/plan/assess_plan.py`\n"
-            "- Modify: `wos/document.py`\n"
-            "- Test: `tests/test_plan_assess.py`\n"
-            "\n"
-            "## Tasks\n"
-            "- [ ] Task 1\n"
-        )
-        files = _extract_file_changes(content)
-        assert "wos/plan/__init__.py" in files
-        assert "wos/plan/assess_plan.py" in files
-        assert "wos/document.py" in files
-        assert "tests/test_plan_assess.py" in files
-
-    def test_no_file_changes_section(self) -> None:
-        """Returns empty list when no File Changes section exists."""
-        from wos.plan.assess_plan import _extract_file_changes
-
-        content = "## Goal\n\nBuild it.\n\n## Tasks\n\n- [ ] Do it\n"
-        assert _extract_file_changes(content) == []
-
-    def test_paths_without_backticks(self) -> None:
-        """Paths without backticks still extracted."""
-        from wos.plan.assess_plan import _extract_file_changes
-
-        content = (
-            "## File Changes\n"
-            "- Create: wos/plan/__init__.py\n"
-            "- Modify: wos/document.py\n"
-            "\n"
-            "## Tasks\n"
-        )
-        files = _extract_file_changes(content)
-        assert "wos/plan/__init__.py" in files
-        assert "wos/document.py" in files
-
-    def test_stops_at_next_section(self) -> None:
-        """Only parses files within File Changes section."""
-        from wos.plan.assess_plan import _extract_file_changes
-
-        content = (
-            "## File Changes\n"
-            "- Create: `wos/plan/assess_plan.py`\n"
-            "\n"
-            "## Tasks\n"
-            "- Create: `not/a/file/change.py`\n"
-        )
-        files = _extract_file_changes(content)
-        assert files == ["wos/plan/assess_plan.py"]
-
-    def test_line_with_colon_and_range(self) -> None:
-        """Paths with line ranges like 'file.py:123-145' extract just path."""
-        from wos.plan.assess_plan import _extract_file_changes
-
-        content = (
-            "## File Changes\n"
-            "- Modify: `wos/document.py:72-81`\n"
-        )
-        files = _extract_file_changes(content)
-        assert files == ["wos/document.py"]
-
-
-class TestMapTaskFiles:
-    """Tests for _map_task_files() — task-to-file mapping."""
-
-    def test_maps_files_under_task_headings(self) -> None:
-        """Files listed under task headings mapped to those tasks."""
-        from wos.plan.assess_plan import _map_task_files
-
-        tasks = [
-            {"index": 1, "title": "Create package", "completed": False, "sha": None},
-            {"index": 2, "title": "Write tests", "completed": False, "sha": None},
-        ]
-        file_changes = [
-            "wos/plan/__init__.py",
-            "wos/plan/assess_plan.py",
-            "tests/test_plan_assess.py",
-        ]
-        content = (
-            "### Task 1: Create package\n"
-            "\n"
-            "**Files:**\n"
-            "- Create: `wos/plan/__init__.py`\n"
-            "- Create: `wos/plan/assess_plan.py`\n"
-            "\n"
-            "### Task 2: Write tests\n"
-            "\n"
-            "**Files:**\n"
-            "- Create: `tests/test_plan_assess.py`\n"
-        )
-        result = _map_task_files(tasks, file_changes, content)
-        assert result["1"] == ["wos/plan/__init__.py", "wos/plan/assess_plan.py"]
-        assert result["2"] == ["tests/test_plan_assess.py"]
-
-    def test_flat_file_list_assigns_all(self) -> None:
-        """Without per-task grouping, all files assigned to all tasks."""
-        from wos.plan.assess_plan import _map_task_files
-
-        tasks = [
-            {"index": 1, "title": "Task A", "completed": False, "sha": None},
-            {"index": 2, "title": "Task B", "completed": False, "sha": None},
-        ]
-        file_changes = ["foo.py", "bar.py"]
-        content = (
-            "## File Changes\n"
-            "- Create: `foo.py`\n"
-            "- Create: `bar.py`\n"
-            "\n"
-            "## Tasks\n"
-            "- [ ] Task A\n"
-            "- [ ] Task B\n"
-        )
-        result = _map_task_files(tasks, file_changes, content)
-        assert result["1"] == ["foo.py", "bar.py"]
-        assert result["2"] == ["foo.py", "bar.py"]
-
-    def test_empty_tasks(self) -> None:
-        """No tasks returns empty map."""
-        from wos.plan.assess_plan import _map_task_files
-
-        assert _map_task_files([], ["foo.py"], "content") == {}
-
-
-class TestFindOverlaps:
-    """Tests for _find_overlaps() — file overlap detection."""
-
-    def test_no_overlaps(self) -> None:
-        """Tasks with disjoint files return empty overlap list."""
-        from wos.plan.assess_plan import _find_overlaps
-
-        task_file_map = {"1": ["foo.py"], "2": ["bar.py"], "3": ["baz.py"]}
-        assert _find_overlaps(task_file_map) == []
-
-    def test_overlapping_tasks(self) -> None:
-        """Tasks sharing files detected as overlapping pairs."""
-        from wos.plan.assess_plan import _find_overlaps
-
-        task_file_map = {
-            "1": ["foo.py", "bar.py"],
-            "2": ["bar.py"],
-            "3": ["baz.py"],
-        }
-        overlaps = _find_overlaps(task_file_map)
-        assert len(overlaps) == 1
-        assert overlaps[0] == {"tasks": ["1", "2"], "shared_files": ["bar.py"]}
-
-    def test_multiple_overlaps(self) -> None:
-        """Multiple overlap pairs all reported."""
-        from wos.plan.assess_plan import _find_overlaps
-
-        task_file_map = {
-            "1": ["a.py"],
-            "2": ["a.py", "b.py"],
-            "3": ["b.py"],
-        }
-        overlaps = _find_overlaps(task_file_map)
-        assert len(overlaps) == 2
-
-    def test_empty_map(self) -> None:
-        """Empty map returns empty list."""
-        from wos.plan.assess_plan import _find_overlaps
-
-        assert _find_overlaps({}) == []
-
-
 class TestAssessFile:
     """Tests for assess_file() — full plan assessment."""
 
-    def _write_plan(
-        self, path, status="approved", tasks_content="",
-        file_changes_content="",
-    ):
+    def _write_plan(self, path, status="approved", tasks_content=""):
         """Helper to create a plan file."""
         content = (
             "---\n"
@@ -389,7 +236,7 @@ class TestAssessFile:
             "## Goal\n\nBuild the thing.\n\n"
             "## Scope\n\nMust/Won't.\n\n"
             "## Approach\n\nHow.\n\n"
-            f"## File Changes\n{file_changes_content}\n\n"
+            "## File Changes\n\n- Create: foo.py\n\n"
             f"## Tasks\n{tasks_content}\n\n"
             "## Validation\n\n- [ ] pytest passes\n"
         )
@@ -406,7 +253,6 @@ class TestAssessFile:
                 "- [ ] Task 1: Do stuff\n"
                 "- [ ] Task 2: More stuff\n"
             ),
-            file_changes_content="- Create: `foo.py`\n",
         )
         result = assess_file(str(plan))
         assert result["exists"] is True
@@ -418,6 +264,8 @@ class TestAssessFile:
         assert result["readiness"]["status_ok"] is True
         assert result["readiness"]["sections_complete"] is True
         assert result["readiness"]["has_pending_tasks"] is True
+        assert "file_changes" not in result
+        assert "parallel_eligible" not in result["readiness"]
 
     def test_executing_plan_with_progress(self, tmp_path) -> None:
         """Executing plan reports correct completed/pending counts."""
@@ -458,66 +306,6 @@ class TestAssessFile:
         result = assess_file("/nonexistent/plan.md")
         assert result["exists"] is False
         assert result["frontmatter"] is None
-
-    def test_parallel_eligibility(self, tmp_path) -> None:
-        """Plan with 3+ non-overlapping tasks is parallel eligible."""
-        from wos.plan.assess_plan import assess_file
-
-        plan = tmp_path / "plan.md"
-        content = (
-            "---\n"
-            "name: Parallel Plan\n"
-            "description: A parallel plan\n"
-            "type: plan\n"
-            "status: approved\n"
-            "---\n"
-            "\n## Goal\n\nBuild.\n\n## Scope\n\nAll.\n\n"
-            "## Approach\n\nParallel.\n\n"
-            "## File Changes\n"
-            "- Create: `a.py`\n- Create: `b.py`\n- Create: `c.py`\n\n"
-            "### Task 1: A\n\n**Files:**\n- Create: `a.py`\n\n"
-            "- [ ] Do A\n\n"
-            "### Task 2: B\n\n**Files:**\n- Create: `b.py`\n\n"
-            "- [ ] Do B\n\n"
-            "### Task 3: C\n\n**Files:**\n- Create: `c.py`\n\n"
-            "- [ ] Do C\n\n"
-            "## Validation\n\n- [ ] Works\n"
-        )
-        plan.write_text(content)
-        result = assess_file(str(plan))
-        assert result["readiness"]["parallel_eligible"] is True
-        assert result["file_changes"]["overlapping_tasks"] == []
-
-    def test_not_parallel_with_overlaps(self, tmp_path) -> None:
-        """Plan with overlapping files is not parallel eligible."""
-        from wos.plan.assess_plan import assess_file
-
-        plan = tmp_path / "plan.md"
-        content = (
-            "---\n"
-            "name: Overlap Plan\n"
-            "description: Overlapping\n"
-            "type: plan\n"
-            "status: approved\n"
-            "---\n"
-            "\n## Goal\n\nBuild.\n\n## Scope\n\nAll.\n\n"
-            "## Approach\n\nSequential.\n\n"
-            "## File Changes\n"
-            "- Modify: `shared.py`\n- Create: `b.py`\n"
-            "- Create: `c.py`\n\n"
-            "### Task 1: A\n\n**Files:**\n- Modify: `shared.py`\n\n"
-            "- [ ] Do A\n\n"
-            "### Task 2: B\n\n**Files:**\n"
-            "- Modify: `shared.py`\n- Create: `b.py`\n\n"
-            "- [ ] Do B\n\n"
-            "### Task 3: C\n\n**Files:**\n- Create: `c.py`\n\n"
-            "- [ ] Do C\n\n"
-            "## Validation\n\n- [ ] Works\n"
-        )
-        plan.write_text(content)
-        result = assess_file(str(plan))
-        assert result["readiness"]["parallel_eligible"] is False
-        assert len(result["file_changes"]["overlapping_tasks"]) > 0
 
 
 class TestScanPlans:
