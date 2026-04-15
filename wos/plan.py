@@ -77,6 +77,7 @@ def _parse_tasks(content: str) -> List[dict]:
 # ── Document subclass ──────────────────────────────────────────────
 
 
+@Document.register("plan")
 @dataclass
 class PlanDocument(Document):
     """A plan document with parsed task list and completion tracking."""

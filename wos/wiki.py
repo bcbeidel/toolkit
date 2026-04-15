@@ -28,6 +28,7 @@ class WikiDocument(Document):
         self,
         root: Path,
         schema: Optional[dict] = None,
+        **_: object,
     ) -> List[dict]:
         """Return base issues plus wiki-specific checks.
 

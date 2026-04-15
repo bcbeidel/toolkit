@@ -9,6 +9,7 @@ from typing import List
 from wos.document import Document
 
 
+@Document.register("context")
 @dataclass
 class ContextDocument(Document):
     """A context document with word count and related-field validation."""
@@ -18,6 +19,7 @@ class ContextDocument(Document):
         root: Path,
         max_words: int = 800,
         min_words: int = 100,
+        **_: object,
     ) -> List[dict]:
         """Return base issues plus context-specific checks.
 

@@ -2,8 +2,8 @@
 
 Provides a Document base class. Document.parse() is the single factory —
 it routes to the right subclass based on frontmatter type and file suffix
-using lazy imports to avoid circular dependencies. parse_document is kept
-as a module-level alias for backwards compatibility.
+using a type registry. Subclasses self-register via @Document.register().
+parse_document is kept as a module-level alias for backwards compatibility.
 """
 
 from __future__ import annotations
@@ -19,6 +19,10 @@ _VALID_STATUSES = frozenset({
     "draft", "approved", "executing", "completed", "abandoned"
 })
 _KNOWN_KEYS = frozenset({"name", "description", "type", "sources", "related", "status"})
+
+# Registry mapping type name strings to subclasses.
+# Populated by @Document.register() decorators on subclasses.
+_REGISTRY: dict[str, type[Document]] = {}
 
 
 # ── Base class ────────────────────────────────────────────────────
@@ -61,7 +65,7 @@ class Document:
 
     # ── Validation ────────────────────────────────────────────────
 
-    def issues(self, root: Path) -> List[dict]:
+    def issues(self, root: Path, **_: object) -> List[dict]:
         """Return validation issues common to all documents.
 
         Checks that name and description are non-empty, and that all
@@ -69,6 +73,8 @@ class Document:
 
         Args:
             root: Project root directory for resolving relative paths.
+            **_: Absorbs extra kwargs so all callers can pass a uniform
+                set of keyword arguments regardless of document type.
 
         Returns:
             List of issue dicts with keys: file, issue, severity.
@@ -100,16 +106,36 @@ class Document:
 
         return result
 
-    def is_valid(self, root: Path) -> bool:
+    def is_valid(self, root: Path, **_: object) -> bool:
         """Return True if issues() contains no fail-severity entries.
 
         Args:
             root: Project root directory.
+            **_: Absorbs extra kwargs forwarded from callers.
 
         Returns:
             True if the document has no fail-severity issues.
         """
         return not any(i["severity"] == "fail" for i in self.issues(root))
+
+    # ── Registry ──────────────────────────────────────────────────
+
+    @classmethod
+    def register(cls, *type_names: str):
+        """Decorator: register a subclass for one or more type name strings.
+
+        Usage::
+
+            @Document.register("research")
+            @dataclass
+            class ResearchDocument(Document):
+                ...
+        """
+        def decorator(subclass: type[Document]) -> type[Document]:
+            for name in type_names:
+                _REGISTRY[name] = subclass
+            return subclass
+        return decorator
 
     # ── Factory ───────────────────────────────────────────────────
 
@@ -179,22 +205,8 @@ class Document:
             meta=meta,
         )
 
-        if doc_type == "research":
-            from wos.research import ResearchDocument
-            return ResearchDocument(**kwargs)
-        if doc_type == "plan":
-            from wos.plan import PlanDocument
-            return PlanDocument(**kwargs)
-        if doc_type == "context":
-            from wos.context import ContextDocument
-            return ContextDocument(**kwargs)
-        if doc_type == "chain":
-            from wos.chain import ChainDocument
-            return ChainDocument(**kwargs)
-        if doc_type == "wiki":
-            from wos.wiki import WikiDocument
-            return WikiDocument(**kwargs)
-        return Document(**kwargs)
+        subclass = _REGISTRY.get(doc_type, Document)
+        return subclass(**kwargs)
 
 
 # ── Module-level alias ─────────────────────────────────────────────

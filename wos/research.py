@@ -24,11 +24,12 @@ from wos.url_checker import check_urls
 # ── Document subclass ──────────────────────────────────────────────
 
 
+@Document.register("research")
 @dataclass
 class ResearchDocument(Document):
     """A research document with source URL and draft-marker validation."""
 
-    def issues(self, root: Path, verify_urls: bool = True) -> List[dict]:
+    def issues(self, root: Path, verify_urls: bool = True, **_: object) -> List[dict]:
         """Return base issues plus research-specific checks.
 
         Adds: sources required, sources-as-dicts warning, draft marker

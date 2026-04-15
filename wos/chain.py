@@ -109,6 +109,7 @@ def _parse_steps_table(body: str, manifest_path: Path) -> List[dict]:
 # ── ChainDocument ──────────────────────────────────────────────────
 
 
+@Document.register("chain")
 @dataclass
 class ChainDocument(Document):
     """A chain manifest document with parsed step list and structural validation.
@@ -141,6 +142,7 @@ class ChainDocument(Document):
         self,
         root: Path,
         skills_dirs: Optional[List[Path]] = None,
+        **_: object,
     ) -> List[dict]:
         """Return base issues plus chain-specific structural checks.
 
