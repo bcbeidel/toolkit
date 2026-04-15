@@ -136,7 +136,7 @@ does not call reindex.
   **Verify:** `ls skills/start-work/references/parallel-dispatch.md 2>&1` → "No such file or directory";
   `ls skills/start-work/references/research-distill-pipeline.md 2>&1` → "No such file or directory"
 
-- [ ] Task 4: Update `skills/start-work/SKILL.md` body:
+- [x] Task 4: Update `skills/start-work/SKILL.md` body: <!-- sha:91f2ce9 -->
   (a) Remove the research-distill pipeline section (5-step phased list,
   currently lines ~96-103). Replace with one line: "For research tasks,
   invoke `/wiki:research` per task; the skill manages its own pipeline
