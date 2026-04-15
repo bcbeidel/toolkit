@@ -1,14 +1,15 @@
-"""Skill size auditing — measure instruction density of skill files.
+"""Skill dataclass and skill quality auditing.
 
-Provides functions to strip frontmatter, count instruction lines, and
-check skill directories for size thresholds.
+Provides the Skill dataclass for reading and validating SKILL.md files,
+along with module-level functions for skill size and metadata checks.
 """
 
 from __future__ import annotations
 
 import re
+from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 _NAME_RE = re.compile(r"^[a-z0-9-]+$")
 _XML_TAG_RE = re.compile(r"<[a-zA-Z]")
@@ -69,85 +70,17 @@ def count_instruction_lines(text: str) -> int:
     return count
 
 
-def check_skill_sizes(
-    skills_dir: Path, max_lines: int = 500
-) -> Tuple[List[dict], List[dict]]:
-    """Measure instruction density of each skill directory.
-
-    Walks *skills_dir* looking for subdirectories that contain a
-    ``SKILL.md`` file.  Directories whose name starts with ``_`` are
-    skipped.
-
-    Returns a tuple of ``(summaries, issues)`` where each summary is a
-    dict with keys ``name``, ``skill_lines``, ``ref_lines``,
-    ``total_lines``, ``words``, ``files`` and each issue follows the
-    standard validator dict shape (``file``, ``issue``, ``severity``).
-    """
-    summaries: List[dict] = []
-    issues: List[dict] = []
-
-    if not skills_dir.is_dir():
-        return summaries, issues
-
-    for entry in sorted(skills_dir.iterdir()):
-        if not entry.is_dir():
-            continue
-        if entry.name.startswith("_"):
-            continue
-
-        skill_md = entry / "SKILL.md"
-        if not skill_md.exists():
-            continue
-
-        # Measure SKILL.md
-        raw_skill = skill_md.read_text(encoding="utf-8")
-        body_skill = strip_frontmatter(raw_skill)
-        skill_lines = count_instruction_lines(body_skill)
-        skill_words = len(body_skill.split())
-        files = [str(skill_md)]
-
-        # Measure references/*.md
-        ref_lines = 0
-        ref_words = 0
-        for ref_path in sorted(entry.rglob("references/*.md")):
-            raw_ref = ref_path.read_text(encoding="utf-8")
-            body_ref = strip_frontmatter(raw_ref)
-            ref_lines += count_instruction_lines(body_ref)
-            ref_words += len(body_ref.split())
-            files.append(str(ref_path))
-
-        total_lines = skill_lines + ref_lines
-        total_words = skill_words + ref_words
-
-        summary = {
-            "name": entry.name,
-            "skill_lines": skill_lines,
-            "ref_lines": ref_lines,
-            "total_lines": total_lines,
-            "words": total_words,
-            "files": files,
-        }
-        summaries.append(summary)
-
-        if max_lines > 0 and total_lines > max_lines:
-            issues.append({
-                "file": str(skill_md),
-                "issue": (
-                    f"skill '{entry.name}' has {total_lines} instruction "
-                    f"lines (threshold: {max_lines})"
-                ),
-                "severity": "warn",
-            })
-
-    return summaries, issues
-
-
 def parse_skill_meta(text: str) -> dict:
     """Extract name and description from SKILL.md frontmatter.
 
     Handles YAML ``>`` block scalars for multi-line descriptions.
     Returns dict with ``name`` and ``description`` keys (None if absent).
     """
+    return _parse_skill_meta(text)
+
+
+def _parse_skill_meta(text: str) -> dict:
+    """Internal implementation of parse_skill_meta."""
     if not text.startswith("---"):
         return {"name": None, "description": None}
 
@@ -269,25 +202,165 @@ def _check_body_lines(body: str, file_str: str) -> List[dict]:
     return []
 
 
+# ── Skill dataclass ────────────────────────────────────────────────
+
+
+@dataclass
+class Skill:
+    """Represents a parsed SKILL.md skill definition.
+
+    Fields:
+        path:        Path to the SKILL.md file (as string).
+        name:        Skill name from frontmatter (None if absent).
+        description: Skill description from frontmatter (None if absent).
+        body:        Body text with frontmatter stripped.
+    """
+
+    path: str
+    name: Optional[str]
+    description: Optional[str]
+    body: str
+
+    @classmethod
+    def parse(cls, skill_dir: Path) -> Optional[Skill]:
+        """Read SKILL.md from skill_dir and return a Skill instance.
+
+        Returns None if no SKILL.md exists in the directory.
+        """
+        skill_md = skill_dir / "SKILL.md"
+        if not skill_md.exists():
+            return None
+        raw = skill_md.read_text(encoding="utf-8")
+        meta = _parse_skill_meta(raw)
+        body = strip_frontmatter(raw)
+        return cls(
+            path=str(skill_md),
+            name=meta.get("name"),
+            description=meta.get("description"),
+            body=body,
+        )
+
+    def size(self, skill_dir: Optional[Path] = None) -> dict:
+        """Return size metrics for this skill.
+
+        Reads the SKILL.md body (already parsed) and optionally reads
+        reference files from ``skill_dir/references/*.md``.
+
+        Args:
+            skill_dir: Directory containing this skill. When provided,
+                reference files are also measured.
+
+        Returns:
+            Dict with keys: name, skill_lines, ref_lines, total_lines,
+            words, files.
+        """
+        skill_lines = count_instruction_lines(self.body)
+        skill_words = len(self.body.split())
+        files = [self.path]
+
+        ref_lines = 0
+        ref_words = 0
+        if skill_dir is not None:
+            for ref_path in sorted(skill_dir.rglob("references/*.md")):
+                raw_ref = ref_path.read_text(encoding="utf-8")
+                body_ref = strip_frontmatter(raw_ref)
+                ref_lines += count_instruction_lines(body_ref)
+                ref_words += len(body_ref.split())
+                files.append(str(ref_path))
+
+        total_lines = skill_lines + ref_lines
+        total_words = skill_words + ref_words
+
+        # Derive a name for the summary from the path if name is absent
+        summary_name = self.name
+        if summary_name is None:
+            summary_name = Path(self.path).parent.name
+
+        return {
+            "name": summary_name,
+            "skill_lines": skill_lines,
+            "ref_lines": ref_lines,
+            "total_lines": total_lines,
+            "words": total_words,
+            "files": files,
+        }
+
+    def issues(self, **_: object) -> List[dict]:
+        """Return validation issues for this skill's metadata and body.
+
+        Checks name format, description quality, ALL-CAPS directive density,
+        and raw body line count.
+
+        Returns:
+            List of issue dicts with keys: file, issue, severity.
+        """
+        result: List[dict] = []
+        if self.name:
+            result.extend(_check_name(self.name, self.path))
+        if self.description:
+            result.extend(_check_description(self.description, self.path))
+        result.extend(_check_directives(self.body, self.path))
+        result.extend(_check_body_lines(self.body, self.path))
+        return result
+
+
+# ── Module-level orchestration functions ──────────────────────────
+
+
+def check_skill_sizes(
+    skills_dir: Path, max_lines: int = 500
+) -> Tuple[List[dict], List[dict]]:
+    """Measure instruction density of each skill directory.
+
+    Walks *skills_dir* looking for subdirectories that contain a
+    ``SKILL.md`` file.  Directories whose name starts with ``_`` are
+    skipped.
+
+    Returns a tuple of ``(summaries, issues)`` where each summary is a
+    dict with keys ``name``, ``skill_lines``, ``ref_lines``,
+    ``total_lines``, ``words``, ``files`` and each issue follows the
+    standard validator dict shape (``file``, ``issue``, ``severity``).
+    """
+    summaries: List[dict] = []
+    issues: List[dict] = []
+
+    if not skills_dir.is_dir():
+        return summaries, issues
+
+    for entry in sorted(skills_dir.iterdir()):
+        if not entry.is_dir():
+            continue
+        if entry.name.startswith("_"):
+            continue
+
+        skill = Skill.parse(entry)
+        if skill is None:
+            continue
+
+        summary = skill.size(skill_dir=entry)
+        # check_skill_sizes uses directory name as the summary name
+        summary["name"] = entry.name
+        summaries.append(summary)
+
+        if max_lines > 0 and summary["total_lines"] > max_lines:
+            issues.append({
+                "file": skill.path,
+                "issue": (
+                    f"skill '{entry.name}' has {summary['total_lines']} instruction "
+                    f"lines (threshold: {max_lines})"
+                ),
+                "severity": "warn",
+            })
+
+    return summaries, issues
+
+
 def check_skill_meta(skill_dir: Path) -> List[dict]:
     """Validate SKILL.md frontmatter and structure conventions.
 
     Returns a list of issues in standard validator format.
     """
-    skill_md = skill_dir / "SKILL.md"
-    if not skill_md.exists():
+    skill = Skill.parse(skill_dir)
+    if skill is None:
         return []
-
-    raw = skill_md.read_text(encoding="utf-8")
-    meta = parse_skill_meta(raw)
-    file_str = str(skill_md)
-    body = strip_frontmatter(raw)
-
-    issues: List[dict] = []
-    if meta.get("name"):
-        issues.extend(_check_name(meta["name"], file_str))
-    if meta.get("description"):
-        issues.extend(_check_description(meta["description"], file_str))
-    issues.extend(_check_directives(body, file_str))
-    issues.extend(_check_body_lines(body, file_str))
-    return issues
+    return skill.issues()

@@ -10,10 +10,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List, Optional
+from typing import ClassVar, List, Optional
 
 from wos.frontmatter import parse_frontmatter
-from wos.suffix import type_from_path
 
 _VALID_STATUSES = frozenset({
     "draft", "approved", "executing", "completed", "abandoned"
@@ -36,6 +35,10 @@ class Document:
     (non-empty name/description, related paths exist on disk).
     Typed subclasses add structured fields and type-specific validation.
     """
+
+    TYPE_SUFFIXES: ClassVar[frozenset] = frozenset({
+        "research", "plan", "design", "context", "prompt",
+    })
 
     path: str
     name: str
@@ -62,6 +65,19 @@ class Document:
             if stripped.startswith("#") and keyword in heading_text:
                 return True
         return False
+
+    @staticmethod
+    def type_from_path(path: Path) -> Optional[str]:
+        """Extract document type from a compound suffix.
+
+        Example: ``foo.research.md`` → ``'research'``.
+        """
+        suffixes = path.suffixes
+        if len(suffixes) >= 2 and suffixes[-1] == ".md":
+            candidate = suffixes[-2].lstrip(".")
+            if candidate in Document.TYPE_SUFFIXES:
+                return candidate
+        return None
 
     # ── Validation ────────────────────────────────────────────────
 
@@ -178,7 +194,7 @@ class Document:
         if not isinstance(doc_type, str) and doc_type is not None:
             doc_type = str(doc_type)
         if doc_type is None:
-            doc_type = type_from_path(Path(path))
+            doc_type = cls.type_from_path(Path(path))
         sources: List[str] = fm.get("sources") or []
         related: List[str] = fm.get("related") or []
         status: Optional[str] = fm.get("status")

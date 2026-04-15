@@ -162,7 +162,7 @@ def main() -> None:
             issues.extend(validate_chain(manifest_path, chain_skills_dirs))
 
     # Skill instruction density reporting
-    from wos.skill_audit import check_skill_meta, check_skill_sizes
+    from wos.skill import check_skill_meta, check_skill_sizes
 
     skills_dir = root / "skills"
     if skills_dir.is_dir():
