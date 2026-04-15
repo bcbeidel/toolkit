@@ -1,12 +1,10 @@
-"""Tests for wos/wiki.py — wiki schema parsing and validator functions."""
+"""Tests for wos/wiki.py — WikiDocument and wiki validation."""
 
 from __future__ import annotations
 
 from pathlib import Path
 
 import pytest  # noqa: F401
-
-from wos.document import Document  # noqa: F401
 
 # ── Helpers ──────────────────────────────────────────────────────
 
@@ -48,9 +46,9 @@ def _wiki_doc(
     created: str = "2026-01-01",
     updated: str = "2026-01-01",
     filename: str = "test-page.md",
-) -> tuple[Path, Document]:
-    """Write a wiki page to tmp_path and return (path, Document)."""
-    from wos.document import parse_document
+):
+    """Write a wiki page to tmp_path and return (path, WikiDocument)."""
+    from wos.wiki import WikiDocument
 
     fm_lines = [
         "---",
@@ -67,7 +65,14 @@ def _wiki_doc(
     content = "\n".join(fm_lines)
     path = tmp_path / filename
     path.write_text(content, encoding="utf-8")
-    doc = parse_document(str(path), content)
+    doc = WikiDocument(
+        path=str(path),
+        name=name,
+        description=description,
+        content=content,
+        type=doc_type,
+        meta={"confidence": confidence, "created": created, "updated": updated},
+    )
     return path, doc
 
 
@@ -79,7 +84,7 @@ def _default_schema() -> dict:
     }
 
 
-# ── test_parse_schema_valid ───────────────────────────────────────
+# ── TestParseSchemaValid ───────────────────────────────────────────
 
 
 class TestParseSchemaValid:
@@ -109,7 +114,7 @@ class TestParseSchemaValid:
         }
 
 
-# ── test_parse_schema_missing_section ────────────────────────────
+# ── TestParseSchemaMissingSection ─────────────────────────────────
 
 
 class TestParseSchemaMissingSection:
@@ -140,7 +145,7 @@ class TestParseSchemaMissingSection:
             parse_schema(schema_file)
 
 
-# ── test_check_wiki_orphans ───────────────────────────────────────
+# ── TestCheckWikiOrphans ──────────────────────────────────────────
 
 
 class TestCheckWikiOrphans:
@@ -181,99 +186,124 @@ class TestCheckWikiOrphans:
         assert issues == []
 
 
-# ── test_check_wiki_schema_violations ────────────────────────────
+# ── TestWikiDocumentIssues ────────────────────────────────────────
 
 
-class TestCheckWikiSchemaViolations:
+class TestWikiDocumentSchemaViolations:
     def test_unrecognized_type_returns_fail(self, tmp_path: Path) -> None:
-        from wos.wiki import check_wiki_schema_violations
-
         _, doc = _wiki_doc(tmp_path, doc_type="unknown-type")
         schema = _default_schema()
 
-        issues = check_wiki_schema_violations(doc, schema)
+        issues = doc.issues(tmp_path, schema=schema)
 
-        assert len(issues) == 1
-        assert issues[0]["severity"] == "fail"
-        assert "unknown-type" in issues[0]["issue"]
+        type_issues = [i for i in issues if "page_types" in i["issue"]]
+        assert len(type_issues) == 1
+        assert type_issues[0]["severity"] == "fail"
+        assert "unknown-type" in type_issues[0]["issue"]
 
     def test_unrecognized_confidence_returns_fail(self, tmp_path: Path) -> None:
-        from wos.wiki import check_wiki_schema_violations
-
         _, doc = _wiki_doc(tmp_path, doc_type="concept", confidence="extreme")
         schema = _default_schema()
 
-        issues = check_wiki_schema_violations(doc, schema)
+        issues = doc.issues(tmp_path, schema=schema)
 
-        assert len(issues) == 1
-        assert issues[0]["severity"] == "fail"
-        assert "extreme" in issues[0]["issue"]
+        conf_issues = [i for i in issues if "confidence_tiers" in i["issue"]]
+        assert len(conf_issues) == 1
+        assert conf_issues[0]["severity"] == "fail"
+        assert "extreme" in conf_issues[0]["issue"]
 
-    def test_valid_doc_no_violations(self, tmp_path: Path) -> None:
-        from wos.wiki import check_wiki_schema_violations
-
+    def test_valid_doc_no_schema_violations(self, tmp_path: Path) -> None:
         _, doc = _wiki_doc(tmp_path, doc_type="concept", confidence="high")
         schema = _default_schema()
 
-        issues = check_wiki_schema_violations(doc, schema)
+        issues = doc.issues(tmp_path, schema=schema)
 
-        assert issues == []
+        schema_issues = [
+            i for i in issues
+            if "page_types" in i["issue"] or "confidence_tiers" in i["issue"]
+        ]
+        assert schema_issues == []
 
-    def test_missing_confidence_not_a_violation(self, tmp_path: Path) -> None:
-        """Missing confidence is a frontmatter issue, not a schema violation."""
-        from wos.document import parse_document
-        from wos.wiki import check_wiki_schema_violations
+    def test_missing_confidence_not_a_schema_violation(self, tmp_path: Path) -> None:
+        """Missing confidence is a frontmatter warn, not a schema violation."""
+        from wos.wiki import WikiDocument
 
-        content = "---\nname: P\ndescription: D\ntype: concept\n---\nbody\n"
-        path = tmp_path / "page.md"
-        path.write_text(content)
-        doc = parse_document(str(path), content)
+        doc = WikiDocument(
+            path=str(tmp_path / "page.md"),
+            name="P",
+            description="D",
+            content="body",
+            type="concept",
+            meta={},  # no confidence key at all
+        )
         schema = _default_schema()
 
-        issues = check_wiki_schema_violations(doc, schema)
+        issues = doc.issues(tmp_path, schema=schema)
 
-        assert issues == []
-
-
-# ── test_check_wiki_frontmatter ──────────────────────────────────
+        schema_issues = [i for i in issues if "confidence_tiers" in i["issue"]]
+        assert schema_issues == []
 
 
-class TestCheckWikiFrontmatter:
+class TestWikiDocumentFrontmatter:
     def test_missing_all_fields_returns_three_warns(self, tmp_path: Path) -> None:
-        from wos.document import parse_document
-        from wos.wiki import check_wiki_frontmatter
+        from wos.wiki import WikiDocument
 
-        content = "---\nname: P\ndescription: D\ntype: concept\n---\nbody\n"
-        path = tmp_path / "page.md"
-        path.write_text(content)
-        doc = parse_document(str(path), content)
+        doc = WikiDocument(
+            path=str(tmp_path / "page.md"),
+            name="P",
+            description="D",
+            content="body",
+            type="concept",
+            meta={},
+        )
 
-        issues = check_wiki_frontmatter(doc)
+        issues = doc.issues(tmp_path, schema=_default_schema())
 
-        assert len(issues) == 3
-        field_names = {i["issue"] for i in issues}
+        fm_issues = [i for i in issues if "missing frontmatter" in i["issue"]]
+        assert len(fm_issues) == 3
+        field_names = {i["issue"] for i in fm_issues}
         assert any("confidence" in f for f in field_names)
         assert any("created" in f for f in field_names)
         assert any("updated" in f for f in field_names)
-        assert all(i["severity"] == "warn" for i in issues)
+        assert all(i["severity"] == "warn" for i in fm_issues)
 
-    def test_all_fields_present_no_issues(self, tmp_path: Path) -> None:
-        from wos.wiki import check_wiki_frontmatter
-
+    def test_all_fields_present_no_frontmatter_issues(self, tmp_path: Path) -> None:
         _, doc = _wiki_doc(tmp_path)
 
-        issues = check_wiki_frontmatter(doc)
+        issues = doc.issues(tmp_path, schema=_default_schema())
 
-        assert issues == []
+        fm_issues = [i for i in issues if "missing frontmatter" in i["issue"]]
+        assert fm_issues == []
+
+    def test_no_schema_skips_schema_checks(self, tmp_path: Path) -> None:
+        """When no SCHEMA.md exists and schema=None, skip schema violation checks."""
+        from wos.wiki import WikiDocument
+
+        # No SCHEMA.md in tmp_path — auto-load will fail, checks are skipped
+        doc = WikiDocument(
+            path=str(tmp_path / "page.md"),
+            name="P",
+            description="D",
+            content="body",
+            type="unknown-type-that-would-fail",
+            meta={
+                "confidence": "high", "created": "2026-01-01", "updated": "2026-01-01"
+            },
+        )
+
+        issues = doc.issues(tmp_path, schema=None)
+
+        schema_issues = [i for i in issues if "page_types" in i["issue"]]
+        assert schema_issues == []
 
 
-# ── test_validate_wiki_clean ──────────────────────────────────────
+# ── TestValidateWikiClean ─────────────────────────────────────────
 
 
 class TestValidateWikiClean:
     def test_clean_wiki_no_issues(self, tmp_path: Path) -> None:
         from wos.index import generate_index
-        from wos.validators import validate_wiki
+        from wos.wiki import validate_wiki
 
         # Write SCHEMA.md
         schema_path = tmp_path / "SCHEMA.md"
@@ -299,12 +329,12 @@ class TestValidateWikiClean:
         assert failures == [], failures
 
 
-# ── test_validate_wiki_with_violations ───────────────────────────
+# ── TestValidateWikiWithViolations ────────────────────────────────
 
 
 class TestValidateWikiWithViolations:
     def test_invalid_type_surfaces_fail(self, tmp_path: Path) -> None:
-        from wos.validators import validate_wiki
+        from wos.wiki import validate_wiki
 
         schema_path = tmp_path / "SCHEMA.md"
         schema_path.write_text(_schema_md(), encoding="utf-8")
@@ -329,7 +359,7 @@ class TestValidateWikiWithViolations:
         assert any("unknown-type" in i["issue"] for i in failures)
 
     def test_malformed_schema_returns_single_warn(self, tmp_path: Path) -> None:
-        from wos.validators import validate_wiki
+        from wos.wiki import validate_wiki
 
         schema_path = tmp_path / "SCHEMA.md"
         schema_path.write_text(

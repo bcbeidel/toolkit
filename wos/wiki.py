@@ -1,16 +1,16 @@
 """Wiki-aware validators for SCHEMA.md-governed wiki directories.
 
-Provides four check functions for validating wiki page structure and schema
-conformance, plus validate_wiki() which orchestrates them.
+Provides WikiDocument — a Document subclass for wiki pages — and
+validate_wiki() which orchestrates validation for a wiki directory.
 
-Each check returns a list of issue dicts with keys: file, issue, severity.
+Each issue dict has keys: file, issue, severity.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from wos.document import Document, parse_document
 
@@ -19,9 +19,70 @@ from wos.document import Document, parse_document
 class WikiDocument(Document):
     """A wiki page document with schema conformance validation.
 
-    Stub — full implementation (issues() override) added in the
-    document-inheritance refactor (Task 5).
+    Overrides ``issues()`` to add: schema type and confidence checks,
+    and required wiki frontmatter field presence (confidence, created,
+    updated).
     """
+
+    def issues(
+        self,
+        root: Path,
+        schema: Optional[dict] = None,
+    ) -> List[dict]:
+        """Return base issues plus wiki-specific checks.
+
+        Adds: page type against schema, confidence tier against schema,
+        and required wiki frontmatter field presence.
+
+        Args:
+            root: Project root directory (used by base class).
+            schema: Schema dict from parse_schema(). If None, attempts
+                to load from ``Path(self.path).parent / "SCHEMA.md"``.
+                If SCHEMA.md is missing or malformed, schema checks are
+                skipped.
+
+        Returns:
+            List of issue dicts with keys: file, issue, severity.
+        """
+        result = super().issues(root)
+
+        if schema is None:
+            schema_path = Path(self.path).parent / "SCHEMA.md"
+            try:
+                schema = parse_schema(schema_path)
+            except ValueError:
+                schema = None  # skip schema checks if unavailable
+
+        if schema is not None:
+            if self.type and self.type not in schema["page_types"]:
+                result.append({
+                    "file": self.path,
+                    "issue": (
+                        f"Wiki page type '{self.type}' not in schema page_types:"
+                        f" {schema['page_types']}"
+                    ),
+                    "severity": "fail",
+                })
+            confidence = self.meta.get("confidence")
+            if confidence is not None and confidence not in schema["confidence_tiers"]:
+                result.append({
+                    "file": self.path,
+                    "issue": (
+                        f"Wiki confidence '{confidence}' not in schema"
+                        f" confidence_tiers: {schema['confidence_tiers']}"
+                    ),
+                    "severity": "fail",
+                })
+
+        for field_name in ("confidence", "created", "updated"):
+            if self.meta.get(field_name) is None:
+                result.append({
+                    "file": self.path,
+                    "issue": f"Wiki page missing frontmatter field: '{field_name}'",
+                    "severity": "warn",
+                })
+
+        return result
 
 
 # ── Schema parsing ─────────────────────────────────────────────
@@ -55,7 +116,7 @@ def parse_schema(schema_path: Path) -> dict:
         raise ValueError(f"Cannot read {schema_path}: {exc}") from exc
 
     collected: dict = {key: [] for key in _REQUIRED.values()}
-    current_key: str | None = None
+    current_key: Optional[str] = None
 
     for line in text.splitlines():
         stripped = line.strip()
@@ -122,85 +183,15 @@ def check_wiki_orphans(wiki_dir: Path) -> List[dict]:
     return issues
 
 
-# ── Per-document checks ────────────────────────────────────────
-
-
-def check_wiki_schema_violations(doc: Document, schema: dict) -> List[dict]:
-    """Fail issues for schema-invalid type or confidence values.
-
-    Checks ``doc.type`` against ``schema['page_types']``. Checks
-    ``doc.meta.get('confidence')`` against ``schema['confidence_tiers']``
-    only when the field is present — missing confidence is a frontmatter
-    issue, not a schema violation.
-
-    Args:
-        doc: A parsed Document instance.
-        schema: Dict from parse_schema() with page_types, confidence_tiers,
-            relationship_types lists.
-
-    Returns:
-        List of issue dicts with severity ``fail``.
-    """
-    issues: List[dict] = []
-
-    if doc.type and doc.type not in schema["page_types"]:
-        issues.append({
-            "file": doc.path,
-            "issue": (
-                f"Wiki page type '{doc.type}' not in schema page_types:"
-                f" {schema['page_types']}"
-            ),
-            "severity": "fail",
-        })
-
-    confidence = doc.meta.get("confidence")
-    if confidence is not None and confidence not in schema["confidence_tiers"]:
-        issues.append({
-            "file": doc.path,
-            "issue": (
-                f"Wiki confidence '{confidence}' not in schema confidence_tiers:"
-                f" {schema['confidence_tiers']}"
-            ),
-            "severity": "fail",
-        })
-
-    return issues
-
-
-def check_wiki_frontmatter(doc: Document) -> List[dict]:
-    """Warn for missing wiki-specific frontmatter fields.
-
-    Checks that ``confidence``, ``created``, and ``updated`` are present
-    in ``doc.meta``.
-
-    Args:
-        doc: A parsed Document instance.
-
-    Returns:
-        List of issue dicts with severity ``warn``.
-    """
-    issues: List[dict] = []
-
-    for field_name in ("confidence", "created", "updated"):
-        if doc.meta.get(field_name) is None:
-            issues.append({
-                "file": doc.path,
-                "issue": f"Wiki page missing frontmatter field: '{field_name}'",
-                "severity": "warn",
-            })
-
-    return issues
-
-
 # ── Orchestrator ───────────────────────────────────────────────
 
 
 def validate_wiki(wiki_dir: Path, schema_path: Path) -> List[dict]:
     """Validate all documents in a wiki directory against its SCHEMA.md.
 
-    Runs schema violation and frontmatter checks per file, orphan check
-    across the directory, and index sync for wiki_dir. If SCHEMA.md is
-    missing or malformed, returns a single warn and exits early.
+    Runs WikiDocument.issues() per file and check_wiki_orphans() across
+    the directory. If SCHEMA.md is missing or malformed, returns a single
+    warn and exits early.
 
     Args:
         wiki_dir: Path to the wiki directory.
@@ -227,7 +218,18 @@ def validate_wiki(wiki_dir: Path, schema_path: Path) -> List[dict]:
             continue
         try:
             text = md_file.read_text(encoding="utf-8")
-            doc = parse_document(str(md_file), text)
+            base_doc = parse_document(str(md_file), text)
+            doc = WikiDocument(
+                path=base_doc.path,
+                name=base_doc.name,
+                description=base_doc.description,
+                content=base_doc.content,
+                type=base_doc.type,
+                sources=base_doc.sources,
+                related=base_doc.related,
+                status=base_doc.status,
+                meta=base_doc.meta,
+            )
         except (OSError, ValueError) as exc:
             issues.append({
                 "file": str(md_file),
@@ -235,8 +237,7 @@ def validate_wiki(wiki_dir: Path, schema_path: Path) -> List[dict]:
                 "severity": "fail",
             })
             continue
-        issues.extend(check_wiki_schema_violations(doc, schema))
-        issues.extend(check_wiki_frontmatter(doc))
+        issues.extend(doc.issues(wiki_dir, schema=schema))
 
     issues.extend(check_wiki_orphans(wiki_dir))
 
