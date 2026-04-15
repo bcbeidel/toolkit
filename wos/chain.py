@@ -1,67 +1,20 @@
 """Chain manifest parsing and structural validation.
 
-Provides parse_chain() for reading *.chain.md manifests, five structural
-check functions for validating chain correctness, and validate_chain()
-which orchestrates them.
+Provides ChainDocument — a Document subclass for *.chain.md manifests —
+and validate_chain() which parses and validates a manifest in one call.
 
-Each check returns a list of issue dicts with keys: file, issue, severity.
+Each issue dict has keys: file, issue, severity.
 """
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import List, Optional
 
 from wos.document import Document, parse_document
 
-
-@dataclass
-class ChainDocument(Document):
-    """A chain manifest document with parsed step list and structural validation.
-
-    Stub — full implementation (steps field, issues() override) added in
-    the document-inheritance refactor (Task 4).
-    """
-
-
-# ── Parsing ────────────────────────────────────────────────────────
-
-
-def parse_chain(manifest_path: Path) -> dict:
-    """Read and parse a *.chain.md manifest. Returns structured dict.
-
-    Parses frontmatter (name, description, type, goal, negative-scope)
-    and the ## Steps markdown pipe table into a list of step dicts.
-
-    Args:
-        manifest_path: Path to a *.chain.md file.
-
-    Returns:
-        Dict with keys: path, name, description, type, goal,
-        negative_scope, steps. ``steps`` is a list of dicts with
-        keys: step, skill, input_contract, output_contract, gate.
-
-    Raises:
-        ValueError: If the file cannot be read, frontmatter is missing,
-            or the ## Steps section is absent.
-    """
-    try:
-        text = manifest_path.read_text(encoding="utf-8")
-    except OSError as exc:
-        raise ValueError(f"Cannot read {manifest_path}: {exc}") from exc
-
-    doc = parse_document(str(manifest_path), text)
-
-    return {
-        "path": str(manifest_path),
-        "name": doc.name,
-        "description": doc.description,
-        "type": doc.type or "",
-        "goal": doc.meta.get("goal") or "",
-        "negative_scope": doc.meta.get("negative-scope") or "",
-        "steps": _parse_steps_table(doc.content, manifest_path),
-    }
+# ── Step table helpers ─────────────────────────────────────────────
 
 
 def _is_separator_row(cells: List[str]) -> bool:
@@ -101,7 +54,6 @@ def _parse_steps_table(body: str, manifest_path: Path) -> List[dict]:
     """
     lines = body.splitlines()
 
-    # Find the ## Steps heading
     steps_start: Optional[int] = None
     for i, line in enumerate(lines):
         if line.strip().lower().startswith("## steps"):
@@ -109,9 +61,7 @@ def _parse_steps_table(body: str, manifest_path: Path) -> List[dict]:
             break
 
     if steps_start is None:
-        raise ValueError(
-            f"No '## Steps' section found in {manifest_path}"
-        )
+        raise ValueError(f"No '## Steps' section found in {manifest_path}")
 
     steps: List[dict] = []
     in_table = False
@@ -121,7 +71,7 @@ def _parse_steps_table(body: str, manifest_path: Path) -> List[dict]:
 
         if not stripped:
             if in_table:
-                break  # Blank line ends the table
+                break
             continue
 
         if not stripped.startswith("|"):
@@ -129,24 +79,19 @@ def _parse_steps_table(body: str, manifest_path: Path) -> List[dict]:
                 break
             continue
 
-        # Split on | and strip whitespace; drop empty tokens from leading/trailing |
         cells = [c.strip() for c in stripped.split("|") if c.strip()]
 
         if not cells:
             continue
-
         if _is_separator_row(cells):
             in_table = True
             continue
-
         if not in_table and _is_header_row(cells):
             in_table = True
             continue
-
         if not in_table:
             continue
 
-        # Pad to 5 columns
         while len(cells) < 5:
             cells.append("")
 
@@ -161,159 +106,199 @@ def _parse_steps_table(body: str, manifest_path: Path) -> List[dict]:
     return steps
 
 
-# ── Structural checks ──────────────────────────────────────────────
+# ── ChainDocument ──────────────────────────────────────────────────
 
 
-def check_chain_skills_exist(
-    manifest: dict, skills_dirs: List[Path]
-) -> List[dict]:
-    """Fail issues for each declared skill that doesn't exist.
+@dataclass
+class ChainDocument(Document):
+    """A chain manifest document with parsed step list and structural validation.
 
-    For each step, checks whether the skill name matches a subdirectory
-    in any of the provided skills_dirs.
-
-    Args:
-        manifest: Parsed chain manifest dict from parse_chain().
-        skills_dirs: List of directories to search for skill subdirectories.
-
-    Returns:
-        List of issue dicts with severity 'fail'.
+    Adds a ``steps`` field (parsed from the ## Steps table in content)
+    and overrides ``issues()`` to check skill existence, termination
+    condition, and step-sequence cycles.
     """
-    file_path = manifest.get("path", "")
 
-    known_skills: set = set()
-    for skills_dir in skills_dirs:
-        p = Path(skills_dir)
-        if p.is_dir():
-            for entry in sorted(p.iterdir()):
-                if entry.is_dir() and not entry.name.startswith("_"):
-                    known_skills.add(entry.name)
+    steps: List[dict] = field(default_factory=list, init=False)
 
-    issues: List[dict] = []
-    for step in manifest.get("steps", []):
-        skill = step.get("skill", "")
-        if skill and skill not in known_skills:
-            issues.append({
-                "file": file_path,
-                "issue": (
-                    f"Chain step {step.get('step', '?')} declares skill"
-                    f" '{skill}' which does not exist in skills directories"
-                ),
+    def __post_init__(self) -> None:
+        self._steps_error: Optional[str] = None
+        try:
+            self.steps = _parse_steps_table(self.content, Path(self.path))
+        except ValueError as exc:
+            self._steps_error = str(exc)
+
+    @property
+    def goal(self) -> str:
+        """The chain's termination condition (from frontmatter ``goal`` field)."""
+        return self.meta.get("goal") or ""
+
+    @property
+    def negative_scope(self) -> str:
+        """What the chain explicitly does not handle."""
+        return self.meta.get("negative-scope") or ""
+
+    def issues(
+        self,
+        root: Path,
+        skills_dirs: Optional[List[Path]] = None,
+    ) -> List[dict]:
+        """Return base issues plus chain-specific structural checks.
+
+        Adds: steps-table parse error, skill existence, termination
+        condition, and cycle detection.
+
+        Args:
+            root: Project root directory (used by base class for related paths).
+            skills_dirs: Directories to search for skill subdirectories.
+                Defaults to ``[root / "skills"]`` if not provided.
+
+        Returns:
+            List of issue dicts with keys: file, issue, severity.
+        """
+        result = super().issues(root)
+
+        if self._steps_error:
+            result.append({
+                "file": self.path,
+                "issue": self._steps_error,
                 "severity": "fail",
             })
+            return result  # can't meaningfully check skills or cycles
 
-    return issues
+        if skills_dirs is None:
+            skills_dirs = [root / "skills"]
 
+        # Skill existence
+        known_skills: set = set()
+        for skills_dir in skills_dirs:
+            p = Path(skills_dir)
+            if p.is_dir():
+                for entry in sorted(p.iterdir()):
+                    if entry.is_dir() and not entry.name.startswith("_"):
+                        known_skills.add(entry.name)
 
-def check_chain_termination(manifest: dict) -> List[dict]:
-    """Fail issue if no termination condition declared at chain level.
-
-    Checks that the manifest's 'goal' field is non-empty.
-
-    Args:
-        manifest: Parsed chain manifest dict from parse_chain().
-
-    Returns:
-        List of issue dicts with severity 'fail'.
-    """
-    file_path = manifest.get("path", "")
-
-    if not manifest.get("goal"):
-        return [{
-            "file": file_path,
-            "issue": (
-                "Chain manifest has no termination condition"
-                " (goal is missing or empty)"
-            ),
-            "severity": "fail",
-        }]
-
-    return []
-
-
-def check_chain_cycles(manifest: dict) -> List[dict]:
-    """Fail issue for any circular skill references in the step sequence.
-
-    Detects:
-    - Step numbers that are not strictly increasing integers
-    - The same skill appearing in two consecutive steps (direct loop)
-
-    Args:
-        manifest: Parsed chain manifest dict from parse_chain().
-
-    Returns:
-        List of issue dicts with severity 'fail'.
-    """
-    file_path = manifest.get("path", "")
-    steps = manifest.get("steps", [])
-    issues: List[dict] = []
-
-    prev_step_num: Optional[int] = None
-    prev_skill = ""
-
-    for step in steps:
-        step_id = step.get("step", "")
-        skill = step.get("skill", "")
-
-        # Check monotonically increasing step numbers
-        try:
-            step_num = int(step_id)
-            if prev_step_num is not None and step_num <= prev_step_num:
-                issues.append({
-                    "file": file_path,
+        for step in self.steps:
+            skill = step.get("skill", "")
+            if skill and skill not in known_skills:
+                result.append({
+                    "file": self.path,
                     "issue": (
-                        f"Chain step numbers are not strictly increasing:"
-                        f" step {step_id} follows step {prev_step_num}"
+                        f"Chain step {step.get('step', '?')} declares skill"
+                        f" '{skill}' which does not exist in skills directories"
                     ),
                     "severity": "fail",
                 })
-            prev_step_num = step_num
-        except (ValueError, TypeError):
-            pass  # Non-integer step IDs are allowed
 
-        # Check consecutive same-skill (direct loop)
-        if skill and skill == prev_skill:
-            issues.append({
-                "file": file_path,
+        # Termination condition
+        if not self.goal:
+            result.append({
+                "file": self.path,
                 "issue": (
-                    f"Chain step {step_id} repeats skill '{skill}'"
-                    f" from the immediately preceding step (direct loop)"
+                    "Chain manifest has no termination condition"
+                    " (goal is missing or empty)"
                 ),
                 "severity": "fail",
             })
 
-        prev_skill = skill
+        # Cycle detection
+        prev_step_num: Optional[int] = None
+        prev_skill = ""
+        for step in self.steps:
+            step_id = step.get("step", "")
+            skill = step.get("skill", "")
+            try:
+                step_num = int(step_id)
+                if prev_step_num is not None and step_num <= prev_step_num:
+                    result.append({
+                        "file": self.path,
+                        "issue": (
+                            f"Chain step numbers are not strictly increasing:"
+                            f" step {step_id} follows step {prev_step_num}"
+                        ),
+                        "severity": "fail",
+                    })
+                prev_step_num = step_num
+            except (ValueError, TypeError):
+                pass
+            if skill and skill == prev_skill:
+                result.append({
+                    "file": self.path,
+                    "issue": (
+                        f"Chain step {step_id} repeats skill '{skill}'"
+                        f" from the immediately preceding step (direct loop)"
+                    ),
+                    "severity": "fail",
+                })
+            prev_skill = skill
 
-    return issues
+        return result
 
 
-# ── Orchestrator ───────────────────────────────────────────────
+# ── Convenience wrappers ───────────────────────────────────────────
 
 
-def validate_chain(manifest_path: Path, skills_dirs: List[Path]) -> List[dict]:
+def parse_chain(manifest_path: Path) -> ChainDocument:
+    """Read and parse a *.chain.md manifest into a ChainDocument.
+
+    Args:
+        manifest_path: Path to a *.chain.md file.
+
+    Returns:
+        A ChainDocument with steps, goal, and negative_scope populated.
+
+    Raises:
+        ValueError: If the file cannot be read or frontmatter is missing.
+    """
+    try:
+        text = manifest_path.read_text(encoding="utf-8")
+    except OSError as exc:
+        raise ValueError(f"Cannot read {manifest_path}: {exc}") from exc
+
+    doc = parse_document(str(manifest_path), text)
+    if not isinstance(doc, ChainDocument):
+        raise ValueError(
+            f"{manifest_path}: expected type 'chain', got '{doc.type}'"
+        )
+    return doc
+
+
+def validate_chain(
+    manifest_path: Path,
+    skills_dirs: List[Path],
+    root: Optional[Path] = None,
+) -> List[dict]:
     """Validate a chain manifest against all structural checks.
 
-    Parses the manifest and runs 5 structural checks. If parsing fails,
-    returns a single warn and exits early.
+    Parses the manifest and runs ChainDocument.issues(). If parsing
+    fails, returns a single warn and exits early.
 
     Args:
         manifest_path: Path to a *.chain.md file.
         skills_dirs: Directories to search for declared skills.
+        root: Project root for resolving related paths. Defaults to
+            manifest_path.parent.
 
     Returns:
         List of issue dicts. Empty on a clean manifest.
     """
+    if root is None:
+        root = manifest_path.parent
+
     try:
-        manifest = parse_chain(manifest_path)
-    except ValueError as exc:
+        text = manifest_path.read_text(encoding="utf-8")
+        doc = parse_document(str(manifest_path), text)
+    except (OSError, ValueError) as exc:
         return [{
             "file": str(manifest_path),
             "issue": f"Invalid chain manifest: {exc}",
             "severity": "warn",
         }]
 
-    issues: List[dict] = []
-    issues.extend(check_chain_skills_exist(manifest, skills_dirs))
-    issues.extend(check_chain_termination(manifest))
-    issues.extend(check_chain_cycles(manifest))
-    return issues
+    if not isinstance(doc, ChainDocument):
+        return [{
+            "file": str(manifest_path),
+            "issue": f"Not a chain document (type: {doc.type!r})",
+            "severity": "warn",
+        }]
+
+    return doc.issues(root, skills_dirs=skills_dirs)
