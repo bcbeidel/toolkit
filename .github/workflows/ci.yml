@@ -22,10 +22,10 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
-        run: pip install -e ".[dev]"
+        run: pip install -e tools/wiki -e tools/check -e ".[dev]"
 
       - name: Lint with ruff
-        run: ruff check wos/ tests/ scripts/
+        run: ruff check tools/
 
       - name: Run tests
-        run: python -m pytest tests/ -v
+        run: python -m pytest tools/wiki/tests/ tools/check/tests/ -v
