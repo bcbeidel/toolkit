@@ -14,7 +14,7 @@ agent's exit condition in the research pipeline.
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, List
 
@@ -55,11 +55,14 @@ _PHASE_AFTER_GATE = {
 class ResearchDocument(Document):
     """A research document with source URL and draft-marker validation."""
 
+    sources: List[str] = field(default_factory=list)
+    related: List[str] = field(default_factory=list)
+
     def issues(self, root: Path, verify_urls: bool = True, **_: object) -> List[dict]:
         """Return base issues plus research-specific checks.
 
-        Adds: sources required, sources-as-dicts warning, draft marker
-        warning, and source URL reachability (fail/warn).
+        Adds: related path existence, sources required, sources-as-dicts
+        warning, draft marker warning, and source URL reachability (fail/warn).
 
         Args:
             root: Project root directory.
@@ -69,6 +72,16 @@ class ResearchDocument(Document):
             List of issue dicts with keys: file, issue, severity.
         """
         result = super().issues(root)
+
+        for rel in self.related:
+            if rel.startswith("http://") or rel.startswith("https://"):
+                continue
+            if not (root / rel).exists():
+                result.append({
+                    "file": self.path,
+                    "issue": f"Related path does not exist: {rel}",
+                    "severity": "fail",
+                })
 
         if not self.sources:
             result.append({

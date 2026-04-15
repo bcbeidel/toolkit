@@ -2,6 +2,9 @@
 
 Provides the SkillDocument dataclass for reading and validating SKILL.md files,
 along with module-level functions for skill size and metadata checks.
+
+SkillDocument extends Document and aligns with the agentskills.io specification:
+required name and description, optional license, compatibility, and allowed-tools.
 """
 
 from __future__ import annotations
@@ -10,6 +13,8 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Optional, Tuple
+
+from wos.document import Document
 
 _NAME_RE = re.compile(r"^[a-z0-9-]+$")
 _XML_TAG_RE = re.compile(r"<[a-zA-Z]")
@@ -68,7 +73,6 @@ def count_instruction_lines(text: str) -> int:
             continue
         count += 1
     return count
-
 
 
 def _check_name(name: str, file_str: str) -> List[dict]:
@@ -156,56 +160,52 @@ def _check_body_lines(body: str, file_str: str) -> List[dict]:
 # ── SkillDocument dataclass ─────────────────────────────────────────
 
 
+@Document.register("skill")
 @dataclass
-class SkillDocument:
-    """Represents a parsed SKILL.md skill definition.
+class SkillDocument(Document):
+    """A parsed SKILL.md skill definition.
 
-    Fields:
-        path:        Path to the SKILL.md file (as string).
-        name:        Skill name from frontmatter (None if absent).
-        description: Skill description from frontmatter (None if absent).
-        body:        Body text with frontmatter stripped.
+    Extends Document with agentskills.io specification fields:
+    optional license, compatibility, and allowed_tools. Content is
+    stored in the inherited ``content`` field.
     """
 
-    path: str
-    name: Optional[str]
-    description: Optional[str]
-    body: str
+    license: Optional[str] = None
+    compatibility: Optional[str] = None
+    allowed_tools: Optional[str] = None
+
+    def __post_init__(self) -> None:
+        # Extract agentskills spec fields from meta (they land there
+        # because they're not in Document._KNOWN_KEYS)
+        if self.license is None:
+            self.license = self.meta.get("license")
+        if self.compatibility is None:
+            self.compatibility = self.meta.get("compatibility")
+        if self.allowed_tools is None:
+            self.allowed_tools = self.meta.get("allowed-tools")
 
     @classmethod
     def parse(cls, skill_dir: Path) -> Optional[SkillDocument]:
-        """Read SKILL.md from skill_dir and return a Skill instance.
+        """Read SKILL.md from skill_dir and return a SkillDocument instance.
 
-        Returns None if no SKILL.md exists in the directory.
+        Delegates to Document.parse() for frontmatter extraction and
+        routing. Returns None if SKILL.md doesn't exist or is unparseable.
         """
-        from wos.frontmatter import parse_frontmatter
-
         skill_md = skill_dir / "SKILL.md"
         if not skill_md.exists():
             return None
-        raw = skill_md.read_text(encoding="utf-8")
+        text = skill_md.read_text(encoding="utf-8")
         try:
-            fm, body = parse_frontmatter(raw)
-            name = str(fm["name"]) if fm.get("name") is not None else None
-            description = (
-                str(fm["description"]) if fm.get("description") is not None else None
-            )
+            doc = Document.parse(str(skill_md), text)
         except ValueError:
-            body = strip_frontmatter(raw)
-            name = None
-            description = None
-        return cls(
-            path=str(skill_md),
-            name=name,
-            description=description,
-            body=body,
-        )
+            return None
+        return doc if isinstance(doc, SkillDocument) else None
 
     def size(self, skill_dir: Optional[Path] = None) -> dict:
         """Return size metrics for this skill.
 
-        Reads the SKILL.md body (already parsed) and optionally reads
-        reference files from ``skill_dir/references/*.md``.
+        Reads the body (``content``) and optionally reads reference files
+        from ``skill_dir/references/*.md``.
 
         Args:
             skill_dir: Directory containing this skill. When provided,
@@ -215,8 +215,8 @@ class SkillDocument:
             Dict with keys: name, skill_lines, ref_lines, total_lines,
             words, files.
         """
-        skill_lines = count_instruction_lines(self.body)
-        skill_words = len(self.body.split())
+        skill_lines = count_instruction_lines(self.content)
+        skill_words = len(self.content.split())
         files = [self.path]
 
         ref_lines = 0
@@ -232,10 +232,7 @@ class SkillDocument:
         total_lines = skill_lines + ref_lines
         total_words = skill_words + ref_words
 
-        # Derive a name for the summary from the path if name is absent
-        summary_name = self.name
-        if summary_name is None:
-            summary_name = Path(self.path).parent.name
+        summary_name = self.name if self.name else Path(self.path).parent.name
 
         return {
             "name": summary_name,
@@ -246,22 +243,26 @@ class SkillDocument:
             "files": files,
         }
 
-    def issues(self, **_: object) -> List[dict]:
-        """Return validation issues for this skill's metadata and body.
+    def issues(self, root: Path, **_: object) -> List[dict]:
+        """Return base issues plus skill-specific checks.
 
-        Checks name format, description quality, ALL-CAPS directive density,
-        and raw body line count.
+        Base checks: name and description non-empty.
+        Skill checks: name format, description quality, ALL-CAPS directive
+        density, and raw body line count.
+
+        Args:
+            root: Project root directory (passed to base issues()).
 
         Returns:
             List of issue dicts with keys: file, issue, severity.
         """
-        result: List[dict] = []
+        result = super().issues(root)
         if self.name:
             result.extend(_check_name(self.name, self.path))
         if self.description:
             result.extend(_check_description(self.description, self.path))
-        result.extend(_check_directives(self.body, self.path))
-        result.extend(_check_body_lines(self.body, self.path))
+        result.extend(_check_directives(self.content, self.path))
+        result.extend(_check_body_lines(self.content, self.path))
         return result
 
 
@@ -324,4 +325,4 @@ def check_skill_meta(skill_dir: Path) -> List[dict]:
     skill = SkillDocument.parse(skill_dir)
     if skill is None:
         return []
-    return skill.issues()
+    return skill.issues(skill_dir)

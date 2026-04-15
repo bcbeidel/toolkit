@@ -22,14 +22,12 @@ class TestDocument:
         assert doc.description == "Guide to writing unit tests"
         assert doc.content == "# Unit Tests\n\nSome content here.\n"
         assert doc.type is None
-        assert doc.sources == []
-        assert doc.related == []
-        assert doc.status is None
+        assert doc.meta == {}
 
     def test_all_fields(self) -> None:
-        from wos.document import Document
+        from wos.research import ResearchDocument
 
-        doc = Document(
+        doc = ResearchDocument(
             path="docs/research/api-review.md",
             name="API Review",
             description="Research on REST API patterns",
@@ -72,8 +70,6 @@ class TestParseDocument:
         assert doc.name == "Unit Tests"
         assert doc.description == "Guide to writing unit tests"
         assert doc.type is None
-        assert doc.sources == []
-        assert doc.related == []
 
     def test_research_doc_with_type_and_sources(self) -> None:
         from wos.document import parse_document
@@ -105,13 +101,16 @@ class TestParseDocument:
             "---\n"
             "name: Authentication\n"
             "description: Auth patterns\n"
+            "type: research\n"
+            "sources:\n"
+            "  - https://example.com/auth\n"
             "related:\n"
             "  - docs/context/api/tokens.md\n"
             "  - https://github.com/org/repo/issues/42\n"
             "---\n"
             "# Authentication\n"
         )
-        doc = parse_document("docs/context/api/authentication.md", text)
+        doc = parse_document("docs/research/authentication.research.md", text)
         assert doc.related == [
             "docs/context/api/tokens.md",
             "https://github.com/org/repo/issues/42",
@@ -171,6 +170,7 @@ class TestParseDocument:
             "---\n"
             "name: Custom Doc\n"
             "description: A document with extra fields\n"
+            "type: plan\n"
             "status: draft\n"
             "priority: high\n"
             "tags:\n"
@@ -179,10 +179,10 @@ class TestParseDocument:
             "---\n"
             "# Custom Doc\n"
         )
-        doc = parse_document("docs/context/misc/custom.md", text)
+        doc = parse_document("docs/plans/custom.md", text)
         assert doc.name == "Custom Doc"
         assert doc.description == "A document with extra fields"
-        assert doc.status == "draft"  # status is now a known field
+        assert doc.status == "draft"
         # Truly unknown fields are not stored
         assert not hasattr(doc, "priority")
 
@@ -274,7 +274,7 @@ class TestParseDocument:
     def test_yaml_null_sources_and_related_default_to_empty_list(self) -> None:
         """sources: and related: with no value parse as YAML null (None).
 
-        The parser should coerce None to [] rather than propagating it.
+        The parser should coerce None to [] on ResearchDocument.
         """
         from wos.document import parse_document
 
@@ -282,12 +282,13 @@ class TestParseDocument:
             "---\n"
             "name: Null Fields\n"
             "description: Sources and related are YAML null\n"
+            "type: research\n"
             "sources:\n"
             "related:\n"
             "---\n"
             "# Content\n"
         )
-        doc = parse_document("test.md", text)
+        doc = parse_document("test.research.md", text)
         assert doc.sources == []
         assert doc.related == []
 
@@ -507,37 +508,40 @@ class TestDocumentIssues:
         )
 
     def test_missing_related_path_is_fail(self, tmp_path) -> None:
-        from wos.document import Document
+        from wos.research import ResearchDocument
 
-        doc = Document(
+        doc = ResearchDocument(
             path="a.md", name="N", description="D", content="",
+            sources=["https://example.com"],
             related=["docs/context/missing.md"],
         )
-        result = doc.issues(tmp_path)
+        result = doc.issues(tmp_path, verify_urls=False)
         assert any(
             i["severity"] == "fail" and "missing.md" in i["issue"] for i in result
         )
 
     def test_existing_related_path_no_issue(self, tmp_path) -> None:
-        from wos.document import Document
+        from wos.research import ResearchDocument
 
         target = tmp_path / "docs" / "context" / "present.md"
         target.parent.mkdir(parents=True)
         target.write_text("exists")
-        doc = Document(
+        doc = ResearchDocument(
             path="a.md", name="N", description="D", content="",
+            sources=["https://example.com"],
             related=["docs/context/present.md"],
         )
-        assert doc.issues(tmp_path) == []
+        assert doc.issues(tmp_path, verify_urls=False) == []
 
     def test_url_in_related_skipped(self, tmp_path) -> None:
-        from wos.document import Document
+        from wos.research import ResearchDocument
 
-        doc = Document(
+        doc = ResearchDocument(
             path="a.md", name="N", description="D", content="",
+            sources=["https://example.com"],
             related=["https://example.com/ref"],
         )
-        assert doc.issues(tmp_path) == []
+        assert doc.issues(tmp_path, verify_urls=False) == []
 
 
 class TestDocumentIsValid:

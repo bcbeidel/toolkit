@@ -226,9 +226,6 @@ def validate_wiki(wiki_dir: Path, schema_path: Path) -> List[dict]:
                 description=base_doc.description,
                 content=base_doc.content,
                 type=base_doc.type,
-                sources=base_doc.sources,
-                related=base_doc.related,
-                status=base_doc.status,
                 meta=base_doc.meta,
             )
         except (OSError, ValueError) as exc:

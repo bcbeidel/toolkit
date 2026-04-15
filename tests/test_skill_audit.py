@@ -101,6 +101,11 @@ def _create_skill(tmp_path: Path, name: str, skill_content: str,
                   ref_contents: dict[str, str] | None = None) -> None:
     skill_dir = tmp_path / name
     skill_dir.mkdir()
+    # Prepend minimal frontmatter if content lacks it (required for SkillDocument.parse)
+    if not skill_content.startswith("---"):
+        skill_content = (
+            f"---\nname: {name}\ndescription: A test skill.\n---\n{skill_content}"
+        )
     (skill_dir / "SKILL.md").write_text(skill_content, encoding="utf-8")
     if ref_contents:
         refs_dir = skill_dir / "references"
@@ -229,7 +234,7 @@ class TestParseSkillMeta:
             "---\ndescription: Does something\n---\n# Body\n"
         )
         skill = SkillDocument.parse(skill_dir)
-        assert skill.name is None
+        assert skill is None
 
     def test_missing_description_returns_none(self, tmp_path: Path) -> None:
         from wos.skill import SkillDocument
@@ -240,17 +245,16 @@ class TestParseSkillMeta:
             "---\nname: my-skill\n---\n# Body\n"
         )
         skill = SkillDocument.parse(skill_dir)
-        assert skill.description is None
+        assert skill is None
 
-    def test_no_frontmatter_returns_nones(self, tmp_path: Path) -> None:
+    def test_no_frontmatter_returns_none(self, tmp_path: Path) -> None:
         from wos.skill import SkillDocument
 
         skill_dir = tmp_path / "my-skill"
         skill_dir.mkdir()
         (skill_dir / "SKILL.md").write_text("# Just a body\n")
         skill = SkillDocument.parse(skill_dir)
-        assert skill.name is None
-        assert skill.description is None
+        assert skill is None
 
 
 class TestCheckSkillMeta:

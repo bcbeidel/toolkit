@@ -14,7 +14,7 @@ import os
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from wos.document import Document, parse_document
 
@@ -100,6 +100,7 @@ def _detect_sections(doc: "PlanDocument") -> Dict[str, bool]:
 class PlanDocument(Document):
     """A plan document with parsed task list and completion tracking."""
 
+    status: Optional[str] = None
     tasks: List[dict] = field(default_factory=list, init=False)
 
     def __post_init__(self) -> None:

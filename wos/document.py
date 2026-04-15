@@ -8,6 +8,7 @@ parse_document is kept as a module-level alias for backwards compatibility.
 
 from __future__ import annotations
 
+import dataclasses
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -33,8 +34,13 @@ class Document:
     """Base class for all WOS documents.
 
     Holds common frontmatter fields and implements base validation
-    (non-empty name/description, related paths exist on disk).
-    Typed subclasses add structured fields and type-specific validation.
+    (non-empty name/description). Typed subclasses add structured fields
+    and type-specific validation.
+
+    The base class is aligned with the agentskills.io specification:
+    required ``name`` and ``description`` fields, plus ``meta`` for
+    arbitrary key-value pairs. Type-specific fields (sources, related,
+    status) live on the subclasses that need them.
     """
 
     TYPE_SUFFIXES: ClassVar[frozenset] = frozenset({
@@ -46,9 +52,6 @@ class Document:
     description: str
     content: str
     type: Optional[str] = None
-    sources: List[str] = field(default_factory=list)
-    related: List[str] = field(default_factory=list)
-    status: Optional[str] = None
     meta: dict = field(default_factory=dict)
 
     # ── Properties ────────────────────────────────────────────────
@@ -85,11 +88,10 @@ class Document:
     def issues(self, root: Path, **_: object) -> List[dict]:
         """Return validation issues common to all documents.
 
-        Checks that name and description are non-empty, and that all
-        local file paths in ``related`` exist on disk.
+        Checks that name and description are non-empty.
 
         Args:
-            root: Project root directory for resolving relative paths.
+            root: Project root directory.
             **_: Absorbs extra kwargs so all callers can pass a uniform
                 set of keyword arguments regardless of document type.
 
@@ -111,28 +113,10 @@ class Document:
                 "severity": "fail",
             })
 
-        for rel in self.related:
-            if rel.startswith("http://") or rel.startswith("https://"):
-                continue
-            if not (root / rel).exists():
-                result.append({
-                    "file": self.path,
-                    "issue": f"Related path does not exist: {rel}",
-                    "severity": "fail",
-                })
-
         return result
 
     def is_valid(self, root: Path, **_: object) -> bool:
-        """Return True if issues() contains no fail-severity entries.
-
-        Args:
-            root: Project root directory.
-            **_: Absorbs extra kwargs forwarded from callers.
-
-        Returns:
-            True if the document has no fail-severity issues.
-        """
+        """Return True if issues() contains no fail-severity entries."""
         return not any(i["severity"] == "fail" for i in self.issues(root))
 
     # ── Scan ──────────────────────────────────────────────────────
@@ -153,12 +137,13 @@ class Document:
             PlanDocument.scan(root, status="executing")  # executing plans
 
         Skips hidden directories, common build/tool directories,
-        and _index.md files.
+        ``_index.md`` files, and ``SKILL.md`` files.
 
         Args:
             root: Project root directory (string path).
             subdir: Optional subdirectory to restrict search (relative to root).
             status: Optional status value to filter on (e.g. 'executing').
+                    Matched against ``doc.status`` via getattr (duck-typed).
 
         Returns:
             List of parsed Document instances (or subclass instances).
@@ -178,7 +163,9 @@ class Document:
                 if not d.startswith(".") and d not in _SKIP
             )
             for filename in sorted(filenames):
-                if not filename.endswith(".md") or filename == "_index.md":
+                if not filename.endswith(".md"):
+                    continue
+                if filename in ("_index.md", "SKILL.md"):
                     continue
                 path = Path(dirpath) / filename
                 try:
@@ -188,7 +175,7 @@ class Document:
                     continue
                 if not isinstance(doc, cls):
                     continue
-                if status and doc.status != status:
+                if status and getattr(doc, "status", None) != status:
                     continue
                 docs.append(doc)
 
@@ -198,15 +185,7 @@ class Document:
 
     @classmethod
     def register(cls, *type_names: str):
-        """Decorator: register a subclass for one or more type name strings.
-
-        Usage::
-
-            @Document.register("research")
-            @dataclass
-            class ResearchDocument(Document):
-                ...
-        """
+        """Decorator: register a subclass for one or more type name strings."""
         def decorator(subclass: type[Document]) -> type[Document]:
             for name in type_names:
                 _REGISTRY[name] = subclass
@@ -220,8 +199,12 @@ class Document:
         """Parse a markdown document and return the appropriate subclass.
 
         Extracts YAML frontmatter between ``---`` delimiters. Routes to
-        ResearchDocument, PlanDocument, ChainDocument, or WikiDocument
-        based on the resolved type. Unknown types return a base Document.
+        the registered subclass based on the resolved type. Unknown types
+        return a base Document.
+
+        Each subclass declares only the fields it needs; parse() filters
+        the extracted kwargs via dataclasses.fields() so subclasses never
+        receive kwargs they don't accept.
 
         Args:
             path: File path for the document (used in error messages).
@@ -255,6 +238,11 @@ class Document:
             doc_type = str(doc_type)
         if doc_type is None:
             doc_type = cls.type_from_path(Path(path))
+
+        # Filename-based routing: SKILL.md → "skill"
+        if doc_type is None and Path(path).name == "SKILL.md":
+            doc_type = "skill"
+
         sources: List[str] = fm.get("sources") or []
         related: List[str] = fm.get("related") or []
         status: Optional[str] = fm.get("status")
@@ -269,7 +257,7 @@ class Document:
 
         meta = {k: v for k, v in fm.items() if k not in _KNOWN_KEYS}
 
-        kwargs = dict(
+        all_kwargs = dict(
             path=path,
             name=name,
             description=description,
@@ -282,7 +270,12 @@ class Document:
         )
 
         subclass = _REGISTRY.get(doc_type, Document)
-        return subclass(**kwargs)
+
+        # Filter to only the fields declared on the target subclass
+        accepted = {f.name for f in dataclasses.fields(subclass)}
+        filtered = {k: v for k, v in all_kwargs.items() if k in accepted}
+
+        return subclass(**filtered)
 
 
 # ── Module-level alias ─────────────────────────────────────────────
