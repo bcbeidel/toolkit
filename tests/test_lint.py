@@ -15,7 +15,7 @@ def _run_audit(*args: str, issues: list[dict] | None = None) -> tuple[str, str, 
     captured_stderr = StringIO()
     exit_code = 0
 
-    mock_target = "wos.validators.validate_project"
+    mock_target = "wos.project.validate_project"
 
     with patch.object(sys, "argv", ["lint.py", *args]):
         with patch("sys.stdout", captured_stdout), patch("sys.stderr", captured_stderr):
@@ -141,7 +141,7 @@ class TestSingleFileMode:
             "---\nname: Test\ndescription: A test\n---\n# Test\n"
         )
         # Single file mode — mock validate_file instead
-        with patch("wos.validators.validate_file", return_value=[]) as mock_vf:
+        with patch("wos.project.validate_file", return_value=[]) as mock_vf:
             stdout, _, code = _run_audit(
                 "--root", str(root), "--no-urls", str(md_file),
             )
@@ -149,59 +149,6 @@ class TestSingleFileMode:
         assert code == 0
 
 
-class TestFixOutput:
-    def test_fix_messages_use_relative_paths(self, tmp_path: Path) -> None:
-        root = tmp_path / "project"
-        idx_dir = root / "docs" / "plans"
-        idx_dir.mkdir(parents=True)
-        idx_file = idx_dir / "_index.md"
-        idx_file.write_text("")
-        issues = [
-            {
-                "file": str(idx_file),
-                "issue": "_index.md is out of sync with directory contents",
-                "severity": "fail",
-            },
-        ]
-        with patch("wos.validators.validate_project", return_value=issues):
-            _, stderr, _ = _run_audit("--root", str(root), "--no-urls", "--fix")
-        assert str(root) not in stderr
-        assert "docs/plans/_index.md" in stderr
-
-    def test_fix_preserves_preamble(self, tmp_path: Path) -> None:
-        """--fix should preserve existing preambles in _index.md files."""
-        from wos.index import generate_index
-
-        root = tmp_path / "project"
-        idx_dir = root / "docs" / "context"
-        idx_dir.mkdir(parents=True)
-        # Create a doc file and generate index with preamble
-        (idx_dir / "auth.md").write_text(
-            "---\nname: Auth\ndescription: Authentication guide\n---\n# Auth\n"
-        )
-        idx_file = idx_dir / "_index.md"
-        preamble_text = "This area covers authentication and authorization."
-        initial = generate_index(idx_dir, preamble=preamble_text)
-        idx_file.write_text(initial)
-
-        # Add a new file so index is out of sync
-        (idx_dir / "tokens.md").write_text(
-            "---\nname: Tokens\ndescription: Token handling\n---\n# Tokens\n"
-        )
-
-        issues = [
-            {
-                "file": str(idx_file),
-                "issue": "_index.md is out of sync with directory contents",
-                "severity": "fail",
-            },
-        ]
-        with patch("wos.validators.validate_project", return_value=issues):
-            _run_audit("--root", str(root), "--no-urls", "--fix")
-
-        result = idx_file.read_text(encoding="utf-8")
-        assert preamble_text in result
-        assert "tokens.md" in result
 
 
 # ── TestChainAutoDetection ────────────────────────────────────────────
@@ -232,8 +179,8 @@ class TestChainAutoDetection:
         root = tmp_path / "project"
         root.mkdir()
 
-        with _patch("wos.validators.validate_project", return_value=[]), \
-             _patch("wos.validators.validate_chain") as mock_chain:
+        with _patch("wos.project.validate_project", return_value=[]), \
+             _patch("wos.skill_chain.validate_chain") as mock_chain:
             _run_audit("--root", str(root), "--no-urls")
 
         mock_chain.assert_not_called()
@@ -245,7 +192,7 @@ class TestChainAutoDetection:
         # Write a chain manifest with an empty goal — triggers termination fail
         self._write_chain_manifest(root / "my.chain.md", goal="")
 
-        with patch("wos.validators.validate_project", return_value=[]):
+        with patch("wos.project.validate_project", return_value=[]):
             stdout, _, exit_code = _run_audit("--root", str(root), "--no-urls")
 
         # termination check produces a fail → exit code 1
@@ -263,8 +210,8 @@ class TestChainAutoDetection:
         # Write chain manifest inside a hidden directory
         self._write_chain_manifest(hidden / "nested.chain.md", goal="some goal")
 
-        with _patch("wos.validators.validate_project", return_value=[]), \
-             _patch("wos.validators.validate_chain") as mock_chain:
+        with _patch("wos.project.validate_project", return_value=[]), \
+             _patch("wos.skill_chain.validate_chain") as mock_chain:
             _run_audit("--root", str(root), "--no-urls")
 
         mock_chain.assert_not_called()

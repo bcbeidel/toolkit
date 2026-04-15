@@ -1,4 +1,4 @@
-"""Tests for wos/chain.py — chain manifest parsing and validator functions."""
+"""Tests for wos/chain.py — SkillChainDocument parsing and validation."""
 
 from __future__ import annotations
 
@@ -72,29 +72,29 @@ def _chain_md(
 
 class TestParseChain:
     def test_returns_correct_frontmatter_fields(self, tmp_path: Path) -> None:
-        from wos.chain import parse_chain
+        from wos.skill_chain import parse_chain
 
         path = tmp_path / "my.chain.md"
         path.write_text(_chain_md(), encoding="utf-8")
 
-        manifest = parse_chain(path)
+        doc = parse_chain(path)
 
-        assert manifest["name"] == "Test Chain"
-        assert manifest["description"] == "A test chain"
-        assert manifest["type"] == "chain"
-        assert manifest["goal"] == "Produce updated wiki pages"
-        assert manifest["negative_scope"] == "Does not handle auth"
+        assert doc.name == "Test Chain"
+        assert doc.description == "A test chain"
+        assert doc.type == "chain"
+        assert doc.goal == "Produce updated wiki pages"
+        assert doc.negative_scope == "Does not handle auth"
 
     def test_returns_steps_list_with_correct_keys(self, tmp_path: Path) -> None:
-        from wos.chain import parse_chain
+        from wos.skill_chain import parse_chain
 
         path = tmp_path / "my.chain.md"
         path.write_text(_chain_md(), encoding="utf-8")
 
-        manifest = parse_chain(path)
+        doc = parse_chain(path)
 
-        assert len(manifest["steps"]) == 2
-        step = manifest["steps"][0]
+        assert len(doc.steps) == 2
+        step = doc.steps[0]
         expected_keys = {"step", "skill", "input_contract", "output_contract", "gate"}
         assert set(step.keys()) == expected_keys
         assert step["step"] == "1"
@@ -102,8 +102,8 @@ class TestParseChain:
         assert step["input_contract"] == "user question"
         assert step["output_contract"] == "research.md file"
 
-    def test_missing_steps_section_raises_value_error(self, tmp_path: Path) -> None:
-        from wos.chain import parse_chain
+    def test_missing_steps_section_records_error(self, tmp_path: Path) -> None:
+        from wos.skill_chain import parse_chain
 
         content = (
             "---\n"
@@ -118,11 +118,15 @@ class TestParseChain:
         path = tmp_path / "broken.chain.md"
         path.write_text(content, encoding="utf-8")
 
-        with pytest.raises(ValueError, match="Steps"):
-            parse_chain(path)
+        doc = parse_chain(path)
+
+        # Parse succeeds but steps error is surfaced via issues()
+        assert doc.steps == []
+        issues = doc.issues(tmp_path)
+        assert any("Steps" in i["issue"] for i in issues)
 
     def test_empty_goal_parsed_as_empty_string(self, tmp_path: Path) -> None:
-        from wos.chain import parse_chain
+        from wos.skill_chain import parse_chain
 
         content = (
             "---\n"
@@ -138,15 +142,33 @@ class TestParseChain:
         path = tmp_path / "nogoal.chain.md"
         path.write_text(content, encoding="utf-8")
 
-        manifest = parse_chain(path)
+        doc = parse_chain(path)
 
-        assert manifest["goal"] == ""
+        assert doc.goal == ""
+
+    def test_wrong_type_raises_value_error(self, tmp_path: Path) -> None:
+        from wos.skill_chain import parse_chain
+
+        content = (
+            "---\n"
+            "name: Not A Chain\n"
+            "description: Wrong type\n"
+            "type: research\n"
+            "sources:\n"
+            "  - https://example.com\n"
+            "---\n\nSome content.\n"
+        )
+        path = tmp_path / "wrong.chain.md"
+        path.write_text(content, encoding="utf-8")
+
+        with pytest.raises(ValueError, match="expected type 'chain'"):
+            parse_chain(path)
 
 
-# ── TestCheckChainSkillsExist ─────────────────────────────────────────
+# ── TestSkillChainDocumentIssues ───────────────────────────────────────────
 
 
-class TestCheckChainSkillsExist:
+class TestSkillChainDocumentIssues:
     def _make_skills_dir(self, tmp_path: Path, skill_names: list[str]) -> Path:
         skills_dir = tmp_path / "skills"
         skills_dir.mkdir()
@@ -154,291 +176,180 @@ class TestCheckChainSkillsExist:
             (skills_dir / name).mkdir()
         return skills_dir
 
-    def test_declared_skill_found_no_issues(self, tmp_path: Path) -> None:
-        from wos.chain import check_chain_skills_exist
+    # skill existence checks
+
+    def test_declared_skill_found_no_skill_issues(self, tmp_path: Path) -> None:
+        from wos.skill_chain import parse_chain
 
         skills_dir = self._make_skills_dir(tmp_path, ["research", "distill"])
-        manifest = {
-            "path": str(tmp_path / "my.chain.md"),
-            "steps": [
-                {"step": "1", "skill": "research", "input_contract": "q",
-                 "output_contract": "r", "gate": ""},
-                {"step": "2", "skill": "distill", "input_contract": "r",
-                 "output_contract": "c", "gate": "approval"},
-            ],
-        }
+        path = tmp_path / "my.chain.md"
+        path.write_text(_chain_md(), encoding="utf-8")
 
-        issues = check_chain_skills_exist(manifest, [skills_dir])
+        doc = parse_chain(path)
+        issues = doc.issues(tmp_path, skills_dirs=[skills_dir])
 
-        assert issues == []
+        skill_issues = [i for i in issues if "does not exist" in i["issue"]]
+        assert skill_issues == []
 
     def test_declared_skill_absent_returns_one_fail(self, tmp_path: Path) -> None:
-        from wos.chain import check_chain_skills_exist
+        from wos.skill_chain import parse_chain
 
         skills_dir = self._make_skills_dir(tmp_path, ["research"])
-        manifest = {
-            "path": str(tmp_path / "my.chain.md"),
-            "steps": [
-                {"step": "1", "skill": "ghost-skill", "input_contract": "q",
-                 "output_contract": "r", "gate": ""},
-            ],
-        }
+        path = tmp_path / "my.chain.md"
+        path.write_text(
+            _chain_md(
+                steps=[
+                    {"step": "1", "skill": "ghost-skill",
+                     "input_contract": "q", "output_contract": "r", "gate": ""},
+                ]
+            ),
+            encoding="utf-8",
+        )
 
-        issues = check_chain_skills_exist(manifest, [skills_dir])
+        doc = parse_chain(path)
+        issues = doc.issues(tmp_path, skills_dirs=[skills_dir])
 
-        assert len(issues) == 1
-        assert issues[0]["severity"] == "fail"
-        assert "ghost-skill" in issues[0]["issue"]
+        skill_issues = [i for i in issues if "does not exist" in i["issue"]]
+        assert len(skill_issues) == 1
+        assert skill_issues[0]["severity"] == "fail"
+        assert "ghost-skill" in skill_issues[0]["issue"]
 
     def test_multiple_missing_skills_multiple_fails(self, tmp_path: Path) -> None:
-        from wos.chain import check_chain_skills_exist
+        from wos.skill_chain import parse_chain
 
         skills_dir = self._make_skills_dir(tmp_path, [])
-        manifest = {
-            "path": str(tmp_path / "my.chain.md"),
-            "steps": [
-                {"step": "1", "skill": "missing-a", "input_contract": "x",
-                 "output_contract": "y", "gate": ""},
-                {"step": "2", "skill": "missing-b", "input_contract": "y",
-                 "output_contract": "z", "gate": "approval"},
-            ],
-        }
+        path = tmp_path / "my.chain.md"
+        path.write_text(
+            _chain_md(
+                steps=[
+                    {"step": "1", "skill": "missing-a",
+                     "input_contract": "x", "output_contract": "y", "gate": ""},
+                    {"step": "2", "skill": "missing-b",
+                     "input_contract": "y", "output_contract": "z", "gate": ""},
+                ]
+            ),
+            encoding="utf-8",
+        )
 
-        issues = check_chain_skills_exist(manifest, [skills_dir])
+        doc = parse_chain(path)
+        issues = doc.issues(tmp_path, skills_dirs=[skills_dir])
 
-        assert len(issues) == 2
-        assert all(i["severity"] == "fail" for i in issues)
+        skill_issues = [i for i in issues if "does not exist" in i["issue"]]
+        assert len(skill_issues) == 2
+        assert all(i["severity"] == "fail" for i in skill_issues)
 
+    # termination condition checks
 
-# ── TestCheckChainInternalConsistency ────────────────────────────────
-
-
-class TestCheckChainInternalConsistency:
-    def test_empty_input_contract_returns_warn(self, tmp_path: Path) -> None:
-        from wos.chain import check_chain_internal_consistency
-
-        manifest = {
-            "path": str(tmp_path / "my.chain.md"),
-            "steps": [
-                {"step": "1", "skill": "research", "input_contract": "",
-                 "output_contract": "research.md", "gate": ""},
-            ],
-        }
-
-        issues = check_chain_internal_consistency(manifest)
-
-        assert any(i["severity"] == "warn" and "input contract" in i["issue"]
-                   for i in issues)
-
-    def test_empty_output_contract_returns_warn(self, tmp_path: Path) -> None:
-        from wos.chain import check_chain_internal_consistency
-
-        manifest = {
-            "path": str(tmp_path / "my.chain.md"),
-            "steps": [
-                {"step": "1", "skill": "research", "input_contract": "question",
-                 "output_contract": "", "gate": ""},
-            ],
-        }
-
-        issues = check_chain_internal_consistency(manifest)
-
-        assert any(i["severity"] == "warn" and "output contract" in i["issue"]
-                   for i in issues)
-
-    def test_contracts_no_shared_words_returns_warn(self, tmp_path: Path) -> None:
-        from wos.chain import check_chain_internal_consistency
-
-        manifest = {
-            "path": str(tmp_path / "my.chain.md"),
-            "steps": [
-                {"step": "1", "skill": "research", "input_contract": "user question",
-                 "output_contract": "orange apple banana", "gate": ""},
-                {"step": "2", "skill": "distill",
-                 "input_contract": "totally unrelated xyz",
-                 "output_contract": "context pages", "gate": "approval"},
-            ],
-        }
-
-        issues = check_chain_internal_consistency(manifest)
-
-        assert any("shares no terms" in i["issue"] for i in issues)
-
-    def test_matching_contracts_no_issues(self, tmp_path: Path) -> None:
-        from wos.chain import check_chain_internal_consistency
-
-        manifest = {
-            "path": str(tmp_path / "my.chain.md"),
-            "steps": [
-                {"step": "1", "skill": "research", "input_contract": "user question",
-                 "output_contract": "research.md file", "gate": ""},
-                {"step": "2", "skill": "distill", "input_contract": "research.md path",
-                 "output_contract": "context files updated", "gate": "approval"},
-            ],
-        }
-
-        issues = check_chain_internal_consistency(manifest)
-
-        assert issues == []
-
-
-# ── TestCheckChainGates ───────────────────────────────────────────────
-
-
-class TestCheckChainGates:
-    def test_consequential_step_without_gate_returns_warn(self, tmp_path: Path) -> None:
-        from wos.chain import check_chain_gates
-
-        manifest = {
-            "path": str(tmp_path / "my.chain.md"),
-            "steps": [
-                {"step": "1", "skill": "ingest", "input_contract": "data",
-                 "output_contract": "pages updated", "gate": ""},
-            ],
-        }
-
-        issues = check_chain_gates(manifest)
-
-        assert len(issues) == 1
-        assert issues[0]["severity"] == "warn"
-        assert "ingest" in issues[0]["issue"]
-
-    def test_research_step_without_gate_no_warn(self, tmp_path: Path) -> None:
-        from wos.chain import check_chain_gates
-
-        manifest = {
-            "path": str(tmp_path / "my.chain.md"),
-            "steps": [
-                {"step": "1", "skill": "research", "input_contract": "question",
-                 "output_contract": "research.md", "gate": ""},
-            ],
-        }
-
-        issues = check_chain_gates(manifest)
-
-        assert issues == []
-
-    def test_gate_present_no_issues(self, tmp_path: Path) -> None:
-        from wos.chain import check_chain_gates
-
-        manifest = {
-            "path": str(tmp_path / "my.chain.md"),
-            "steps": [
-                {"step": "1", "skill": "ingest", "input_contract": "data",
-                 "output_contract": "pages updated", "gate": "user approves"},
-            ],
-        }
-
-        issues = check_chain_gates(manifest)
-
-        assert issues == []
-
-
-# ── TestCheckChainTermination ─────────────────────────────────────────
-
-
-class TestCheckChainTermination:
     def test_empty_goal_returns_fail(self, tmp_path: Path) -> None:
-        from wos.chain import check_chain_termination
+        from wos.skill_chain import parse_chain
 
-        manifest = {
-            "path": str(tmp_path / "my.chain.md"),
-            "goal": "",
-            "steps": [],
-        }
+        path = tmp_path / "my.chain.md"
+        path.write_text(
+            _chain_md(goal="", steps=[]),
+            encoding="utf-8",
+        )
 
-        issues = check_chain_termination(manifest)
+        doc = parse_chain(path)
+        issues = doc.issues(tmp_path)
 
-        assert len(issues) == 1
-        assert issues[0]["severity"] == "fail"
+        term_issues = [i for i in issues if "termination" in i["issue"]]
+        assert len(term_issues) == 1
+        assert term_issues[0]["severity"] == "fail"
 
-    def test_missing_goal_key_returns_fail(self, tmp_path: Path) -> None:
-        from wos.chain import check_chain_termination
+    def test_nonempty_goal_no_termination_issue(self, tmp_path: Path) -> None:
+        from wos.skill_chain import parse_chain
 
-        manifest = {
-            "path": str(tmp_path / "my.chain.md"),
-            "steps": [],
-        }
+        skills_dir = self._make_skills_dir(tmp_path, ["research", "distill"])
+        path = tmp_path / "my.chain.md"
+        path.write_text(_chain_md(), encoding="utf-8")
 
-        issues = check_chain_termination(manifest)
+        doc = parse_chain(path)
+        issues = doc.issues(tmp_path, skills_dirs=[skills_dir])
 
-        assert len(issues) == 1
-        assert issues[0]["severity"] == "fail"
+        term_issues = [i for i in issues if "termination" in i["issue"]]
+        assert term_issues == []
 
-    def test_nonempty_goal_no_issues(self, tmp_path: Path) -> None:
-        from wos.chain import check_chain_termination
+    # cycle / step-order checks
 
-        manifest = {
-            "path": str(tmp_path / "my.chain.md"),
-            "goal": "All wiki pages updated and indexed",
-            "steps": [],
-        }
-
-        issues = check_chain_termination(manifest)
-
-        assert issues == []
-
-
-# ── TestCheckChainCycles ──────────────────────────────────────────────
-
-
-class TestCheckChainCycles:
     def test_step_numbers_out_of_order_returns_fail(self, tmp_path: Path) -> None:
-        from wos.chain import check_chain_cycles
+        from wos.skill_chain import parse_chain
 
-        manifest = {
-            "path": str(tmp_path / "my.chain.md"),
-            "steps": [
-                {"step": "1", "skill": "research", "input_contract": "q",
-                 "output_contract": "r", "gate": ""},
-                {"step": "3", "skill": "distill", "input_contract": "r",
-                 "output_contract": "c", "gate": ""},
-                {"step": "2", "skill": "ingest", "input_contract": "c",
-                 "output_contract": "pages", "gate": ""},
-            ],
-        }
+        path = tmp_path / "my.chain.md"
+        path.write_text(
+            _chain_md(
+                steps=[
+                    {"step": "1", "skill": "research",
+                     "input_contract": "q", "output_contract": "r", "gate": ""},
+                    {"step": "3", "skill": "distill",
+                     "input_contract": "r", "output_contract": "c", "gate": ""},
+                    {"step": "2", "skill": "ingest",
+                     "input_contract": "c", "output_contract": "pages", "gate": ""},
+                ]
+            ),
+            encoding="utf-8",
+        )
 
-        issues = check_chain_cycles(manifest)
+        doc = parse_chain(path)
+        issues = doc.issues(tmp_path)
 
-        assert any(i["severity"] == "fail" and "strictly increasing" in i["issue"]
-                   for i in issues)
+        assert any(
+            i["severity"] == "fail" and "strictly increasing" in i["issue"]
+            for i in issues
+        )
 
     def test_same_skill_consecutive_steps_returns_fail(self, tmp_path: Path) -> None:
-        from wos.chain import check_chain_cycles
+        from wos.skill_chain import parse_chain
 
-        manifest = {
-            "path": str(tmp_path / "my.chain.md"),
-            "steps": [
-                {"step": "1", "skill": "research", "input_contract": "q",
-                 "output_contract": "r", "gate": ""},
-                {"step": "2", "skill": "research", "input_contract": "r",
-                 "output_contract": "r2", "gate": ""},
-            ],
-        }
+        path = tmp_path / "my.chain.md"
+        path.write_text(
+            _chain_md(
+                steps=[
+                    {"step": "1", "skill": "research",
+                     "input_contract": "q", "output_contract": "r", "gate": ""},
+                    {"step": "2", "skill": "research",
+                     "input_contract": "r", "output_contract": "r2", "gate": ""},
+                ]
+            ),
+            encoding="utf-8",
+        )
 
-        issues = check_chain_cycles(manifest)
+        doc = parse_chain(path)
+        issues = doc.issues(tmp_path)
 
-        assert any(i["severity"] == "fail" and "direct loop" in i["issue"]
-                   for i in issues)
+        assert any(
+            i["severity"] == "fail" and "direct loop" in i["issue"]
+            for i in issues
+        )
 
-    def test_valid_step_sequence_no_issues(self, tmp_path: Path) -> None:
-        from wos.chain import check_chain_cycles
+    def test_valid_step_sequence_no_cycle_issues(self, tmp_path: Path) -> None:
+        from wos.skill_chain import parse_chain
 
-        manifest = {
-            "path": str(tmp_path / "my.chain.md"),
-            "steps": [
-                {"step": "1", "skill": "research", "input_contract": "q",
-                 "output_contract": "r", "gate": ""},
-                {"step": "2", "skill": "distill", "input_contract": "r",
-                 "output_contract": "c", "gate": "approval"},
-                {"step": "3", "skill": "ingest", "input_contract": "c",
-                 "output_contract": "pages updated", "gate": "lint passes"},
-            ],
-        }
+        skills_dir = self._make_skills_dir(tmp_path, ["research", "distill", "ingest"])
+        path = tmp_path / "my.chain.md"
+        path.write_text(
+            _chain_md(
+                steps=[
+                    {"step": "1", "skill": "research",
+                     "input_contract": "q", "output_contract": "r", "gate": ""},
+                    {"step": "2", "skill": "distill",
+                     "input_contract": "r", "output_contract": "c",
+                     "gate": "approval"},
+                    {"step": "3", "skill": "ingest",
+                     "input_contract": "c", "output_contract": "pages updated",
+                     "gate": "lint passes"},
+                ]
+            ),
+            encoding="utf-8",
+        )
 
-        issues = check_chain_cycles(manifest)
+        doc = parse_chain(path)
+        issues = doc.issues(tmp_path, skills_dirs=[skills_dir])
 
-        assert issues == []
+        cycle_issues = [
+            i for i in issues
+            if "strictly increasing" in i["issue"] or "direct loop" in i["issue"]
+        ]
+        assert cycle_issues == []
 
 
 # ── TestValidateChain ─────────────────────────────────────────────────
@@ -446,7 +357,7 @@ class TestCheckChainCycles:
 
 class TestValidateChain:
     def test_clean_manifest_with_skills_no_failures(self, tmp_path: Path) -> None:
-        from wos.validators import validate_chain
+        from wos.skill_chain import validate_chain
 
         # Create skills directory with the two skills used
         skills_dir = tmp_path / "skills"
@@ -463,7 +374,7 @@ class TestValidateChain:
         assert failures == [], failures
 
     def test_manifest_missing_skills_surfaces_failures(self, tmp_path: Path) -> None:
-        from wos.validators import validate_chain
+        from wos.skill_chain import validate_chain
 
         # Empty skills directory — no skills defined
         skills_dir = tmp_path / "skills"
@@ -480,7 +391,7 @@ class TestValidateChain:
                    for i in failures)
 
     def test_malformed_manifest_returns_single_warn(self, tmp_path: Path) -> None:
-        from wos.validators import validate_chain
+        from wos.skill_chain import validate_chain
 
         # Missing frontmatter — will fail to parse
         manifest_path = tmp_path / "bad.chain.md"

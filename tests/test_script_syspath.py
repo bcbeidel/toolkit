@@ -42,29 +42,6 @@ class TestLintSysPath:
         assert "validation checks" in result.stdout.lower()
 
 
-class TestReindexSysPath:
-    def test_reindex_runs_from_different_cwd(self, tmp_path: Path) -> None:
-        """reindex.py should work when CWD is not the plugin root."""
-        result = subprocess.run(
-            [sys.executable, str(SCRIPTS_DIR / "reindex.py"), "--root", str(tmp_path)],
-            capture_output=True,
-            text=True,
-            cwd=str(tmp_path),
-        )
-        assert "ModuleNotFoundError" not in result.stderr
-        assert "No module named" not in result.stderr
-
-    def test_reindex_help_from_different_cwd(self, tmp_path: Path) -> None:
-        """reindex.py --help should work from any directory."""
-        result = subprocess.run(
-            [sys.executable, str(SCRIPTS_DIR / "reindex.py"), "--help"],
-            capture_output=True,
-            text=True,
-            cwd=str(tmp_path),
-        )
-        assert result.returncode == 0
-        assert "reindex" in result.stdout.lower() or "_index.md" in result.stdout
-
 
 class TestLintSingleFileSysPath:
     def test_lint_single_file_from_different_cwd(self, tmp_path: Path) -> None:

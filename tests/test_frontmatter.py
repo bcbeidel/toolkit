@@ -1,10 +1,10 @@
-"""Tests for wos/frontmatter.py — custom YAML frontmatter parser."""
+"""Tests for the frontmatter parser in wos/document.py."""
 
 from __future__ import annotations
 
 import pytest
 
-from wos.frontmatter import parse_frontmatter
+from wos.document import parse_frontmatter
 
 
 class TestDelimiters:

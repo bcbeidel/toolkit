@@ -6,7 +6,6 @@ import sys
 from pathlib import Path
 
 from wos.agents_md import BEGIN_MARKER, END_MARKER
-from wos.index import generate_index
 
 SCRIPTS_DIR = Path(__file__).resolve().parent.parent / "scripts"
 
@@ -60,9 +59,6 @@ class TestUpdatePreferencesWritesAgentsMd:
         (area_dir / "endpoints.md").write_text(
             "---\nname: Endpoints\ndescription: API endpoints\n---\n"
         )
-        (area_dir / "_index.md").write_text(
-            generate_index(area_dir, preamble="API docs")
-        )
 
         agents_path = tmp_path / "AGENTS.md"
         agents_path.write_text(
@@ -81,7 +77,7 @@ class TestUpdatePreferencesWritesAgentsMd:
         assert result.returncode == 0
 
         content = agents_path.read_text()
-        assert "| API docs | docs/context/api |" in content
+        assert "docs/context/api" in content
         assert "**Directness:**" in content
 
     def test_creates_agents_md_if_missing(self, tmp_path: Path) -> None:

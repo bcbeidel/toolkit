@@ -7,29 +7,18 @@
 
 Usage:
     python scripts/lint.py [FILE] [--root DIR] [--no-urls] [--json]
-                           [--fix] [--strict] [--context-max-words N]
+                           [--strict] [--context-max-words N]
                            [--context-min-words N] [--skill-max-lines N]
 """
 from __future__ import annotations
 
 import argparse
 import json
-import os
 import sys
 import warnings
 from pathlib import Path
 
-# Ensure `import wos` works whether pip-installed or run from plugin cache.
-# Prefer CLAUDE_PLUGIN_ROOT env var (set by Claude Code for hooks/MCP);
-# fall back to navigating from __file__ (required for skill-invoked scripts).
-_env_root = os.environ.get("CLAUDE_PLUGIN_ROOT", "")
-# scripts/ → plugin root
-_plugin_root = (
-    Path(_env_root) if _env_root and os.path.isdir(_env_root)
-    else Path(__file__).resolve().parent.parent
-)
-if str(_plugin_root) not in sys.path:
-    sys.path.insert(0, str(_plugin_root))
+import _bootstrap  # noqa: F401 — side effect: adds plugin root to sys.path
 
 
 def _relative_path(file_path: str, root: Path) -> str:
@@ -68,26 +57,9 @@ def main() -> None:
         help="Output issues as JSON",
     )
     parser.add_argument(
-        "--fix",
-        action="store_true",
-        help="Regenerate out-of-sync or missing _index.md files",
-    )
-    parser.add_argument(
         "--strict",
         action="store_true",
         help="Exit 1 on any issue (including warnings)",
-    )
-    parser.add_argument(
-        "--context-max-words",
-        type=int,
-        default=800,
-        help="Word count threshold for context file warnings (default: 800)",
-    )
-    parser.add_argument(
-        "--context-min-words",
-        type=int,
-        default=100,
-        help="Minimum word count for context file warnings (default: 100)",
     )
     parser.add_argument(
         "--skill-max-lines",
@@ -98,67 +70,24 @@ def main() -> None:
             " (default: 500, 0 to disable)"
         ),
     )
-    parser.add_argument(
-        "--all-dirs",
-        action="store_true",
-        help="Index-check all directories (skip default exclusions)",
-    )
     args = parser.parse_args()
 
     # Deferred imports — keeps --help fast
-    from wos.index import extract_preamble, generate_index
-    from wos.validators import validate_file, validate_project
+    from wos.project import validate_file, validate_project
 
     root = Path(args.root).resolve()
 
     # Single-file or project mode
     if args.file:
         file_path = Path(args.file).resolve()
-        issues = validate_file(
-            file_path, root,
-            verify_urls=not args.no_urls,
-            context_max_words=args.context_max_words,
-            context_min_words=args.context_min_words,
-        )
+        issues = validate_file(file_path, root, verify_urls=not args.no_urls)
     else:
-        exclude = frozenset() if args.all_dirs else None
-        issues = validate_project(
-            root,
-            verify_urls=not args.no_urls,
-            context_max_words=args.context_max_words,
-            context_min_words=args.context_min_words,
-            exclude_dirs=exclude,
-        )
-
-    # --fix: regenerate _index.md files that are out of sync or missing
-    if args.fix:
-        fixed: list[str] = []
-        remaining: list[dict] = []
-        for issue in issues:
-            file_path_str = issue["file"]
-            msg = issue["issue"]
-            if (
-                file_path_str.endswith("_index.md")
-                and ("out of sync" in msg or "missing" in msg)
-            ):
-                idx_path = Path(file_path_str)
-                directory = idx_path.parent
-                preamble = extract_preamble(idx_path)
-                content = generate_index(directory, preamble=preamble)
-                idx_path.write_text(content, encoding="utf-8")
-                fixed.append(file_path_str)
-                print(
-                    f"Fixed: {_relative_path(file_path_str, root)}",
-                    file=sys.stderr,
-                )
-            else:
-                remaining.append(issue)
-        issues = remaining
+        issues = validate_project(root, verify_urls=not args.no_urls)
 
     # Wiki validation — auto-activated when wiki/SCHEMA.md is present
     wiki_schema = root / "wiki" / "SCHEMA.md"
     if wiki_schema.is_file():
-        from wos.validators import validate_wiki
+        from wos.wiki import validate_wiki
         issues.extend(validate_wiki(root / "wiki", wiki_schema))
 
     # Chain validation — auto-activated when *.chain.md files are present
@@ -167,13 +96,13 @@ def main() -> None:
         if not any(part.startswith(".") for part in p.parts)
     ]
     if chain_manifests:
-        from wos.validators import validate_chain
+        from wos.skill_chain import validate_chain
         chain_skills_dirs = [root / "skills"] if (root / "skills").is_dir() else []
         for manifest_path in sorted(chain_manifests):
             issues.extend(validate_chain(manifest_path, chain_skills_dirs))
 
     # Skill instruction density reporting
-    from wos.skill_audit import check_skill_meta, check_skill_sizes
+    from wos.skill import check_skill_meta, check_skill_sizes
 
     skills_dir = root / "skills"
     if skills_dir.is_dir():

@@ -3,6 +3,12 @@
 Renders the WOS-managed section for AGENTS.md (context navigation,
 areas table, file metadata format, preferences) and updates the file
 content using marker-based replacement.
+
+Also provides replace_marker_section(), a general utility for replacing
+or appending marker-delimited sections in any text file.
+
+Communication preference dimensions, instruction mappings, and
+render_preferences() live here because they describe AGENTS.md content.
 """
 
 from __future__ import annotations
@@ -11,7 +17,148 @@ import re
 from pathlib import Path
 from typing import Dict, List, Optional
 
-# ── Markers ──────────────────────────────────────────────────────
+# ── Preference dimensions ─────────────────────────────────────────
+
+DIMENSIONS: Dict[str, List[str]] = {
+    "directness": ["blunt", "balanced", "diplomatic"],
+    "verbosity": ["terse", "moderate", "thorough"],
+    "depth": ["just-answers", "context-when-useful", "teach-me"],
+    "expertise": ["beginner", "intermediate", "expert"],
+    "tone": ["casual", "neutral", "formal"],
+}
+
+DIMENSION_INSTRUCTIONS: Dict[tuple, str] = {
+    # Directness
+    ("directness", "blunt"): (
+        "Be direct. State problems and disagreements plainly "
+        "without hedging or softening."
+    ),
+    ("directness", "balanced"): (
+        "Be straightforward but considerate. State issues clearly "
+        "while acknowledging tradeoffs."
+    ),
+    ("directness", "diplomatic"): (
+        "Frame feedback constructively. Lead with positives, "
+        "suggest improvements gently."
+    ),
+    # Verbosity
+    ("verbosity", "terse"): (
+        "Keep responses concise. Skip preamble and unnecessary elaboration."
+    ),
+    ("verbosity", "moderate"): (
+        "Provide enough detail to be clear without being exhaustive."
+    ),
+    ("verbosity", "thorough"): (
+        "Be comprehensive. Include context, examples, and edge cases."
+    ),
+    # Depth
+    ("depth", "just-answers"): (
+        "Give the answer directly. Skip explanations unless asked."
+    ),
+    ("depth", "context-when-useful"): (
+        "Provide context when it aids understanding, but don't over-explain."
+    ),
+    ("depth", "teach-me"): (
+        "Explain the reasoning and principles behind recommendations. "
+        "Help me learn, not just execute."
+    ),
+    # Expertise
+    ("expertise", "beginner"): (
+        "Assume limited domain knowledge. Define terms and explain concepts."
+    ),
+    ("expertise", "intermediate"): (
+        "Assume working knowledge. Skip basics but explain advanced concepts."
+    ),
+    ("expertise", "expert"): (
+        "Assume expert-level knowledge. Skip fundamentals."
+    ),
+    # Tone
+    ("tone", "casual"): (
+        "Keep it casual and conversational. Informal language is fine."
+    ),
+    ("tone", "neutral"): (
+        "Neutral and professional. No sycophancy or forced enthusiasm."
+    ),
+    ("tone", "formal"): (
+        "Maintain a formal, professional tone throughout."
+    ),
+}
+
+_DISPLAY_NAMES = {
+    "directness": "Directness",
+    "verbosity": "Verbosity",
+    "depth": "Depth",
+    "expertise": "Expertise",
+    "tone": "Tone",
+}
+
+
+def render_preferences(prefs: Dict[str, str]) -> List[str]:
+    """Render preference dimensions as instruction strings.
+
+    Each string is formatted as ``**Dimension:** instruction`` without
+    a bullet prefix. Pass the returned list to
+    ``render_wos_section(preferences=...)`` which adds bullets.
+
+    Args:
+        prefs: Mapping of dimension name to level.
+
+    Returns:
+        List of formatted instruction strings.
+
+    Raises:
+        ValueError: If an unknown dimension or level is provided.
+    """
+    result: List[str] = []
+    for dim, level in prefs.items():
+        if dim not in DIMENSIONS:
+            raise ValueError(f"Unknown dimension: {dim}")
+        if level not in DIMENSIONS[dim]:
+            raise ValueError(
+                f"Unknown level '{level}' for dimension '{dim}'. "
+                f"Valid levels: {DIMENSIONS[dim]}"
+            )
+        instruction = DIMENSION_INSTRUCTIONS[(dim, level)]
+        display = _DISPLAY_NAMES[dim]
+        result.append(f"**{display}:** {instruction}")
+    return result
+
+# ── Marker utilities ─────────────────────────────────────────────
+
+
+def replace_marker_section(
+    content: str,
+    begin_marker: str,
+    end_marker: str,
+    section: str,
+) -> str:
+    """Replace or append a marker-delimited section in text content.
+
+    If both markers exist, replaces everything between them (inclusive).
+    If markers don't exist, appends the section to the end.
+
+    Args:
+        content: The existing file content.
+        begin_marker: The opening marker string.
+        end_marker: The closing marker string.
+        section: The new section content (should include markers if needed).
+
+    Returns:
+        Updated content with the new section.
+    """
+    begin_idx = content.find(begin_marker)
+    end_idx = content.find(end_marker)
+
+    if begin_idx != -1 and end_idx != -1:
+        end_idx += len(end_marker)
+        # Consume trailing newline if present
+        if end_idx < len(content) and content[end_idx] == "\n":
+            end_idx += 1
+        return content[:begin_idx] + section + content[end_idx:]
+
+    # Append
+    return content.rstrip("\n") + "\n\n" + section
+
 
 BEGIN_MARKER = "<!-- wos:begin -->"
 END_MARKER = "<!-- wos:end -->"
@@ -27,9 +174,8 @@ VALID_LAYOUTS = frozenset({"separated", "co-located", "flat", "none"})
 def discover_areas(root: Path) -> List[Dict[str, str]]:
     """Discover areas by scanning for directories with managed documents.
 
-    Walks the project tree using the discovery module, finds all
-    directories containing managed documents, and returns them as
-    navigable areas with ``_index.md`` preambles as descriptions.
+    Walks the project tree and finds all directories containing non-index
+    .md files. Returns them as navigable areas.
 
     Args:
         root: Project root directory.
@@ -37,24 +183,27 @@ def discover_areas(root: Path) -> List[Dict[str, str]]:
     Returns:
         Sorted list of dicts with 'name' and 'path' keys.
     """
-    from wos.discovery import discover_document_dirs
-    from wos.index import extract_preamble
+    import os
 
-    doc_dirs = discover_document_dirs(root)
-    if not doc_dirs:
-        return []
-
-    areas: List[Dict[str, str]] = []
-    for directory in doc_dirs:
-        index_path = directory / "_index.md"
-        preamble = extract_preamble(index_path)
-        name = preamble if preamble else directory.name
-        try:
-            rel_path = str(directory.relative_to(root))
-        except ValueError:
-            rel_path = str(directory)
-        areas.append({"name": name, "path": rel_path})
-
+    _SKIP = frozenset({
+        "node_modules", "__pycache__", "venv", ".venv",
+        "dist", "build", ".tox", ".mypy_cache", ".pytest_cache",
+    })
+    areas = []
+    seen: set[str] = set()
+    for dirpath, dirnames, filenames in os.walk(root):
+        dirnames[:] = sorted(
+            d for d in dirnames
+            if not d.startswith(".") and d not in _SKIP
+        )
+        if any(f.endswith(".md") and f != "_index.md" for f in filenames):
+            try:
+                rel = str(Path(dirpath).relative_to(root))
+            except ValueError:
+                rel = dirpath
+            if rel and rel not in seen:
+                seen.add(rel)
+                areas.append({"name": rel, "path": rel})
     return areas
 
 
@@ -88,18 +237,6 @@ def read_layout_hint(content: str) -> Optional[str]:
     return None
 
 
-def write_layout_hint(layout: str) -> str:
-    """Return the comment marker string for a layout pattern.
-
-    Args:
-        layout: One of 'separated', 'co-located', 'flat', 'none'.
-
-    Returns:
-        HTML comment string like ``<!-- wos:layout: co-located -->``.
-    """
-    return f"<!-- wos:layout: {layout} -->"
-
-
 # ── Render ───────────────────────────────────────────────────────
 
 
@@ -122,7 +259,7 @@ def render_wos_section(
 
     # ── Layout hint (if set) ──────────────────────────────────────
     if layout and layout in VALID_LAYOUTS:
-        lines.append(write_layout_hint(layout))
+        lines.append(f"<!-- wos:layout: {layout} -->")
 
     # ── Context Navigation header ────────────────────────────────
     lines.append("## Context Navigation")
@@ -268,8 +405,6 @@ def update_agents_md(
     Returns:
         Updated AGENTS.md content with the new WOS section.
     """
-    from wos.markers import replace_marker_section
-
     # Preserve existing layout if not explicitly provided
     if layout is None:
         layout = read_layout_hint(content)
