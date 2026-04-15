@@ -56,13 +56,13 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    from wos.plan import assess_file, scan_plans
+    from wos.plan import PlanDocument
 
     if args.file:
-        result = assess_file(args.file)
+        result = PlanDocument.assess(args.file)
     else:
         root = str(Path(args.root).resolve())
-        result = scan_plans(root, subdir=args.subdir)
+        result = PlanDocument.scan(root, subdir=args.subdir)
 
     print(json.dumps(result, indent=2))
 

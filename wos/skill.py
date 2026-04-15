@@ -70,55 +70,6 @@ def count_instruction_lines(text: str) -> int:
     return count
 
 
-def parse_skill_meta(text: str) -> dict:
-    """Extract name and description from SKILL.md frontmatter.
-
-    Handles YAML ``>`` block scalars for multi-line descriptions.
-    Returns dict with ``name`` and ``description`` keys (None if absent).
-    """
-    return _parse_skill_meta(text)
-
-
-def _parse_skill_meta(text: str) -> dict:
-    """Internal implementation of parse_skill_meta."""
-    if not text.startswith("---"):
-        return {"name": None, "description": None}
-
-    close = text.find("\n---", 3)
-    if close == -1:
-        return {"name": None, "description": None}
-
-    yaml_text = text[4:close]
-
-    name = None
-    description = None
-
-    name_match = re.search(r"^name:\s*(.+)$", yaml_text, re.MULTILINE)
-    if name_match:
-        name = name_match.group(1).strip().strip('"').strip("'")
-
-    desc_match = re.search(r"^description:\s*(.*)$", yaml_text, re.MULTILINE)
-    if desc_match:
-        value = desc_match.group(1).strip()
-        if value in (">", "|", ">-", "|-"):
-            lines = yaml_text.split("\n")
-            desc_parts: List[str] = []
-            capture = False
-            for line in lines:
-                if line.strip().startswith("description:"):
-                    capture = True
-                    continue
-                if capture:
-                    if line.startswith("  ") or line.startswith("\t"):
-                        desc_parts.append(line.strip())
-                    else:
-                        break
-            description = " ".join(desc_parts)
-        else:
-            description = value.strip('"').strip("'")
-
-    return {"name": name, "description": description}
-
 
 def _check_name(name: str, file_str: str) -> List[dict]:
     issues: List[dict] = []
@@ -227,16 +178,26 @@ class Skill:
 
         Returns None if no SKILL.md exists in the directory.
         """
+        from wos.frontmatter import parse_frontmatter
+
         skill_md = skill_dir / "SKILL.md"
         if not skill_md.exists():
             return None
         raw = skill_md.read_text(encoding="utf-8")
-        meta = _parse_skill_meta(raw)
-        body = strip_frontmatter(raw)
+        try:
+            fm, body = parse_frontmatter(raw)
+            name = str(fm["name"]) if fm.get("name") is not None else None
+            description = (
+                str(fm["description"]) if fm.get("description") is not None else None
+            )
+        except ValueError:
+            body = strip_frontmatter(raw)
+            name = None
+            description = None
         return cls(
             path=str(skill_md),
-            name=meta.get("name"),
-            description=meta.get("description"),
+            name=name,
+            description=description,
             body=body,
         )
 

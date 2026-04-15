@@ -54,11 +54,29 @@ def _parse_yaml_subset(
     - key: value -> {"key": "value"} (string, no type coercion)
     - key: -> {"key": None}
     - - item lines after a key -> {"key": ["item1", "item2"]}
+    - key: > (or |, >-, |-) -> block scalar, indented lines joined with spaces
     """
     result: Dict[str, Union[str, List[str], None]] = {}
     current_key: Optional[str] = None
+    collecting_block: bool = False
+    block_parts: List[str] = []
 
     for line in yaml_text.split("\n"):
+        if collecting_block:
+            if line and not line[0].isspace():
+                # End of block scalar — flush accumulated lines
+                result[current_key] = " ".join(block_parts)
+                collecting_block = False
+                block_parts = []
+                current_key = None
+                # Fall through to parse this line as a new key-value
+            else:
+                stripped = line.strip()
+                if stripped:
+                    block_parts.append(stripped)
+                # Skip blank lines inside block scalar
+                continue
+
         stripped = line.strip()
 
         # Skip blank lines and comments
@@ -88,11 +106,21 @@ def _parse_yaml_subset(
         if value_stripped == "[]":
             result[key] = []
             current_key = None
+        elif value_stripped in (">", "|", ">-", "|-"):
+            # Block scalar — collect indented lines that follow
+            result[key] = None
+            current_key = key
+            collecting_block = True
+            block_parts = []
         elif value_stripped:
             result[key] = value_stripped
             current_key = None
         else:
             result[key] = None
             current_key = key
+
+    # Flush any pending block scalar at end of input
+    if collecting_block and current_key is not None:
+        result[current_key] = " ".join(block_parts)
 
     return result

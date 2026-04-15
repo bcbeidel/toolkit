@@ -188,18 +188,24 @@ class TestCheckSkillSizes:
 
 
 class TestParseSkillMeta:
-    def test_extracts_name_and_description(self) -> None:
-        from wos.skill import parse_skill_meta
+    def test_extracts_name_and_description(self, tmp_path: Path) -> None:
+        from wos.skill import Skill
 
-        text = "---\nname: my-skill\ndescription: Does something useful\n---\n# Body\n"
-        meta = parse_skill_meta(text)
-        assert meta["name"] == "my-skill"
-        assert meta["description"] == "Does something useful"
+        skill_dir = tmp_path / "my-skill"
+        skill_dir.mkdir()
+        (skill_dir / "SKILL.md").write_text(
+            "---\nname: my-skill\ndescription: Does something useful\n---\n# Body\n"
+        )
+        skill = Skill.parse(skill_dir)
+        assert skill.name == "my-skill"
+        assert skill.description == "Does something useful"
 
-    def test_multiline_description_with_fold(self) -> None:
-        from wos.skill import parse_skill_meta
+    def test_multiline_description_with_fold(self, tmp_path: Path) -> None:
+        from wos.skill import Skill
 
-        text = (
+        skill_dir = tmp_path / "my-skill"
+        skill_dir.mkdir()
+        (skill_dir / "SKILL.md").write_text(
             "---\n"
             "name: my-skill\n"
             "description: >\n"
@@ -209,32 +215,42 @@ class TestParseSkillMeta:
             "---\n"
             "# Body\n"
         )
-        meta = parse_skill_meta(text)
-        assert meta["name"] == "my-skill"
-        assert "First line" in meta["description"]
-        assert "second line" in meta["description"]
+        skill = Skill.parse(skill_dir)
+        assert skill.name == "my-skill"
+        assert "First line" in skill.description
+        assert "second line" in skill.description
 
-    def test_missing_name_returns_none(self) -> None:
-        from wos.skill import parse_skill_meta
+    def test_missing_name_returns_none(self, tmp_path: Path) -> None:
+        from wos.skill import Skill
 
-        text = "---\ndescription: Does something\n---\n# Body\n"
-        meta = parse_skill_meta(text)
-        assert meta["name"] is None
+        skill_dir = tmp_path / "my-skill"
+        skill_dir.mkdir()
+        (skill_dir / "SKILL.md").write_text(
+            "---\ndescription: Does something\n---\n# Body\n"
+        )
+        skill = Skill.parse(skill_dir)
+        assert skill.name is None
 
-    def test_missing_description_returns_none(self) -> None:
-        from wos.skill import parse_skill_meta
+    def test_missing_description_returns_none(self, tmp_path: Path) -> None:
+        from wos.skill import Skill
 
-        text = "---\nname: my-skill\n---\n# Body\n"
-        meta = parse_skill_meta(text)
-        assert meta["description"] is None
+        skill_dir = tmp_path / "my-skill"
+        skill_dir.mkdir()
+        (skill_dir / "SKILL.md").write_text(
+            "---\nname: my-skill\n---\n# Body\n"
+        )
+        skill = Skill.parse(skill_dir)
+        assert skill.description is None
 
-    def test_no_frontmatter_returns_nones(self) -> None:
-        from wos.skill import parse_skill_meta
+    def test_no_frontmatter_returns_nones(self, tmp_path: Path) -> None:
+        from wos.skill import Skill
 
-        text = "# Just a body\n"
-        meta = parse_skill_meta(text)
-        assert meta["name"] is None
-        assert meta["description"] is None
+        skill_dir = tmp_path / "my-skill"
+        skill_dir.mkdir()
+        (skill_dir / "SKILL.md").write_text("# Just a body\n")
+        skill = Skill.parse(skill_dir)
+        assert skill.name is None
+        assert skill.description is None
 
 
 class TestCheckSkillMeta:

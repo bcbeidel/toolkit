@@ -1,7 +1,7 @@
 """Research document class and structural assessment.
 
-Combines the ResearchDocument subclass with module-level assessment
-functions (assess_file, scan_directory, check_gates, check_single_gate).
+Combines the ResearchDocument subclass with classmethods for assessment
+(assess, scan, check_gates, check_single_gate).
 Reports observable facts about research documents — word count, draft
 markers, section presence, source listing. The model infers phase and
 next actions from these facts.
@@ -20,6 +20,32 @@ from typing import Dict, List
 
 from wos.document import Document, parse_document
 from wos.url_checker import check_urls
+
+# ── Module-level constants ─────────────────────────────────────────
+
+_SECTION_KEYWORDS = frozenset({
+    "claims", "synthesis", "sources", "findings", "challenge",
+})
+
+# Ordered list of gate names for current_phase derivation.
+_GATE_ORDER = [
+    "gatherer_exit",
+    "evaluator_exit",
+    "challenger_exit",
+    "synthesizer_exit",
+    "verifier_exit",
+    "finalizer_exit",
+]
+
+# Phase name that follows each gate (used for current_phase).
+_PHASE_AFTER_GATE = {
+    "gatherer_exit": "evaluator",
+    "evaluator_exit": "challenger",
+    "challenger_exit": "synthesizer",
+    "synthesizer_exit": "verifier",
+    "verifier_exit": "finalizer",
+    "finalizer_exit": "done",
+}
 
 # ── Document subclass ──────────────────────────────────────────────
 
@@ -100,174 +126,141 @@ class ResearchDocument(Document):
 
         return result
 
+    @classmethod
+    def assess(cls, path: str) -> dict:
+        """Assess structural facts of a single research document.
 
-# ── Module-level assessment functions ─────────────────────────────
+        Args:
+            path: Absolute or relative path to a markdown file.
 
+        Returns:
+            Dict with keys: file, exists, frontmatter, content, sources.
+            If the file doesn't exist, frontmatter/content/sources are None.
+        """
+        if not os.path.isfile(path):
+            return {
+                "file": path,
+                "exists": False,
+                "frontmatter": None,
+                "content": None,
+                "sources": None,
+            }
 
-_SECTION_KEYWORDS = frozenset({
-    "claims", "synthesis", "sources", "findings", "challenge",
-})
+        text = Path(path).read_text(encoding="utf-8")
+        doc = parse_document(path, text)
 
+        urls = [s for s in doc.sources if s.startswith(("http://", "https://"))]
+        non_url_count = len(doc.sources) - len(urls)
+        sections = {kw: doc.has_section(kw) for kw in _SECTION_KEYWORDS}
 
-def assess_file(path: str) -> dict:
-    """Assess structural facts of a single research document.
-
-    Args:
-        path: Absolute or relative path to a markdown file.
-
-    Returns:
-        Dict with keys: file, exists, frontmatter, content, sources.
-        If the file doesn't exist, frontmatter/content/sources are None.
-    """
-    if not os.path.isfile(path):
         return {
             "file": path,
-            "exists": False,
-            "frontmatter": None,
-            "content": None,
-            "sources": None,
+            "exists": True,
+            "frontmatter": {
+                "name": doc.name,
+                "description": doc.description,
+                "type": doc.type,
+                "sources_count": len(doc.sources),
+                "related_count": len(doc.related),
+            },
+            "content": {
+                "word_count": doc.word_count,
+                "draft_marker_present": "<!-- DRAFT -->" in doc.content,
+                "has_sections": sections,
+            },
+            "sources": {
+                "total": len(doc.sources),
+                "urls": urls,
+                "non_url_count": non_url_count,
+            },
         }
 
-    text = Path(path).read_text(encoding="utf-8")
-    doc = parse_document(path, text)
+    @classmethod
+    def scan(cls, root: str, subdir: str = "") -> dict:
+        """Scan for research documents and return summaries.
 
-    urls = [s for s in doc.sources if s.startswith(("http://", "https://"))]
-    non_url_count = len(doc.sources) - len(urls)
-    sections = {kw: doc.has_section(kw) for kw in _SECTION_KEYWORDS}
+        Uses the discovery module to find all type: research documents.
+        If subdir is provided, restricts to that subdirectory.
 
-    return {
-        "file": path,
-        "exists": True,
-        "frontmatter": {
-            "name": doc.name,
-            "description": doc.description,
-            "type": doc.type,
-            "sources_count": len(doc.sources),
-            "related_count": len(doc.related),
-        },
-        "content": {
-            "word_count": doc.word_count,
-            "draft_marker_present": "<!-- DRAFT -->" in doc.content,
-            "has_sections": sections,
-        },
-        "sources": {
-            "total": len(doc.sources),
-            "urls": urls,
-            "non_url_count": non_url_count,
-        },
-    }
+        Args:
+            root: Project root directory.
+            subdir: Optional subdirectory to restrict scan (default: full tree).
 
+        Returns:
+            Dict with keys: directory, documents. Each document has:
+            file, name, draft_marker_present, word_count, sources_count.
+        """
+        from wos.discovery import filter_documents
 
-def scan_directory(root: str, subdir: str = "") -> dict:
-    """Scan for research documents and return summaries.
+        label, research_docs = filter_documents(Path(root), "research", subdir=subdir)
+        documents = [
+            {
+                "file": os.path.join(root, doc.path),
+                "name": doc.name,
+                "draft_marker_present": "<!-- DRAFT -->" in doc.content,
+                "word_count": doc.word_count,
+                "sources_count": len(doc.sources),
+            }
+            for doc in research_docs
+        ]
+        return {"directory": label, "documents": documents}
 
-    Uses the discovery module to find all type: research documents.
-    If subdir is provided, restricts to that subdirectory.
+    @classmethod
+    def check_gates(cls, path: str) -> dict:
+        """Check all research phase gates for a document.
 
-    Args:
-        root: Project root directory.
-        subdir: Optional subdirectory to restrict scan (default: full tree).
+        Returns a dict with ``file``, ``gates`` (per-gate results), and
+        ``current_phase`` (the phase after the highest passing gate, or
+        ``"gatherer"`` if none pass).
+        """
+        if not os.path.isfile(path):
+            return {
+                "file": path,
+                "gates": {gate: {"pass": False, "checks": {}} for gate in _GATE_ORDER},
+                "current_phase": "gatherer",
+            }
 
-    Returns:
-        Dict with keys: directory, documents. Each document has:
-        file, name, draft_marker_present, word_count, sources_count.
-    """
-    from wos.discovery import filter_documents
+        text = Path(path).read_text(encoding="utf-8")
+        doc = parse_document(path, text)
 
-    label, research_docs = filter_documents(Path(root), "research", subdir=subdir)
-    documents = [
-        {
-            "file": os.path.join(root, doc.path),
-            "name": doc.name,
-            "draft_marker_present": "<!-- DRAFT -->" in doc.content,
-            "word_count": doc.word_count,
-            "sources_count": len(doc.sources),
+        gates: Dict[str, dict] = {
+            "gatherer_exit": _check_gatherer_exit(doc),
+            "evaluator_exit": _check_evaluator_exit(doc),
+            "challenger_exit": _check_challenger_exit(doc),
+            "synthesizer_exit": _check_synthesizer_exit(doc),
+            "verifier_exit": _check_verifier_exit(doc),
+            "finalizer_exit": _check_finalizer_exit(doc),
         }
-        for doc in research_docs
-    ]
-    return {"directory": label, "documents": documents}
 
+        # Derive current_phase: phase after highest passing gate.
+        current_phase = "gatherer"
+        for gate_name in _GATE_ORDER:
+            if gates[gate_name]["pass"]:
+                current_phase = _PHASE_AFTER_GATE[gate_name]
+            else:
+                break
 
-# ---------------------------------------------------------------------------
-# Gate checks — deterministic phase handoff validation
-# ---------------------------------------------------------------------------
-
-# Ordered list of gate names for current_phase derivation.
-_GATE_ORDER = [
-    "gatherer_exit",
-    "evaluator_exit",
-    "challenger_exit",
-    "synthesizer_exit",
-    "verifier_exit",
-    "finalizer_exit",
-]
-
-# Phase name that follows each gate (used for current_phase).
-_PHASE_AFTER_GATE = {
-    "gatherer_exit": "evaluator",
-    "evaluator_exit": "challenger",
-    "challenger_exit": "synthesizer",
-    "synthesizer_exit": "verifier",
-    "verifier_exit": "finalizer",
-    "finalizer_exit": "done",
-}
-
-
-def check_gates(path: str) -> dict:
-    """Check all research phase gates for a document.
-
-    Returns a dict with ``file``, ``gates`` (per-gate results), and
-    ``current_phase`` (the phase after the highest passing gate, or
-    ``"gatherer"`` if none pass).
-    """
-    if not os.path.isfile(path):
         return {
             "file": path,
-            "gates": {gate: {"pass": False, "checks": {}} for gate in _GATE_ORDER},
-            "current_phase": "gatherer",
+            "gates": gates,
+            "current_phase": current_phase,
         }
 
-    text = Path(path).read_text(encoding="utf-8")
-    doc = parse_document(path, text)
-
-    gates: Dict[str, dict] = {
-        "gatherer_exit": _check_gatherer_exit(doc),
-        "evaluator_exit": _check_evaluator_exit(doc),
-        "challenger_exit": _check_challenger_exit(doc),
-        "synthesizer_exit": _check_synthesizer_exit(doc),
-        "verifier_exit": _check_verifier_exit(doc),
-        "finalizer_exit": _check_finalizer_exit(doc),
-    }
-
-    # Derive current_phase: phase after highest passing gate.
-    current_phase = "gatherer"
-    for gate_name in _GATE_ORDER:
-        if gates[gate_name]["pass"]:
-            current_phase = _PHASE_AFTER_GATE[gate_name]
-        else:
-            break
-
-    return {
-        "file": path,
-        "gates": gates,
-        "current_phase": current_phase,
-    }
-
-
-def check_single_gate(path: str, gate_name: str) -> dict:
-    """Check a single named gate and return its result."""
-    result = check_gates(path)
-    if gate_name == "all":
-        return result
-    if gate_name not in result["gates"]:
-        return {"error": f"Unknown gate: {gate_name}",
-                "valid_gates": _GATE_ORDER + ["all"]}
-    return {
-        "file": path,
-        "gate": gate_name,
-        **result["gates"][gate_name],
-        "current_phase": result["current_phase"],
-    }
+    @classmethod
+    def check_single_gate(cls, path: str, gate_name: str) -> dict:
+        """Check a single named gate and return its result."""
+        result = cls.check_gates(path)
+        if gate_name == "all":
+            return result
+        if gate_name not in result["gates"]:
+            return {"error": f"Unknown gate: {gate_name}",
+                    "valid_gates": _GATE_ORDER + ["all"]}
+        return {
+            "file": path,
+            "gate": gate_name,
+            **result["gates"][gate_name],
+            "current_phase": result["current_phase"],
+        }
 
 
 # --- Individual gate checks -----------------------------------------------

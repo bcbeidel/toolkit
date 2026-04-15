@@ -10,7 +10,7 @@ import os
 
 import pytest
 
-from wos.research import check_single_gate
+from wos.research import ResearchDocument
 
 FIXTURES_DIR = os.path.join(os.path.dirname(__file__), "fixtures", "research")
 
@@ -32,7 +32,7 @@ def _fixture(name: str) -> str:
 )
 def test_exit_fixture_passes_gate(gate_name: str, fixture_file: str) -> None:
     """Exit fixtures should pass their corresponding gate check."""
-    result = check_single_gate(_fixture(fixture_file), gate_name)
+    result = ResearchDocument.check_single_gate(_fixture(fixture_file), gate_name)
     assert result["pass"], (
         f"{fixture_file} failed {gate_name}: {result.get('checks', {})}"
     )
@@ -40,5 +40,7 @@ def test_exit_fixture_passes_gate(gate_name: str, fixture_file: str) -> None:
 
 def test_gatherer_entry_fails_gatherer_exit() -> None:
     """Entry fixture should fail the exit gate (negative test)."""
-    result = check_single_gate(_fixture("gatherer_entry.md"), "gatherer_exit")
+    result = ResearchDocument.check_single_gate(
+        _fixture("gatherer_entry.md"), "gatherer_exit"
+    )
     assert not result["pass"], "gatherer_entry.md should fail gatherer_exit gate"
