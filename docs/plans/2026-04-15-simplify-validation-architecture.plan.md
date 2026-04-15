@@ -233,12 +233,12 @@ does not call reindex.
   **Verify:** Run against this plan file → exit 1 with open task list;
   run against a file with all `[x]` boxes → exit 0
 
-- [x] Task 13: Update `skills/plan-work/SKILL.md` step 5 (Review with User) — <!-- sha:pending -->
+- [x] Task 13: Update `skills/plan-work/SKILL.md` step 5 (Review with User) — <!-- sha:ce69633 -->
   add a pre-check: "Run `bash <plugin-skills-dir>/start-work/scripts/validate_plan.sh
   <plan-file>` to confirm all required sections are present before presenting."
   **Verify:** `grep -q "validate_plan.sh" skills/plan-work/SKILL.md`
 
-- [x] Task 14: Update `skills/check-work/SKILL.md` step 2 (Plan Preconditions) — <!-- sha:pending -->
+- [x] Task 14: Update `skills/check-work/SKILL.md` step 2 (Plan Preconditions) — <!-- sha:ce69633 -->
   replace the `plan_assess.py` call with:
   ```bash
   bash <plugin-skills-dir>/start-work/scripts/check_tasks_complete.sh <path>
@@ -251,7 +251,7 @@ does not call reindex.
 
 ### Chunk 5: Tests and clean state
 
-- [ ] Task 15: Run `python scripts/reindex.py --root .` to regenerate `_index.md`
+- [x] Task 15: Run `python scripts/reindex.py --root .` to regenerate `_index.md` <!-- sha:pending -->
   files after all deletions. Run the full test suite.
   **Verify:** `python -m pytest tests/ -v` → 0 failures
 
