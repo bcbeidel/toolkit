@@ -229,3 +229,27 @@ class Project:
         if directory is None:
             directory = self.root
         return check_all_indexes(directory)
+
+
+# ── Module-level convenience functions ────────────────────────────
+
+
+def check_project_files(root: Path) -> List[dict]:
+    """Check AGENTS.md and CLAUDE.md configuration. See Project.check_project_files."""
+    return Project(root).check_project_files()
+
+
+def validate_project(
+    root: Path,
+    verify_urls: bool = True,
+    context_max_words: int = 800,
+    context_min_words: int = 100,
+    exclude_dirs: Optional[frozenset] = None,
+) -> List[dict]:
+    """Validate all managed documents in a project. See Project.validate."""
+    return Project(root).validate(
+        verify_urls=verify_urls,
+        context_max_words=context_max_words,
+        context_min_words=context_min_words,
+        exclude_dirs=exclude_dirs,
+    )

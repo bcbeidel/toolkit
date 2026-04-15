@@ -29,7 +29,7 @@ def _md(name: str = "Test", description: str = "A test doc", **extra_fm) -> str:
 class TestCheckAllIndexes:
     def test_synced_index_with_preamble(self, tmp_path: Path) -> None:
         from wos.index import generate_index
-        from wos.validators import check_all_indexes
+        from wos.project import check_all_indexes
 
         # Create a directory with a file and a synced _index.md with preamble
         area = tmp_path / "context" / "testing"
@@ -52,7 +52,7 @@ class TestCheckAllIndexes:
         assert issues == []
 
     def test_missing_index(self, tmp_path: Path) -> None:
-        from wos.validators import check_all_indexes
+        from wos.project import check_all_indexes
 
         # Create a directory with a file but no _index.md
         area = tmp_path / "context" / "testing"
@@ -72,7 +72,7 @@ class TestCheckAllIndexes:
 class TestCheckPreamble:
     def test_index_with_preamble_no_warning(self, tmp_path: Path) -> None:
         from wos.index import generate_index
-        from wos.validators import check_all_indexes
+        from wos.project import check_all_indexes
 
         area = tmp_path / "context" / "api"
         area.mkdir(parents=True)
@@ -91,7 +91,7 @@ class TestCheckPreamble:
 
     def test_index_without_preamble_warns(self, tmp_path: Path) -> None:
         from wos.index import generate_index
-        from wos.validators import check_all_indexes
+        from wos.project import check_all_indexes
 
         area = tmp_path / "context" / "api"
         area.mkdir(parents=True)
@@ -115,14 +115,14 @@ class TestCheckPreamble:
 
 class TestCheckProjectFiles:
     def test_no_agents_md_warns(self, tmp_path: Path) -> None:
-        from wos.validators import check_project_files
+        from wos.project import check_project_files
 
         issues = check_project_files(tmp_path)
         agents_issues = [i for i in issues if i["file"] == "AGENTS.md"]
         assert any("No AGENTS.md" in i["issue"] for i in agents_issues)
 
     def test_agents_md_without_markers_warns(self, tmp_path: Path) -> None:
-        from wos.validators import check_project_files
+        from wos.project import check_project_files
 
         (tmp_path / "AGENTS.md").write_text("# Agents\n\nSome content.\n")
         issues = check_project_files(tmp_path)
@@ -130,7 +130,7 @@ class TestCheckProjectFiles:
         assert any("markers" in i["issue"].lower() for i in agents_issues)
 
     def test_agents_md_with_markers_clean(self, tmp_path: Path) -> None:
-        from wos.validators import check_project_files
+        from wos.project import check_project_files
 
         (tmp_path / "AGENTS.md").write_text(
             "# Agents\n\n<!-- wos:begin -->\nWOS content\n<!-- wos:end -->\n"
@@ -140,14 +140,14 @@ class TestCheckProjectFiles:
         assert agents_issues == []
 
     def test_no_claude_md_warns(self, tmp_path: Path) -> None:
-        from wos.validators import check_project_files
+        from wos.project import check_project_files
 
         issues = check_project_files(tmp_path)
         claude_issues = [i for i in issues if i["file"] == "CLAUDE.md"]
         assert any("No CLAUDE.md" in i["issue"] for i in claude_issues)
 
     def test_claude_md_without_agents_ref_warns(self, tmp_path: Path) -> None:
-        from wos.validators import check_project_files
+        from wos.project import check_project_files
 
         (tmp_path / "CLAUDE.md").write_text("# Project\n\nSome instructions.\n")
         issues = check_project_files(tmp_path)
@@ -155,7 +155,7 @@ class TestCheckProjectFiles:
         assert any("@AGENTS.md" in i["issue"] for i in claude_issues)
 
     def test_claude_md_with_agents_ref_clean(self, tmp_path: Path) -> None:
-        from wos.validators import check_project_files
+        from wos.project import check_project_files
 
         (tmp_path / "CLAUDE.md").write_text(
             "# Project\n\n@AGENTS.md\n\nSome instructions.\n"
@@ -170,7 +170,7 @@ class TestCheckProjectFiles:
 
 class TestValidateFile:
     def test_valid_file(self, tmp_path: Path) -> None:
-        from wos.validators import validate_file
+        from wos.project import validate_file
 
         md_file = tmp_path / "docs" / "context" / "testing" / "unit-tests.md"
         md_file.parent.mkdir(parents=True)
@@ -180,7 +180,7 @@ class TestValidateFile:
         assert issues == []
 
     def test_file_without_frontmatter(self, tmp_path: Path) -> None:
-        from wos.validators import validate_file
+        from wos.project import validate_file
 
         md_file = tmp_path / "docs" / "context" / "testing" / "bad.md"
         md_file.parent.mkdir(parents=True)
@@ -199,7 +199,7 @@ class TestValidateFile:
 class TestValidateProject:
     def test_valid_project(self, tmp_path: Path) -> None:
         from wos.index import generate_index
-        from wos.validators import validate_project
+        from wos.project import validate_project
 
         # Set up a document under docs/
         area = tmp_path / "docs" / "context" / "testing"
@@ -223,7 +223,7 @@ class TestValidateProject:
 
     def test_discovers_docs_outside_docs_dir(self, tmp_path: Path) -> None:
         """validate_project finds documents anywhere in the tree."""
-        from wos.validators import validate_project
+        from wos.project import validate_project
 
         # Put a research doc outside docs/
         research = tmp_path / "project-x" / "study.research.md"
@@ -253,7 +253,7 @@ class TestValidateProject:
 class TestCompoundSuffixValidation:
     def test_validate_file_with_compound_suffix(self, tmp_path: Path) -> None:
         """validate_file works on compound suffix files."""
-        from wos.validators import validate_file
+        from wos.project import validate_file
 
         md_file = tmp_path / "docs" / "research" / "api.research.md"
         md_file.parent.mkdir(parents=True)
@@ -271,7 +271,7 @@ class TestCompoundSuffixValidation:
     ) -> None:
         """Research file with compound suffix (no frontmatter type) triggers
         research-specific validation (sources required)."""
-        from wos.validators import validate_file
+        from wos.project import validate_file
 
         md_file = tmp_path / "docs" / "research" / "topic.research.md"
         md_file.parent.mkdir(parents=True)
@@ -289,7 +289,7 @@ class TestCompoundSuffixValidation:
         self, tmp_path: Path
     ) -> None:
         """Research file with compound suffix and sources passes validation."""
-        from wos.validators import validate_file
+        from wos.project import validate_file
 
         md_file = tmp_path / "docs" / "research" / "topic.research.md"
         md_file.parent.mkdir(parents=True)
@@ -325,7 +325,7 @@ class TestCompoundSuffixValidation:
     ) -> None:
         """validate_project discovers and validates compound suffix files."""
         from wos.index import generate_index
-        from wos.validators import validate_project
+        from wos.project import validate_project
 
         # Set up research area with a compound suffix file
         research_dir = tmp_path / "docs" / "research"
@@ -351,7 +351,7 @@ class TestCompoundSuffixValidation:
 
     def test_context_type_no_related_warns(self, tmp_path: Path) -> None:
         """Context file without related fields warns via validate_file."""
-        from wos.validators import validate_file
+        from wos.project import validate_file
 
         md_file = tmp_path / "auth.context.md"
         md_file.write_text(_md(
@@ -368,7 +368,7 @@ class TestCompoundSuffixValidation:
 
     def test_context_type_with_related_no_warn(self, tmp_path: Path) -> None:
         """Context file with related field has no related-field warning."""
-        from wos.validators import validate_file
+        from wos.project import validate_file
 
         related_file = tmp_path / "ref.md"
         related_file.write_text("---\nname: Ref\ndescription: Ref\n---\nbody\n")

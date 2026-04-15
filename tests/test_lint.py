@@ -15,7 +15,7 @@ def _run_audit(*args: str, issues: list[dict] | None = None) -> tuple[str, str, 
     captured_stderr = StringIO()
     exit_code = 0
 
-    mock_target = "wos.validators.validate_project"
+    mock_target = "wos.project.validate_project"
 
     with patch.object(sys, "argv", ["lint.py", *args]):
         with patch("sys.stdout", captured_stdout), patch("sys.stderr", captured_stderr):
@@ -141,7 +141,7 @@ class TestSingleFileMode:
             "---\nname: Test\ndescription: A test\n---\n# Test\n"
         )
         # Single file mode — mock validate_file instead
-        with patch("wos.validators.validate_file", return_value=[]) as mock_vf:
+        with patch("wos.project.validate_file", return_value=[]) as mock_vf:
             stdout, _, code = _run_audit(
                 "--root", str(root), "--no-urls", str(md_file),
             )
@@ -163,7 +163,7 @@ class TestFixOutput:
                 "severity": "fail",
             },
         ]
-        with patch("wos.validators.validate_project", return_value=issues):
+        with patch("wos.project.validate_project", return_value=issues):
             _, stderr, _ = _run_audit("--root", str(root), "--no-urls", "--fix")
         assert str(root) not in stderr
         assert "docs/plans/_index.md" in stderr
@@ -196,7 +196,7 @@ class TestFixOutput:
                 "severity": "fail",
             },
         ]
-        with patch("wos.validators.validate_project", return_value=issues):
+        with patch("wos.project.validate_project", return_value=issues):
             _run_audit("--root", str(root), "--no-urls", "--fix")
 
         result = idx_file.read_text(encoding="utf-8")
@@ -232,7 +232,7 @@ class TestChainAutoDetection:
         root = tmp_path / "project"
         root.mkdir()
 
-        with _patch("wos.validators.validate_project", return_value=[]), \
+        with _patch("wos.project.validate_project", return_value=[]), \
              _patch("wos.chain.validate_chain") as mock_chain:
             _run_audit("--root", str(root), "--no-urls")
 
@@ -245,7 +245,7 @@ class TestChainAutoDetection:
         # Write a chain manifest with an empty goal — triggers termination fail
         self._write_chain_manifest(root / "my.chain.md", goal="")
 
-        with patch("wos.validators.validate_project", return_value=[]):
+        with patch("wos.project.validate_project", return_value=[]):
             stdout, _, exit_code = _run_audit("--root", str(root), "--no-urls")
 
         # termination check produces a fail → exit code 1
@@ -263,7 +263,7 @@ class TestChainAutoDetection:
         # Write chain manifest inside a hidden directory
         self._write_chain_manifest(hidden / "nested.chain.md", goal="some goal")
 
-        with _patch("wos.validators.validate_project", return_value=[]), \
+        with _patch("wos.project.validate_project", return_value=[]), \
              _patch("wos.chain.validate_chain") as mock_chain:
             _run_audit("--root", str(root), "--no-urls")
 

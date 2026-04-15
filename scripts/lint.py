@@ -96,7 +96,7 @@ def main() -> None:
 
     # Deferred imports — keeps --help fast
     from wos.index import extract_preamble, generate_index
-    from wos.validators import validate_file, validate_project
+    from wos.project import validate_file, validate_project
 
     root = Path(args.root).resolve()
 
