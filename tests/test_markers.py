@@ -1,11 +1,11 @@
-"""Tests for wos/markers.py — shared marker replacement utility."""
+"""Tests for replace_marker_section — shared marker replacement utility."""
 
 from __future__ import annotations
 
 
 class TestReplaceMarkerSection:
     def test_replaces_between_existing_markers(self) -> None:
-        from wos.markers import replace_marker_section
+        from wos.agents_md import replace_marker_section
 
         content = (
             "Before.\n\n"
@@ -21,7 +21,7 @@ class TestReplaceMarkerSection:
         assert "After." in result
 
     def test_appends_when_no_markers(self) -> None:
-        from wos.markers import replace_marker_section
+        from wos.agents_md import replace_marker_section
 
         content = "# Header\n\nExisting content.\n"
         result = replace_marker_section(
@@ -32,7 +32,7 @@ class TestReplaceMarkerSection:
         assert "new section" in result
 
     def test_consumes_trailing_newline_after_end_marker(self) -> None:
-        from wos.markers import replace_marker_section
+        from wos.agents_md import replace_marker_section
 
         content = "Before.\n<!-- begin -->\nold\n<!-- end -->\nAfter.\n"
         result = replace_marker_section(
@@ -42,7 +42,7 @@ class TestReplaceMarkerSection:
         assert "new\nAfter." in result
 
     def test_handles_empty_content(self) -> None:
-        from wos.markers import replace_marker_section
+        from wos.agents_md import replace_marker_section
 
         result = replace_marker_section(
             "", "<!-- begin -->", "<!-- end -->", "section\n"

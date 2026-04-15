@@ -573,7 +573,8 @@ class TestDocumentIsValid:
 
 class TestFactoryRouting:
     def test_research_type_returns_research_document(self) -> None:
-        from wos.document import ResearchDocument, parse_document
+        from wos.document import parse_document
+        from wos.research import ResearchDocument
 
         text = (
             "---\nname: T\ndescription: D\ntype: research\n"
@@ -583,7 +584,8 @@ class TestFactoryRouting:
         assert isinstance(doc, ResearchDocument)
 
     def test_plan_type_returns_plan_document(self) -> None:
-        from wos.document import PlanDocument, parse_document
+        from wos.document import parse_document
+        from wos.plan import PlanDocument
 
         text = (
             "---\nname: T\ndescription: D\ntype: plan\nstatus: draft\n---\n"
@@ -614,7 +616,8 @@ class TestFactoryRouting:
         assert type(parse_document("x.md", text)) is type(Document.parse("x.md", text))
 
     def test_research_suffix_returns_research_document(self) -> None:
-        from wos.document import ResearchDocument, parse_document
+        from wos.document import parse_document
+        from wos.research import ResearchDocument
 
         text = (
             "---\nname: T\ndescription: D\n"
@@ -629,7 +632,7 @@ class TestFactoryRouting:
 
 class TestResearchDocumentIssues:
     def test_no_sources_is_fail(self, tmp_path) -> None:
-        from wos.document import ResearchDocument
+        from wos.research import ResearchDocument
 
         doc = ResearchDocument(
             path="a.md", name="N", description="D",
@@ -639,7 +642,7 @@ class TestResearchDocumentIssues:
         assert any(i["severity"] == "fail" and "sources" in i["issue"] for i in result)
 
     def test_draft_marker_is_warn(self, tmp_path) -> None:
-        from wos.document import ResearchDocument
+        from wos.research import ResearchDocument
 
         doc = ResearchDocument(
             path="a.md", name="N", description="D",
@@ -650,7 +653,7 @@ class TestResearchDocumentIssues:
         assert any(i["severity"] == "warn" and "DRAFT" in i["issue"] for i in result)
 
     def test_dict_source_is_warn(self, tmp_path) -> None:
-        from wos.document import ResearchDocument
+        from wos.research import ResearchDocument
 
         doc = ResearchDocument(
             path="a.md", name="N", description="D",
@@ -661,7 +664,7 @@ class TestResearchDocumentIssues:
         assert any(i["severity"] == "warn" and "dict" in i["issue"] for i in result)
 
     def test_valid_research_doc_no_issues(self, tmp_path) -> None:
-        from wos.document import ResearchDocument
+        from wos.research import ResearchDocument
 
         doc = ResearchDocument(
             path="a.md", name="N", description="D",
@@ -672,7 +675,7 @@ class TestResearchDocumentIssues:
         assert result == []
 
     def test_inherits_base_related_path_check(self, tmp_path) -> None:
-        from wos.document import ResearchDocument
+        from wos.research import ResearchDocument
 
         doc = ResearchDocument(
             path="a.md", name="N", description="D",
@@ -689,7 +692,7 @@ class TestResearchDocumentIssues:
 
 class TestPlanDocument:
     def test_tasks_parsed_from_content(self) -> None:
-        from wos.document import PlanDocument
+        from wos.plan import PlanDocument
 
         content = (
             "## Tasks\n\n"
@@ -705,7 +708,7 @@ class TestPlanDocument:
         assert doc.tasks[1]["completed"] is True
 
     def test_tasks_complete_all_done(self) -> None:
-        from wos.document import PlanDocument
+        from wos.plan import PlanDocument
 
         content = "## Tasks\n\n- [x] Task 1: Done\n- [x] Task 2: Also done\n"
         doc = PlanDocument(
@@ -715,7 +718,7 @@ class TestPlanDocument:
         assert doc.tasks_complete() is True
 
     def test_tasks_complete_some_pending(self) -> None:
-        from wos.document import PlanDocument
+        from wos.plan import PlanDocument
 
         content = "## Tasks\n\n- [ ] Task 1: Not done\n- [x] Task 2: Done\n"
         doc = PlanDocument(
@@ -725,7 +728,7 @@ class TestPlanDocument:
         assert doc.tasks_complete() is False
 
     def test_completion_stats(self) -> None:
-        from wos.document import PlanDocument
+        from wos.plan import PlanDocument
 
         content = (
             "## Tasks\n\n"
@@ -741,7 +744,8 @@ class TestPlanDocument:
         assert stats == {"total": 3, "done": 1, "remaining": 2}
 
     def test_factory_returns_plan_document_with_tasks(self) -> None:
-        from wos.document import PlanDocument, parse_document
+        from wos.document import parse_document
+        from wos.plan import PlanDocument
 
         text = (
             "---\nname: My Plan\ndescription: A plan\n"
@@ -758,7 +762,7 @@ class TestPlanDocument:
 
 class TestContextDocument:
     def _make_context(self, tmp_path, content="body", related=None, path=None):
-        from wos.document import ContextDocument
+        from wos.context import ContextDocument
         return ContextDocument(
             path=str(path or (tmp_path / "notes.md")),
             name="N",
@@ -835,7 +839,8 @@ class TestContextDocument:
     # factory routing
 
     def test_factory_routes_context_type(self) -> None:
-        from wos.document import ContextDocument, parse_document
+        from wos.context import ContextDocument
+        from wos.document import parse_document
 
         text = (
             "---\nname: T\ndescription: D\ntype: context\n"
@@ -845,7 +850,8 @@ class TestContextDocument:
         assert isinstance(doc, ContextDocument)
 
     def test_factory_routes_context_suffix(self) -> None:
-        from wos.document import ContextDocument, parse_document
+        from wos.context import ContextDocument
+        from wos.document import parse_document
 
         text = "---\nname: T\ndescription: D\n---\nbody\n"
         doc = parse_document("notes.context.md", text)

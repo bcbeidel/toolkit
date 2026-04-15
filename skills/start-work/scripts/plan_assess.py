@@ -56,7 +56,7 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    from wos.assess_plan import assess_file, scan_plans
+    from wos.plan import assess_file, scan_plans
 
     if args.file:
         result = assess_file(args.file)

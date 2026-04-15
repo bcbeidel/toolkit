@@ -1,4 +1,7 @@
-"""Plan document structural assessment.
+"""Plan document class and structural assessment.
+
+Combines the PlanDocument subclass (with task parsing) with module-level
+assessment functions (assess_file, scan_plans).
 
 Reports observable facts about plan documents — status, task completion,
 section presence. The model infers execution state and next actions from
@@ -8,10 +11,93 @@ these facts.
 from __future__ import annotations
 
 import os
+import re
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, List
 
-from wos.document import PlanDocument, parse_document
+from wos.document import Document, parse_document
+
+# ── Task parsing ───────────────────────────────────────────────────
+
+_TASK_RE = re.compile(
+    r"^- \[([ xX])\] "
+    r"(?:Task \d+:\s*)?"
+    r"(.+?)"
+    r"(?:\s*<!--\s*sha:(\w+)\s*-->)?"
+    r"\s*$",
+)
+
+
+def _parse_tasks(content: str) -> List[dict]:
+    """Extract top-level checkbox items from plan content.
+
+    Parses ``- [ ] Task N: title`` and ``- [x] Task N: title <!-- sha:abc -->``
+    patterns. Indented checkboxes are ignored. Parsing is restricted to
+    headings containing "task" or "chunk" and stops at a "validation" heading.
+
+    Returns:
+        List of dicts with keys: index, title, completed, sha.
+    """
+    has_tasks_heading = any(
+        "task" in line.lstrip("#").strip().lower()
+        or "chunk" in line.lstrip("#").strip().lower()
+        for line in content.split("\n")
+        if line.strip().startswith("#")
+    )
+
+    tasks: List[dict] = []
+    index = 0
+    in_tasks = not has_tasks_heading
+    for line in content.split("\n"):
+        stripped = line.strip()
+        if stripped.startswith("#") and has_tasks_heading:
+            heading = stripped.lstrip("#").strip().lower()
+            if "task" in heading or "chunk" in heading:
+                in_tasks = True
+            else:
+                in_tasks = False
+            continue
+        if not in_tasks:
+            continue
+        match = _TASK_RE.match(line)
+        if not match:
+            continue
+        index += 1
+        tasks.append({
+            "index": index,
+            "title": match.group(2).strip(),
+            "completed": match.group(1).lower() == "x",
+            "sha": match.group(3),
+        })
+
+    return tasks
+
+
+# ── Document subclass ──────────────────────────────────────────────
+
+
+@dataclass
+class PlanDocument(Document):
+    """A plan document with parsed task list and completion tracking."""
+
+    tasks: List[dict] = field(default_factory=list, init=False)
+
+    def __post_init__(self) -> None:
+        self.tasks = _parse_tasks(self.content)
+
+    def tasks_complete(self) -> bool:
+        """Return True if all tasks are marked completed."""
+        return bool(self.tasks) and all(t["completed"] for t in self.tasks)
+
+    def completion_stats(self) -> dict:
+        """Return task completion counts."""
+        total = len(self.tasks)
+        done = sum(1 for t in self.tasks if t["completed"])
+        return {"total": total, "done": done, "remaining": total - done}
+
+
+# ── Module-level assessment functions ─────────────────────────────
 
 _PLAN_SECTIONS = {
     "goal": "goal",

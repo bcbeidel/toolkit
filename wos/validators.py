@@ -13,8 +13,10 @@ from __future__ import annotations
 from pathlib import Path
 from typing import List, Optional
 
-from wos.document import ContextDocument, ResearchDocument, parse_document
+from wos.context import ContextDocument
+from wos.document import parse_document
 from wos.index import check_index_sync, extract_preamble
+from wos.research import ResearchDocument
 
 
 def check_all_indexes(directory: Path) -> List[dict]:

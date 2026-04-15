@@ -157,7 +157,7 @@ class TestAssessFile:
 
     def test_assess_minimal_research_doc(self, tmp_path) -> None:
         """Minimal research doc returns expected structural facts."""
-        from wos.assess_research import assess_file
+        from wos.research import assess_file
 
         doc = tmp_path / "test.md"
         doc.write_text(
@@ -189,7 +189,7 @@ class TestAssessFile:
 
     def test_assess_doc_with_draft_marker(self, tmp_path) -> None:
         """Draft marker is detected in content."""
-        from wos.assess_research import assess_file
+        from wos.research import assess_file
 
         doc = tmp_path / "draft.md"
         doc.write_text(
@@ -208,7 +208,7 @@ class TestAssessFile:
 
     def test_assess_doc_with_sections(self, tmp_path) -> None:
         """Section detection finds claims, synthesis, sources, findings headings."""
-        from wos.assess_research import assess_file
+        from wos.research import assess_file
 
         doc = tmp_path / "full.md"
         doc.write_text(
@@ -242,7 +242,7 @@ class TestAssessFile:
 
     def test_assess_doc_with_synthesis_section(self, tmp_path) -> None:
         """Synthesis section is detected."""
-        from wos.assess_research import assess_file
+        from wos.research import assess_file
 
         doc = tmp_path / "synth.md"
         doc.write_text(
@@ -260,7 +260,7 @@ class TestAssessFile:
 
     def test_assess_nonexistent_file(self) -> None:
         """Non-existent file returns exists=False with null fields."""
-        from wos.assess_research import assess_file
+        from wos.research import assess_file
 
         result = assess_file("/nonexistent/path/doc.md")
         assert result["file"] == "/nonexistent/path/doc.md"
@@ -271,7 +271,7 @@ class TestAssessFile:
 
     def test_assess_doc_with_related(self, tmp_path) -> None:
         """Related field count is reported."""
-        from wos.assess_research import assess_file
+        from wos.research import assess_file
 
         doc = tmp_path / "related.md"
         doc.write_text(
@@ -292,7 +292,7 @@ class TestAssessFile:
 
     def test_assess_doc_with_non_url_sources(self, tmp_path) -> None:
         """Sources that aren't URLs are counted separately."""
-        from wos.assess_research import assess_file
+        from wos.research import assess_file
 
         doc = tmp_path / "mixed.md"
         doc.write_text(
@@ -344,7 +344,7 @@ class TestScanDirectory:
 
     def test_scan_finds_research_docs(self, tmp_path) -> None:
         """Scan returns all type:research docs in the directory."""
-        from wos.assess_research import scan_directory
+        from wos.research import scan_directory
 
         research_dir = tmp_path / "docs" / "research"
         research_dir.mkdir(parents=True)
@@ -365,7 +365,7 @@ class TestScanDirectory:
 
     def test_scan_skips_non_research_docs(self, tmp_path) -> None:
         """Scan ignores documents without type:research."""
-        from wos.assess_research import scan_directory
+        from wos.research import scan_directory
 
         research_dir = tmp_path / "docs" / "research"
         research_dir.mkdir(parents=True)
@@ -388,7 +388,7 @@ class TestScanDirectory:
 
     def test_scan_skips_index_files(self, tmp_path) -> None:
         """Scan ignores _index.md files."""
-        from wos.assess_research import scan_directory
+        from wos.research import scan_directory
 
         research_dir = tmp_path / "docs" / "research"
         research_dir.mkdir(parents=True)
@@ -404,7 +404,7 @@ class TestScanDirectory:
 
     def test_scan_empty_directory(self, tmp_path) -> None:
         """Scan of empty directory returns empty documents list."""
-        from wos.assess_research import scan_directory
+        from wos.research import scan_directory
 
         research_dir = tmp_path / "docs" / "research"
         research_dir.mkdir(parents=True)
@@ -414,14 +414,14 @@ class TestScanDirectory:
 
     def test_scan_missing_directory(self, tmp_path) -> None:
         """Scan when docs/research doesn't exist returns empty documents list."""
-        from wos.assess_research import scan_directory
+        from wos.research import scan_directory
 
         result = scan_directory(str(tmp_path))
         assert result["documents"] == []
 
     def test_scan_custom_subdir(self, tmp_path) -> None:
         """Scan with custom subdir parameter."""
-        from wos.assess_research import scan_directory
+        from wos.research import scan_directory
 
         custom_dir = tmp_path / "custom" / "path"
         custom_dir.mkdir(parents=True)
@@ -435,7 +435,7 @@ class TestScanDirectory:
 
     def test_scan_document_summary_fields(self, tmp_path) -> None:
         """Scan returns correct summary fields per document."""
-        from wos.assess_research import scan_directory
+        from wos.research import scan_directory
 
         research_dir = tmp_path / "docs" / "research"
         research_dir.mkdir(parents=True)
@@ -461,7 +461,7 @@ class TestCheckGates:
 
     def test_complete_doc_passes_all_gates(self, tmp_path) -> None:
         """A fully completed research doc passes all 6 gates."""
-        from wos.assess_research import check_gates
+        from wos.research import check_gates
 
         doc = tmp_path / "complete.md"
         doc.write_text(_COMPLETE_DOC)
@@ -473,7 +473,7 @@ class TestCheckGates:
 
     def test_gatherer_exit_passes_at_gatherer_stage(self, tmp_path) -> None:
         """Doc at gatherer exit passes gatherer gate, fails evaluator."""
-        from wos.assess_research import check_gates
+        from wos.research import check_gates
 
         doc = tmp_path / "gathered.md"
         doc.write_text(_GATHERER_EXIT_DOC)
@@ -485,7 +485,7 @@ class TestCheckGates:
 
     def test_evaluator_exit_passes_at_evaluator_stage(self, tmp_path) -> None:
         """Doc at evaluator exit passes evaluator gate, fails challenger."""
-        from wos.assess_research import check_gates
+        from wos.research import check_gates
 
         doc = tmp_path / "evaluated.md"
         doc.write_text(_EVALUATOR_EXIT_DOC)
@@ -498,7 +498,7 @@ class TestCheckGates:
 
     def test_unverified_claims_fail_verifier_gate(self, tmp_path) -> None:
         """Doc with unverified claims fails verifier exit gate."""
-        from wos.assess_research import check_gates
+        from wos.research import check_gates
 
         doc = tmp_path / "unverified.md"
         doc.write_text(_UNVERIFIED_CLAIMS_DOC)
@@ -511,7 +511,7 @@ class TestCheckGates:
 
     def test_nonexistent_file_fails_all_gates(self) -> None:
         """Non-existent file fails every gate, current_phase is gatherer."""
-        from wos.assess_research import check_gates
+        from wos.research import check_gates
 
         result = check_gates("/nonexistent/doc.md")
 
@@ -521,7 +521,7 @@ class TestCheckGates:
 
     def test_current_phase_stops_at_first_failure(self, tmp_path) -> None:
         """current_phase reflects the phase after the highest passing gate."""
-        from wos.assess_research import check_gates
+        from wos.research import check_gates
 
         # Doc with challenge but no findings → stops at synthesizer.
         doc = tmp_path / "challenged.md"
@@ -554,7 +554,7 @@ class TestCheckGates:
 
     def test_gatherer_exit_checks_detail(self, tmp_path) -> None:
         """Gatherer exit gate checks individual conditions."""
-        from wos.assess_research import check_gates
+        from wos.research import check_gates
 
         # Minimal doc with no sources table or extracts.
         doc = tmp_path / "empty.md"
@@ -581,7 +581,7 @@ class TestCheckSingleGate:
 
     def test_single_gate_returns_specific_result(self, tmp_path) -> None:
         """check_single_gate returns just the requested gate."""
-        from wos.assess_research import check_single_gate
+        from wos.research import check_single_gate
 
         doc = tmp_path / "complete.md"
         doc.write_text(_COMPLETE_DOC)
@@ -594,7 +594,7 @@ class TestCheckSingleGate:
 
     def test_single_gate_all_returns_full_result(self, tmp_path) -> None:
         """check_single_gate with 'all' returns the full gates dict."""
-        from wos.assess_research import check_single_gate
+        from wos.research import check_single_gate
 
         doc = tmp_path / "complete.md"
         doc.write_text(_COMPLETE_DOC)
@@ -605,7 +605,7 @@ class TestCheckSingleGate:
 
     def test_unknown_gate_returns_error(self, tmp_path) -> None:
         """Unknown gate name returns an error dict."""
-        from wos.assess_research import check_single_gate
+        from wos.research import check_single_gate
 
         doc = tmp_path / "complete.md"
         doc.write_text(_COMPLETE_DOC)

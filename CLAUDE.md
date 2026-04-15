@@ -36,7 +36,7 @@ Versioning policy and version bump process: see [CONTRIBUTING.md](CONTRIBUTING.m
 1. **Convention over configuration** — document patterns, don't enforce them
 2. **Structure in code, quality in skills** — deterministic checks in Python or shell scripts, judgment in LLMs
 3. **Single source of truth** — navigation is derived from disk, never hand-curated
-4. **Keep it simple** — no hierarchies, no frameworks, no indirection
+4. **Keep it simple** — no frameworks, no unnecessary indirection. Inheritance is acceptable when a document type has distinct data or validation behavior that would otherwise scatter across unrelated modules.
 5. **When in doubt, leave it out** — every field, abstraction, and feature must justify itself
 6. **Omit needless words** — agent-facing output earns every token
 7. **Depend on nothing** — stdlib-only core; scripts isolate their own deps
@@ -50,21 +50,21 @@ Full descriptions: [Design Principles](PRINCIPLES.md)
 
 ### Package Structure
 
-- `wos/` — importable Python package (12 modules + 2 subpackages)
+- `wos/` — importable Python package
   - `frontmatter.py` — custom YAML subset parser (stdlib-only)
-  - `document.py` — `Document` dataclass + `parse_document()`
+  - `document.py` — `Document` base class + subclasses + `parse_document()` factory
   - `discovery.py` — document discovery via project tree walking (.gitignore-aware)
-  - `suffix.py` — typed file suffix utilities (compound suffix extraction, markdown discovery)
+  - `suffix.py` — compound suffix extraction (`type_from_path`)
   - `index.py` — `_index.md` generation + sync checking (preamble-preserving)
-  - `validators.py` — 8 validation checks with warn/fail severity (frontmatter, timestamps, content length, draft markers, URLs, related paths, index sync, project files)
+  - `validators.py` — project-wide orchestration (`validate_project()`); index and project-file checks
   - `skill_audit.py` — skill instruction density measurement (line counting, size thresholds)
   - `url_checker.py` — HTTP HEAD/GET URL reachability (urllib)
-  - `agents_md.py` — marker-based AGENTS.md section management
-  - `markers.py` — shared marker-based section replacement
+  - `agents_md.py` — marker-based AGENTS.md section management + `replace_marker_section()`
   - `preferences.py` — communication preferences dimensions and rendering
-  - `research_protocol.py` — search protocol logging (`SearchEntry`, `SearchProtocol`, formatters)
-  - `research/` — research skill support (`assess_research.py` — research document assessment)
-  - `plan/` — plan skill support (`assess_plan.py` — plan document structural assessment)
+  - `wiki.py` — `WikiDocument` subclass + schema parsing + directory-level orphan checks
+  - `chain.py` — `ChainDocument` subclass + step table parsing + structural validation
+  - `research/` — research skill support (`assess_research.py` — thin wrapper over `ResearchDocument`)
+  - `plan/` — plan skill support (`assess_plan.py` — thin wrapper over `PlanDocument`)
 - `scripts/` — thin CLI entry points with argparse and PEP 723 inline metadata
   - `lint.py` — run validation checks (`--root`, `--no-urls`, `--json`, `--fix`, `--strict`, `--context-min-words`, `--context-max-words`, `--skill-max-lines`)
   - `reindex.py` — regenerate all `_index.md` files (preamble-preserving)
@@ -77,12 +77,27 @@ Full descriptions: [Design Principles](PRINCIPLES.md)
 
 ### Document Model
 
-One `Document` dataclass. No subclasses, no inheritance.
+`Document` is the base class. Type-specific subclasses add structured data fields and
+override `issues()` for type-specific validation. `parse_document()` is the single
+factory — it routes to the right subclass based on frontmatter `type` and file suffix.
+
+```
+Document          — common fields + base validation (required frontmatter, related paths)
+├── ResearchDocument  — source URL checks, draft marker check, sources required
+├── PlanDocument      — tasks field (parsed from content), completion tracking
+├── ChainDocument     — steps field (parsed from content), cycle/termination checks
+└── WikiDocument      — schema conformance, wiki-specific frontmatter checks
+```
 
 Required frontmatter: `name`, `description`
-Optional frontmatter: `type` (semantic tag), `sources` (URLs), `related` (file paths), plus any extra fields.
+Optional frontmatter: `type` (routes subclass selection), `sources`, `related`, `status`, plus extra fields in `meta`.
 
-`type: research` triggers source requirements (sources must be non-empty, URLs verified).
+**Validation interface** — two methods on every class:
+- `doc.issues(root) -> list[dict]` — full issue list, each with `file`, `issue`, `severity`
+- `doc.is_valid(root) -> bool` — True if no `fail`-severity issues
+
+Subclasses call `super().issues(root)` and extend. Type-specific checks live on the
+subclass — never on the base class.
 
 ### Navigation
 
@@ -96,16 +111,25 @@ instructions, areas table, metadata format, and communication preferences.
 Prefix: `/wos:` (e.g., `/wos:setup`, `/wos:lint`). 13 skills + 1 command.
 Full skill ecosystem, lifecycle diagram, and layer descriptions: [OVERVIEW.md](OVERVIEW.md)
 
-### Validation (8 checks, warn/fail severity)
+### Validation
 
-1. **Frontmatter** (fail + warn) — `name`/`description` non-empty, research sources, dict source warnings, context `related` field warnings
-2. **Content length** (warn) — context files below 100 or exceeding 800 words (configurable)
-3. **Draft markers** (warn) — research documents containing `<!-- DRAFT -->` markers
-4. **Source URLs** (fail + warn) — URLs in `sources` reachable; 403/429 downgraded to `warn`
-5. **Related paths** (fail) — file paths in `related` frontmatter exist on disk
-6. **Index sync** (fail + warn) — `_index.md` matches directory contents, preamble presence
-7. **Project files** (warn) — AGENTS.md/CLAUDE.md existence and configuration
-8. **Skill quality** (fail + warn) — skill name format/reserved words (fail), description length/XML/voice (warn), instruction lines exceeding threshold (warn, default 500, configurable), SKILL.md body exceeding 500 lines (warn), ALL-CAPS directive density (warn, threshold 3)
+Validation is class-based. Each document class owns its checks via `issues(root)`.
+`validators.py` is the project-wide orchestrator — it discovers documents, calls
+`doc.issues(root)` on each, and runs directory-level checks (index sync, project files).
+
+**Per-document checks (on the class):**
+- `Document` — required frontmatter fields, related paths exist on disk
+- `ResearchDocument` — sources required, source URLs reachable (403/429 → warn), no draft markers
+- `PlanDocument` — plan-specific structural checks
+- `ChainDocument` — termination condition, no cycles, declared skills exist
+- `WikiDocument` — schema conformance (page_type, confidence_tier), required wiki frontmatter fields
+
+**Project-level checks (in `validators.py`):**
+- **Content length** (warn) — context files below 100 or exceeding 800 words (configurable)
+- **Index sync** (fail + warn) — `_index.md` matches directory contents, preamble presence
+- **Project files** (warn) — AGENTS.md/CLAUDE.md existence and configuration
+
+**Skill quality** (in `skill_audit.py`) — name format/reserved words (fail), description length/XML/voice (warn), instruction line count (warn, default 500), ALL-CAPS directive density (warn, threshold 3)
 
 ### Key Entry Points
 
@@ -147,7 +171,7 @@ Full skill ecosystem, lifecycle diagram, and layer descriptions: [OVERVIEW.md](O
   `# skills/research/scripts/ → skills/research/ → skills/ → plugin root`).
   Do NOT use marker-based walk-up (`pyproject.toml` search) — it finds the
   user's project root instead of the plugin root.
-- Validators return `list[dict]` with keys: `file`, `issue`, `severity`
+- `doc.issues(root)` returns `list[dict]` with keys: `file`, `issue`, `severity`; `doc.is_valid(root)` returns `bool`
 - Skills use free-text intake — users describe intent, Claude routes
 - `ValueError` + stdlib exceptions only (no custom exception hierarchy)
 - Tests use inline markdown strings and `tmp_path` fixtures

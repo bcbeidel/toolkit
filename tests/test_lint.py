@@ -233,7 +233,7 @@ class TestChainAutoDetection:
         root.mkdir()
 
         with _patch("wos.validators.validate_project", return_value=[]), \
-             _patch("wos.validators.validate_chain") as mock_chain:
+             _patch("wos.chain.validate_chain") as mock_chain:
             _run_audit("--root", str(root), "--no-urls")
 
         mock_chain.assert_not_called()
@@ -264,7 +264,7 @@ class TestChainAutoDetection:
         self._write_chain_manifest(hidden / "nested.chain.md", goal="some goal")
 
         with _patch("wos.validators.validate_project", return_value=[]), \
-             _patch("wos.validators.validate_chain") as mock_chain:
+             _patch("wos.chain.validate_chain") as mock_chain:
             _run_audit("--root", str(root), "--no-urls")
 
         mock_chain.assert_not_called()

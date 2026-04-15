@@ -5,11 +5,9 @@ from __future__ import annotations
 from pathlib import Path
 
 from wos.discovery import (
-    _GitignorePattern,
+    _should_skip_dir,
     discover_document_dirs,
     discover_documents,
-    is_ignored,
-    load_gitignore,
 )
 
 # ── Helper ────────────────────────────────────────────────────
@@ -28,93 +26,26 @@ def _write_plain(path: Path, content: str = "no frontmatter here\n") -> None:
     path.write_text(content, encoding="utf-8")
 
 
-# ── Gitignore parsing ────────────────────────────────────────
+# ── _should_skip_dir ──────────────────────────────────────────
 
 
-class TestLoadGitignore:
-    def test_no_gitignore(self, tmp_path: Path) -> None:
-        patterns = load_gitignore(tmp_path)
-        assert patterns == []
+class TestShouldSkipDir:
+    def test_hidden_dirs_skipped(self) -> None:
+        assert _should_skip_dir(".git")
+        assert _should_skip_dir(".venv")
+        assert _should_skip_dir(".mypy_cache")
 
-    def test_basic_globs(self, tmp_path: Path) -> None:
-        (tmp_path / ".gitignore").write_text("*.pyc\nbuild/\n")
-        patterns = load_gitignore(tmp_path)
-        assert len(patterns) == 2
-        assert patterns[0].pattern == "*.pyc"
-        assert not patterns[0].negated
-        assert not patterns[0].dir_only
-        assert patterns[1].pattern == "build"
-        assert patterns[1].dir_only
+    def test_known_build_dirs_skipped(self) -> None:
+        assert _should_skip_dir("node_modules")
+        assert _should_skip_dir("__pycache__")
+        assert _should_skip_dir("venv")
+        assert _should_skip_dir("build")
+        assert _should_skip_dir("dist")
 
-    def test_negation(self, tmp_path: Path) -> None:
-        (tmp_path / ".gitignore").write_text("*.md\n!keep.md\n")
-        patterns = load_gitignore(tmp_path)
-        assert len(patterns) == 2
-        assert not patterns[0].negated
-        assert patterns[1].negated
-        assert patterns[1].pattern == "keep.md"
-
-    def test_comments_and_blank_lines(self, tmp_path: Path) -> None:
-        (tmp_path / ".gitignore").write_text("# comment\n\n*.pyc\n  \n")
-        patterns = load_gitignore(tmp_path)
-        assert len(patterns) == 1
-        assert patterns[0].pattern == "*.pyc"
-
-
-# ── is_ignored ────────────────────────────────────────────────
-
-
-class TestIsIgnored:
-    def test_git_dir_always_ignored(self, tmp_path: Path) -> None:
-        git_dir = tmp_path / ".git"
-        git_dir.mkdir()
-        assert is_ignored(git_dir, tmp_path, [])
-
-    def test_git_subpath_always_ignored(self, tmp_path: Path) -> None:
-        git_path = tmp_path / ".git" / "objects"
-        git_path.mkdir(parents=True)
-        assert is_ignored(git_path, tmp_path, [])
-
-    def test_glob_pattern_matches_file(self, tmp_path: Path) -> None:
-        patterns = [_GitignorePattern("*.pyc", negated=False, dir_only=False)]
-        f = tmp_path / "module.pyc"
-        f.touch()
-        assert is_ignored(f, tmp_path, patterns)
-
-    def test_glob_pattern_no_match(self, tmp_path: Path) -> None:
-        patterns = [_GitignorePattern("*.pyc", negated=False, dir_only=False)]
-        f = tmp_path / "module.py"
-        f.touch()
-        assert not is_ignored(f, tmp_path, patterns)
-
-    def test_negation_overrides(self, tmp_path: Path) -> None:
-        patterns = [
-            _GitignorePattern("*.md", negated=False, dir_only=False),
-            _GitignorePattern("keep.md", negated=True, dir_only=False),
-        ]
-        ignored = tmp_path / "notes.md"
-        ignored.touch()
-        kept = tmp_path / "keep.md"
-        kept.touch()
-        assert is_ignored(ignored, tmp_path, patterns)
-        assert not is_ignored(kept, tmp_path, patterns)
-
-    def test_dir_only_pattern(self, tmp_path: Path) -> None:
-        patterns = [_GitignorePattern("build", negated=False, dir_only=True)]
-        build_dir = tmp_path / "build"
-        build_dir.mkdir()
-        # File inside build dir
-        f = tmp_path / "build" / "output.md"
-        f.touch()
-        assert is_ignored(build_dir, tmp_path, patterns)
-        assert is_ignored(f, tmp_path, patterns)
-
-    def test_nested_component_match(self, tmp_path: Path) -> None:
-        patterns = [_GitignorePattern("node_modules", negated=False, dir_only=False)]
-        nested = tmp_path / "frontend" / "node_modules" / "pkg" / "readme.md"
-        nested.parent.mkdir(parents=True)
-        nested.touch()
-        assert is_ignored(nested, tmp_path, patterns)
+    def test_normal_dirs_not_skipped(self) -> None:
+        assert not _should_skip_dir("docs")
+        assert not _should_skip_dir("src")
+        assert not _should_skip_dir("research")
 
 
 # ── discover_documents ────────────────────────────────────────
@@ -144,11 +75,9 @@ class TestDiscoverDocuments:
         assert len(docs) == 1
         assert docs[0].name == "Real"
 
-    def test_respects_gitignore(self, tmp_path: Path) -> None:
-        (tmp_path / ".gitignore").write_text("ignored/\n")
+    def test_skips_node_modules(self, tmp_path: Path) -> None:
         _write_md(tmp_path / "visible.md", "Visible", "Should be found")
-        ignored_dir = tmp_path / "ignored"
-        _write_md(ignored_dir / "hidden.md", "Hidden", "Should be ignored")
+        _write_md(tmp_path / "node_modules" / "pkg" / "readme.md", "Pkg", "Hidden")
         docs = discover_documents(tmp_path)
         assert len(docs) == 1
         assert docs[0].name == "Visible"

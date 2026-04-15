@@ -65,13 +65,13 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    from wos.assess_research import assess_file, scan_directory
+    from wos.research import assess_file, scan_directory
 
     if args.gate and not args.file:
         parser.error("--gate requires --file")
 
     if args.file and args.gate:
-        from wos.assess_research import check_single_gate
+        from wos.research import check_single_gate
         result = check_single_gate(args.file, args.gate)
     elif args.file:
         result = assess_file(args.file)

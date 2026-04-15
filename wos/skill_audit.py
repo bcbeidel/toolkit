@@ -187,6 +187,88 @@ def parse_skill_meta(text: str) -> dict:
     return {"name": name, "description": description}
 
 
+def _check_name(name: str, file_str: str) -> List[dict]:
+    issues: List[dict] = []
+    if not _NAME_RE.match(name):
+        issues.append({
+            "file": file_str,
+            "issue": (
+                f"skill name '{name}' must be lowercase letters, "
+                f"numbers, and hyphens only"
+            ),
+            "severity": "fail",
+        })
+    if len(name) > 64:
+        issues.append({
+            "file": file_str,
+            "issue": f"skill name exceeds 64 characters ({len(name)})",
+            "severity": "fail",
+        })
+    for word in _RESERVED_WORDS:
+        if word in name:
+            issues.append({
+                "file": file_str,
+                "issue": f"skill name contains reserved word '{word}'",
+                "severity": "fail",
+            })
+    return issues
+
+
+def _check_description(desc: str, file_str: str) -> List[dict]:
+    issues: List[dict] = []
+    if len(desc) > 1024:
+        issues.append({
+            "file": file_str,
+            "issue": f"skill description exceeds 1024 characters ({len(desc)})",
+            "severity": "warn",
+        })
+    if _XML_TAG_RE.search(desc):
+        issues.append({
+            "file": file_str,
+            "issue": "skill description contains XML tags",
+            "severity": "warn",
+        })
+    desc_lower = desc.lower()
+    for pattern in _SECOND_PERSON_PATTERNS:
+        if pattern in desc_lower:
+            issues.append({
+                "file": file_str,
+                "issue": (
+                    f"skill description may not use third person "
+                    f"(found '{pattern}')"
+                ),
+                "severity": "warn",
+            })
+            break
+    return issues
+
+
+def _check_directives(body: str, file_str: str) -> List[dict]:
+    directive_matches = _RIGID_DIRECTIVE_RE.findall(body)
+    if len(directive_matches) >= _RIGID_DIRECTIVE_THRESHOLD:
+        return [{
+            "file": file_str,
+            "issue": (
+                f"SKILL.md body has {len(directive_matches)} ALL-CAPS "
+                f"directives (MUST/NEVER/ALWAYS/etc.) — consider "
+                f"explaining rationale instead of rigid commands"
+            ),
+            "severity": "warn",
+        }]
+    return []
+
+
+def _check_body_lines(body: str, file_str: str) -> List[dict]:
+    raw_lines = sum(1 for line in body.splitlines() if line.strip())
+    if raw_lines > 500:
+        return [{
+            "file": file_str,
+            "issue": f"SKILL.md body exceeds 500 non-blank lines ({raw_lines})",
+            "severity": "warn",
+        }]
+    return []
+
+
 def check_skill_meta(skill_dir: Path) -> List[dict]:
     """Validate SKILL.md frontmatter and structure conventions.
 
@@ -199,87 +281,13 @@ def check_skill_meta(skill_dir: Path) -> List[dict]:
     raw = skill_md.read_text(encoding="utf-8")
     meta = parse_skill_meta(raw)
     file_str = str(skill_md)
-    issues: List[dict] = []
-
-    # Name checks
-    name = meta.get("name")
-    if name:
-        if not _NAME_RE.match(name):
-            issues.append({
-                "file": file_str,
-                "issue": (
-                    f"skill name '{name}' must be lowercase letters, "
-                    f"numbers, and hyphens only"
-                ),
-                "severity": "fail",
-            })
-        if len(name) > 64:
-            issues.append({
-                "file": file_str,
-                "issue": f"skill name exceeds 64 characters ({len(name)})",
-                "severity": "fail",
-            })
-        for word in _RESERVED_WORDS:
-            if word in name:
-                issues.append({
-                    "file": file_str,
-                    "issue": f"skill name contains reserved word '{word}'",
-                    "severity": "fail",
-                })
-
-    # Description checks
-    desc = meta.get("description")
-    if desc:
-        if len(desc) > 1024:
-            issues.append({
-                "file": file_str,
-                "issue": (
-                    f"skill description exceeds 1024 characters ({len(desc)})"
-                ),
-                "severity": "warn",
-            })
-        if _XML_TAG_RE.search(desc):
-            issues.append({
-                "file": file_str,
-                "issue": "skill description contains XML tags",
-                "severity": "warn",
-            })
-        desc_lower = desc.lower()
-        for pattern in _SECOND_PERSON_PATTERNS:
-            if pattern in desc_lower:
-                issues.append({
-                    "file": file_str,
-                    "issue": (
-                        f"skill description may not use third person "
-                        f"(found '{pattern}')"
-                    ),
-                    "severity": "warn",
-                })
-                break
-
-    # Rigid directive density
     body = strip_frontmatter(raw)
-    directive_matches = _RIGID_DIRECTIVE_RE.findall(body)
-    if len(directive_matches) >= _RIGID_DIRECTIVE_THRESHOLD:
-        issues.append({
-            "file": file_str,
-            "issue": (
-                f"SKILL.md body has {len(directive_matches)} ALL-CAPS "
-                f"directives (MUST/NEVER/ALWAYS/etc.) — consider "
-                f"explaining rationale instead of rigid commands"
-            ),
-            "severity": "warn",
-        })
 
-    # Raw line count
-    raw_lines = sum(1 for line in body.splitlines() if line.strip())
-    if raw_lines > 500:
-        issues.append({
-            "file": file_str,
-            "issue": (
-                f"SKILL.md body exceeds 500 non-blank lines ({raw_lines})"
-            ),
-            "severity": "warn",
-        })
-
+    issues: List[dict] = []
+    if meta.get("name"):
+        issues.extend(_check_name(meta["name"], file_str))
+    if meta.get("description"):
+        issues.extend(_check_description(meta["description"], file_str))
+    issues.extend(_check_directives(body, file_str))
+    issues.extend(_check_body_lines(body, file_str))
     return issues

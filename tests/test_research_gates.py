@@ -10,7 +10,7 @@ import os
 
 import pytest
 
-from wos.assess_research import check_single_gate
+from wos.research import check_single_gate
 
 FIXTURES_DIR = os.path.join(os.path.dirname(__file__), "fixtures", "research")
 

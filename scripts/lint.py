@@ -14,22 +14,11 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import sys
 import warnings
 from pathlib import Path
 
-# Ensure `import wos` works whether pip-installed or run from plugin cache.
-# Prefer CLAUDE_PLUGIN_ROOT env var (set by Claude Code for hooks/MCP);
-# fall back to navigating from __file__ (required for skill-invoked scripts).
-_env_root = os.environ.get("CLAUDE_PLUGIN_ROOT", "")
-# scripts/ → plugin root
-_plugin_root = (
-    Path(_env_root) if _env_root and os.path.isdir(_env_root)
-    else Path(__file__).resolve().parent.parent
-)
-if str(_plugin_root) not in sys.path:
-    sys.path.insert(0, str(_plugin_root))
+import _bootstrap  # noqa: F401 — side effect: adds plugin root to sys.path
 
 
 def _relative_path(file_path: str, root: Path) -> str:
@@ -158,7 +147,7 @@ def main() -> None:
     # Wiki validation — auto-activated when wiki/SCHEMA.md is present
     wiki_schema = root / "wiki" / "SCHEMA.md"
     if wiki_schema.is_file():
-        from wos.validators import validate_wiki
+        from wos.wiki import validate_wiki
         issues.extend(validate_wiki(root / "wiki", wiki_schema))
 
     # Chain validation — auto-activated when *.chain.md files are present
@@ -167,7 +156,7 @@ def main() -> None:
         if not any(part.startswith(".") for part in p.parts)
     ]
     if chain_manifests:
-        from wos.validators import validate_chain
+        from wos.chain import validate_chain
         chain_skills_dirs = [root / "skills"] if (root / "skills").is_dir() else []
         for manifest_path in sorted(chain_manifests):
             issues.extend(validate_chain(manifest_path, chain_skills_dirs))

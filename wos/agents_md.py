@@ -3,6 +3,9 @@
 Renders the WOS-managed section for AGENTS.md (context navigation,
 areas table, file metadata format, preferences) and updates the file
 content using marker-based replacement.
+
+Also provides replace_marker_section(), a general utility for replacing
+or appending marker-delimited sections in any text file.
 """
 
 from __future__ import annotations
@@ -11,7 +14,42 @@ import re
 from pathlib import Path
 from typing import Dict, List, Optional
 
-# ── Markers ──────────────────────────────────────────────────────
+# ── Marker utilities ─────────────────────────────────────────────
+
+
+def replace_marker_section(
+    content: str,
+    begin_marker: str,
+    end_marker: str,
+    section: str,
+) -> str:
+    """Replace or append a marker-delimited section in text content.
+
+    If both markers exist, replaces everything between them (inclusive).
+    If markers don't exist, appends the section to the end.
+
+    Args:
+        content: The existing file content.
+        begin_marker: The opening marker string.
+        end_marker: The closing marker string.
+        section: The new section content (should include markers if needed).
+
+    Returns:
+        Updated content with the new section.
+    """
+    begin_idx = content.find(begin_marker)
+    end_idx = content.find(end_marker)
+
+    if begin_idx != -1 and end_idx != -1:
+        end_idx += len(end_marker)
+        # Consume trailing newline if present
+        if end_idx < len(content) and content[end_idx] == "\n":
+            end_idx += 1
+        return content[:begin_idx] + section + content[end_idx:]
+
+    # Append
+    return content.rstrip("\n") + "\n\n" + section
+
 
 BEGIN_MARKER = "<!-- wos:begin -->"
 END_MARKER = "<!-- wos:end -->"
@@ -88,18 +126,6 @@ def read_layout_hint(content: str) -> Optional[str]:
     return None
 
 
-def write_layout_hint(layout: str) -> str:
-    """Return the comment marker string for a layout pattern.
-
-    Args:
-        layout: One of 'separated', 'co-located', 'flat', 'none'.
-
-    Returns:
-        HTML comment string like ``<!-- wos:layout: co-located -->``.
-    """
-    return f"<!-- wos:layout: {layout} -->"
-
-
 # ── Render ───────────────────────────────────────────────────────
 
 
@@ -122,7 +148,7 @@ def render_wos_section(
 
     # ── Layout hint (if set) ──────────────────────────────────────
     if layout and layout in VALID_LAYOUTS:
-        lines.append(write_layout_hint(layout))
+        lines.append(f"<!-- wos:layout: {layout} -->")
 
     # ── Context Navigation header ────────────────────────────────
     lines.append("## Context Navigation")
@@ -268,8 +294,6 @@ def update_agents_md(
     Returns:
         Updated AGENTS.md content with the new WOS section.
     """
-    from wos.markers import replace_marker_section
-
     # Preserve existing layout if not explicitly provided
     if layout is None:
         layout = read_layout_hint(content)

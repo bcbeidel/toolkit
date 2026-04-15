@@ -27,7 +27,7 @@ class TestAssessFile:
 
     def test_approved_plan_ready(self, tmp_path) -> None:
         """Approved plan with all sections reports ready."""
-        from wos.assess_plan import assess_file
+        from wos.plan import assess_file
 
         plan = tmp_path / "plan.md"
         self._write_plan(
@@ -52,7 +52,7 @@ class TestAssessFile:
 
     def test_executing_plan_with_progress(self, tmp_path) -> None:
         """Executing plan reports correct completed/pending counts."""
-        from wos.assess_plan import assess_file
+        from wos.plan import assess_file
 
         plan = tmp_path / "plan.md"
         self._write_plan(
@@ -74,7 +74,7 @@ class TestAssessFile:
 
     def test_draft_plan_not_ready(self, tmp_path) -> None:
         """Draft plan reports status_ok=False."""
-        from wos.assess_plan import assess_file
+        from wos.plan import assess_file
 
         plan = tmp_path / "plan.md"
         self._write_plan(plan, status="draft")
@@ -84,7 +84,7 @@ class TestAssessFile:
 
     def test_nonexistent_file(self) -> None:
         """Non-existent file returns exists=False."""
-        from wos.assess_plan import assess_file
+        from wos.plan import assess_file
 
         result = assess_file("/nonexistent/plan.md")
         assert result["exists"] is False
@@ -103,7 +103,7 @@ class TestScanPlans:
 
     def test_finds_executing_plans(self, tmp_path) -> None:
         """Scan returns only plans with status: executing."""
-        from wos.assess_plan import scan_plans
+        from wos.plan import scan_plans
 
         plans_dir = tmp_path / "docs" / "plans"
         plans_dir.mkdir(parents=True)
@@ -118,7 +118,7 @@ class TestScanPlans:
 
     def test_empty_directory(self, tmp_path) -> None:
         """Empty plans directory returns empty list."""
-        from wos.assess_plan import scan_plans
+        from wos.plan import scan_plans
 
         plans_dir = tmp_path / "docs" / "plans"
         plans_dir.mkdir(parents=True)
@@ -127,14 +127,14 @@ class TestScanPlans:
 
     def test_missing_directory(self, tmp_path) -> None:
         """Missing docs/plans returns empty list."""
-        from wos.assess_plan import scan_plans
+        from wos.plan import scan_plans
 
         result = scan_plans(str(tmp_path))
         assert result["plans"] == []
 
     def test_skips_non_plan_docs(self, tmp_path) -> None:
         """Non-plan documents are ignored."""
-        from wos.assess_plan import scan_plans
+        from wos.plan import scan_plans
 
         plans_dir = tmp_path / "docs" / "plans"
         plans_dir.mkdir(parents=True)
@@ -151,7 +151,7 @@ class TestScanPlans:
 
     def test_skips_index_files(self, tmp_path) -> None:
         """Index files are skipped."""
-        from wos.assess_plan import scan_plans
+        from wos.plan import scan_plans
 
         plans_dir = tmp_path / "docs" / "plans"
         plans_dir.mkdir(parents=True)

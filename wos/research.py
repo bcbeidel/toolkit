@@ -1,5 +1,7 @@
-"""Research document structural assessment.
+"""Research document class and structural assessment.
 
+Combines the ResearchDocument subclass with module-level assessment
+functions (assess_file, scan_directory, check_gates, check_single_gate).
 Reports observable facts about research documents — word count, draft
 markers, section presence, source listing. The model infers phase and
 next actions from these facts.
@@ -12,10 +14,98 @@ agent's exit condition in the research pipeline.
 from __future__ import annotations
 
 import os
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict
+from typing import Dict, List
 
 from wos.document import Document, parse_document
+from wos.url_checker import check_urls
+
+# ── Document subclass ──────────────────────────────────────────────
+
+
+@dataclass
+class ResearchDocument(Document):
+    """A research document with source URL and draft-marker validation."""
+
+    def issues(self, root: Path, verify_urls: bool = True) -> List[dict]:
+        """Return base issues plus research-specific checks.
+
+        Adds: sources required, sources-as-dicts warning, draft marker
+        warning, and source URL reachability (fail/warn).
+
+        Args:
+            root: Project root directory.
+            verify_urls: If False, skip HTTP reachability checks.
+
+        Returns:
+            List of issue dicts with keys: file, issue, severity.
+        """
+        result = super().issues(root)
+
+        if not self.sources:
+            result.append({
+                "file": self.path,
+                "issue": "Research document has no sources",
+                "severity": "fail",
+            })
+
+        for idx, source in enumerate(self.sources):
+            if isinstance(source, dict):
+                result.append({
+                    "file": self.path,
+                    "issue": f"sources[{idx}] is a dict, expected a URL string",
+                    "severity": "warn",
+                })
+
+        if "<!-- DRAFT -->" in self.content:
+            result.append({
+                "file": self.path,
+                "issue": "Research document contains <!-- DRAFT --> marker",
+                "severity": "warn",
+            })
+
+        if verify_urls and self.sources:
+            urls = []
+            for s in self.sources:
+                if isinstance(s, dict):
+                    urls.append(s.get("url", s.get("href", "")))
+                else:
+                    urls.append(str(s))
+            for url_result in check_urls(urls):
+                if not url_result.reachable:
+                    if url_result.status in (403, 429):
+                        result.append({
+                            "file": self.path,
+                            "issue": (
+                                f"URL returned {url_result.status}"
+                                f" (site may block automated checks):"
+                                f" {url_result.url}"
+                            ),
+                            "severity": "warn",
+                        })
+                    else:
+                        reason = (
+                            f" ({url_result.reason})" if url_result.reason else ""
+                        )
+                        result.append({
+                            "file": self.path,
+                            "issue": (
+                                f"Source URL unreachable:"
+                                f" {url_result.url}{reason}"
+                            ),
+                            "severity": "fail",
+                        })
+
+        return result
+
+
+# ── Module-level assessment functions ─────────────────────────────
+
+
+_SECTION_KEYWORDS = frozenset({
+    "claims", "synthesis", "sources", "findings", "challenge",
+})
 
 
 def assess_file(path: str) -> dict:
@@ -95,11 +185,6 @@ def scan_directory(root: str, subdir: str = "") -> dict:
         for doc in research_docs
     ]
     return {"directory": label, "documents": documents}
-
-
-_SECTION_KEYWORDS = frozenset({
-    "claims", "synthesis", "sources", "findings", "challenge",
-})
 
 
 # ---------------------------------------------------------------------------
