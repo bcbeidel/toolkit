@@ -1,6 +1,6 @@
-"""Skill dataclass and skill quality auditing.
+"""SkillDocument dataclass and skill quality auditing.
 
-Provides the Skill dataclass for reading and validating SKILL.md files,
+Provides the SkillDocument dataclass for reading and validating SKILL.md files,
 along with module-level functions for skill size and metadata checks.
 """
 
@@ -153,11 +153,11 @@ def _check_body_lines(body: str, file_str: str) -> List[dict]:
     return []
 
 
-# ── Skill dataclass ────────────────────────────────────────────────
+# ── SkillDocument dataclass ─────────────────────────────────────────
 
 
 @dataclass
-class Skill:
+class SkillDocument:
     """Represents a parsed SKILL.md skill definition.
 
     Fields:
@@ -173,7 +173,7 @@ class Skill:
     body: str
 
     @classmethod
-    def parse(cls, skill_dir: Path) -> Optional[Skill]:
+    def parse(cls, skill_dir: Path) -> Optional[SkillDocument]:
         """Read SKILL.md from skill_dir and return a Skill instance.
 
         Returns None if no SKILL.md exists in the directory.
@@ -294,7 +294,7 @@ def check_skill_sizes(
         if entry.name.startswith("_"):
             continue
 
-        skill = Skill.parse(entry)
+        skill = SkillDocument.parse(entry)
         if skill is None:
             continue
 
@@ -321,7 +321,7 @@ def check_skill_meta(skill_dir: Path) -> List[dict]:
 
     Returns a list of issues in standard validator format.
     """
-    skill = Skill.parse(skill_dir)
+    skill = SkillDocument.parse(skill_dir)
     if skill is None:
         return []
     return skill.issues()

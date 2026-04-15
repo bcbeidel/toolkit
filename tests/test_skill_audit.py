@@ -189,19 +189,19 @@ class TestCheckSkillSizes:
 
 class TestParseSkillMeta:
     def test_extracts_name_and_description(self, tmp_path: Path) -> None:
-        from wos.skill import Skill
+        from wos.skill import SkillDocument
 
         skill_dir = tmp_path / "my-skill"
         skill_dir.mkdir()
         (skill_dir / "SKILL.md").write_text(
             "---\nname: my-skill\ndescription: Does something useful\n---\n# Body\n"
         )
-        skill = Skill.parse(skill_dir)
+        skill = SkillDocument.parse(skill_dir)
         assert skill.name == "my-skill"
         assert skill.description == "Does something useful"
 
     def test_multiline_description_with_fold(self, tmp_path: Path) -> None:
-        from wos.skill import Skill
+        from wos.skill import SkillDocument
 
         skill_dir = tmp_path / "my-skill"
         skill_dir.mkdir()
@@ -215,40 +215,40 @@ class TestParseSkillMeta:
             "---\n"
             "# Body\n"
         )
-        skill = Skill.parse(skill_dir)
+        skill = SkillDocument.parse(skill_dir)
         assert skill.name == "my-skill"
         assert "First line" in skill.description
         assert "second line" in skill.description
 
     def test_missing_name_returns_none(self, tmp_path: Path) -> None:
-        from wos.skill import Skill
+        from wos.skill import SkillDocument
 
         skill_dir = tmp_path / "my-skill"
         skill_dir.mkdir()
         (skill_dir / "SKILL.md").write_text(
             "---\ndescription: Does something\n---\n# Body\n"
         )
-        skill = Skill.parse(skill_dir)
+        skill = SkillDocument.parse(skill_dir)
         assert skill.name is None
 
     def test_missing_description_returns_none(self, tmp_path: Path) -> None:
-        from wos.skill import Skill
+        from wos.skill import SkillDocument
 
         skill_dir = tmp_path / "my-skill"
         skill_dir.mkdir()
         (skill_dir / "SKILL.md").write_text(
             "---\nname: my-skill\n---\n# Body\n"
         )
-        skill = Skill.parse(skill_dir)
+        skill = SkillDocument.parse(skill_dir)
         assert skill.description is None
 
     def test_no_frontmatter_returns_nones(self, tmp_path: Path) -> None:
-        from wos.skill import Skill
+        from wos.skill import SkillDocument
 
         skill_dir = tmp_path / "my-skill"
         skill_dir.mkdir()
         (skill_dir / "SKILL.md").write_text("# Just a body\n")
-        skill = Skill.parse(skill_dir)
+        skill = SkillDocument.parse(skill_dir)
         assert skill.name is None
         assert skill.description is None
 
