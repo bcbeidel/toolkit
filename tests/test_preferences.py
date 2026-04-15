@@ -9,14 +9,14 @@ import pytest
 
 class TestDimensionInstruction:
     def test_all_dimensions_have_instructions(self) -> None:
-        from wos.preferences import DIMENSION_INSTRUCTIONS, DIMENSIONS
+        from wos.agents_md import DIMENSION_INSTRUCTIONS, DIMENSIONS
 
         for dim in DIMENSIONS:
             for level in DIMENSIONS[dim]:
                 assert (dim, level) in DIMENSION_INSTRUCTIONS
 
     def test_instruction_is_nonempty_string(self) -> None:
-        from wos.preferences import DIMENSION_INSTRUCTIONS
+        from wos.agents_md import DIMENSION_INSTRUCTIONS
 
         for key, instruction in DIMENSION_INSTRUCTIONS.items():
             assert isinstance(instruction, str), f"{key} is not a string"
@@ -28,7 +28,7 @@ class TestDimensionInstruction:
 
 class TestRenderPreferences:
     def test_renders_all_dimensions(self) -> None:
-        from wos.preferences import render_preferences
+        from wos.agents_md import render_preferences
 
         prefs = {
             "directness": "blunt",
@@ -47,7 +47,7 @@ class TestRenderPreferences:
         assert any("Tone" in line for line in result)
 
     def test_renders_subset_of_dimensions(self) -> None:
-        from wos.preferences import render_preferences
+        from wos.agents_md import render_preferences
 
         prefs = {"directness": "blunt", "tone": "formal"}
         result = render_preferences(prefs)
@@ -57,27 +57,26 @@ class TestRenderPreferences:
         assert not any("Verbosity" in line for line in result)
 
     def test_no_bullet_prefix(self) -> None:
-        from wos.preferences import render_preferences
+        from wos.agents_md import render_preferences
 
         result = render_preferences({"directness": "blunt"})
         assert not result[0].startswith("- ")
         assert result[0].startswith("**Directness:**")
 
     def test_invalid_dimension_raises(self) -> None:
-        from wos.preferences import render_preferences
+        from wos.agents_md import render_preferences
 
         with pytest.raises(ValueError, match="Unknown dimension"):
             render_preferences({"nonexistent": "value"})
 
     def test_invalid_level_raises(self) -> None:
-        from wos.preferences import render_preferences
+        from wos.agents_md import render_preferences
 
         with pytest.raises(ValueError, match="Unknown level"):
             render_preferences({"directness": "nonexistent"})
 
     def test_compatible_with_render_wos_section(self) -> None:
-        from wos.agents_md import render_wos_section
-        from wos.preferences import render_preferences
+        from wos.agents_md import render_preferences, render_wos_section
 
         prefs = render_preferences({"directness": "blunt"})
         result = render_wos_section(areas=[], preferences=prefs)

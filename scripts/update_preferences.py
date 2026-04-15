@@ -36,8 +36,7 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    from wos.agents_md import discover_areas, update_agents_md
-    from wos.preferences import render_preferences
+    from wos.agents_md import discover_areas, render_preferences, update_agents_md
 
     root = Path(args.root).resolve()
 
