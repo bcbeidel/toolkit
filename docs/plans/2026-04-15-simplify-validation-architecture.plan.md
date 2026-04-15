@@ -146,7 +146,7 @@ does not call reindex.
   the order listed."
   **Verify:** `grep -c "distill\|parallel\|Parallel" skills/start-work/SKILL.md` → 0
 
-- [ ] Task 5: Delete `scripts/get_version.py` and `tests/test_get_version.py`.
+- [x] Task 5: Delete `scripts/get_version.py` and `tests/test_get_version.py`. <!-- sha:dc7c2aa -->
   Update `skills/retrospective/references/retrospective-workflow.md` Phase 3
   — remove `python <plugin-scripts-dir>/get_version.py`; replace with:
   "Read `<plugin-root>/plugin.json` and extract the `version` field."
@@ -155,7 +155,7 @@ does not call reindex.
 
 ### Chunk 2: Simplify Python assessment modules
 
-- [ ] Task 6: Simplify `wos/plan/assess_plan.py`. Remove the three
+- [x] Task 6: Simplify `wos/plan/assess_plan.py`. Remove the three <!-- sha:07043f0 -->
   file-overlap functions and their supporting regexes:
   - Delete `_extract_file_changes()`, `_map_task_files()`, `_find_overlaps()`
   - Delete `_FILE_CHANGE_RE` and `_TASK_HEADING_RE` constants
@@ -168,7 +168,7 @@ does not call reindex.
   **Verify:** `python -m pytest tests/test_plan_assess.py -v` → all pass;
   `grep -c "parallel_eligible\|overlapping_tasks\|file_changes" wos/plan/assess_plan.py` → 0
 
-- [ ] Task 7: Simplify `wos/research/assess_research.py`. Remove the three
+- [x] Task 7: Simplify `wos/research/assess_research.py`. Remove the three <!-- sha:ef351b7 -->
   table parsing helpers:
   - Delete `_find_table_under_heading()`, `_table_columns()`, `_table_data_rows()`
   Replace the three table-dependent gate checks with string/section matching:
@@ -187,7 +187,7 @@ does not call reindex.
 
 ### Chunk 3: Research self-contained validation
 
-- [ ] Task 8: Create `skills/research/scripts/validate_finalize.sh`. Accepts
+- [x] Task 8: Create `skills/research/scripts/validate_finalize.sh`. Accepts <!-- sha:pending -->
   a single file path argument; exits 1 printing which check failed:
   1. `name:` present in frontmatter
   2. `description:` present in frontmatter
