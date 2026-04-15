@@ -34,12 +34,14 @@ Include summary line: `N searches across M sources, X found, Y used`.
 3. **Remove `<!-- DRAFT -->`** marker.
 4. **Verify claims.** No `unverified` in Claims Table. `unverifiable` and
    `human-review` annotated in body.
-5. **Reindex and validate:**
+5. **Validate:**
 
 ```bash
-python <plugin-scripts-dir>/reindex.py --root .
-python <plugin-scripts-dir>/lint.py <file> --root . --no-urls
+bash <plugin-skills-dir>/research/scripts/validate_finalize.sh <file>
 ```
+
+Note: Reindex is no longer triggered here. Run `/wiki:ingest` after a
+research session to sync `_index.md` files.
 
 ## Output
 

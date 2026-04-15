@@ -187,7 +187,7 @@ does not call reindex.
 
 ### Chunk 3: Research self-contained validation
 
-- [x] Task 8: Create `skills/research/scripts/validate_finalize.sh`. Accepts <!-- sha:pending -->
+- [x] Task 8: Create `skills/research/scripts/validate_finalize.sh`. Accepts <!-- sha:be0c1d9 -->
   a single file path argument; exits 1 printing which check failed:
   1. `name:` present in frontmatter
   2. `description:` present in frontmatter
@@ -198,7 +198,7 @@ does not call reindex.
   **Verify:** Run against a valid `.research.md` → exit 0;
   run against a file containing `<!-- DRAFT -->` → exit 1 with message
 
-- [ ] Task 9: Update `skills/_shared/references/research/finalize.md` step 5.
+- [x] Task 9: Update `skills/_shared/references/research/finalize.md` step 5. <!-- sha:pending -->
   Replace:
   ```bash
   python <plugin-scripts-dir>/reindex.py --root .
@@ -212,7 +212,7 @@ does not call reindex.
   research session to sync `_index.md` files."
   **Verify:** `grep -c "reindex\|lint\.py" skills/_shared/references/research/finalize.md` → 0
 
-- [ ] Task 10: Update `skills/ingest/SKILL.md` Post-Ingest section. Fix:
+- [x] Task 10: Update `skills/ingest/SKILL.md` Post-Ingest section. Fix: <!-- sha:pending -->
   - `python scripts/lint.py` → `python <plugin-scripts-dir>/lint.py`
   - `python scripts/reindex.py` → `python <plugin-scripts-dir>/reindex.py`
   **Verify:** `grep -c "python scripts/" skills/ingest/SKILL.md` → 0
