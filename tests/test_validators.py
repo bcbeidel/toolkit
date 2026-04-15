@@ -4,21 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from wos.document import Document
-
 # ── Helpers ─────────────────────────────────────────────────────
-
-
-def _make_doc(**overrides) -> Document:
-    """Build a minimal valid Document, applying overrides."""
-    defaults = {
-        "path": "docs/context/testing/unit-tests.md",
-        "name": "Unit Tests",
-        "description": "Guide to writing unit tests",
-        "content": "# Unit Tests\n\nSome content.\n",
-    }
-    defaults.update(overrides)
-    return Document(**defaults)
 
 
 def _md(name: str = "Test", description: str = "A test doc", **extra_fm) -> str:
@@ -35,126 +21,6 @@ def _md(name: str = "Test", description: str = "A test doc", **extra_fm) -> str:
     lines.append(f"# {name}")
     lines.append("")
     return "\n".join(lines) + "\n"
-
-
-# ── check_content ─────────────────────────────────────────────
-
-
-class TestCheckContent:
-    def test_short_context_file_no_warning(self) -> None:
-        from wos.validators import check_content
-
-        doc = _make_doc(type="context", content="Word " * 200)
-        issues = check_content(doc)
-        assert issues == []
-
-    def test_long_context_file_warns(self) -> None:
-        from wos.validators import check_content
-
-        doc = _make_doc(type="context", content="Word " * 900)
-        issues = check_content(doc)
-        assert len(issues) == 1
-        assert issues[0]["severity"] == "warn"
-        assert "900" in issues[0]["issue"]
-
-    def test_non_context_file_no_warning(self) -> None:
-        from wos.validators import check_content
-
-        doc = _make_doc(type="research", content="Word " * 2000)
-        issues = check_content(doc)
-        assert issues == []
-
-    def test_untyped_file_no_warning(self) -> None:
-        from wos.validators import check_content
-
-        doc = _make_doc(content="Word " * 2000)
-        issues = check_content(doc)
-        assert issues == []
-
-    def test_index_file_excluded(self) -> None:
-        from wos.validators import check_content
-
-        doc = _make_doc(
-            type="context",
-            path="docs/context/api/_index.md",
-            content="Word " * 2000,
-        )
-        issues = check_content(doc)
-        assert issues == []
-
-    def test_custom_max_words(self) -> None:
-        from wos.validators import check_content
-
-        doc = _make_doc(type="context", content="Word " * 500)
-        issues = check_content(doc, max_words=400)
-        assert len(issues) == 1
-
-    def test_exactly_at_threshold_no_warning(self) -> None:
-        from wos.validators import check_content
-
-        doc = _make_doc(type="context", content="Word " * 800)
-        issues = check_content(doc)
-        assert issues == []
-
-    def test_below_min_words_warns(self) -> None:
-        from wos.validators import check_content
-
-        doc = _make_doc(type="context", content="Word " * 50)
-        issues = check_content(doc)
-        assert len(issues) == 1
-        assert issues[0]["severity"] == "warn"
-        assert "50" in issues[0]["issue"]
-
-    def test_above_min_words_no_warning(self) -> None:
-        from wos.validators import check_content
-
-        doc = _make_doc(type="context", content="Word " * 200)
-        issues = check_content(doc)
-        assert issues == []
-
-    def test_exactly_at_min_threshold_no_warning(self) -> None:
-        from wos.validators import check_content
-
-        doc = _make_doc(type="context", content="Word " * 100)
-        issues = check_content(doc)
-        assert issues == []
-
-    def test_custom_min_words(self) -> None:
-        from wos.validators import check_content
-
-        doc = _make_doc(type="context", content="Word " * 150)
-        issues = check_content(doc, min_words=200)
-        assert len(issues) == 1
-
-    def test_non_context_no_min_warning(self) -> None:
-        from wos.validators import check_content
-
-        doc = _make_doc(type="research", content="Word " * 10)
-        issues = check_content(doc)
-        assert issues == []
-
-    def test_index_file_excluded_from_min_check(self) -> None:
-        from wos.validators import check_content
-
-        doc = _make_doc(
-            type="context",
-            path="docs/context/api/_index.md",
-            content="Word " * 10,
-        )
-        issues = check_content(doc)
-        assert issues == []
-
-    def test_context_anywhere_gets_checked(self) -> None:
-        """Context-type docs get word-count checks regardless of path."""
-        from wos.validators import check_content
-
-        doc = _make_doc(
-            type="context",
-            path="project-x/notes.context.md",
-            content="Word " * 900,
-        )
-        issues = check_content(doc)
-        assert len(issues) == 1
 
 
 # ── check_all_indexes ──────────────────────────────────────────

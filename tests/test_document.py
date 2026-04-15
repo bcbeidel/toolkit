@@ -752,3 +752,102 @@ class TestPlanDocument:
         assert isinstance(doc, PlanDocument)
         assert len(doc.tasks) == 1
 
+
+# ── ContextDocument ───────────────────────────────────────────────
+
+
+class TestContextDocument:
+    def _make_context(self, tmp_path, content="body", related=None, path=None):
+        from wos.document import ContextDocument
+        return ContextDocument(
+            path=str(path or (tmp_path / "notes.md")),
+            name="N",
+            description="D",
+            content=content,
+            type="context",
+            related=related or [],
+        )
+
+    # word count checks
+
+    def test_within_range_no_issues(self, tmp_path) -> None:
+        doc = self._make_context(tmp_path, content="Word " * 200)
+        issues = [i for i in doc.issues(tmp_path) if "word" in i["issue"].lower()]
+        assert issues == []
+
+    def test_over_max_warns(self, tmp_path) -> None:
+        doc = self._make_context(tmp_path, content="Word " * 900)
+        issues = doc.issues(tmp_path)
+        word_issues = [i for i in issues if "900" in i["issue"]]
+        assert len(word_issues) == 1
+        assert word_issues[0]["severity"] == "warn"
+
+    def test_under_min_warns(self, tmp_path) -> None:
+        doc = self._make_context(tmp_path, content="Word " * 50)
+        issues = doc.issues(tmp_path)
+        word_issues = [i for i in issues if "50" in i["issue"]]
+        assert len(word_issues) == 1
+        assert word_issues[0]["severity"] == "warn"
+
+    def test_exactly_at_max_no_warning(self, tmp_path) -> None:
+        doc = self._make_context(tmp_path, content="Word " * 800)
+        issues = [i for i in doc.issues(tmp_path) if "threshold" in i["issue"]]
+        assert issues == []
+
+    def test_exactly_at_min_no_warning(self, tmp_path) -> None:
+        doc = self._make_context(tmp_path, content="Word " * 100)
+        issues = [i for i in doc.issues(tmp_path) if "minimum" in i["issue"]]
+        assert issues == []
+
+    def test_custom_max_words(self, tmp_path) -> None:
+        doc = self._make_context(tmp_path, content="Word " * 500)
+        issues = doc.issues(tmp_path, max_words=400)
+        assert any("500" in i["issue"] for i in issues)
+
+    def test_custom_min_words(self, tmp_path) -> None:
+        doc = self._make_context(tmp_path, content="Word " * 150)
+        issues = doc.issues(tmp_path, min_words=200)
+        assert any("150" in i["issue"] for i in issues)
+
+    def test_index_file_skips_word_count(self, tmp_path) -> None:
+        doc = self._make_context(
+            tmp_path, content="Word " * 2000,
+            path=tmp_path / "_index.md",
+        )
+        word_issues = [i for i in doc.issues(tmp_path) if "words" in i["issue"]]
+        assert word_issues == []
+
+    # related field checks
+
+    def test_no_related_warns(self, tmp_path) -> None:
+        doc = self._make_context(tmp_path, related=[])
+        issues = doc.issues(tmp_path)
+        assert any("related" in i["issue"].lower() and i["severity"] == "warn"
+                   for i in issues)
+
+    def test_with_related_no_warn(self, tmp_path) -> None:
+        ref = tmp_path / "ref.md"
+        ref.write_text("exists")
+        doc = self._make_context(tmp_path, related=["ref.md"])
+        issues = doc.issues(tmp_path)
+        assert not any("related" in i["issue"].lower() for i in issues)
+
+    # factory routing
+
+    def test_factory_routes_context_type(self) -> None:
+        from wos.document import ContextDocument, parse_document
+
+        text = (
+            "---\nname: T\ndescription: D\ntype: context\n"
+            "related:\n  - https://example.com\n---\nbody\n"
+        )
+        doc = parse_document("notes.md", text)
+        assert isinstance(doc, ContextDocument)
+
+    def test_factory_routes_context_suffix(self) -> None:
+        from wos.document import ContextDocument, parse_document
+
+        text = "---\nname: T\ndescription: D\n---\nbody\n"
+        doc = parse_document("notes.context.md", text)
+        assert isinstance(doc, ContextDocument)
+

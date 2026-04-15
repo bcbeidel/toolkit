@@ -1,9 +1,9 @@
 """Per-file and project-wide validation checks.
 
-Provides content length check, index sync, project-file checks, and two
-composite functions (validate_file, validate_project) that orchestrate
-them. Document-level validation (frontmatter, sources, URLs, related
-paths) now lives on the document subclasses via doc.issues(root).
+Provides index sync, project-file checks, and two composite functions
+(validate_file, validate_project) that orchestrate them. All
+document-level validation now lives on the document subclasses via
+doc.issues(root).
 
 Each check returns a list of issue dicts with keys: file, issue, severity.
 """
@@ -13,47 +13,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import List, Optional
 
-from wos.document import Document, ResearchDocument, parse_document
+from wos.document import ContextDocument, ResearchDocument, parse_document
 from wos.index import check_index_sync, extract_preamble
-
-
-def check_content(
-    doc: Document,
-    max_words: int = 800,
-    min_words: int = 100,
-) -> List[dict]:
-    """Warn when context-type files exceed or fall below word count thresholds.
-
-    Only checks documents with type ``context``. Non-context files and
-    _index.md files are excluded.
-
-    Args:
-        doc: A parsed Document instance.
-        max_words: Upper word count threshold (default 800).
-        min_words: Lower word count threshold (default 100).
-
-    Returns:
-        List of issue dicts. Empty if within thresholds.
-    """
-    if doc.type != "context":
-        return []
-    if doc.path.endswith("_index.md"):
-        return []
-
-    word_count = doc.word_count
-    if word_count > max_words:
-        return [{
-            "file": doc.path,
-            "issue": f"Context file is {word_count} words (threshold: {max_words})",
-            "severity": "warn",
-        }]
-    if word_count < min_words:
-        return [{
-            "file": doc.path,
-            "issue": f"Context file is {word_count} words (minimum: {min_words})",
-            "severity": "warn",
-        }]
-    return []
 
 
 def check_all_indexes(directory: Path) -> List[dict]:
@@ -105,7 +66,7 @@ def validate_file(
     """Validate a single markdown file.
 
     Reads the file, parses it with parse_document(), then calls
-    doc.issues(root) (type-dispatched) plus content-length check.
+    doc.issues(root) with type-appropriate keyword arguments.
     If parsing fails, returns a single parse-error issue.
 
     Args:
@@ -136,25 +97,13 @@ def validate_file(
             "severity": "fail",
         }]
 
-    issues: List[dict] = []
-
     if isinstance(doc, ResearchDocument):
-        issues.extend(doc.issues(root, verify_urls=verify_urls))
-    else:
-        issues.extend(doc.issues(root))
-
-    # Context-file warning: no ContextDocument subclass, so inline here
-    if doc.type == "context" and not doc.related:
-        issues.append({
-            "file": doc.path,
-            "issue": "Context file has no related fields",
-            "severity": "warn",
-        })
-
-    issues.extend(check_content(
-        doc, max_words=context_max_words, min_words=context_min_words,
-    ))
-    return issues
+        return doc.issues(root, verify_urls=verify_urls)
+    if isinstance(doc, ContextDocument):
+        return doc.issues(
+            root, max_words=context_max_words, min_words=context_min_words,
+        )
+    return doc.issues(root)
 
 
 def check_project_files(root: Path) -> List[dict]:
@@ -254,20 +203,12 @@ def validate_project(
     for doc in documents:
         if isinstance(doc, ResearchDocument):
             issues.extend(doc.issues(root, verify_urls=verify_urls))
+        elif isinstance(doc, ContextDocument):
+            issues.extend(doc.issues(
+                root, max_words=context_max_words, min_words=context_min_words,
+            ))
         else:
             issues.extend(doc.issues(root))
-
-        # Context-file warning: no ContextDocument subclass, so inline here
-        if doc.type == "context" and not doc.related:
-            issues.append({
-                "file": doc.path,
-                "issue": "Context file has no related fields",
-                "severity": "warn",
-            })
-
-        issues.extend(check_content(
-            doc, max_words=context_max_words, min_words=context_min_words,
-        ))
 
     # Index sync checks on directories containing managed documents
     doc_dirs = discover_document_dirs(root, exclude_dirs=exclude_dirs)
