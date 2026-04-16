@@ -8,6 +8,26 @@ Pre-restructure releases used a single version. Post-restructure, each plugin
 
 ## [Unreleased]
 
+## [wiki-0.1.7, work-0.1.5, build-0.1.4] - 2026-04-16
+
+### Changed
+
+- **Default document directories are now dot-prefixed at repo root (#297).**
+  The `separated` layout in `wiki:setup` now creates `.plans/`, `.designs/`,
+  `.research/`, `.context/`, and `.prompts/` instead of `docs/<type>/`
+  subdirectories. Dot-prefixed root dirs follow the `.github/`/`.vscode/`
+  convention and make per-type gitignoring straightforward without any new
+  layout options.
+
+  Updated skills: `wiki:setup`, `wiki:research`, `work:scope-work`,
+  `work:plan-work`, `work:start-work`, `build:refine-prompt`, and their
+  associated reference files and scripts (`research_assess.py`,
+  `plan_assess.py`).
+
+  Toolkit's own `docs/` directories migrated to match. Existing projects
+  using `docs/` paths are not affected — the layout hint override remains
+  the escape hatch.
+
 ## [build-0.1.3] - 2026-04-16
 
 ### Fixed
