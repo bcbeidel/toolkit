@@ -8,7 +8,7 @@ references:
   - references/repair-playbook.md
 ---
 
-# /wos:check-rule
+# /build:check-rule
 
 Evaluate the quality of an existing rule library. Checks format validity
 deterministically, then evaluates six semantic quality dimensions per rule
@@ -118,7 +118,7 @@ Close with a summary line:
 ## Example
 
 <example>
-User: `/wos:check-rule docs/rules/`
+User: `/build:check-rule docs/rules/`
 
 Step 1 — Discovers 3 rules: staging-layer-purity.rule.md, api-input-validation.rule.md, naming-conventions.rule.md
 
