@@ -18,14 +18,13 @@ references:
   - ../../_shared/references/plan-format.md
 ---
 
-# Check Work
-
+# Verify Work
 
 Verify that completed work meets validation criteria — either from a plan's
 Validation section or from a hypothesis built from git diff, project
 conventions, and project docs.
 
-**Announce at start:** "I'm using the check-work skill to verify this work."
+**Announce at start:** "I'm using the verify-work skill to verify this work."
 
 ## Workflow
 

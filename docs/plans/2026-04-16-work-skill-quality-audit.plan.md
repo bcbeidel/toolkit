@@ -87,7 +87,7 @@ gh issue list --state open --search "scope-work" --limit 5
 
 ### Task 4: Audit and fix `start-work`
 
-- [x] Run `/build:check-skill plugins/work/skills/start-work/SKILL.md`, triage findings, fix clear-cut issues, file GitHub issues for judgment calls, commit <!-- sha:pending -->
+- [x] Run `/build:check-skill plugins/work/skills/start-work/SKILL.md`, triage findings, fix clear-cut issues, file GitHub issues for judgment calls, commit <!-- sha:facb753 -->
 
 **Verify:**
 ```bash
@@ -99,7 +99,7 @@ gh issue list --state open --search "start-work" --limit 5
 
 ### Task 5: Audit and fix `verify-work`
 
-- [ ] Run `/build:check-skill plugins/work/skills/verify-work/SKILL.md`, triage findings, fix clear-cut issues, file GitHub issues for judgment calls, commit
+- [x] Run `/build:check-skill plugins/work/skills/verify-work/SKILL.md`, triage findings, fix clear-cut issues, file GitHub issues for judgment calls, commit <!-- sha:pending -->
 
 **Verify:**
 ```bash
