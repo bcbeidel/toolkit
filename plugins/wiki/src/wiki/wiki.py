@@ -175,8 +175,9 @@ def check_wiki_orphans(wiki_dir: Path) -> List[dict]:
             issues.append({
                 "file": str(md_file),
                 "issue": (
-                    f"Wiki page not in index. "
-                    f"Run /wos:ingest wiki/{md_file.name} to index it."
+                    "Wiki page not in index. "
+                    "Add an entry to wiki/_index.md or run /wiki:lint --fix "
+                    "to regenerate the index."
                 ),
                 "severity": "warn",
             })

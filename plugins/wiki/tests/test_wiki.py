@@ -161,7 +161,7 @@ class TestCheckWikiOrphans:
 
         assert len(issues) == 1
         assert issues[0]["severity"] == "warn"
-        assert "orphan.md" in issues[0]["issue"]
+        assert "wiki/_index.md" in issues[0]["issue"]
 
     def test_indexed_file_no_issue(self, tmp_path: Path) -> None:
         from wiki.wiki import check_wiki_orphans

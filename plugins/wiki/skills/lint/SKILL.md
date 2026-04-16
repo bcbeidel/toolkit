@@ -143,12 +143,9 @@ After presenting audit results, offer to help resolve actionable warnings:
 
 ## Skill Evaluation
 
-When the audit encounters skill directories, the automated Python checks (name
-format, description length/voice, body size, instruction density) appear in the
-standard issue table as usual.
-
-For LLM-level quality evaluation, invoke `/wos:check-skill` on each skill
-directory found and incorporate its findings into the report. Do not perform
+Skill quality evaluation is handled entirely by `/wiki:check-skill` — lint does
+not run automated Python-level skill checks. Invoke `/wiki:check-skill` on each
+skill directory found and incorporate its findings into the report. Do not perform
 independent skill quality judgment here — `check-skill` is the single source of
 truth for what good looks like. Delegating keeps criteria consistent and prevents
 drift between the two skills.
