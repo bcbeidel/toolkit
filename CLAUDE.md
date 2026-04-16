@@ -63,6 +63,9 @@ Five plugins under `plugins/`, each independently installable:
 | `work` | `plugins/work/` | none | `scope-work`, `plan-work`, `start-work`, `verify-work`, `finish-work` |
 | `consider` | `plugins/consider/` | none | 16 mental models + meta |
 
+Each plugin versions independently from `0.1.0`. A version bump requires updating
+the plugin's `pyproject.toml` and `.claude-plugin/plugin.json`. See CONTRIBUTING.md.
+
 Each plugin directory contains:
 - `.claude-plugin/plugin.json` — plugin manifest
 - `skills/` — skill definitions (SKILL.md + references/)
@@ -138,7 +141,7 @@ Skills live at `plugins/<plugin>/skills/<name>/SKILL.md`.
 
 ## Reference
 
-- Design principles: [WOS Design Principles](PRINCIPLES.md)
+- Design principles: [Design Principles](PRINCIPLES.md)
 
 ## Plans
 
@@ -147,6 +150,7 @@ Skills live at `plugins/<plugin>/skills/<name>/SKILL.md`.
 - Plans MUST include checkboxes to indicate progress, marking things off as completed
 - Plans MUST indicate the branch, and pull-request associated with the work
 - Plans MUST be implemented on a branch, and merged only after human review of a pull-request
+- Completed plans are historical records — `wos/` path references in older completed plans are intentional; do not update them
 
 ## Conventions
 
