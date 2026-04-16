@@ -231,7 +231,7 @@ Audited N agent(s): N ok, N warn, N fail
 
 If any issues were found, add a one-sentence recommendation, e.g.:
 
-> "3 agents have over-permissioned tool sets — run `/wos:build-subagent`
+> "3 agents have over-permissioned tool sets — run `/build:build-subagent`
 > to rebuild with least-privilege tool selection."
 
 ## Anti-Pattern Guards
