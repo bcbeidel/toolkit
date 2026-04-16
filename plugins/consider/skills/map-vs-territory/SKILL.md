@@ -1,6 +1,6 @@
 ---
 name: map-vs-territory
-description: Recognize where your mental model diverges from reality
+description: Recognize where your mental model diverges from reality — use when a plan or model is driving decisions and its assumptions haven't been stress-tested
 argument-hint: "[situation where assumptions may not match reality]"
 user-invocable: true
 ---
@@ -71,4 +71,20 @@ The external API dependency. Our velocity model assumes all work is within our c
 ### Reality Check
 Ask the external team for their delivery date and confidence level. If they can't commit, re-sequence the epic to pull forward work that doesn't depend on their API. Adjust the estimate to 4-5 sprints to account for the dependency and PTO gaps.
 </example>
+
+## Key Instructions
+
+- The goal is to find gaps before they cause failures, not to invalidate the model — a well-calibrated map with known limits is still useful.
+- Does not update the model; produces a gap audit and a verification plan the user acts on.
+
+## Anti-Pattern Guards
+
+1. **Treating simplifications as failures** — all maps simplify; the question is whether the simplification matters for the decision at hand.
+2. **Generating abstract gaps** — every gap must have a concrete risk statement ("if this gap is real, X could happen"), not just "this isn't modeled."
+
+## Handoff
+
+**Receives:** A mental model, plan, or abstraction the user is relying on for a decision
+**Produces:** A three-zone gap audit (matches / simplifies / ignores) with the highest-risk divergence and a reality-check approach
+**Chainable to:** `first-principles` (to rebuild from verified fundamentals), `second-order` (to trace consequences of the highest-risk gap)
 
