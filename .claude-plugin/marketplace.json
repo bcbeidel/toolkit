@@ -10,11 +10,6 @@
       "description": "Skills for creating and refining Claude Code skills, rules, hooks, and subagents."
     },
     {
-      "name": "check",
-      "source": "./plugins/check",
-      "description": "Skills for auditing Claude Code skills, rules, hooks, and subagents for quality issues."
-    },
-    {
       "name": "wiki",
       "source": "./plugins/wiki",
       "description": "Skills for building and maintaining structured project context — setup, research, ingest, and lint."
@@ -36,12 +31,12 @@
       "plugins": ["wiki"]
     },
     "build-tooling": {
-      "description": "Create, audit, and maintain Claude Code skills and rules.",
-      "plugins": ["build", "check"]
+      "description": "Create and maintain Claude Code skills and rules.",
+      "plugins": ["build"]
     },
     "full-suite": {
       "description": "Complete toolkit for AI-assisted project work.",
-      "plugins": ["build", "check", "wiki", "work", "consider"]
+      "plugins": ["build", "wiki", "work", "consider"]
     }
   }
 }

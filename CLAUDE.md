@@ -10,12 +10,12 @@ the tools, not using them.
 Install plugin packages and dev dependencies:
 
 ```bash
-pip install -e plugins/wiki -e plugins/check -e ".[dev]"
+pip install -e plugins/wiki -e ".[dev]"
 ```
 
 Run tests:
 ```bash
-python -m pytest plugins/wiki/tests/ plugins/check/tests/ -v
+python -m pytest plugins/wiki/tests/ -v
 ```
 
 Lint:
@@ -45,8 +45,8 @@ Note: `ruff` may not be installed locally; CI runs it via GitHub Actions.
 - **Script path convention:** Scripts use `Path(__file__).parent.parent` (2 levels)
   to reach plugin root. Per-skill scripts go deeper. No marker-based walk-up —
   it finds the user's project root, not the plugin root.
-- **`work`/`build` scripts:** No Python package — rely on editable installs of
-  `wiki`/`check`. Do not add sys.path manipulation to these scripts.
+- **`work`/`build` scripts:** No Python package — rely on editable install of
+  `wiki`. Do not add sys.path manipulation to these scripts.
 - **Per-plugin versioning:** A version bump updates the plugin's `pyproject.toml`
   and `.claude-plugin/plugin.json`. See CONTRIBUTING.md.
 - Python 3.9 — use `from __future__ import annotations` for type hints
