@@ -2,7 +2,7 @@
 name: Wiki Plugin Bugfix Batch
 description: Fix 6 bugs in the wiki plugin covering broken scripts, missing wiki init, stale skill text, and silent data loss
 type: plan
-status: executing
+status: completed
 branch: fix/wiki-plugin-bugfix-batch
 related:
   - docs/designs/2026-04-15-wiki-plugin-bugfix-batch.design.md
@@ -159,22 +159,22 @@ Update setup and ingest skills to call the now-existing `reindex.py`.
 
 **Depends on:** Task 5 (reindex.py must exist before SKILL.md references it)
 
-- [ ] In `skills/setup/SKILL.md` step 3, replace the `reindex.py` description with the correct invocation: `python3 <plugin-scripts-dir>/reindex.py --root <project-root>`. Update the description to reflect what the script actually does (creates `_index.md` files in directories with managed documents; updates AGENTS.md areas table).
-- [ ] In `skills/ingest/SKILL.md` Post-Ingest section, replace the `reindex.py` call with: `python3 <plugin-scripts-dir>/reindex.py --root <project-root>`.
-- [ ] Verify: `grep -n "reindex.py" plugins/wiki/skills/setup/SKILL.md plugins/wiki/skills/ingest/SKILL.md` → both reference it correctly
-- [ ] Verify: `python -m pytest plugins/wiki/tests/ -v` — full suite still passes (no regressions)
-- [ ] Commit: `fix: update SKILL.md refs to use reindex.py now that script exists (#266)`
+- [x] Update setup/SKILL.md step 3 description to reflect scoped behavior. <!-- sha:292f820 -->
+- [x] Update ingest/SKILL.md post-ingest confirmation message. <!-- sha:292f820 -->
+- [x] Verify: both SKILL.md files reference reindex.py correctly. <!-- sha:292f820 -->
+- [x] Verify: 244 tests pass (no regressions). <!-- sha:292f820 -->
+- [x] Commit: `fix: update SKILL.md refs to use reindex.py now that script exists (#266)` <!-- sha:292f820 -->
 
 ---
 
 ## Validation
 
-- [ ] `python -m pytest plugins/wiki/tests/ -v` — all tests pass, including new ones for `extract_areas`, `update_agents_md(areas=None)`, and `reindex.py`
-- [ ] `python3 plugins/wiki/scripts/update_preferences.py --root . directness=blunt` (run in this repo) — `AGENTS.md` Preferences section updated; Areas table unchanged (verify with `git diff`)
-- [ ] `python3 plugins/wiki/scripts/reindex.py --root .` (run in this repo) — `_index.md` files created in `docs/context/`, `docs/plans/`, etc.; AGENTS.md updated; `wiki/_index.md` not created or touched
-- [ ] `grep "wos:setup" plugins/wiki/skills/ingest/SKILL.md` → no output
-- [ ] `grep "git stash" plugins/wiki/skills/setup/SKILL.md` → line present
-- [ ] `grep "2.8" plugins/wiki/skills/setup/SKILL.md` → wiki init step present
+- [x] `python -m pytest plugins/wiki/tests/ -v` — 244 passed (pre-existing lint/syspath failures about missing `check` plugin unchanged). <!-- sha:292f820 -->
+- [x] `python3 plugins/wiki/scripts/update_preferences.py --root . directness=blunt` — Preferences updated; Areas table unchanged. <!-- sha:1ee957d -->
+- [x] `python3 plugins/wiki/scripts/reindex.py --root .` — indexes only 4 registered WOS areas; plugin/test dirs untouched. <!-- sha:e86f9f2 -->
+- [x] `grep "wos:setup" plugins/wiki/skills/ingest/SKILL.md` → no output. <!-- sha:819d8eb -->
+- [x] `grep "git stash" plugins/wiki/skills/setup/SKILL.md` → line present. <!-- sha:819d8eb -->
+- [x] `grep "2.8" plugins/wiki/skills/setup/SKILL.md` → wiki init step present. <!-- sha:819d8eb -->
 
 ## Notes
 <!-- Decisions made during execution, scope adjustments, lessons learned -->
