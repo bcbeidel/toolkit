@@ -114,9 +114,26 @@ Based on the response, suggest a concrete WOS skill sequence:
 
 If the user declines or skips, move on without suggesting.
 
+### 2.8. Initialize wiki infrastructure
+
+Create the wiki directory and required seed files if they do not exist:
+
+1. Create the `wiki/` directory if missing.
+2. Create `wiki/SCHEMA.md` from `references/wiki-schema-template.md` if missing.
+3. Create `wiki/_index.md` with an empty page inventory if missing:
+
+```markdown
+# Wiki Index
+
+| Page | Description | File |
+|------|-------------|------|
+```
+
+Idempotent — skip any file that already exists. Never overwrite existing content.
+
 ### 3. Reindex
 
-Run: `python <plugin-scripts-dir>/reindex.py --root .`
+Run: `python3 <plugin-scripts-dir>/reindex.py --root .`
 
 This creates `_index.md` files in directories with managed documents and
 updates the AGENTS.md areas table if AGENTS.md exists.
@@ -150,7 +167,7 @@ Run the full capture workflow in `references/capture-workflow.md`:
 1. Ask the freeform communication style question
 2. Map response to dimensions
 3. Confirm with user
-4. Write to AGENTS.md via `python <plugin-scripts-dir>/update_preferences.py --root .`
+4. Write to AGENTS.md via `python3 <plugin-scripts-dir>/update_preferences.py --root .`
 
 **If preferences already exist:**
 
@@ -191,7 +208,7 @@ If everything was already set up, confirm: "WOS is up to date. No changes needed
 
 ## Anti-Pattern Guards
 
-1. **Running setup with uncommitted changes in the repo** — setup writes AGENTS.md and CLAUDE.md. If the working tree has uncommitted changes, the pre-setup state is ambiguous and harder to recover from if something goes wrong. Check for a clean working tree before proceeding; ask the user if changes are present.
+1. **Running setup with uncommitted changes in the repo** — setup writes AGENTS.md and CLAUDE.md. Check for tracked modified files (`git diff --name-only HEAD`) before proceeding. Untracked-only changes are advisory — note them but do not block. If tracked modifications exist, warn the user: setup writes to AGENTS.md and CLAUDE.md, making the diff ambiguous and recovery harder if setup fails partway. Suggest `git stash` as remediation and wait for the user to decide whether to stash, continue anyway, or abort.
 2. **Silent layout selection** — if no layout hint exists, always present the four layout options and wait for explicit selection. Applying a default layout without asking embeds a structural decision that is costly to reverse once docs have been created.
 3. **Overwriting content outside WOS markers** — only the section between `<!-- wos:begin -->` and `<!-- wos:end -->` markers is WOS-managed. Content written by the user outside these markers must not be touched. A full AGENTS.md rewrite is always wrong.
 4. **Skipping the current-state check** — setup is idempotent, but it must check what already exists before writing. Presenting layout options when a layout hint already exists confuses the user; showing the current layout and asking if it should change is the correct flow.
