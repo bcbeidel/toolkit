@@ -38,8 +38,8 @@ def main() -> None:
     )
     parser.add_argument(
         "--subdir",
-        default="docs/plans",
-        help="Subdirectory to scan (default: docs/plans)",
+        default=".plans",
+        help="Subdirectory to scan (default: .plans)",
     )
     args = parser.parse_args()
 
