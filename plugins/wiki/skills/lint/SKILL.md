@@ -135,6 +135,16 @@ After presenting audit results, offer to help resolve actionable warnings:
 
   Process URLs one at a time. Do not batch-ask about all URLs at once.
 
+## Post-Lint
+
+After reporting results, append an entry to `wiki/log.md` (create if missing).
+Append-only — never modify existing entries.
+
+```
+## [YYYY-MM-DD] lint | <summary>
+<N> issues found: <brief description>. (or: No issues.)
+```
+
 ## Key Rules
 
 - Audit is read-only (except `--fix` which only regenerates `_index.md` files)
