@@ -154,7 +154,15 @@ Show the complete rule file to the user. Iterate on feedback. Do not write until
 
 - Create the parent directory if it doesn't exist
 - Write the rule file at the correct path for the detected format
-- Write a co-located test file at `<same-dir>/<slug>.tests.md` with at minimum 3 PASS cases and 3 FAIL cases, each with a rationale note. Reference the [Rule Testing Guide](references/rule-testing-guide.md) for format. Test cases must use different code than the rule's own examples.
+- Write the test file at the format-specific location:
+
+  | Format | Test file location |
+  |--------|--------------------|
+  | WOS | `docs/rules/<slug>.tests.md` |
+  | Cursor | `.cursor/rules/<slug>.tests.md` |
+  | Claude Code | `docs/rules/<slug>.tests.md` (create directory if needed) |
+
+  Include at minimum 3 PASS cases and 3 FAIL cases, each with a rationale note. Reference the [Rule Testing Guide](references/rule-testing-guide.md) for format. Test cases must use different code than the rule's own examples.
 - Report both file paths
 
 ## Example
