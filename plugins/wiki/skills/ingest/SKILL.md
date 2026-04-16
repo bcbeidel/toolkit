@@ -39,6 +39,30 @@ If `wiki/_index.md` or `wiki/SCHEMA.md` is missing, stop and report the missing 
 
 With the source content and wiki context in hand:
 
+### Step 0: Discuss Key Takeaways
+
+Before proposing the page list, present your reading of the source to the user
+and invite correction. This is the default behaviour — skip only when
+`--no-discuss` is passed.
+
+**Single source:**
+
+```
+Here are the key takeaways from [Source Title]:
+- ...
+- ...
+
+Does this capture the important ideas? Anything missing or worth
+emphasizing differently before I propose the page list?
+```
+
+**Multiple sources (bulk mode):** Present takeaways for all sources in a single
+consolidated discussion — one list per source, one round of feedback for all.
+Do not run a separate round-trip per source.
+
+**Opt-out:** If the user passes `--no-discuss`, skip this step entirely and
+proceed directly to Step 1.
+
 ### Step 1: Identify Affected Pages
 
 Identify **5–15 wiki pages** that this source meaningfully informs — both:
@@ -151,7 +175,8 @@ The high-rigor path is never required. It is appropriate when the user wants to 
 
 ## Anti-Pattern Guards
 
-1. **Overwriting existing prose** — every `git diff` after ingest should show only additions. Rewriting existing content destroys the provenance trail and may silently lose validated information. If existing content is wrong, flag a contradiction marker instead.
+1. **Separate discussion round per source in bulk mode** — when ingesting multiple sources, running one discussion round per source creates unnecessary back-and-forth. Consolidate all sources into a single takeaways discussion before moving to the page list.
+2. **Overwriting existing prose** — every `git diff` after ingest should show only additions. Rewriting existing content destroys the provenance trail and may silently lose validated information. If existing content is wrong, flag a contradiction marker instead.
 2. **Skipping Pre-Ingest reads** — proceeding without reading `wiki/_index.md` and `wiki/SCHEMA.md` causes type/confidence misassignment and duplicate page creation. These are required reads, not optional context.
 3. **Silent contradiction** — when source content conflicts with an existing page, the anti-pattern is choosing one version silently. The correct action is the contradiction marker. Unresolved conflicts belong to the user, not the ingest operation.
 4. **Padding to hit the 5-page minimum** — if a narrow source genuinely affects fewer than 5 pages, proceed with what applies. Forcing connections to reach a target count produces low-quality updates that degrade the wiki.
