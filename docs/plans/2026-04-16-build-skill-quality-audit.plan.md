@@ -56,7 +56,7 @@ Ten sequential tasks, one per skill, each following the same protocol: run check
 
 ### Task 1: Audit and fix `build-hook`
 
-- [ ] Run `/build:check-skill plugins/build/skills/build-hook/SKILL.md`, triage findings, fix clear-cut issues, file GitHub issues for judgment calls, commit
+- [x] Run `/build:check-skill plugins/build/skills/build-hook/SKILL.md`, triage findings, fix clear-cut issues, file GitHub issues for judgment calls, commit <!-- sha:b874061 -->
 
 **Verify:**
 ```bash
