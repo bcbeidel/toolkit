@@ -151,4 +151,4 @@ Wait for user confirmation before invoking the skill.
 
 **Receives:** Plan file path (`.plan.md`) with `status: approved`
 **Produces:** Implemented code and files per plan; plan tasks marked `[x]` with commit SHAs
-**Chainable to:** check-work
+**Chainable to:** verify-work

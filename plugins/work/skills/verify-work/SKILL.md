@@ -1,5 +1,5 @@
 ---
-name: check-work
+name: verify-work
 description: >
   Verifies completed work against validation criteria. Works in two
   modes: with a plan (runs the plan's Validation section) or ad-hoc
