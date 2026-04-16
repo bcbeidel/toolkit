@@ -1,6 +1,6 @@
 ---
 name: pareto
-description: Apply the 80/20 rule to find the highest-leverage inputs
+description: Apply the 80/20 rule to find the highest-leverage inputs — use when effort and results feel misaligned or there are too many things competing for attention
 argument-hint: "[area where effort and results feel misaligned]"
 user-invocable: true
 ---
@@ -73,4 +73,20 @@ Reduce monthly support tickets from 500 to under 200.
 ### Recommended Focus Shift
 Two changes (self-service password reset + billing page redesign) would eliminate ~60% of tickets. Everything else combined is less impactful than either of these alone. Start with password reset — it's a weekend project with the highest single-category impact.
 </example>
+
+## Key Instructions
+
+- Contribution estimates don't need to be precise — ballpark percentages identify the vital few; perfect data is usually unavailable and not required.
+- Does not prescribe what to cut; produces a leverage map the user applies.
+
+## Anti-Pattern Guards
+
+1. **Treating 80/20 as a precise law** — it's a heuristic, not a formula; the vital few might be 15% producing 70% or 30% producing 90%; use it directionally, not literally.
+2. **Optimizing the wrong outcome** — before ranking inputs, confirm the outcome metric is the right one to optimize; the wrong metric produces a Pareto analysis that points at the wrong levers.
+
+## Handoff
+
+**Receives:** An area where the user wants to find the highest-leverage inputs or activities
+**Produces:** An input-to-outcome ranking identifying the vital few and a recommended focus shift
+**Chainable to:** `one-thing` (to narrow from the vital few to a single action), `eisenhower-matrix` (to prioritize vital-few items against urgency)
 
