@@ -118,13 +118,8 @@ Summary:
 
 - **Won't present integration options until tests pass** — the hard gate in Step 1 enforces this; failing tests must be fixed before continuing
 - **Won't discard without typed "discard" confirmation** — Option 4 is irreversible; no shortcut, no yes/no prompt
-- **Tests must pass before presenting options.** The hard gate in Step 1
-  enforces this. Shipping broken work is worse than delaying integration.
 - **Plan is optional.** The skill works for both plan-backed branches and
   ad-hoc feature branches. Skip plan-related steps when no plan exists.
-- **Discard is irreversible — confirm explicitly.** Require the user to
-  type "discard" before deleting any branch or work. Show exactly what
-  will be lost.
 - **Worktree cleanup follows the option.** Only clean up worktrees on
   merge (Option 1) or discard (Option 4). Keep and PR preserve the
   worktree for continued access.

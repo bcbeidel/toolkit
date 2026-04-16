@@ -8,6 +8,18 @@ Pre-restructure releases used a single version. Post-restructure, each plugin
 
 ## [Unreleased]
 
+## [work-0.1.4] - 2026-04-16
+
+### Fixed
+
+- **`work:verify-work` stale `check-work` references in H1 and announce string.**
+  Renamed `# Check Work` → `# Verify Work` and updated the announce string
+  to say `verify-work skill`. Leftover from the prior `name:` rename.
+
+- **`work:finish-work` duplicate Key Instructions bullets removed.** Two bullets
+  restated the terse "Won't…" rules directly above them; removed the verbose
+  duplicates.
+
 ## [wiki-0.1.6] - 2026-04-16
 
 ### Fixed
