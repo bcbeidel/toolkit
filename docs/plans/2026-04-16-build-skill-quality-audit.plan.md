@@ -80,7 +80,7 @@ gh issue list --state open --search "build-rule" --limit 5
 
 ### Task 3: Audit and fix `build-skill`
 
-- [ ] Run `/build:check-skill plugins/build/skills/build-skill/SKILL.md`, triage findings, fix clear-cut issues, file GitHub issues for judgment calls, commit
+- [x] Run `/build:check-skill plugins/build/skills/build-skill/SKILL.md`, triage findings, fix clear-cut issues, file GitHub issues for judgment calls, commit <!-- sha:3a6492b -->
 
 **Verify:**
 ```bash
