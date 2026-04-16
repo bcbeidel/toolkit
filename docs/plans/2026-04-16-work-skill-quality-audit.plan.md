@@ -99,7 +99,7 @@ gh issue list --state open --search "start-work" --limit 5
 
 ### Task 5: Audit and fix `verify-work`
 
-- [x] Run `/build:check-skill plugins/work/skills/verify-work/SKILL.md`, triage findings, fix clear-cut issues, file GitHub issues for judgment calls, commit <!-- sha:pending -->
+- [x] Run `/build:check-skill plugins/work/skills/verify-work/SKILL.md`, triage findings, fix clear-cut issues, file GitHub issues for judgment calls, commit <!-- sha:c425f5d -->
 
 **Verify:**
 ```bash
