@@ -17,6 +17,14 @@ Pre-restructure releases used a single version. Post-restructure, each plugin
   installs). Skills renamed to plugin-prefixed convention
   (`/build:build-skill`, `/check:check-skill`, `/wiki:research`, etc.).
 
+- **`work` skills renamed and pruned.** `finish`→`finish-work`, `plan`→`plan-work`,
+  `scope`→`scope-work`, `start`→`start-work`, `verify`→`verify-work`. `audit` and
+  `retrospective` removed.
+
+### Removed
+
+- **`WORKFLOW.md`** — superseded by individual SKILL.md handoff contracts and README.
+
 ## [0.41.0] - 2026-04-13
 
 ### Added
