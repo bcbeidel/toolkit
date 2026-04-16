@@ -1,6 +1,6 @@
 ---
 name: hanlons-razor
-description: Interpret behavior charitably — attribute to mistakes before malice
+description: Interpret behavior charitably — attribute to mistakes before malice; use when behavior seems hostile or frustrating and an adversarial interpretation is forming
 argument-hint: "[situation where someone's behavior seems problematic]"
 user-invocable: true
 ---
@@ -69,4 +69,20 @@ PR size + competing priorities. A 400-line PR requires 30-60 minutes of focused 
 ### Appropriate Response
 Break the PR into 2-3 smaller PRs if possible. Message the reviewer offering to walk through the changes in 15 minutes to reduce their review burden. If still no response after the offer, reassign to a different reviewer without resentment.
 </example>
+
+## Key Instructions
+
+- Charitable interpretation does not mean ignoring evidence of genuine malice; it means exhausting more likely explanations first.
+- Does not resolve the situation; produces a clearer interpretation framework and a recommended response approach.
+
+## Anti-Pattern Guards
+
+1. **Overriding clear evidence** — Hanlon's Razor applies before evidence, not against it; if malice is demonstrated, the razor doesn't apply.
+2. **Using charity to avoid addressing patterns** — a repeated pattern of the same "mistake" may indicate intent; acknowledge when the charitable explanation stops being the most likely one.
+
+## Handoff
+
+**Receives:** A situation where someone's behavior seems problematic, hostile, or deliberately harmful
+**Produces:** A structured alternatives analysis with distinguishing evidence and a recommended response
+**Chainable to:** `consider` (to apply additional models), `map-vs-territory` (to check what assumptions are driving the uncharitable interpretation)
 
