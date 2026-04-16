@@ -50,7 +50,7 @@ Four sequential tasks, one per skill, each following the same protocol: run chec
 
 ### Task 1: Audit and fix `ingest`
 
-- [ ] Run `/build:check-skill plugins/wiki/skills/ingest/SKILL.md`, triage findings, fix clear-cut issues, file GitHub issues for judgment calls, commit
+- [x] Run `/build:check-skill plugins/wiki/skills/ingest/SKILL.md`, triage findings, fix clear-cut issues, file GitHub issues for judgment calls, commit <!-- sha:408f45a -->
 
 **Verify:**
 ```bash
@@ -62,7 +62,7 @@ gh issue list --state open --search "ingest" --limit 5  # judgment-call issues f
 
 ### Task 2: Audit and fix `lint`
 
-- [ ] Run `/build:check-skill plugins/wiki/skills/lint/SKILL.md`, triage findings, fix clear-cut issues, file GitHub issues for judgment calls, commit
+- [x] Run `/build:check-skill plugins/wiki/skills/lint/SKILL.md`, triage findings, fix clear-cut issues, file GitHub issues for judgment calls, commit <!-- sha:e9fde3b -->
 
 **Verify:**
 ```bash
@@ -74,7 +74,7 @@ gh issue list --state open --search "wiki lint" --limit 5
 
 ### Task 3: Audit and fix `research`
 
-- [ ] Run `/build:check-skill plugins/wiki/skills/research/SKILL.md`, triage findings, fix clear-cut issues, file GitHub issues for judgment calls, commit
+- [x] Run `/build:check-skill plugins/wiki/skills/research/SKILL.md`, triage findings, fix clear-cut issues, file GitHub issues for judgment calls, commit <!-- sha:02c4dd5 -->
 
 **Verify:**
 ```bash
