@@ -108,7 +108,7 @@ python3 <plugin-scripts-dir>/reindex.py --root <project-root>
 
 Report results to the user:
 - If lint produces new issues, list them with severity
-- Confirm that `wiki/_index.md` was regenerated
+- Confirm that area `_index.md` files were refreshed
 
 Do not block on lint issues — report and continue.
 

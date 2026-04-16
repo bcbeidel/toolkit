@@ -135,8 +135,10 @@ Idempotent — skip any file that already exists. Never overwrite existing conte
 
 Run: `python3 <plugin-scripts-dir>/reindex.py --root .`
 
-This creates `_index.md` files in directories with managed documents and
-updates the AGENTS.md areas table if AGENTS.md exists.
+Creates `_index.md` files in each directory registered in the AGENTS.md
+areas table. On first run (no areas registered yet), scans the `docs/`
+subtree as a fallback. Also refreshes the AGENTS.md areas table,
+preserving any human-written area descriptions.
 
 ### 4. Update AGENTS.md
 
