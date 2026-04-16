@@ -5,7 +5,7 @@ description: Canonical reference for plan document structure, lifecycle states, 
 
 # Plan Document Format
 
-Plans are Markdown files stored at `docs/plans/YYYY-MM-DD-<feature-name>.plan.md`.
+Plans are Markdown files stored at `.plans/YYYY-MM-DD-<feature-name>.plan.md`.
 
 ## Frontmatter Schema
 
@@ -16,7 +16,7 @@ description: One-sentence summary of what this plan achieves
 type: plan
 status: draft
 related:
-  - docs/designs/YYYY-MM-DD-<topic>.design.md
+  - .designs/YYYY-MM-DD-<topic>.design.md
 ---
 ```
 

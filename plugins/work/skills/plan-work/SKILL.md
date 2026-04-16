@@ -28,7 +28,7 @@ The output is a plan document — not code, not a design.
 
 - Read the design doc (if invoked from scope-work, check the `related` field).
 - Explore the codebase: identify files to create, modify, or delete.
-- Check `docs/plans/` for overlapping or related plans.
+- Check `.plans/` for overlapping or related plans.
 - If no design doc exists, gather requirements from the user before proceeding.
 
 ### 2. Scope Check
@@ -44,7 +44,7 @@ testable software on its own.
 
 Save location depends on the project's layout hint (read from AGENTS.md
 `<!-- wos:layout: ... -->` comment):
-- **separated**: `docs/plans/YYYY-MM-DD-<feature-name>.plan.md`
+- **separated**: `.plans/YYYY-MM-DD-<feature-name>.plan.md`
 - **co-located**: same directory as the related design doc
 - **flat**: `docs/YYYY-MM-DD-<feature-name>.plan.md`
 - **none** or missing: ask the user where to save
@@ -176,7 +176,7 @@ Plan documents use WOS frontmatter:
     type: plan
     status: draft
     related:
-      - docs/designs/YYYY-MM-DD-<name>.design.md
+      - .designs/YYYY-MM-DD-<name>.design.md
     ---
 
 Save location follows the project's layout hint (see step 3 above).
@@ -185,5 +185,5 @@ The `related` field links to design docs, context files, or other plans.
 ## Handoff
 
 **Receives:** Design doc path or feature description; optional issue number and roadmap context
-**Produces:** Implementation plan document saved to `docs/plans/` with tasks, file changes, and validation criteria
+**Produces:** Implementation plan document saved to `.plans/` with tasks, file changes, and validation criteria
 **Chainable to:** start-work

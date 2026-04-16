@@ -15,7 +15,7 @@ focused scope, 3 tasks with TDD verification.
     type: plan
     status: draft
     related:
-      - docs/designs/2026-03-11-status-field.design.md
+      - .designs/2026-03-11-status-field.design.md
     ---
 
     # Status Field Implementation
