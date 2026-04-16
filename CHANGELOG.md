@@ -26,6 +26,29 @@ Pre-restructure releases used a single version. Post-restructure, each plugin
   numbers (criterion 14 judgment call)
 - **#300** — `build:refine-prompt`: `Chainable to: (context-dependent)` is
   too vague (criterion 3 judgment call)
+## [work-0.1.4] - 2026-04-16
+
+### Fixed
+
+- **`work:verify-work` stale `check-work` references in H1 and announce string.**
+  Renamed `# Check Work` → `# Verify Work` and updated the announce string
+  to say `verify-work skill`. Leftover from the prior `name:` rename.
+
+- **`work:finish-work` duplicate Key Instructions bullets removed.** Two bullets
+  restated the terse "Won't…" rules directly above them; removed the verbose
+  duplicates.
+
+## [wiki-0.1.6] - 2026-04-16
+
+### Fixed
+
+- **`wiki:lint` section name `## Key Rules` → `## Key Instructions`.** Renamed
+  the non-standard section header to match the required convention checked by
+  `build:check-skill`.
+
+- **`wiki:research` duplicate Key sections merged.** Merged a stale
+  `## Key Rules` block into the existing `## Key Instructions` section,
+  eliminating duplicate content and bringing the skill into conformance.
 
 ## [wiki-0.1.5, consider-0.1.1, work-0.1.3, build-0.1.2] - 2026-04-16
 

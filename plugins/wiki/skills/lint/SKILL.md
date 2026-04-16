@@ -155,7 +155,7 @@ Append-only — never modify existing entries.
 <N> issues found: <brief description>. (or: No issues.)
 ```
 
-## Key Rules
+## Key Instructions
 
 - Audit is read-only (except `--fix` which only regenerates `_index.md` files)
 - Use `/wiki:setup` to initialize missing project structure

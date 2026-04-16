@@ -336,9 +336,6 @@ loop itself remains single-threaded (HIGH).
 - **Won't proceed without brief approval** — the Step 3 user approval gate is mandatory; no research stages execute until the user confirms the framing brief
 - **Won't finalize without claim verification** — statistics, attributions, and superlatives must be traced to source before `<!-- DRAFT -->` is removed
 - **Won't skip SIFT** — every source requires tier classification; un-tiered sources do not enter the document
-
-## Key Rules
-
 - **SIFT every source** — no source enters the document without tier classification. See `evaluate-sources-sift.md`.
 - **Counter-evidence is required** for deep-dive, options, and technical modes. See `research-modes.md`.
 - **Log every search** during Phase 2 and include the protocol in the final document.
