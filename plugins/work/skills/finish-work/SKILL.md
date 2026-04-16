@@ -114,15 +114,6 @@ Summary:
   confirmation, update plan status to `abandoned` if plan exists, delete
   branch, clean up worktree.
 
-### 6. Optional Retrospective
-
-After integration completes, offer:
-
-> "Work is integrated. Would you like to run a retrospective? Invoke `/wos:retrospective` to review this session."
-
-Do not embed the retrospective workflow here — it lives in `/wos:retrospective`.
-If the user declines, close out without further action.
-
 ## Key Instructions
 
 - **Won't present integration options until tests pass** — the hard gate in Step 1 enforces this; failing tests must be fixed before continuing
