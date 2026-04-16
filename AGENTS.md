@@ -3,10 +3,10 @@
 <!-- wos:begin -->
 ## Context Navigation
 
-- `docs/context/` -- Project context documents covering domain knowledge, patterns, and conventions.
-- `docs/plans/` -- Implementation plans for toolkit features.
-- `docs/prompts/` -- Saved and refined prompts for skill development and maintenance tasks.
-- `docs/research/` -- Research investigations using the SIFT framework.
+- `.context/` -- Project context documents covering domain knowledge, patterns, and conventions.
+- `.plans/` -- Implementation plans for toolkit features.
+- `.prompts/` -- Saved and refined prompts for skill development and maintenance tasks.
+- `.research/` -- Research investigations using the SIFT framework.
 
 Each `.md` file starts with YAML metadata (between `---` lines).
 Read the `description` field before reading the full file.
@@ -28,10 +28,10 @@ Shared scripts: `plugins/wiki/scripts/`.
 ### Areas
 | Area | Path |
 |------|------|
-| Project context documents covering domain knowledge, patterns, and conventions. | docs/context |
-| Implementation plans for toolkit features. | docs/plans |
-| Saved and refined prompts for skill development and maintenance tasks. | docs/prompts |
-| Research investigations using the SIFT framework. | docs/research |
+| Project context documents covering domain knowledge, patterns, and conventions. | .context |
+| Implementation plans for toolkit features. | .plans |
+| Saved and refined prompts for skill development and maintenance tasks. | .prompts |
+| Research investigations using the SIFT framework. | .research |
 
 ### File Metadata Format
 ```yaml
