@@ -102,18 +102,18 @@ On failure, consult [recovery patterns](references/recovery-patterns.md).
 ### 6. Validate
 
 When all tasks are checked, present to user: "All tasks complete. Ready
-to invoke `/wos:check-work` to verify the plan succeeded — proceed?"
+to invoke `/work:verify-work` to verify the plan succeeded — proceed?"
 
 Wait for user confirmation before invoking the skill.
 
-- **User confirms** — invoke `/wos:check-work`, which runs validation
+- **User confirms** — invoke `/work:verify-work`, which runs validation
   and handles the `status: completed` transition on success.
 - **User declines** — update frontmatter to `status: completed` directly.
   The user accepts responsibility for skipping plan-level validation.
 
 ### 7. Finish
 
-Present to user: "Validation passed. Ready to invoke `/wos:finish-work`
+Present to user: "Validation passed. Ready to invoke `/work:finish-work`
 to integrate — proceed?"
 
 Wait for user confirmation before invoking the skill.
