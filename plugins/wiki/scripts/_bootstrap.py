@@ -26,3 +26,6 @@ plugin_root: Path = (
 )
 if str(plugin_root) not in sys.path:
     sys.path.insert(0, str(plugin_root))
+_src = plugin_root / "src"
+if _src.is_dir() and str(_src) not in sys.path:
+    sys.path.insert(0, str(_src))
