@@ -39,8 +39,8 @@ If no layout hint exists in AGENTS.md, present the four layout patterns:
 
 > "How would you like to organize your project documents?"
 >
-> 1. **Separated** — Group by artifact type: `docs/context/`, `docs/plans/`,
->    `docs/designs/`, `docs/research/`. Good for teams wanting clear separation.
+> 1. **Separated** — Group by artifact type: `.context/`, `.plans/`,
+>    `.designs/`, `.research/`, `.prompts/`. Dot-prefixed at repo root — easy to gitignore. Good for teams wanting clear separation.
 > 2. **Co-located** — All artifacts for a feature live together:
 >    `docs/{feature}/`. Good for feature-driven work.
 > 3. **Flat** — Everything in `docs/`. Rely on file suffixes (`.plan.md`,
@@ -50,7 +50,7 @@ If no layout hint exists in AGENTS.md, present the four layout patterns:
 Wait for user selection. Record the choice (used in step 4 for the layout hint).
 
 Create initial directory structure based on selection:
-- **separated**: Create `docs/context/`, `docs/plans/`, `docs/designs/`, `docs/research/`
+- **separated**: Create `.context/`, `.plans/`, `.designs/`, `.research/`, `.prompts/` at repo root
 - **co-located**: Create `docs/` only (subdirs created per-feature later)
 - **flat**: Create `docs/`
 - **none**: Skip directory creation
