@@ -2,7 +2,7 @@
 name: Consider Plugin Skill Quality Audit
 description: Audit all 17 skills in plugins/consider with check-skill, fix clear-cut issues, file GitHub issues for judgment calls.
 type: plan
-status: executing
+status: completed
 branch: chore/consider-skill-quality-audit
 related:
   - docs/designs/2026-04-16-build-skill-quality-audit.design.md
