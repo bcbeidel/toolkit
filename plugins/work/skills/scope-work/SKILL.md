@@ -71,7 +71,7 @@ templates and approach comparison format.
   structured spec for multi-system changes.
 - Save location depends on the project's layout hint (read from AGENTS.md
   `<!-- wos:layout: ... -->` comment):
-  - **separated**: `docs/designs/YYYY-MM-DD-<name>.design.md`
+  - **separated**: `.designs/YYYY-MM-DD-<name>.design.md`
   - **co-located**: same directory as related documents
   - **flat**: `docs/YYYY-MM-DD-<name>.design.md`
   - **none** or missing: ask the user where to save
@@ -151,7 +151,7 @@ Design docs use WOS frontmatter:
     type: design
     status: draft
     related:
-      - docs/context/relevant-file.md
+      - .context/relevant-file.md
     ---
 
 Save location follows the project's layout hint (see step 4 above).
@@ -161,5 +161,5 @@ design docs.
 ## Handoff
 
 **Receives:** User-described topic or problem to explore; optional seed research or constraints
-**Produces:** Design document saved to `docs/designs/` with structured requirements and scope boundaries
+**Produces:** Design document saved to `.designs/` with structured requirements and scope boundaries
 **Chainable to:** plan-work, research

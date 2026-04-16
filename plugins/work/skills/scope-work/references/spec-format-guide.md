@@ -16,7 +16,7 @@ works internally. Architecture decisions belong in the plan.
     type: design
     status: draft
     related:
-      - docs/context/relevant-file.md
+      - .context/relevant-file.md
     ---
 
 Use unquoted values. The WOS frontmatter parser does not strip quotes.
