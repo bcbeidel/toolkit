@@ -3,22 +3,35 @@
 <!-- wos:begin -->
 ## Context Navigation
 
-Each directory has an `_index.md` listing all files with descriptions.
-- `docs/context/_index.md` -- Project context documents covering domain knowledge, patterns, and conventions.
-- `docs/plans/_index.md` -- Implementation plans for WOS features.
-- `docs/prompts/_index.md` -- Saved and refined prompts for WOS skill development and maintenance tasks.
-- `docs/research/_index.md` -- Research investigations using the SIFT framework.
+- `docs/context/` -- Project context documents covering domain knowledge, patterns, and conventions.
+- `docs/plans/` -- Implementation plans for toolkit features.
+- `docs/prompts/` -- Saved and refined prompts for skill development and maintenance tasks.
+- `docs/research/` -- Research investigations using the SIFT framework.
 
 Each `.md` file starts with YAML metadata (between `---` lines).
 Read the `description` field before reading the full file.
 Documents put key insights first and last; supplemental detail in the middle.
 
+### Plugin Structure
+
+| Plugin | Path | Skills |
+|--------|------|--------|
+| `build` | `plugins/build/` | `build-skill`, `build-rule`, `build-hook`, `build-subagent`, `refine-prompt` |
+| `check` | `plugins/check/` | `check-skill`, `check-rule`, `check-hook`, `check-subagent`, `check-skill-chain` |
+| `wiki` | `plugins/wiki/` | `setup`, `research`, `ingest`, `lint` |
+| `work` | `plugins/work/` | `scope-work`, `plan-work`, `start-work`, `verify-work`, `finish-work` |
+| `consider` | `plugins/consider/` | 16 mental models + meta |
+
+Each plugin's skills live at `plugins/<plugin>/skills/<name>/SKILL.md`.
+Python packages: `plugins/wiki/wiki/` and `plugins/check/check/` (editable installs).
+Shared scripts: `plugins/wiki/scripts/`.
+
 ### Areas
 | Area | Path |
 |------|------|
 | Project context documents covering domain knowledge, patterns, and conventions. | docs/context |
-| Implementation plans for WOS features. | docs/plans |
-| Saved and refined prompts for WOS skill development and maintenance tasks. | docs/prompts |
+| Implementation plans for toolkit features. | docs/plans |
+| Saved and refined prompts for skill development and maintenance tasks. | docs/prompts |
 | Research investigations using the SIFT framework. | docs/research |
 
 ### File Metadata Format

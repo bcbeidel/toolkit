@@ -1,0 +1,8 @@
+{
+  "name": "build",
+  "version": "0.1.0",
+  "description": "Skills for creating and refining Claude Code skills, rules, hooks, and subagents.",
+  "author": {
+    "name": "Brandon Beidel"
+  }
+}

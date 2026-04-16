@@ -9,16 +9,17 @@ against what the context corpus says, then make targeted additions for any
 meaningful gaps. Do not rewrite or restructure existing content — insert only.
 
 <context>
-You are editing a skill file in the wos repo — a Claude Code plugin at the
-working directory root. The skill generates hook scripts and settings.json
-entries. Its output is what an LLM will produce when a user asks to build a
-hook. Every gap in the skill is a gap in the generated output.
+You are editing a skill file in the toolkit repo — a Claude Code plugin
+marketplace at the working directory root. The skill generates hook scripts
+and settings.json entries. Its output is what an LLM will produce when a
+user asks to build a hook. Every gap in the skill is a gap in the generated
+output.
 
 Read all files below. Do not skip any. Read them fully, not just the
 description lines.
 
 **The skill being edited:**
-- `skills/build-hook/SKILL.md`
+- `plugins/build/skills/build-hook/SKILL.md`
 
 **Hook domain — how hooks work in Claude Code:**
 - `docs/context/hooks-deterministic-enforcement-vs-advisory.context.md`
@@ -96,7 +97,7 @@ Focus areas likely to have remaining gaps:
 2. Make all edits.
 3. Run:
 ```
-python scripts/lint.py skills/build-hook/SKILL.md --root . --no-urls
+python plugins/wiki/scripts/lint.py plugins/build/skills/build-hook/SKILL.md --root . --no-urls
 ```
 4. Report lint output. Acceptable: 0 fail. Pre-existing warn on `build-skill`
    density can be ignored. If lint shows fail on `build-hook`, fix it.

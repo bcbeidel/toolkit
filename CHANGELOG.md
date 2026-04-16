@@ -1,11 +1,29 @@
 # Changelog
 
-All notable changes to wos will be documented in this file.
+All notable changes to toolkit will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+Pre-restructure releases used a single version. Post-restructure, each plugin
+(`build`, `check`, `wiki`, `work`, `consider`) versions independently from `0.1.0`.
 
 ## [Unreleased]
+
+### Changed
+
+- **Restructured `wos` monorepo into `toolkit` plugin marketplace.** Five
+  self-contained, independently installable plugins under `plugins/`: `build`,
+  `check`, `wiki`, `work`, `consider`. Each plugin owns its Python code,
+  scripts, skills, and tests. Python packages: `wiki` and `check` (editable
+  installs). Skills renamed to plugin-prefixed convention
+  (`/build:build-skill`, `/check:check-skill`, `/wiki:research`, etc.).
+
+- **`work` skills renamed and pruned.** `finish`→`finish-work`, `plan`→`plan-work`,
+  `scope`→`scope-work`, `start`→`start-work`, `verify`→`verify-work`. `audit` and
+  `retrospective` removed.
+
+### Removed
+
+- **`WORKFLOW.md`** — superseded by individual SKILL.md handoff contracts and README.
 
 ## [0.41.0] - 2026-04-13
 

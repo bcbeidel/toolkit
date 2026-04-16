@@ -10,17 +10,17 @@ make targeted additions for any meaningful gaps. Do not rewrite or restructure
 existing content — insert only.
 
 <context>
-You are editing a skill file in the wos repo — a Claude Code plugin at the
-working directory root. The skill audits existing hook configurations and
-scripts. Its output is a findings report that surfaces misconfigurations,
-gaps, and quality problems. Every gap in the skill is an audit finding that
-gets missed.
+You are editing a skill file in the toolkit repo — a Claude Code plugin
+marketplace at the working directory root. The skill audits existing hook
+configurations and scripts. Its output is a findings report that surfaces
+misconfigurations, gaps, and quality problems. Every gap in the skill is an
+audit finding that gets missed.
 
 Read all files below. Do not skip any. Read them fully, not just the
 description lines.
 
 **The skill being edited:**
-- `skills/check-hook/SKILL.md`
+- `plugins/check/skills/check-hook/SKILL.md`
 
 **Hook domain — how hooks work in Claude Code:**
 - `docs/context/hooks-deterministic-enforcement-vs-advisory.context.md`
@@ -105,7 +105,7 @@ After reading all sources:
 2. Make all edits.
 3. Run:
 ```
-python scripts/lint.py skills/check-hook/SKILL.md --root . --no-urls
+python plugins/wiki/scripts/lint.py plugins/check/skills/check-hook/SKILL.md --root . --no-urls
 ```
 4. Report lint output. Acceptable: 0 fail. Pre-existing warn on `build-skill`
    density can be ignored. If lint shows fail on `check-hook`, fix it.
