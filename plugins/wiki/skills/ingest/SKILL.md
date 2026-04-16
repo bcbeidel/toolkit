@@ -73,6 +73,8 @@ If the source is narrow and fewer than 5 pages genuinely apply, proceed with wha
 
 **Emergent path selection for new pages:** Based on the existing `wiki/` directory structure read in Pre-Ingest, propose a subdirectory path that fits contextually — place the new page alongside existing pages on related topics. Example: if `wiki/llm-patterns/` already exists with caching pages, a new page on cache invalidation belongs at `wiki/llm-patterns/cache-invalidation.md`, not `wiki/cache-invalidation.md`. If no relevant subdirectory exists, propose a new one whose name reflects the topic cluster. The user can override any proposed path at Step 1b.
 
+**Source summary page:** Always include one source summary page for the ingested source (see [Step 3a](#step-3a-create-source-summary-page)). Place it in a subdirectory that fits contextually alongside related pages — the same emergent path logic applies. Idempotency: if a source summary page already exists for this URL (matched by URL in the `sources:` frontmatter field), update it rather than creating a duplicate — append new claims, never remove existing ones.
+
 ### Step 1b: Confirm Before Writing
 
 Present the proposed changes to the user before modifying any file:
@@ -111,6 +113,45 @@ For topics the source covers with no existing wiki page, create a new page:
 - Include full frontmatter: `name`, `description`, `type`, `confidence`, `sources`, `created`, `updated`
 - Write an initial page body from the source content — follow the structure of existing wiki pages
 - Add `related:` links to existing pages that connect
+
+### Step 3a: Create Source Summary Page
+
+For every ingest, create (or update) a source summary page in addition to the
+concept and entity pages.
+
+**Structure:**
+
+```markdown
+---
+name: <Source Title>
+description: One-sentence summary of the source
+type: source-summary
+sources: [<URL or file path>]
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+---
+
+# <Source Title>
+
+**Author:** ...  **Date:** ...  **URL:** ...
+
+## Key Claims
+
+- Claim 1
+- Claim 2
+
+## Summary
+
+[Structured summary of what the source says]
+```
+
+**Factual-only constraint:** Source summary pages record what the source says.
+No interpretation, synthesis, or evaluation. Those belong in concept and
+synthesis pages.
+
+**Idempotency:** Match an existing source summary page by URL in its `sources:`
+frontmatter. If found, append new claims — do not create a duplicate, do not
+remove existing claims.
 
 ### Step 4: Contradiction Handling
 
@@ -177,6 +218,7 @@ The high-rigor path is never required. It is appropriate when the user wants to 
 
 1. **Separate discussion round per source in bulk mode** — when ingesting multiple sources, running one discussion round per source creates unnecessary back-and-forth. Consolidate all sources into a single takeaways discussion before moving to the page list.
 2. **Overwriting existing prose** — every `git diff` after ingest should show only additions. Rewriting existing content destroys the provenance trail and may silently lose validated information. If existing content is wrong, flag a contradiction marker instead.
+3. **Writing interpretation into source summary pages** — source summary pages record what the source says, not what you conclude from it. Synthesis and evaluation belong in concept or synthesis pages, not in `type: source-summary` pages.
 2. **Skipping Pre-Ingest reads** — proceeding without reading `wiki/_index.md` and `wiki/SCHEMA.md` causes type/confidence misassignment and duplicate page creation. These are required reads, not optional context.
 3. **Silent contradiction** — when source content conflicts with an existing page, the anti-pattern is choosing one version silently. The correct action is the contradiction marker. Unresolved conflicts belong to the user, not the ingest operation.
 4. **Padding to hit the 5-page minimum** — if a narrow source genuinely affects fewer than 5 pages, proceed with what applies. Forcing connections to reach a target count produces low-quality updates that degrade the wiki.
