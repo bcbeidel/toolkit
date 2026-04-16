@@ -92,7 +92,7 @@ gh issue list --state open --search "build-skill" --limit 5
 
 ### Task 4: Audit and fix `build-subagent`
 
-- [ ] Run `/build:check-skill plugins/build/skills/build-subagent/SKILL.md`, triage findings, fix clear-cut issues, file GitHub issues for judgment calls, commit
+- [x] Run `/build:check-skill plugins/build/skills/build-subagent/SKILL.md`, triage findings, fix clear-cut issues, file GitHub issues for judgment calls, commit <!-- sha:a8d2a6a -->
 
 **Verify:**
 ```bash
