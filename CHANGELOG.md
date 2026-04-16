@@ -8,6 +8,25 @@ Pre-restructure releases used a single version. Post-restructure, each plugin
 
 ## [Unreleased]
 
+## [build-0.1.3] - 2026-04-16
+
+### Fixed
+
+- **`build:check-subagent` missing `## Key Instructions` section.** Added
+  won't-do scope statements covering auto-fix, tool-count anchoring, and
+  placeholder handoff detection.
+
+- **`build:refine-prompt` section named `## Key Rules` instead of
+  `## Key Instructions`.** Renamed to match the standard section name
+  expected by `check-skill` criteria 11 and 15.
+
+### Issues filed
+
+- **#298** — `build:build-hook`: workflow steps use named sections without
+  numbers (criterion 14 judgment call)
+- **#300** — `build:refine-prompt`: `Chainable to: (context-dependent)` is
+  too vague (criterion 3 judgment call)
+
 ## [wiki-0.1.5, consider-0.1.1, work-0.1.3, build-0.1.2] - 2026-04-16
 
 ### Fixed
