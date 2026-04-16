@@ -8,6 +8,33 @@ Pre-restructure releases used a single version. Post-restructure, each plugin
 
 ## [Unreleased]
 
+## [wiki-0.1.5, consider-0.1.1, work-0.1.3, build-0.1.2] - 2026-04-16
+
+### Fixed
+
+- **`wiki:lint` false positives on test fixtures (#292).** Added `"tests"` to
+  the `Document.scan()` skip list so fixture files under `tests/` are never
+  evaluated as live content. Running lint on the toolkit root now exits clean.
+
+- **`consider` plugin: all 17 skills missing required frontmatter (#293).**
+  Added `name:` and `user-invocable: true` to every skill in
+  `plugins/consider/skills/`. Skills now surface correctly in discovery indexes
+  and pass `Document.parse()` validation.
+
+- **`work:verify-work` name mismatch (#294).** Corrected frontmatter
+  `name: check-work` → `name: verify-work` and updated `start-work` Handoff
+  `Chainable to:` reference to match. `/work:verify-work` is now reachable via
+  its registered name.
+
+- **`build:build-rule` test file placement ambiguous for Claude Code format
+  (#295).** Replaced the single co-located path instruction in Step 8 with a
+  format-specific table covering WOS, Cursor, and Claude Code formats.
+
+- **`build:check-skill` broken static-check script path (#291).** Fixed
+  hardcoded `scripts/lint.py` → `<plugin-scripts-dir>/../../src/check/lint.py`,
+  `python` → `python3`, and added an install prerequisite note
+  (`pip install -e plugins/build`).
+
 ### Changed
 
 - **Restructured `wos` monorepo into `toolkit` plugin marketplace.** Five
