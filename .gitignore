@@ -212,6 +212,7 @@ __marimo__/
 
 # Working artifact directories (ephemeral by default — commit selectively)
 .plans/
+.designs/
 .research/
 .context/
 .prompts/
