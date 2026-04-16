@@ -266,6 +266,7 @@ class Document:
         _SKIP = frozenset({
             "node_modules", "__pycache__", "venv", ".venv",
             "dist", "build", ".tox", ".mypy_cache", ".pytest_cache",
+            "tests",
         })
 
         root_path = Path(root)
