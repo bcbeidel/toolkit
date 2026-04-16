@@ -148,18 +148,79 @@ class TestReindexFirstRunFallback:
         assert "nothing to reindex" in result.stdout
 
 
-class TestReindexDoesNotTouchWikiInventory:
-    def test_wiki_index_untouched_when_wiki_is_not_a_registered_area(
-        self, tmp_path: Path
-    ) -> None:
-        """wiki/_index.md (page inventory) must not be overwritten by reindex."""
+class TestReindexWikiMode:
+    """Wiki reindex mode is activated when wiki/SCHEMA.md is present."""
+
+    def _make_schema(self, wiki_dir: Path) -> None:
+        (wiki_dir / "SCHEMA.md").write_text(
+            "## Page Types\n- concept\n\n"
+            "## Confidence Tiers\n- high\n\n"
+            "## Relationship Types\n- related_to\n",
+            encoding="utf-8",
+        )
+
+    def test_subdir_gets_flat_index(self, tmp_path: Path) -> None:
+        """A wiki subdir with .md files gets its own _index.md."""
+        wiki = tmp_path / "wiki"
+        wiki.mkdir()
+        self._make_schema(wiki)
+        subdir = wiki / "patterns"
+        subdir.mkdir()
+        _make_md(subdir / "caching.md", name="Caching", description="Cache patterns")
+        _agents_with_areas(tmp_path, [("Docs", "docs")])
+        (tmp_path / "docs").mkdir()
+
+        _run(tmp_path)
+
+        assert (subdir / "_index.md").exists()
+        content = (subdir / "_index.md").read_text()
+        assert "caching.md" in content
+
+    def test_root_wiki_index_has_subdir_heading(self, tmp_path: Path) -> None:
+        """Root wiki/_index.md has a ## heading for each subdirectory."""
+        wiki = tmp_path / "wiki"
+        wiki.mkdir()
+        self._make_schema(wiki)
+        subdir = wiki / "patterns"
+        subdir.mkdir()
+        _make_md(subdir / "caching.md", name="Caching", description="Cache patterns")
+        _agents_with_areas(tmp_path, [("Docs", "docs")])
+        (tmp_path / "docs").mkdir()
+
+        _run(tmp_path)
+
+        root_index = wiki / "_index.md"
+        assert root_index.exists()
+        content = root_index.read_text()
+        assert "## patterns" in content
+
+    def test_log_md_not_in_any_index(self, tmp_path: Path) -> None:
+        """log.md is excluded from all generated _index.md files."""
+        wiki = tmp_path / "wiki"
+        wiki.mkdir()
+        self._make_schema(wiki)
+        (wiki / "log.md").write_text("## [2026-01-01] ingest | Source\n")
+        subdir = wiki / "patterns"
+        subdir.mkdir()
+        _make_md(subdir / "caching.md", name="Caching", description="Cache patterns")
+        _agents_with_areas(tmp_path, [("Docs", "docs")])
+        (tmp_path / "docs").mkdir()
+
+        _run(tmp_path)
+
+        root_content = (wiki / "_index.md").read_text()
+        sub_content = (subdir / "_index.md").read_text()
+        assert "log.md" not in root_content
+        assert "log.md" not in sub_content
+
+    def test_no_schema_wiki_not_touched(self, tmp_path: Path) -> None:
+        """Without wiki/SCHEMA.md, reindex does not touch the wiki/ directory."""
         wiki = tmp_path / "wiki"
         wiki.mkdir()
         wiki_index = wiki / "_index.md"
-        expected = "# Wiki Index\n\n| Page | Description | File |\n"
-        wiki_index.write_text(expected)
+        original = "# Wiki Index\n\n| Page | Description | File |\n"
+        wiki_index.write_text(original)
 
-        # wiki/ is not in the areas table
         docs = tmp_path / "docs"
         docs.mkdir()
         _make_md(docs / "topic.md", name="Topic", description="A topic")
@@ -167,7 +228,23 @@ class TestReindexDoesNotTouchWikiInventory:
 
         _run(tmp_path)
 
-        assert wiki_index.read_text() == expected
+        assert wiki_index.read_text() == original
+
+    def test_wiki_mode_output_message(self, tmp_path: Path) -> None:
+        """Reindex prints a wiki subdirectory count when wiki mode activates."""
+        wiki = tmp_path / "wiki"
+        wiki.mkdir()
+        self._make_schema(wiki)
+        subdir = wiki / "patterns"
+        subdir.mkdir()
+        _make_md(subdir / "caching.md", name="Caching", description="Cache patterns")
+        _agents_with_areas(tmp_path, [("Docs", "docs")])
+        (tmp_path / "docs").mkdir()
+
+        result = _run(tmp_path)
+
+        assert "Wiki:" in result.stdout
+        assert "subdirector" in result.stdout
 
 
 class TestReindexUpdatesAgentsMd:
