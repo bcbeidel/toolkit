@@ -10,6 +10,7 @@ description: >
 argument-hint: "[design doc path or feature description]"
 user-invocable: true
 references:
+  - ../../_shared/references/plan-format.md
   - references/format-guide.md
   - references/plan-template.md
   - references/examples/small-plan.md

@@ -84,7 +84,7 @@ If that fails, try `master`. Confirm with the user:
 
 ### 4. Present 4 Options
 
-Present exactly these options with no additional explanation:
+Present these options, distinguishing the irreversible action:
 
 ```
 Implementation complete. What would you like to do?
@@ -92,7 +92,7 @@ Implementation complete. What would you like to do?
 1. Merge back to <base-branch> locally
 2. Push and create a Pull Request
 3. Keep the branch as-is (I'll handle it later)
-4. Discard this work
+4. Discard this work (irreversible)
 ```
 
 ### 5. Execute Chosen Option

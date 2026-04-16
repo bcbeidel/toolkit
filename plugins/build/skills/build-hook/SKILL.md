@@ -17,9 +17,9 @@ references:
 Scaffold a Claude Code hook: an event-driven script that enforces quality
 gates deterministically, bypassing LLM interpretation.
 
-**Workflow sequence:** Route → Elicit → Draft → Safety Check → (Stop Hook Guard if Stop/SubagentStop) → Rule Overlap → Review Gate → Save → Test
+**Workflow sequence:** 1. Route → 2. Elicit → 3. Draft → 4. Safety Check → (5. Stop Hook Guard if Stop/SubagentStop) → 6. Rule Overlap → 7. Review Gate → 8. Save → 9. Test
 
-## Route
+## 1. Route
 
 Determine whether a hook is the right primitive before asking hook-specific questions. Full decision matrix: [primitive-routing.md](../../_shared/references/primitive-routing.md).
 
@@ -32,7 +32,7 @@ Determine whether a hook is the right primitive before asking hook-specific ques
 - **Goal has a specific lifecycle trigger and must fire regardless of LLM judgment** →
   proceed to Elicit.
 
-## Elicit
+## 2. Elicit
 
 Ask three things, one question at a time:
 
@@ -59,7 +59,7 @@ Default to `command` unless the user has a specific reason otherwise.
 **3. Enforcement goal** — one sentence: what should this hook enforce or
 detect? Confirm the goal before drafting.
 
-## Draft
+## 3. Draft
 
 Produce two artifacts.
 
@@ -185,7 +185,7 @@ the hook from running entirely.
 
 Present both artifacts to the user before any safety checks.
 
-## Safety Check
+## 4. Safety Check
 
 With the draft script from the preceding step in hand, review it against eleven criteria. Revise before proceeding if
 any fail.
@@ -250,7 +250,7 @@ any fail.
     run in parallel). Flag this as a misconfiguration; consolidate all input
     modifications for a given tool into one hook.
 
-## Stop Hook Guard
+## 5. Stop Hook Guard
 
 **Only for `Stop` and `SubagentStop` events.** Skip this section for all
 other events.
@@ -303,7 +303,7 @@ Two permanent limitations that affect hook design decisions:
   Claude Code spawns hooks in non-interactive shells, so the `i` flag is absent
   and the guarded block is skipped.
 
-## Rule Overlap
+## 6. Rule Overlap
 
 Check `CLAUDE.md` for instructions that already express the same enforcement
 goal.
@@ -316,7 +316,7 @@ If overlap is found, note it and ask:
 Both can be intentional (belt-and-suspenders); one may be stale. The user
 decides.
 
-## Review Gate
+## 7. Review Gate
 
 Present both artifacts — the complete hook script and the settings.json
 snippet — and wait for explicit user approval before writing any file to
@@ -326,7 +326,7 @@ If the user requests changes, revise and re-present. Continue this loop
 until the user explicitly approves the artifacts or cancels. Do not
 proceed to Save on anything short of explicit approval.
 
-## Save
+## 8. Save
 
 Write the approved hook to `.claude/hooks/<name>.sh` (or a path the user
 specifies). Make it executable:
@@ -343,7 +343,7 @@ should not be overwritten.
 > entry shown above to `.claude/settings.json` (or settings.local.json
 > for local-only enforcement) to activate it."
 
-## Test
+## 9. Test
 
 Read `references/hook-testing.md` and follow the three-layer verification
 procedure (configuration, logic isolation, execution trace) before activating
