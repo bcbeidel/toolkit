@@ -23,7 +23,8 @@ then offer an opt-in repair loop.
 ### 2. Run Static Checks
 
 ```bash
-python scripts/lint.py --root <project-root> --no-urls
+# Prerequisite: pip install -e plugins/build
+python3 <plugin-scripts-dir>/../../src/check/lint.py --root <project-root> --no-urls
 ```
 
 Extract findings for the target skill(s). Static checks cover two of the
