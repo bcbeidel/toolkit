@@ -33,7 +33,15 @@ is the deliverable at this stage — not code, not a plan.
 - Assess scope: if the request describes multiple independent subsystems,
   flag this immediately. Don't refine details of a project that needs
   decomposition first. Each sub-project gets its own scope-work → plan-work cycle.
+- When untracked directories are present, read their contents — at minimum
+  a directory listing — before deciding whether to include, exclude, defer,
+  or flag them for separate scoping.
+- Before flagging any file as needing modification, read its current content
+  to confirm the change is actually required. Do not assume from filenames
+  or context alone.
 - Ask clarifying questions one at a time, multiple-choice preferred.
+  Ask at least one question that surfaces timing (why now?), motivation,
+  or downstream dependencies before moving to approach proposals.
   Establish what and why before how.
 
 ### 2. Diverge
@@ -42,6 +50,10 @@ is the deliverable at this stage — not code, not a plan.
 - Lead with your recommendation and reasoning.
 - Do not converge prematurely — if only one approach is proposed,
   divergence was skipped.
+- Each option must be a genuine trade-off: real costs, real benefits.
+  Before presenting, verify that no option exists solely to make another
+  look better (straw man). If you cannot identify 2-3 distinct trade-off
+  pairs, say so explicitly rather than padding with a weak third option.
 
 See [Exploration Patterns](references/exploration-patterns.md) for question
 templates and approach comparison format.
