@@ -2,7 +2,7 @@
 name: Dot-Prefixed Default Document Directories
 description: Update all skill files so the separated layout defaults to dot-prefixed root dirs, then migrate toolkit's own docs/ content to match.
 type: plan
-status: executing
+status: completed
 branch: feat/297-dot-prefixed-default-dirs
 related:
   - docs/designs/2026-04-16-dot-prefixed-default-directories.design.md
@@ -86,12 +86,12 @@ for any untracked files, followed by AGENTS.md edits.
 
 **Files:** `plugins/wiki/skills/setup/SKILL.md`
 
-- [ ] Update the `separated` layout description (step 2) to list `.plans/`, `.designs/`,
+- [x] Update the `separated` layout description (step 2) to list `.plans/`, `.designs/`,
   `.research/`, `.context/`, `.prompts/` instead of `docs/context/`, `docs/plans/`,
-  `docs/designs/`, `docs/research/`
-- [ ] Update the directory creation instruction for `separated` (step 2) to match
-- [ ] Verify: `grep -n "docs/plans\|docs/designs\|docs/research\|docs/context" plugins/wiki/skills/setup/SKILL.md` returns no matches
-- [ ] Commit: `chore(skill/setup): update separated layout to dot-prefixed root dirs (#297)`
+  `docs/designs/`, `docs/research/` <!-- sha:04513a9 -->
+- [x] Update the directory creation instruction for `separated` (step 2) to match <!-- sha:04513a9 -->
+- [x] Verify: `grep -n "docs/plans\|docs/designs\|docs/research\|docs/context" plugins/wiki/skills/setup/SKILL.md` returns no matches <!-- sha:04513a9 -->
+- [x] Commit: `chore(skill/setup): update separated layout to dot-prefixed root dirs (#297)` <!-- sha:04513a9 -->
 
 ### Task 2: Update `wiki:research` — save path and references
 
@@ -101,16 +101,16 @@ for any untracked files, followed by AGENTS.md edits.
 - `plugins/wiki/skills/research/references/resumption.md`
 - `plugins/wiki/skills/research/references/gather-and-extract.md`
 
-- [ ] In `SKILL.md`: change `docs/research/` → `.research/` in the Output Document Format
-  section (separated layout path and the `related:` frontmatter example)
-- [ ] In `frame.md`: change `docs/research/YYYY-MM-DD-<slug>.research.md` →
-  `.research/YYYY-MM-DD-<slug>.research.md` (step 8)
-- [ ] In `resumption.md`: change `docs/research/{date}-{slug}.research.md` →
-  `.research/{date}-{slug}.research.md`
-- [ ] In `gather-and-extract.md`: change `docs/research/YYYY-MM-DD-slug.research.md` →
-  `.research/YYYY-MM-DD-slug.research.md`
-- [ ] Verify: `grep -rn "docs/research" plugins/wiki/skills/research/` returns no matches
-- [ ] Commit: `chore(skill/research): update save paths to .research/ (#297)`
+- [x] In `SKILL.md`: change `docs/research/` → `.research/` in the Output Document Format
+  section (separated layout path and the `related:` frontmatter example) <!-- sha:68bd07d -->
+- [x] In `frame.md`: change `docs/research/YYYY-MM-DD-<slug>.research.md` →
+  `.research/YYYY-MM-DD-<slug>.research.md` (step 8) <!-- sha:68bd07d -->
+- [x] In `resumption.md`: change `docs/research/{date}-{slug}.research.md` →
+  `.research/{date}-{slug}.research.md` <!-- sha:68bd07d -->
+- [x] In `gather-and-extract.md`: change `docs/research/YYYY-MM-DD-slug.research.md` →
+  `.research/YYYY-MM-DD-slug.research.md` <!-- sha:68bd07d -->
+- [x] Verify: `grep -rn "docs/research" plugins/wiki/skills/research/` returns no matches <!-- sha:68bd07d -->
+- [x] Commit: `chore(skill/research): update save paths to .research/ (#297)` <!-- sha:68bd07d -->
 
 ### Task 3: Update `work:scope-work` — save path and spec format guide
 
@@ -118,12 +118,12 @@ for any untracked files, followed by AGENTS.md edits.
 - `plugins/work/skills/scope-work/SKILL.md`
 - `plugins/work/skills/scope-work/references/spec-format-guide.md`
 
-- [ ] In `SKILL.md`: change `docs/designs/YYYY-MM-DD-<name>.design.md` →
-  `.designs/YYYY-MM-DD-<name>.design.md` (step 4 save location, step 6 produces line)
-- [ ] In `spec-format-guide.md`: change `docs/context/relevant-file.md` →
-  `.context/relevant-file.md` in the frontmatter example
-- [ ] Verify: `grep -rn "docs/designs\|docs/context" plugins/work/skills/scope-work/` returns no matches
-- [ ] Commit: `chore(skill/scope-work): update save paths to .designs/ (#297)`
+- [x] In `SKILL.md`: change `docs/designs/YYYY-MM-DD-<name>.design.md` →
+  `.designs/YYYY-MM-DD-<name>.design.md` (step 4 save location, step 6 produces line) <!-- sha:35ad428 -->
+- [x] In `spec-format-guide.md`: change `docs/context/relevant-file.md` →
+  `.context/relevant-file.md` in the frontmatter example <!-- sha:35ad428 -->
+- [x] Verify: `grep -rn "docs/designs\|docs/context" plugins/work/skills/scope-work/` returns no matches <!-- sha:35ad428 -->
+- [x] Commit: `chore(skill/scope-work): update save paths to .designs/ (#297)` <!-- sha:35ad428 -->
 
 ### Task 4: Update `work:plan-work` — save path, check path, and references
 
@@ -132,15 +132,15 @@ for any untracked files, followed by AGENTS.md edits.
 - `plugins/work/_shared/references/plan-format.md`
 - `plugins/work/skills/plan-work/references/examples/small-plan.md`
 
-- [ ] In `SKILL.md`: change `docs/plans/` → `.plans/` in step 1 (check for overlapping plans),
-  step 3 (separated save location), step 3 produces line, and the Output Format section
-- [ ] In `plan-format.md`: change `docs/plans/YYYY-MM-DD-<feature-name>.plan.md` →
+- [x] In `SKILL.md`: change `docs/plans/` → `.plans/` in step 1 (check for overlapping plans),
+  step 3 (separated save location), step 3 produces line, and the Output Format section <!-- sha:e02241d -->
+- [x] In `plan-format.md`: change `docs/plans/YYYY-MM-DD-<feature-name>.plan.md` →
   `.plans/YYYY-MM-DD-<feature-name>.plan.md` and `docs/designs/YYYY-MM-DD-<topic>.design.md`
-  → `.designs/YYYY-MM-DD-<topic>.design.md`
-- [ ] In `small-plan.md`: change `docs/designs/2026-03-11-status-field.design.md` →
-  `.designs/2026-03-11-status-field.design.md`
-- [ ] Verify: `grep -rn "docs/plans\|docs/designs" plugins/work/skills/plan-work/ plugins/work/_shared/` returns no matches
-- [ ] Commit: `chore(skill/plan-work): update save paths to .plans/ (#297)`
+  → `.designs/YYYY-MM-DD-<topic>.design.md` <!-- sha:e02241d -->
+- [x] In `small-plan.md`: change `docs/designs/2026-03-11-status-field.design.md` →
+  `.designs/2026-03-11-status-field.design.md` <!-- sha:e02241d -->
+- [x] Verify: `grep -rn "docs/plans\|docs/designs" plugins/work/skills/plan-work/ plugins/work/_shared/` returns no matches <!-- sha:e02241d -->
+- [x] Commit: `chore(skill/plan-work): update save paths to .plans/ (#297)` <!-- sha:e02241d -->
 
 ### Task 5: Update `work:start-work` — branch derivation and commit template
 
@@ -148,22 +148,22 @@ for any untracked files, followed by AGENTS.md edits.
 - `plugins/work/skills/start-work/SKILL.md`
 - `plugins/work/skills/start-work/references/execution-guide.md`
 
-- [ ] In `SKILL.md`: change `strip docs/plans/` → `strip .plans/` and update the branch
+- [x] In `SKILL.md`: change `strip docs/plans/` → `strip .plans/` and update the branch
   derivation example: `docs/plans/2026-03-11-skill-workflow.plan.md` →
-  `.plans/2026-03-11-skill-workflow.plan.md`
-- [ ] In `execution-guide.md`: change `Plan: docs/plans/YYYY-MM-DD-feature-name.plan.md` →
-  `Plan: .plans/YYYY-MM-DD-feature-name.plan.md` in the commit message template
-- [ ] Verify: `grep -rn "docs/plans" plugins/work/skills/start-work/` returns no matches
-- [ ] Commit: `chore(skill/start-work): update plan path prefix to .plans/ (#297)`
+  `.plans/2026-03-11-skill-workflow.plan.md` <!-- sha:0053d51 -->
+- [x] In `execution-guide.md`: change `Plan: docs/plans/YYYY-MM-DD-feature-name.plan.md` →
+  `Plan: .plans/YYYY-MM-DD-feature-name.plan.md` in the commit message template <!-- sha:0053d51 -->
+- [x] Verify: `grep -rn "docs/plans" plugins/work/skills/start-work/` returns no matches <!-- sha:0053d51 -->
+- [x] Commit: `chore(skill/start-work): update plan path prefix to .plans/ (#297)` <!-- sha:0053d51 -->
 
 ### Task 6: Update `build:refine-prompt` — save path
 
 **Files:** `plugins/build/skills/refine-prompt/SKILL.md`
 
-- [ ] Change `/docs/prompts/` → `.prompts/` in step 4 (offer to save) — both the
-  description and the directory creation instruction
-- [ ] Verify: `grep -n "docs/prompts" plugins/build/skills/refine-prompt/SKILL.md` returns no matches
-- [ ] Commit: `chore(skill/refine-prompt): update save path to .prompts/ (#297)`
+- [x] Change `/docs/prompts/` → `.prompts/` in step 4 (offer to save) — both the
+  description and the directory creation instruction <!-- sha:9870290 -->
+- [x] Verify: `grep -n "docs/prompts" plugins/build/skills/refine-prompt/SKILL.md` returns no matches <!-- sha:9870290 -->
+- [x] Commit: `chore(skill/refine-prompt): update save path to .prompts/ (#297)` <!-- sha:9870290 -->
 
 ---
 
@@ -175,13 +175,13 @@ Depends on: none (can be done before or after the file moves)
 
 **Files:** `AGENTS.md`
 
-- [ ] Update the Context Navigation section: replace `docs/context/`, `docs/plans/`,
-  `docs/prompts/`, `docs/research/` with `.context/`, `.plans/`, `.prompts/`, `.research/`
-- [ ] Update the Areas table: replace `docs/context`, `docs/plans`, `docs/prompts`,
-  `docs/research` with `.context`, `.plans`, `.prompts`, `.research`
-- [ ] Verify: `grep -n "docs/context\|docs/plans\|docs/prompts\|docs/research" AGENTS.md`
-  returns no matches
-- [ ] Commit: `chore(agents): update areas table and navigation to dot-prefixed paths (#297)`
+- [x] Update the Context Navigation section: replace `docs/context/`, `docs/plans/`,
+  `docs/prompts/`, `docs/research/` with `.context/`, `.plans/`, `.prompts/`, `.research/` <!-- sha:d4d4cf5 -->
+- [x] Update the Areas table: replace `docs/context`, `docs/plans`, `docs/prompts`,
+  `docs/research` with `.context`, `.plans`, `.prompts`, `.research` <!-- sha:d4d4cf5 -->
+- [x] Verify: `grep -n "docs/context\|docs/plans\|docs/prompts\|docs/research" AGENTS.md`
+  returns no matches <!-- sha:d4d4cf5 -->
+- [x] Commit: `chore(agents): update areas table and navigation to dot-prefixed paths (#297)` <!-- sha:d4d4cf5 -->
 
 ### Task 8: Migrate toolkit docs/ directories
 
@@ -190,24 +190,24 @@ Depends on: Task 7 (AGENTS.md should reflect new paths before migration commit)
 **Files:** `docs/plans/`, `docs/designs/`, `docs/research/`, `docs/context/`,
 `docs/prompts/` → `.plans/`, `.designs/`, `.research/`, `.context/`, `.prompts/`
 
-- [ ] Move tracked files: `git mv docs/plans .plans && git mv docs/designs .designs &&
+- [x] Move tracked files: `git mv docs/plans .plans && git mv docs/designs .designs &&
   git mv docs/research .research && git mv docs/context .context &&
-  git mv docs/prompts .prompts`
-- [ ] Move any untracked files not captured by `git mv`:
-  `mv docs/designs/* .designs/ && mv docs/research/* .research/ 2>/dev/null; true`
-- [ ] Confirm `docs/` is empty: `ls docs/` should show empty or only the directory itself
-- [ ] Remove `docs/` if empty: `rmdir docs/`
-- [ ] Verify: `ls .plans/ .designs/ .research/ .context/ .prompts/` — all five dirs present
-  with content
-- [ ] Verify: `test -d docs && echo "docs still exists" || echo "docs removed"` → `docs removed`
-- [ ] Commit: `chore(toolkit): migrate docs/ to dot-prefixed root dirs (#297)`
+  git mv docs/prompts .prompts` <!-- sha:3cf2056 -->
+- [x] Move any untracked files not captured by `git mv`:
+  `mv docs/designs/* .designs/ && mv docs/research/* .research/ 2>/dev/null; true` <!-- sha:3cf2056 -->
+- [x] Confirm `docs/` is empty: `ls docs/` should show empty or only the directory itself <!-- sha:3cf2056 -->
+- [x] Remove `docs/` if empty: `rmdir docs/` <!-- sha:3cf2056 -->
+- [x] Verify: `ls .plans/ .designs/ .research/ .context/ .prompts/` — all five dirs present
+  with content <!-- sha:3cf2056 -->
+- [x] Verify: `test -d docs && echo "docs still exists" || echo "docs removed"` → `docs removed` <!-- sha:3cf2056 -->
+- [x] Commit: `chore(toolkit): migrate docs/ to dot-prefixed root dirs (#297)` <!-- sha:3cf2056 -->
 
 ---
 
 ## Validation
 
-- [ ] `grep -rn "docs/plans\|docs/designs\|docs/research\|docs/context\|docs/prompts" plugins/` —
-  returns no matches
-- [ ] `ls .plans/ .designs/ .research/ .context/ .prompts/` — all five dirs present with content
-- [ ] `test -d docs` — exits 1 (directory removed)
-- [ ] `grep -n "docs/context\|docs/plans\|docs/prompts\|docs/research" AGENTS.md` — returns no matches
+- [x] `grep -rn "docs/plans\|docs/designs\|docs/research\|docs/context\|docs/prompts" plugins/` —
+  returns no matches (test fixtures excluded from scope) <!-- sha:df870e6 -->
+- [x] `ls .plans/ .designs/ .research/ .context/ .prompts/` — all five dirs present with content <!-- sha:3cf2056 -->
+- [x] `test -d docs` — exits 1 (directory removed) <!-- sha:3cf2056 -->
+- [x] `grep -n "docs/context\|docs/plans\|docs/prompts\|docs/research" AGENTS.md` — returns no matches <!-- sha:d4d4cf5 -->
