@@ -1,6 +1,6 @@
 ---
 name: occams-razor
-description: Find the simplest explanation or solution that accounts for all known facts
+description: Find the simplest explanation or solution that accounts for all known facts — use when there are multiple competing explanations and the simplest hasn't been tried first
 argument-hint: "[phenomenon or problem with multiple possible explanations]"
 user-invocable: true
 ---
@@ -65,4 +65,20 @@ Upstream search provider experienced degradation. This requires only one assumpt
 ### Distinguishing Evidence
 Check the provider's status page for Tuesday incidents. If clean, run `curl` directly against the provider API to measure current latency. If provider is fast, re-examine the search index.
 </example>
+
+## Key Instructions
+
+- A simpler explanation that doesn't account for all known facts is not Occam's Razor — it's an incomplete explanation; simplicity cannot come at the cost of explanatory coverage.
+- Does not prescribe investigation steps; identifies the most parsimonious explanation to test first.
+
+## Anti-Pattern Guards
+
+1. **Discarding evidence to achieve simplicity** — the simplest explanation must fit all known facts; simplifying by ignoring inconvenient observations is not Occam's Razor.
+2. **Conflating common with simple** — a common explanation requires fewer assumptions only if its commonness doesn't itself require additional assumptions to explain.
+
+## Handoff
+
+**Receives:** A phenomenon or problem with multiple possible explanations and a set of known observations
+**Produces:** A ranked candidate explanation table with the simplest sufficient explanation and distinguishing evidence
+**Chainable to:** `5-whys` (to drill into the chosen explanation's root cause), `map-vs-territory` (to check whether the observations themselves are accurate)
 
