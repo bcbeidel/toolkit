@@ -1,6 +1,6 @@
 ---
 name: eisenhower-matrix
-description: Prioritize tasks and decisions by mapping urgency against importance
+description: Prioritize tasks and decisions by mapping urgency against importance — use when facing competing demands and unclear where to focus first
 argument-hint: "[list of tasks, decisions, or competing priorities]"
 user-invocable: true
 ---
@@ -71,4 +71,21 @@ from crowding out what actually matters.
 ### Key Insight
 PR reviews feel urgent because notifications pile up, but they're not important enough to displace the architecture proposal. Batching reviews to end-of-day prevents them from fragmenting deep work on Q2 items.
 </example>
+
+## Key Instructions
+
+- "Urgent" means time-sensitive with an external deadline, not just "feels pressing right now."
+- If the user's list has more than 10 items, group related items before applying the matrix.
+- Does not make scheduling decisions; produces a prioritization framework the user applies.
+
+## Anti-Pattern Guards
+
+1. **Over-filling Q1** — if everything lands in "Do Now," the assessment needs recalibration; most perceived Q1 items are actually Q3 urgency traps.
+2. **Letting urgency displace importance** — the most common failure is Q3 items crowding out Q2; step 6 surfaces this explicitly; always call it out.
+
+## Handoff
+
+**Receives:** A list of tasks, decisions, or competing priorities the user wants to sort
+**Produces:** A four-quadrant prioritization matrix with specific next actions for Q1 and Q2 items
+**Chainable to:** `pareto` (to find the highest-leverage Q2 items), `one-thing` (to identify the single most important Q2 action)
 
