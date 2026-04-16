@@ -373,3 +373,112 @@ class TestValidateWikiWithViolations:
         assert len(issues) == 1
         assert issues[0]["severity"] == "warn"
         assert "Invalid SCHEMA.md" in issues[0]["issue"]
+
+
+# ── TestValidateWikiRecursive ─────────────────────────────────────
+
+
+def _valid_page_content(name: str = "Page", doc_type: str = "concept") -> str:
+    return (
+        f"---\nname: {name}\ndescription: A page\n"
+        f"type: {doc_type}\nconfidence: high\n"
+        "created: 2026-01-01\nupdated: 2026-01-01\n"
+        f"---\n# {name}\n"
+    )
+
+
+class TestValidateWikiRecursive:
+    def test_page_in_subdir_is_validated(self, tmp_path: Path) -> None:
+        """validate_wiki() walks subdirectories and validates their pages."""
+        from wiki.wiki import validate_wiki
+
+        schema_path = tmp_path / "SCHEMA.md"
+        schema_path.write_text(_schema_md(), encoding="utf-8")
+
+        subdir = tmp_path / "patterns"
+        subdir.mkdir()
+        page = subdir / "caching.md"
+        page.write_text(_valid_page_content("Caching"), encoding="utf-8")
+        (subdir / "_index.md").write_text(
+            "| [caching.md](caching.md) | A page |\n", encoding="utf-8"
+        )
+        (tmp_path / "_index.md").write_text("# wiki\n", encoding="utf-8")
+
+        issues = validate_wiki(tmp_path, schema_path)
+
+        failures = [i for i in issues if i["severity"] == "fail"]
+        assert failures == [], failures
+
+    def test_invalid_type_in_subdir_surfaces_fail(self, tmp_path: Path) -> None:
+        """A type violation in a subdirectory page is reported as fail."""
+        from wiki.wiki import validate_wiki
+
+        schema_path = tmp_path / "SCHEMA.md"
+        schema_path.write_text(_schema_md(), encoding="utf-8")
+
+        subdir = tmp_path / "patterns"
+        subdir.mkdir()
+        page = subdir / "bad.md"
+        page.write_text(
+            _valid_page_content("Bad", doc_type="unknown-type"), encoding="utf-8"
+        )
+        (subdir / "_index.md").write_text(
+            "| [bad.md](bad.md) | A page |\n", encoding="utf-8"
+        )
+        (tmp_path / "_index.md").write_text("# wiki\n", encoding="utf-8")
+
+        issues = validate_wiki(tmp_path, schema_path)
+
+        failures = [i for i in issues if i["severity"] == "fail"]
+        assert any("unknown-type" in i["issue"] for i in failures)
+
+    def test_log_md_not_validated_as_wiki_page(self, tmp_path: Path) -> None:
+        """log.md is excluded from page validation — no missing-frontmatter warnings."""
+        from wiki.wiki import validate_wiki
+
+        schema_path = tmp_path / "SCHEMA.md"
+        schema_path.write_text(_schema_md(), encoding="utf-8")
+        (tmp_path / "_index.md").write_text("# wiki\n", encoding="utf-8")
+        (tmp_path / "log.md").write_text(
+            "## [2026-01-01] ingest | Source\n1 page created.\n",
+            encoding="utf-8",
+        )
+
+        issues = validate_wiki(tmp_path, schema_path)
+
+        log_issues = [i for i in issues if "log.md" in i["file"]]
+        assert log_issues == []
+
+
+class TestCheckWikiOrphansSkipsLogMd:
+    def test_log_md_not_reported_as_orphan(self, tmp_path: Path) -> None:
+        """log.md alongside a _index.md that doesn't list it is not an orphan."""
+        from wiki.wiki import check_wiki_orphans
+
+        (tmp_path / "_index.md").write_text("# Index\n", encoding="utf-8")
+        (tmp_path / "log.md").write_text(
+            "## [2026-01-01] ingest | Source\n", encoding="utf-8"
+        )
+
+        issues = check_wiki_orphans(tmp_path)
+
+        assert issues == []
+
+
+class TestCheckWikiOrphansSubdirMessage:
+    def test_error_message_references_subdir_index(self, tmp_path: Path) -> None:
+        """Orphan in a subdir references that subdir's _index.md, not wiki/_index.md."""
+        from wiki.wiki import check_wiki_orphans
+
+        subdir = tmp_path / "patterns"
+        subdir.mkdir()
+        (subdir / "_index.md").write_text("# patterns\n", encoding="utf-8")
+        (subdir / "orphan.md").write_text(
+            "---\nname: X\ndescription: Y\n---\n", encoding="utf-8"
+        )
+
+        issues = check_wiki_orphans(subdir)
+
+        assert len(issues) == 1
+        assert "patterns/_index.md" in issues[0]["issue"]
+        assert "wiki/_index.md" not in issues[0]["issue"]
