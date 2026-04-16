@@ -31,7 +31,7 @@
       "plugins": ["wiki"]
     },
     "build-tooling": {
-      "description": "Create and maintain Claude Code skills and rules.",
+      "description": "Create, audit, and maintain Claude Code skills and rules.",
       "plugins": ["build"]
     },
     "full-suite": {

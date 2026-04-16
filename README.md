@@ -14,7 +14,7 @@ Four self-contained plugins, each independently installable:
 | Plugin | Install | Skills |
 |--------|---------|--------|
 | `wiki` | `claude plugin install bcbeidel/toolkit --plugin wiki` | `setup`, `research`, `ingest`, `lint` |
-| `build` | `claude plugin install bcbeidel/toolkit --plugin build` | `build-skill`, `build-rule`, `build-hook`, `build-subagent`, `refine-prompt` |
+| `build` | `claude plugin install bcbeidel/toolkit --plugin build` | `build-skill`, `build-rule`, `build-hook`, `build-subagent`, `refine-prompt`, `check-skill`, `check-rule`, `check-hook`, `check-subagent`, `check-skill-chain` |
 | `work` | `claude plugin install bcbeidel/toolkit --plugin work` | `scope-work`, `plan-work`, `start-work`, `verify-work`, `finish-work` |
 | `consider` | `claude plugin install bcbeidel/toolkit --plugin consider` | 16 mental models + meta |
 
@@ -25,7 +25,7 @@ Four self-contained plugins, each independently installable:
 claude plugin install bcbeidel/toolkit --plugin wiki
 ```
 
-**Build tooling** — create and maintain Claude Code skills and rules:
+**Build tooling** — create, audit, and maintain Claude Code skills and rules:
 ```bash
 claude plugin install bcbeidel/toolkit --plugin build
 ```
