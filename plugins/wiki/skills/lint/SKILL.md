@@ -117,9 +117,9 @@ All checks passed.
 
 After presenting audit results, offer to help resolve actionable warnings:
 
-- **Missing AGENTS.md or CLAUDE.md:** Offer to run `/wos:setup` to
+- **Missing AGENTS.md or CLAUDE.md:** Offer to run `/wiki:setup` to
   initialize. Confirm with the user before writing any files.
-- **AGENTS.md missing WOS markers:** Offer to run `/wos:setup` to add
+- **AGENTS.md missing WOS markers:** Offer to run `/wiki:setup` to add
   the WOS-managed section. Confirm before modifying existing content.
 - **CLAUDE.md missing @AGENTS.md reference:** Offer to add the reference.
   Do not rewrite CLAUDE.md contents — only add the `@AGENTS.md` line.
@@ -158,7 +158,7 @@ Append-only — never modify existing entries.
 ## Key Rules
 
 - Audit is read-only (except `--fix` which only regenerates `_index.md` files)
-- Use `/wos:setup` to initialize missing project structure
+- Use `/wiki:setup` to initialize missing project structure
 - Empty project (no `docs/` directory) exits 0 with no issues
 
 ## Skill Evaluation
