@@ -1,6 +1,8 @@
 ---
+name: one-thing
 description: Identify the single highest-leverage action that makes everything else easier
 argument-hint: "[goal or area where focus is needed]"
+user-invocable: true
 ---
 
 <objective>

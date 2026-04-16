@@ -1,6 +1,8 @@
 ---
+name: pareto
 description: Apply the 80/20 rule to find the highest-leverage inputs
 argument-hint: "[area where effort and results feel misaligned]"
+user-invocable: true
 ---
 
 <objective>

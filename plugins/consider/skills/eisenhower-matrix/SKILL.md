@@ -1,6 +1,8 @@
 ---
+name: eisenhower-matrix
 description: Prioritize tasks and decisions by mapping urgency against importance
 argument-hint: "[list of tasks, decisions, or competing priorities]"
+user-invocable: true
 ---
 
 <objective>

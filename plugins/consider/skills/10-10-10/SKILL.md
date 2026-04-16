@@ -1,6 +1,8 @@
 ---
+name: 10-10-10
 description: Evaluate decisions by considering impact across three time horizons
 argument-hint: "[decision you're weighing or struggling with]"
+user-invocable: true
 ---
 
 <objective>

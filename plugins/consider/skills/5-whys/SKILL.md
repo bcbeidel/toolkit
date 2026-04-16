@@ -1,6 +1,8 @@
 ---
+name: 5-whys
 description: Drill to root cause by asking why repeatedly until fundamentals emerge
 argument-hint: "[problem or symptom to trace to its root cause]"
+user-invocable: true
 ---
 
 <objective>

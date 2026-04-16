@@ -1,6 +1,8 @@
 ---
+name: opportunity-cost
 description: Evaluate what you give up by choosing one option over alternatives
 argument-hint: "[decision with multiple options to compare]"
+user-invocable: true
 ---
 
 <objective>

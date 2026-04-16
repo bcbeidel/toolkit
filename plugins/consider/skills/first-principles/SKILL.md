@@ -1,6 +1,8 @@
 ---
+name: first-principles
 description: Break down assumptions and rebuild reasoning from fundamental truths
 argument-hint: "[problem or system to deconstruct]"
+user-invocable: true
 ---
 
 <objective>

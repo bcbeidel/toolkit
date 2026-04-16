@@ -1,6 +1,8 @@
 ---
+name: inversion
 description: Solve problems backwards by identifying what would guarantee failure
 argument-hint: "[goal or outcome to achieve]"
+user-invocable: true
 ---
 
 <objective>
