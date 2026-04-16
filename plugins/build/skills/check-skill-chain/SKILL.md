@@ -36,7 +36,7 @@ skill-chain manifest for structural and contract correctness with an opt-in repa
    - Frontmatter: `name`, `description`, `type: chain`, `goal`, `negative-scope`
    - Body: `## Steps` pipe table — `| Step | Skill | Input Contract | Output Contract | Gate |`
 4. **Hard gate** — present for user review. State: "This is a design artifact — invoke
-   `/wos:start-work` or run each skill manually to execute." Do not invoke any step.
+   `/work:start-work` or run each skill manually to execute." Do not invoke any step.
 
 ### Manifest Mode
 
@@ -57,7 +57,7 @@ skill-chain manifest for structural and contract correctness with an opt-in repa
    For each selected finding:
    - Manifest fix: propose targeted edit, show diff, apply on confirmation
    - SKILL.md fix: propose targeted edit, show diff, apply on confirmation
-   - Missing skill (step references a skill that doesn't exist): invoke `/wos:build-skill`
+   - Missing skill (step references a skill that doesn't exist): invoke `/build:build-skill`
      inline to create it, then re-check existence
 5. **Re-verify** — after each applied fix, re-run `scripts/lint.py` and re-run
    cross-reference on affected steps. Return to findings presentation.
