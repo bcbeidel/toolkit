@@ -29,6 +29,7 @@ help the user choose by presenting the options below.
 | `map-vs-territory` | Recognize model limitations, check assumptions |
 | `reversibility` | Assess decision risk — one-way vs two-way doors |
 | `hanlons-razor` | Interpret behavior charitably, avoid conspiracy thinking |
+| `pick-model` | Select the right AI model for a task based on benchmarks, pricing, and effort tradeoffs |
 
 ## Usage
 
