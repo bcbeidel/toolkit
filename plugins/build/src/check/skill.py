@@ -40,6 +40,7 @@ _VAGUE_PHRASES = (
 )
 _DESCRIPTION_CAP = 1024
 _DESCRIPTION_COMBINED_CAP = 1536
+_SUBSTITUTION_RE = re.compile(r"\$ARGUMENTS(?:\[\d+\])?|\$[0-9]\b")
 
 
 def strip_frontmatter(text: str) -> str:
@@ -178,6 +179,35 @@ def _check_description(
             break
 
     return issues
+
+
+def _check_substitution_usage(
+    argument_hint: object,
+    body: str,
+    file_str: str,
+) -> List[dict]:
+    """Warn when ``argument-hint`` is set but body uses no substitution.
+
+    When ``argument-hint`` is declared, Claude Code expects the body to
+    consume the argument via ``$ARGUMENTS``, ``$ARGUMENTS[N]``, or ``$N``.
+    Without a substitution, Claude Code falls back to appending
+    ``ARGUMENTS: <value>`` at the end of the rendered skill, putting
+    the argument in the wrong position relative to the workflow.
+    """
+    if not isinstance(argument_hint, str) or not argument_hint.strip():
+        return []
+    if _SUBSTITUTION_RE.search(body):
+        return []
+    return [{
+        "file": file_str,
+        "issue": (
+            "argument-hint is set but body uses no $ARGUMENTS / $N "
+            "substitution; argument will be appended as "
+            "'ARGUMENTS: <value>' at end of skill, putting it in the "
+            "wrong position for the workflow"
+        ),
+        "severity": "warn",
+    }]
 
 
 def _check_allowed_tools(value: object, file_str: str) -> List[dict]:

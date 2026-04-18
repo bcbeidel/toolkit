@@ -500,3 +500,38 @@ class TestCheckAllowedTools:
     def test_single_tool_no_issues(self) -> None:
         from check.skill import _check_allowed_tools
         assert _check_allowed_tools("Grep", "f") == []
+
+
+class TestCheckSubstitutionUsage:
+    def test_no_argument_hint_no_issues(self) -> None:
+        from check.skill import _check_substitution_usage
+        assert _check_substitution_usage(None, "# Body\n", "f") == []
+
+    def test_argument_hint_with_arguments_substitution_no_issues(self) -> None:
+        from check.skill import _check_substitution_usage
+        body = "# Body\n\nProcess $ARGUMENTS to extract records.\n"
+        assert _check_substitution_usage("[file]", body, "f") == []
+
+    def test_argument_hint_with_indexed_substitution_no_issues(self) -> None:
+        from check.skill import _check_substitution_usage
+        body = "# Body\n\nFirst arg: $0, second: $1\n"
+        assert _check_substitution_usage("[a] [b]", body, "f") == []
+
+    def test_argument_hint_with_arguments_n_no_issues(self) -> None:
+        from check.skill import _check_substitution_usage
+        body = "# Body\n\nFirst is $ARGUMENTS[0]\n"
+        assert _check_substitution_usage("[a]", body, "f") == []
+
+    def test_argument_hint_no_substitution_warns(self) -> None:
+        from check.skill import _check_substitution_usage
+        body = "# Body\n\nUse the path argument if provided.\n"
+        issues = _check_substitution_usage("[file]", body, "f")
+        assert len(issues) == 1
+        assert issues[0]["severity"] == "warn"
+        assert "argument-hint is set" in issues[0]["issue"]
+
+    def test_empty_argument_hint_no_issues(self) -> None:
+        from check.skill import _check_substitution_usage
+        assert _check_substitution_usage("", "# Body\n", "f") == []
+
+
