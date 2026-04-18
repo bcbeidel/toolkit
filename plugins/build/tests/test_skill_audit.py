@@ -261,12 +261,12 @@ class TestCheckSkillMeta:
     def test_valid_skill_no_issues(self, tmp_path: Path) -> None:
         from check.skill import check_skill_meta
         _create_skill(
-            tmp_path, "good-skill",
-            "---\nname: good-skill\n"
+            tmp_path, "processing-records",
+            "---\nname: processing-records\n"
             "description: Performs good actions. Use when asked.\n"
             "---\n# Good Skill\n\n- Do good\n",
         )
-        issues = check_skill_meta(tmp_path / "good-skill")
+        issues = check_skill_meta(tmp_path / "processing-records")
         assert len(issues) == 0
 
     def test_name_uppercase_fails(self, tmp_path: Path) -> None:
@@ -392,12 +392,31 @@ class TestCheckSkillMeta:
     def test_windows_path_in_body_fails(self, tmp_path: Path) -> None:
         from check.skill import check_skill_meta
         _create_skill(
-            tmp_path, "win-paths",
-            "---\nname: win-paths\ndescription: Valid skill.\n---\n"
+            tmp_path, "windows-checker",
+            "---\nname: windows-checker\ndescription: Valid skill.\n---\n"
             "# X\n\n```\nopen src\\check\\skill.py\n```\n",
         )
-        issues = check_skill_meta(tmp_path / "win-paths")
+        issues = check_skill_meta(tmp_path / "windows-checker")
         assert any("Windows-style" in i["issue"] for i in issues)
+
+    def test_argument_hint_without_substitution_warns(self, tmp_path: Path) -> None:
+        from check.skill import check_skill_meta
+        _create_skill(
+            tmp_path, "missing-substitution",
+            "---\nname: missing-substitution\ndescription: Valid skill.\n"
+            "argument-hint: \"[file]\"\n---\n# X\n\nProcess the file argument.\n",
+        )
+        issues = check_skill_meta(tmp_path / "missing-substitution")
+        assert any("argument-hint is set" in i["issue"] for i in issues)
+
+    def test_vague_name_warns(self, tmp_path: Path) -> None:
+        from check.skill import check_skill_meta
+        _create_skill(
+            tmp_path, "helper",
+            "---\nname: helper\ndescription: Valid skill.\n---\n# X\n",
+        )
+        issues = check_skill_meta(tmp_path / "helper")
+        assert any("vague token" in i["issue"] for i in issues)
 
 
 class TestCheckBodyPaths:
@@ -500,3 +519,78 @@ class TestCheckAllowedTools:
     def test_single_tool_no_issues(self) -> None:
         from check.skill import _check_allowed_tools
         assert _check_allowed_tools("Grep", "f") == []
+
+
+class TestCheckSubstitutionUsage:
+    def test_no_argument_hint_no_issues(self) -> None:
+        from check.skill import _check_substitution_usage
+        assert _check_substitution_usage(None, "# Body\n", "f") == []
+
+    def test_argument_hint_with_arguments_substitution_no_issues(self) -> None:
+        from check.skill import _check_substitution_usage
+        body = "# Body\n\nProcess $ARGUMENTS to extract records.\n"
+        assert _check_substitution_usage("[file]", body, "f") == []
+
+    def test_argument_hint_with_indexed_substitution_no_issues(self) -> None:
+        from check.skill import _check_substitution_usage
+        body = "# Body\n\nFirst arg: $0, second: $1\n"
+        assert _check_substitution_usage("[a] [b]", body, "f") == []
+
+    def test_argument_hint_with_arguments_n_no_issues(self) -> None:
+        from check.skill import _check_substitution_usage
+        body = "# Body\n\nFirst is $ARGUMENTS[0]\n"
+        assert _check_substitution_usage("[a]", body, "f") == []
+
+    def test_argument_hint_no_substitution_warns(self) -> None:
+        from check.skill import _check_substitution_usage
+        body = "# Body\n\nUse the path argument if provided.\n"
+        issues = _check_substitution_usage("[file]", body, "f")
+        assert len(issues) == 1
+        assert issues[0]["severity"] == "warn"
+        assert "argument-hint is set" in issues[0]["issue"]
+
+    def test_empty_argument_hint_no_issues(self) -> None:
+        from check.skill import _check_substitution_usage
+        assert _check_substitution_usage("", "# Body\n", "f") == []
+
+
+class TestCheckGerundNaming:
+    def test_gerund_name_no_issues(self) -> None:
+        from check.skill import _check_gerund_naming
+        assert _check_gerund_naming("processing-pdfs", "f") == []
+
+    def test_agent_noun_name_no_issues(self) -> None:
+        from check.skill import _check_gerund_naming
+        assert _check_gerund_naming("checker", "f") == []
+
+    def test_vague_helper_warns(self) -> None:
+        from check.skill import _check_gerund_naming
+        issues = _check_gerund_naming("helper", "f")
+        assert len(issues) == 1
+        assert issues[0]["severity"] == "warn"
+        assert "vague token" in issues[0]["issue"]
+
+    def test_vague_compound_warns(self) -> None:
+        from check.skill import _check_gerund_naming
+        issues = _check_gerund_naming("data-utils", "f")
+        assert len(issues) == 1
+        assert "vague token" in issues[0]["issue"]
+
+    def test_vague_first_segment_warns(self) -> None:
+        from check.skill import _check_gerund_naming
+        issues = _check_gerund_naming("helper-runner", "f")
+        assert len(issues) == 1
+        assert "vague token" in issues[0]["issue"]
+
+    def test_non_gerund_warns_style(self) -> None:
+        from check.skill import _check_gerund_naming
+        issues = _check_gerund_naming("frobulate", "f")
+        assert len(issues) == 1
+        assert issues[0]["severity"] == "warn"
+        assert "style suggestion" in issues[0]["issue"]
+
+    def test_multi_segment_gerund_no_issues(self) -> None:
+        from check.skill import _check_gerund_naming
+        assert _check_gerund_naming("analyze-spreadsheets-merging", "f") == []
+
+

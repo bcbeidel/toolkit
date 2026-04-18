@@ -37,6 +37,8 @@ and always precede LLM checks. They cover:
 - **Description quality** — warn on second-person ("you can", "I will"), vague phrasings ("helps with", "processes data"), or XML tags
 - **Reserved words in name** — fail on `anthropic` or `claude` (platform-owned namespaces)
 - **Windows-style paths** — fail on backslash path separators in fenced blocks or inline code (drive-letter prefixes, relative `.\` / `..\` prefixes, or multi-component paths with file extensions)
+- **Substitution usage** — warn when `argument-hint` is set but the body has no `$ARGUMENTS`, `$ARGUMENTS[N]`, or `$N` substitution; without one, the user-supplied argument lands at the end as `ARGUMENTS: <value>`
+- **Gerund/vague naming** — warn on vague tokens (`helper`, `utils`, `tools`, `thing`, etc.) anywhere in the name; warn on names that aren't in gerund (`-ing`) or agent-noun (`-er`) form (style suggestion only)
 
 ### 3. Run LLM Checks
 

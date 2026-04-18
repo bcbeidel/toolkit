@@ -73,7 +73,7 @@ Proceed without a gate if intent is unambiguous; ask one clarifying question if 
 
 ### Capture Intent
 
-Start by understanding the user's intent. The current conversation might already contain a workflow the user wants to capture (e.g., they say "turn this into a skill"). If so, extract answers from the conversation history first — the tools used, the sequence of steps, corrections the user made, input/output formats observed. The user may need to fill the gaps, and should confirm before proceeding to the next step.
+Start by understanding the user's intent. If `$ARGUMENTS` is non-empty, use it as the initial skill name and description signal — for example, `/build-skill processing-pdfs` → propose `processing-pdfs` as the name and ask for the description. The current conversation might already contain a workflow the user wants to capture (e.g., they say "turn this into a skill"). If so, extract answers from the conversation history first — the tools used, the sequence of steps, corrections the user made, input/output formats observed. The user may need to fill the gaps, and should confirm before proceeding to the next step.
 
 1. What should this skill enable Claude to do?
 2. When should this skill trigger? (what user phrases/contexts)
@@ -91,6 +91,13 @@ Also probe for structural decisions that shape how the skill is built — derive
 - **User-facing command or agent background knowledge?** If the user wants this as domain context injected into an agent rather than a callable command, `user-invocable: false` is the right pattern.
 - **Needs persistent configuration?** API keys, project IDs, user preferences that vary per-person. If yes, plan for the `config.json` setup pattern.
 - **Depends on other skills?** If the skill calls out to another skill by name, it needs a won't-work-without dependency note in Key Instructions.
+- **Where should this skill live?** Pick a scope before drafting:
+  - **project** — `.claude/skills/<name>/SKILL.md` (default when working in a repo with a `.claude/` directory; ships with the codebase)
+  - **personal** — `~/.claude/skills/<name>/SKILL.md` (single-user, all projects)
+  - **plugin** — `<plugin-root>/skills/<name>/SKILL.md` (when contributing to a plugin marketplace)
+  - **enterprise** — managed deployment path defined by the deploying org
+
+  This decision is load-bearing: the write step needs the full path, not the relative `skills/<name>/SKILL.md`.
 
 Check available MCPs - if useful for research (searching docs, finding similar skills, looking up best practices), research in parallel via subagents if available, otherwise inline. Come prepared with context to reduce burden on the user.
 
@@ -98,10 +105,10 @@ Check available MCPs - if useful for research (searching docs, finding similar s
 
 Based on the user interview, fill in these components. Most skills need only `name` + `description` — reach for the others when the use case calls for it:
 
-- **name**: Skill identifier (lowercase, hyphens, ≤64 chars). Reserved words (`anthropic`, `claude`) are rejected — they collide with platform-owned namespaces.
-- **description**: When to trigger, what it does. Primary triggering mechanism — write it in **third person** ("Processes X", not "You can use this to…") and front-load the trigger phrase. Cap is **1024 characters**; for longer guidance, split trigger phrases into optional `when_to_use` (combined cap 1536). Avoid vague phrasings ("helps with", "processes data") — name a specific capability. Claude undertriggers, so cover adjacent phrasings and contexts even when the user doesn't name the skill explicitly. *(check-skill #7, #13)*
-- **when_to_use** _(Claude Code only)_: Optional split for trigger phrases when the `description` alone would exceed 1024 chars. The two fields are concatenated at routing time under a combined 1536-char cap.
-- **argument-hint**: One-line hint shown in the CLI (e.g., `"[skill name and description]"`) *(check-skill #20)*
+- **name**: Skill identifier (lowercase, hyphens, ≤64 chars). Reserved words (`anthropic`, `claude`) are rejected — they collide with platform-owned namespaces. Prefer **gerund form** (`processing-pdfs`, `analyzing-spreadsheets`) or **agent-noun form** (`checker`, `parser`) — these read as actions and improve trigger matching. Reject vague tokens (`helper`, `utils`, `tools`, `thing`, `stuff`) — they provide no triggering signal. *(check-skill: gerund-naming WARN)*
+- **description**: When to trigger, what it does. Primary triggering mechanism — write it in **third person** ("Processes X", not "You can use this to…") and front-load the trigger phrase. Cap is **1024 characters**; if the draft passes ~800 chars, actively offer to split trigger phrases into optional `when_to_use` (combined cap 1536) rather than truncating. Avoid vague phrasings ("helps with", "processes data") — name a specific capability. Claude undertriggers, so cover adjacent phrasings and contexts even when the user doesn't name the skill explicitly. *(check-skill #7, #13)*
+- **when_to_use** _(Claude Code only)_: Optional split for trigger phrases when the `description` alone would exceed 1024 chars. The two fields are concatenated at routing time under a combined 1536-char cap. When the description is at risk of overflow, prefer this split over compression — the trigger surface is what determines whether the skill fires at all.
+- **argument-hint**: One-line hint shown in the CLI (e.g., `"[skill name and description]"`). When set, the body must consume the argument via a substitution: `$ARGUMENTS` (full string), `$ARGUMENTS[N]` or `$N` (Nth token). Without one, Claude Code appends `ARGUMENTS: <value>` at the end of the rendered skill — wrong position relative to the workflow. Insert `$ARGUMENTS` into the workflow step that consumes the input (e.g., "Read $ARGUMENTS"). See `references/skill-writing-guide.md` → Substitutions. *(check-skill #20, substitution-usage WARN)*
 - **user-invocable**: Default `true` — **omit** unless you need `false` (reduces frontmatter noise and the post-compaction token budget). Set `false` for background-knowledge skills that should be preloaded into an agent rather than called directly; this also hides them from the `/` menu. *(check-skill #17)*
 - **disable-model-invocation** _(optional)_: Set `true` for dangerous or consequential skills (deploy, destructive ops) that should only fire on explicit user invocation — never auto-triggered. *(check-skill #23)*
 - **model** _(optional)_: Override the session model for this skill. Use `haiku` for fast lookups, `opus` for complex multi-step work.
@@ -152,7 +159,7 @@ python scripts/lint.py --root <project-root> --no-urls   # fix any skill quality
 python scripts/reindex.py --root <project-root>           # update _index.md navigation
 ```
 
-Write to `skills/<name>/SKILL.md`. Do not write until the user approves the draft. After writing, invoke `/check-skill` on the new skill — surface any findings and offer the repair loop before moving to test cases.
+Write to the full path determined by the scope decision in the Interview step (e.g. `.claude/skills/<name>/SKILL.md` for a project skill). Do not write until the user approves the draft. After writing, invoke `/check-skill` on the new skill — surface any findings and offer the repair loop before moving to test cases.
 
 ### Test Cases
 

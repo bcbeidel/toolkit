@@ -39,6 +39,58 @@ cloud-deploy/
 ```
 Claude reads only the relevant reference file.
 
+## Substitutions
+
+When `argument-hint` is set in frontmatter, the body must consume the
+user's argument explicitly. Otherwise Claude Code appends `ARGUMENTS:
+<value>` at the end of the rendered skill — wrong position relative to
+the workflow.
+
+| Token | Meaning |
+|-------|---------|
+| `$ARGUMENTS` | The full argument string passed at invocation. |
+| `$ARGUMENTS[N]` | The Nth whitespace-separated token (zero-indexed). |
+| `$N` | Shorthand for `$ARGUMENTS[N]` (e.g. `$0`, `$1`). |
+| `${CLAUDE_SESSION_ID}` | Current session identifier. |
+| `${CLAUDE_SKILL_DIR}` | Absolute path of the directory containing this SKILL.md — useful for referencing bundled scripts and references. |
+
+Examples:
+
+```
+1. Read the file at $ARGUMENTS.
+2. Compare $0 (current branch) against $1 (target branch).
+3. Load the schema from ${CLAUDE_SKILL_DIR}/references/schema.yaml.
+```
+
+Insert substitutions at the workflow step that consumes the input — not
+in a generic preamble. Position matters because Claude reads the body
+top-to-bottom.
+
+## Dynamic Context
+
+Inline `` !`<command>` `` and fenced ` ```! ` blocks are evaluated by
+Claude Code **before** the skill is sent to Claude. Their stdout is
+substituted into the rendered text, so Claude sees the data as if it
+were always there.
+
+```
+The current branch is !`git branch --show-current`.
+
+Recent commits:
+```!
+git log --oneline -5
+```
+```
+
+Use this for state Claude could have received pre-rendered — git
+status, file lists, environment fingerprints — not as a substitute for
+arbitrary tool calls during the workflow. Pre-rendering saves a tool
+round-trip and lands the data in the right position; it's not a way to
+hide side effects.
+
+Note: any command that modifies state will execute on every
+invocation. Reserve dynamic context for read-only commands.
+
 ## On-Demand Hooks
 
 Skills can register lifecycle hooks that activate only when the skill runs and
