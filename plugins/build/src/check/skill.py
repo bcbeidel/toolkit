@@ -389,6 +389,73 @@ def _check_body_lines(body: str, file_str: str) -> List[dict]:
     return []
 
 
+_TOC_HEADING_RE = re.compile(
+    r"^\s*##+\s*(table of contents|contents|toc)\b",
+    re.IGNORECASE | re.MULTILINE,
+)
+
+
+def _check_reference_depth(skill_dir: Path, file_str: str) -> List[dict]:
+    """Warn on reference files nested more than one level deep.
+
+    Canonical progressive disclosure loads a single level under
+    ``references/``. Deeper nesting makes on-demand loading awkward
+    because Claude does partial reads of nested files.
+    """
+    issues: List[dict] = []
+    refs_dir = skill_dir / "references"
+    if not refs_dir.is_dir():
+        return issues
+    for path in sorted(refs_dir.rglob("*.md")):
+        relative = path.relative_to(refs_dir)
+        # One level means len(parts) == 1 (file directly in references/).
+        # Two levels: references/foo/bar.md → parts == ("foo", "bar.md") → len 2.
+        if len(relative.parts) > 1:
+            issues.append({
+                "file": file_str,
+                "issue": (
+                    f"reference file {relative} is nested more than 1 level "
+                    f"under references/; flatten for clean on-demand loading"
+                ),
+                "severity": "warn",
+            })
+    return issues
+
+
+def _check_reference_toc(skill_dir: Path, file_str: str) -> List[dict]:
+    """Warn on reference files over 100 non-blank lines without a TOC.
+
+    Long references without a table of contents force Claude to scan
+    the whole file to find the relevant section. A TOC (``## Table of
+    Contents``, ``## Contents``, or ``## TOC``) near the top indexes
+    the sections so partial loads land in the right spot.
+    """
+    issues: List[dict] = []
+    refs_dir = skill_dir / "references"
+    if not refs_dir.is_dir():
+        return issues
+    for path in sorted(refs_dir.glob("*.md")):
+        text = path.read_text(encoding="utf-8")
+        body = strip_frontmatter(text)
+        non_blank = sum(1 for line in body.splitlines() if line.strip())
+        if non_blank <= 100:
+            continue
+        head = "\n".join(body.splitlines()[:20])
+        if _TOC_HEADING_RE.search(head):
+            continue
+        relative = path.relative_to(skill_dir)
+        issues.append({
+            "file": file_str,
+            "issue": (
+                f"reference file {relative} has {non_blank} non-blank "
+                f"lines but no Table of Contents heading in the first 20 "
+                f"lines; add one so partial loads find their section"
+            ),
+            "severity": "warn",
+        })
+    return issues
+
+
 # ── SkillDocument dataclass ─────────────────────────────────────────
 
 

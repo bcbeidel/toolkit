@@ -594,3 +594,77 @@ class TestCheckGerundNaming:
         assert _check_gerund_naming("analyze-spreadsheets-merging", "f") == []
 
 
+class TestCheckReferenceDepth:
+    def test_no_references_dir_no_issues(self, tmp_path: Path) -> None:
+        from check.skill import _check_reference_depth
+        d = tmp_path / "skill"
+        d.mkdir()
+        assert _check_reference_depth(d, "f") == []
+
+    def test_flat_references_no_issues(self, tmp_path: Path) -> None:
+        from check.skill import _check_reference_depth
+        d = tmp_path / "skill"
+        (d / "references").mkdir(parents=True)
+        (d / "references" / "guide.md").write_text("# Guide\n")
+        (d / "references" / "schema.md").write_text("# Schema\n")
+        assert _check_reference_depth(d, "f") == []
+
+    def test_nested_reference_warns(self, tmp_path: Path) -> None:
+        from check.skill import _check_reference_depth
+        d = tmp_path / "skill"
+        (d / "references" / "aws").mkdir(parents=True)
+        (d / "references" / "aws" / "iam.md").write_text("# IAM\n")
+        issues = _check_reference_depth(d, "f")
+        assert len(issues) == 1
+        assert issues[0]["severity"] == "warn"
+        assert "nested more than 1 level" in issues[0]["issue"]
+
+
+class TestCheckReferenceToc:
+    def test_no_references_dir_no_issues(self, tmp_path: Path) -> None:
+        from check.skill import _check_reference_toc
+        d = tmp_path / "skill"
+        d.mkdir()
+        assert _check_reference_toc(d, "f") == []
+
+    def test_short_reference_no_issues(self, tmp_path: Path) -> None:
+        from check.skill import _check_reference_toc
+        d = tmp_path / "skill"
+        (d / "references").mkdir(parents=True)
+        (d / "references" / "guide.md").write_text("# Guide\n\nShort content.\n")
+        assert _check_reference_toc(d, "f") == []
+
+    def test_long_reference_without_toc_warns(self, tmp_path: Path) -> None:
+        from check.skill import _check_reference_toc
+        d = tmp_path / "skill"
+        (d / "references").mkdir(parents=True)
+        content = "# Guide\n\n" + "\n".join(f"line {i}" for i in range(120))
+        (d / "references" / "long.md").write_text(content)
+        issues = _check_reference_toc(d, "f")
+        assert len(issues) == 1
+        assert issues[0]["severity"] == "warn"
+        assert "Table of Contents" in issues[0]["issue"]
+
+    def test_long_reference_with_toc_no_issues(self, tmp_path: Path) -> None:
+        from check.skill import _check_reference_toc
+        d = tmp_path / "skill"
+        (d / "references").mkdir(parents=True)
+        content = (
+            "# Guide\n\n## Table of Contents\n\n- Section A\n- Section B\n\n"
+            + "\n".join(f"line {i}" for i in range(120))
+        )
+        (d / "references" / "long.md").write_text(content)
+        assert _check_reference_toc(d, "f") == []
+
+    def test_contents_heading_variant_accepted(self, tmp_path: Path) -> None:
+        from check.skill import _check_reference_toc
+        d = tmp_path / "skill"
+        (d / "references").mkdir(parents=True)
+        content = (
+            "# Guide\n\n## Contents\n\n- A\n- B\n\n"
+            + "\n".join(f"line {i}" for i in range(120))
+        )
+        (d / "references" / "long.md").write_text(content)
+        assert _check_reference_toc(d, "f") == []
+
+
