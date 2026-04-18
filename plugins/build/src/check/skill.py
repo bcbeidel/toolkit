@@ -725,6 +725,9 @@ class SkillDocument(Document):
             self.meta.get("argument-hint"), self.content, self.path,
         ))
         result.extend(_check_body_paths(self.content, self.path))
+        result.extend(_check_mcp_references(self.content, self.path))
+        result.extend(_check_time_sensitive(self.content, self.path))
+        result.extend(_check_embedded_scripts(self.content, self.path))
         result.extend(_check_directives(self.content, self.path))
         result.extend(_check_body_lines(self.content, self.path))
         return result
