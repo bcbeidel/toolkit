@@ -39,6 +39,45 @@ cloud-deploy/
 ```
 Claude reads only the relevant reference file.
 
+## Lifecycle & Compaction
+
+Skills aren't scripts — they're standing instructions that enter the
+conversation once and persist.
+
+**Normal lifecycle.** When a skill triggers, Claude Code renders the
+SKILL.md body into a single message and inserts it into the
+conversation. That message stays for the whole session. Every turn
+after the trigger reads the same body. Nothing reloads unless the
+user re-triggers.
+
+**After compaction.** When the conversation is compacted (either
+explicitly via `/compact` or automatically near the context limit),
+skills are re-attached with two caps:
+
+- **5,000 tokens per skill** — only the first 5K tokens of each
+  re-attached SKILL.md survive. Content past that point is dropped.
+- **25,000 tokens combined** — all re-attached skills share a single
+  25K budget. Skills beyond the budget are dropped entirely.
+
+**Practical implications:**
+
+- **Put the load-bearing instructions first.** The trigger phrase lives
+  in `description`, but the body's first 5K tokens are the only part
+  guaranteed to survive compaction. Structure accordingly.
+- **Write standing instructions, not one-time steps.** A body that
+  says "First, introduce yourself" or "Start by asking three questions"
+  goes stale after the first use and confuses the model on re-read.
+  Write procedures that apply consistently throughout a task: "When
+  processing a file, extract the header first." "Gate destructive ops
+  on explicit user approval." These read correctly on every turn.
+- **Use progressive disclosure for long content.** Move detail to
+  `references/` instead of inlining it. Reference files load on
+  demand and don't consume the 25K combined budget unless actually
+  loaded.
+- **The soft-cap of 500 lines in the body isn't arbitrary** — it
+  approximates the post-compaction survival zone. Skills that blow
+  past it risk losing their tail after a long conversation.
+
 ## Degrees of Freedom
 
 Match instruction specificity to task fragility. Fragile tasks get
