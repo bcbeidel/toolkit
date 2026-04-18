@@ -39,6 +39,35 @@ cloud-deploy/
 ```
 Claude reads only the relevant reference file.
 
+## Degrees of Freedom
+
+Match instruction specificity to task fragility. Fragile tasks get
+narrow, explicit instructions; routine tasks get broad prose. Over-
+specifying a routine task produces brittle skills that break on edge
+cases Claude could have handled; under-specifying a destructive task
+produces skills that fail dangerously.
+
+| Freedom | When to use | Form |
+|---------|-------------|------|
+| **Low** | Destructive / irreversible operations (deploy, rm -rf, DROP TABLE, force-push, external API writes). | Scripts or pseudocode with no parameters. Explicit gates. No variation allowed. |
+| **Medium** | External effects where tool order matters (refactors, migrations, multi-step writes). | Parameterized steps that name specific tools and state data-flow between steps. |
+| **High** | Reversible, low-stakes operations (file transforms, analysis, doc generation, reads). | Prose that describes the intent and lets Claude pick tools and order. |
+
+Examples:
+
+- **Low** — deploy script: "Run `./bin/deploy.sh --env=prod`. Do not
+  substitute. Do not parameterize. If the script is missing, stop."
+- **Medium** — migration workflow: "1. Run `alembic upgrade head`. 2. Verify
+  `alembic current` matches expected head. 3. If mismatch, roll back via
+  `alembic downgrade -1`."
+- **High** — code review: "Review the diff for correctness, style, and
+  security. Surface concerns proportional to severity. Skip nits unless
+  asked."
+
+Calibration heuristic: if you'd feel uneasy watching Claude improvise
+the task, specify more. If you'd feel uneasy watching Claude follow a
+script verbatim, specify less.
+
 ## Substitutions
 
 When `argument-hint` is set in frontmatter, the body must consume the
