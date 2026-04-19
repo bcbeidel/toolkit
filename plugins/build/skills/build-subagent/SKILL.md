@@ -237,10 +237,10 @@ Add fields only when they were raised and confirmed in Step 3:
 |---|---|
 | `disallowedTools` | denylist approach was chosen over allowlist |
 | `model` | specific model was justified for this workflow |
-| `permissionMode` | agent makes broad or irreversible changes |
+| `permissionMode` | agent's risk profile differs from the parent session (see Step 3 for the 6 spec values) |
 | `maxTurns` | multi-step or recursive workflow |
 | `background` | parallelism was the Step 1 justification |
-| `isolation: worktree` | agent writes files AND `background: true`, or modifies versioned files requiring a clean working copy |
+| `isolation: worktree` | **required** when `background: true` AND effective tools include `Write` or `Edit`; also recommended when modifying versioned files that require a clean working copy |
 | `skills` | workflow needs project-specific procedures |
 
 Do not include fields that were not discussed. Do not include commented-out
@@ -313,7 +313,7 @@ definitions that pass the checks it enforces downstream.
 
 ## Key Instructions
 
-- **Won't write the definition file until the user explicitly approves the draft** — Step 6 is a hard gate; no file is written before it passes
+- **Won't write the definition file until the user explicitly approves the draft** — Step 8 is a hard gate; no file is written before it passes
 - **Won't proceed to intake if a skill would suffice** — Step 1 justification check is mandatory; redirect to `/build:build-skill` if none of the three justification conditions hold
 
 ## Anti-Pattern Guards
