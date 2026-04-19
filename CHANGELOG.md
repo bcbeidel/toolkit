@@ -8,6 +8,30 @@ Pre-restructure releases used a single version. Post-restructure, each plugin
 
 ## [Unreleased]
 
+## [wiki-0.3.0] - 2026-04-19
+
+Retroactive entry for #325, which merged ahead of v0.43.0 without a
+version bump or CHANGELOG line. Catches the wiki plugin up to reflect
+what shipped.
+
+### Added
+
+- **`wiki:setup` captures per-project Working Agreements (#325, closes
+  #321).** `/wiki:setup` seeds new projects with a default
+  codify-repetition ethos under a managed `## Working Agreements`
+  section in `AGENTS.md`. On re-run against projects that already have
+  the section, reviews with the user (keep / edit / replace) rather
+  than silently skipping. Eight new unit tests cover the
+  `has_working_agreements` detection path.
+
+### Changed
+
+- **Unified AGENTS.md migration (#325).** Build & Test, Design
+  Principles, and Conventions move from `CLAUDE.md` to `AGENTS.md` in
+  a uniform `- **Name.** imperative.` bullet form. `CLAUDE.md` becomes
+  a thin pointer. The repo's AGENTS.md now serves any AI coding tool
+  that favors the AGENTS.md convention, not just Claude Code.
+
 ## [build-0.4.0] - 2026-04-19
 
 ### Added
