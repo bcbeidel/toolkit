@@ -42,6 +42,10 @@ Do not proceed to intake until the user confirms a subagent is the right primiti
 
 ### 2. Elicit Requirements
 
+If `$ARGUMENTS` is non-empty, seed the intake from it: treat the first token
+as the proposed name and the remainder as the capability description, then
+confirm with the user before moving on.
+
 Gather four inputs, one at a time:
 
 1. **Name** — slug form: lowercase, hyphen-separated, no spaces
@@ -71,8 +75,12 @@ For tools not requested but clearly needed, suggest them and explain why:
 - `Bash` when only file reads are needed
 - `Write`/`Edit` when the agent only produces reports
 - `WebFetch`/`WebSearch` for internal-only workflows
-- `Agent` listed in tools — subagents cannot spawn other subagents; the
-  Agent tool is filtered out at the platform level. Listing it has no effect.
+- `Agent` listed in tools for a **subagent-scoped** definition — subagents
+  cannot spawn other subagents; the Agent tool is filtered out at the
+  platform level. Listing it has no effect. Exception: the `Agent` and
+  `Agent(worker, researcher)` syntax *is* meaningful when the definition
+  is intended to run as the *main thread* via `claude --agent <name>` (spec
+  documents this path explicitly). Flag only for subagent-scoped use.
 
 **`tools` allowlist vs `disallowedTools` denylist:**
 Use `tools` when the agent needs only a small, specific set. Use
@@ -84,13 +92,24 @@ specific ones. If both are set, `disallowedTools` is applied first.
 Do not present these as a menu. Surface each only when the described
 workflow signals it:
 
-**`permissionMode`** — raise only if the agent makes broad or irreversible
-changes:
-- `plan`: proposes changes for user approval before acting
-- `acceptEdits`: accepts file edits without prompting (fully automated writes)
-- Note: if the parent uses `bypassPermissions` or `auto` mode, this field is
-  overridden — the subagent cannot restrict its own permissions below the
-  parent's level.
+**`permissionMode`** — raise only when the agent's risk profile differs from
+the parent session (read-only exploration, auto-accepting edits, etc.). Spec
+values:
+- `default`: standard permission checking with prompts
+- `acceptEdits`: auto-accepts file edits and common filesystem commands for
+  paths in the working directory or `additionalDirectories`
+- `auto`: background classifier reviews commands and protected-directory writes
+- `dontAsk`: auto-denies permission prompts (explicitly allowed tools still work)
+- `bypassPermissions`: skips permission prompts (use with caution)
+- `plan`: plan mode (read-only exploration)
+
+Parent-session precedence rules (spec):
+- If the parent uses `bypassPermissions` **or `acceptEdits`**, that takes
+  precedence and the subagent's `permissionMode` is ignored.
+- If the parent uses `auto` mode, the subagent inherits auto mode and its own
+  `permissionMode` is ignored; the parent's classifier evaluates each tool call.
+- Plugin subagents have `permissionMode`, `hooks`, and `mcpServers` silently
+  ignored regardless of value (spec: security-scoped plugin restriction).
 
 **`maxTurns`** — raise only if the workflow is multi-step or recursive:
 > "This workflow has several steps — add `maxTurns: N` as a safety net.
@@ -101,16 +120,40 @@ in Step 1:
 > "Since parallelism is the reason for this subagent, `background: true`
 > lets it run concurrently while the parent continues."
 
-**`isolation: worktree`** — raise when the agent writes or modifies files AND
-parallelism was cited in Step 1 (`background: true`), or when the agent
-makes changes to versioned files that require a clean working copy:
+**`isolation: worktree`** — **required** when `background: true` is set AND
+the effective tool set includes `Write` or `Edit`. Also recommended when
+the agent makes changes to versioned files that require a clean working
+copy. This mirrors check-subagent #11: background agents with write access
+and no worktree isolation are a flagged warn because parallel writes on
+shared files conflict. Surface this to the user:
 > "Since this agent modifies files in parallel, `isolation: worktree` gives
-> it a clean working copy to prevent write conflicts."
+> it a clean working copy to prevent write conflicts. Without it,
+> check-subagent will flag this combination."
 
 **`skills`** — raise only if the workflow implies needing project-specific
 context or toolkit procedures:
 > "Parent session skills aren't inherited. If this agent needs [skill]
 > procedures, list it explicitly in the `skills` field."
+
+**`mcpServers`** — raise when the subagent needs MCP access the parent
+doesn't have, or when you want to keep an MCP server's tool descriptions
+out of the parent conversation's token budget:
+> "The `mcpServers` field scopes MCP servers to this subagent. Inline
+> definitions connect at start and disconnect at finish; string references
+> reuse the parent session's connection. Defining a server here instead of
+> in `.mcp.json` keeps its tool descriptions out of the parent context."
+
+**`memory`** — raise only if the user wants the subagent to accumulate
+knowledge across sessions (codebase patterns, recurring issues, debugging
+insights):
+> "Setting `memory: project` (or `user`/`local`) gives this subagent a
+> persistent directory. Heads-up: enabling memory auto-grants Read/Write/Edit
+> regardless of the `tools` field, so the subagent can manage its memory
+> files. If you specified a narrow `tools` allowlist, memory will expand it."
+
+Scope choices: `user` (`~/.claude/agent-memory/<name>/`), `project`
+(`.claude/agent-memory/<name>/` — shareable via version control, recommended
+default), `local` (`.claude/agent-memory-local/<name>/` — not checked in).
 
 **Portability** — raise only if the user mentions Copilot, Cursor, or
 cross-platform use:
@@ -162,20 +205,30 @@ produces, when to use it.>
 
 <Specific trigger conditions — name the problem, not just the action.
 What makes this the right agent over a skill or inline execution?
-Include 1-2 example requests that SHOULD route here.
-Include at least one example that should NOT (routes to a skill instead).>
+Required: 1–2 example requests that SHOULD route here.
+Required: at least one example that should NOT (routes to a skill
+instead, or is handled inline). The negative case is what disambiguates
+this agent from adjacent routing targets and is checked by
+check-subagent #3.>
 
 ## Workflow
 
 <Numbered steps describing the agent's execution pattern.
 The final step must state an explicit completion condition:
-what "done" looks like and what the agent returns to the parent.>
+what "done" looks like and what the agent returns to the parent.
+See check-subagent #5 — agents without a completion condition AND
+without `maxTurns` are flagged as runaway risks.>
 
 ## Handoff
 
-**Receives:** <specific inputs from parent — name the data, not the category>
-**Produces:** <specific outputs returned to parent — format, location, or structure>
-**Returns to:** <parent agent or orchestrator>
+**Receives:** <concrete input descriptor — e.g., "list of failing test
+names and their error messages", not "test results". Generic category
+descriptors are flagged by check-subagent #4.>
+**Produces:** <concrete output descriptor — format, file path, or
+structure the downstream consumer can parse, e.g., "Markdown report at
+`.research/<slug>.research.md` with Claims table, Sources table, and
+Findings sections">
+**Returns to:** <parent agent or orchestrator name>
 ```
 
 Add fields only when they were raised and confirmed in Step 3:
@@ -184,10 +237,10 @@ Add fields only when they were raised and confirmed in Step 3:
 |---|---|
 | `disallowedTools` | denylist approach was chosen over allowlist |
 | `model` | specific model was justified for this workflow |
-| `permissionMode` | agent makes broad or irreversible changes |
+| `permissionMode` | agent's risk profile differs from the parent session (see Step 3 for the 6 spec values) |
 | `maxTurns` | multi-step or recursive workflow |
 | `background` | parallelism was the Step 1 justification |
-| `isolation: worktree` | agent writes files AND `background: true`, or modifies versioned files requiring a clean working copy |
+| `isolation: worktree` | **required** when `background: true` AND effective tools include `Write` or `Edit`; also recommended when modifying versioned files that require a clean working copy |
 | `skills` | workflow needs project-specific procedures |
 
 Do not include fields that were not discussed. Do not include commented-out
@@ -206,21 +259,61 @@ A one-liner with no exclusions and no output format is insufficient. A descripti
 
 **Skills are not inherited.** The parent session's active skills do not carry over to subagents. If the workflow requires project-specific procedures, list them explicitly in the `skills` field. If omitted, the subagent starts with no skill context beyond its own system prompt.
 
-### 6. Present for Approval
+### 6. Narrate the Draft
 
-Show the complete draft. Wait for explicit user confirmation before writing
-any file. If the user requests changes, revise and re-present.
+Before asking for approval, walk the user through the key design choices in
+3–6 bullets. Cover:
+
+- **Frontmatter choices** — explain any non-default field settings and why.
+  Name the field *and* the reasoning: "I set `permissionMode: acceptEdits`
+  because this agent auto-applies linter fixes — interactive prompts would
+  defeat the point."
+- **Structure choices** — why the workflow is ordered the way it is, where
+  gate checks are placed and what they guard, and how prescriptive vs.
+  flexible each step is.
+- **Patterns applied** — call out `isolation: worktree`, `background: true`,
+  `memory: project`, `mcpServers` scoping, or other patterns you used.
+- **What you didn't use and why** — briefly note patterns you considered
+  but skipped (e.g., "I didn't set `maxTurns` because the workflow has one
+  step; if we add retry logic, we should add it then"). This is often the
+  most educational part of the narration.
+
+The goal is that a user unfamiliar with subagent authoring can read the
+narration and disagree with any structural choice. If you can't explain a
+choice clearly, revisit it before presenting.
+
+### 7. WOS Quality Check
+
+Before writing to disk, run lint and reindex on the worktree root:
+
+```bash
+python3 plugins/wiki/scripts/lint.py --root <project-root> --no-urls
+python3 plugins/wiki/scripts/reindex.py --root <project-root>
+```
+
+Fix any findings surfaced by lint before writing. `reindex.py` updates
+`_index.md` navigation so the new agent is discoverable.
+
+### 8. Present for Approval
+
+Show the complete draft and the narration together. Wait for explicit user
+confirmation before writing any file. If the user requests changes, revise
+and re-present.
 
 Do not write the file until approved.
 
-### 7. Write the File
+### 9. Write the File and Audit
 
 Write to `.claude/agents/<name>.md`. Confirm the path and that the file
 was written.
 
+After writing, invoke `check-subagent` on the new file — surface any findings
+and offer the repair loop before moving on. build-subagent must produce
+definitions that pass the checks it enforces downstream.
+
 ## Key Instructions
 
-- **Won't write the definition file until the user explicitly approves the draft** — Step 6 is a hard gate; no file is written before it passes
+- **Won't write the definition file until the user explicitly approves the draft** — Step 8 is a hard gate; no file is written before it passes
 - **Won't proceed to intake if a skill would suffice** — Step 1 justification check is mandatory; redirect to `/build:build-skill` if none of the three justification conditions hold
 
 ## Anti-Pattern Guards
