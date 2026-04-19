@@ -22,7 +22,6 @@ packages = []
 target-version = "py39"
 line-length = 88
 exclude = [
-    "plugins/build/skills/build-skill/eval-viewer/",
     "plugins/build/skills/build-skill/scripts/",
 ]
 

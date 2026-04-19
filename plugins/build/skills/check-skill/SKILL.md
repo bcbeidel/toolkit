@@ -23,9 +23,12 @@ then offer an opt-in repair loop.
 ### 2. Run Static Checks
 
 ```bash
-# Prerequisite: pip install -e plugins/build
-python3 <plugin-scripts-dir>/../../src/check/lint.py --root <project-root> --no-urls
+# Prerequisites: pip install -e plugins/build -e plugins/wiki
+python3 plugins/wiki/scripts/lint.py --root <project-root> --no-urls
 ```
+
+The linter lives in the wiki plugin and imports the `check` package from the
+build plugin — both must be installed.
 
 Extract findings for the target skill(s). Static checks run deterministically
 and always precede LLM checks. They cover:
@@ -76,7 +79,7 @@ For each skill, read the SKILL.md body and assess the remaining twenty criteria:
 |---|-------|----------|---------------|
 | 8 | Vagueness | best-practice | Each rule produces a consistent decision; two developers reading it would make the same choice in the same situation |
 | 9 | Removal test | best-practice | Each significant rule would cause a mistake if removed; rules that restate model defaults or code-visible conventions are noise |
-| 10 | Persona framing | best-practice | No "act as X" or "you are a senior X expert" constructions; OpenSSF 2025 found persona framing reduces performance on the intended tasks |
+| 10 | Affirmative rule phrasing | best-practice | Each rule states what *to* do, not what to avoid. "Don't X" must be rewritten as "Do Y instead" or paired with the affirmative alternative in the same rule. Negative phrasings are easier for the model to invert or miss than positive directives. Exceptions: explicit scope boundaries flagged by #11 ("this skill won't X") and failure-recovery steps flagged by #21 — those are identity/recovery statements, not instructional rules. |
 | 12 | Contradiction-free | best-practice | No two rules in the skill body produce explicitly opposite directives for the same scenario. Flag as fail only when Rule A says "always X" and Rule B says "never X" in the same or overlapping trigger context within `## Key Instructions` or `## Anti-Pattern Guards`. Semantic tension and trade-off language ("prefer X unless Y") is not a contradiction. |
 | 16 | Edge case handling | best-practice | The skill explicitly addresses at least one failure mode: missing or ambiguous input, a precondition that isn't met, or a mid-workflow failure. A gate check (#5) that blocks on missing input counts; a Workflow step that says "if X is unavailable, do Y" counts. Silence on all failure modes is a fail. |
 | 21 | Reversibility | best-practice | If the skill performs irreversible or high-impact operations (file deletion, git reset, commit, deploy, external API write), `## Key Instructions` or `## Handoff` documents how to revert or recover from an unintended execution (e.g., "use `git reflog` to recover", "review with `/diff` before confirming"). |
@@ -114,23 +117,23 @@ For each selected finding:
 2. Propose a minimal specific edit — fix the finding without restructuring surrounding content
 3. Show the diff
 4. Write the change only on user confirmation
-5. Re-run `scripts/lint.py` after each applied fix
+5. Re-run `lint.py` after each applied fix
 
 ## Anti-Pattern Guards
 
-1. **Running LLM checks before `scripts/lint.py`** — static checks are deterministic and fast; always run them first
+1. **Running LLM checks before `lint.py`** — static checks are deterministic and fast; always run them first
 2. **Applying all fixes at once** — per-change confirmation is required; bulk application removes the user's ability to review individual changes
 3. **Auditing `skills/_shared/`** — this directory holds shared references, not invocable skills; exclude it from all-skill audits
 
 ## Handoff
 
 **Receives:** Path to a SKILL.md (or no argument for all-skills audit)
-**Produces:** Structured findings table in `scripts/lint.py` format (file, issue, severity); optionally, targeted edits applied to the audited skill(s)
+**Produces:** Structured findings table in `lint.py` format (file, issue, severity); optionally, targeted edits applied to the audited skill(s)
 **Chainable to:** build-skill (to create a replacement), start-work (for bulk repair across skills)
 
 ## Key Instructions
 
 - Exclude `skills/_shared/` from all-skill audits
-- Do not modify `wos/skill_audit.py` — the static checks are authoritative; this skill adds LLM-level judgment on top
+- Treat `plugins/build/src/check/skill.py` as read-only — the static checks are authoritative; this skill adds LLM-level judgment on top
 - When proposing edits, keep changes minimal — fix the finding without restructuring surrounding content
 - Checks 8 and 9 (vagueness, removal test) are the highest-value content-quality checks; prioritize surfacing them clearly

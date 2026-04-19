@@ -260,7 +260,7 @@ flag any that are missing:
 | 6 | At least one concrete example — invocation, sample output, or table row with a real case |
 | 8 | Each rule produces a consistent decision; two developers reading it would make the same choice |
 | 9 | Each rule would cause a mistake if removed — cut anything that restates model defaults |
-| 10 | No "act as X" or "you are a senior X expert" persona framing — degrades task performance |
+| 10 | Each rule states what to do, not what to avoid — rewrite "Don't X" as "Do Y instead" (exceptions: scope boundaries in #11, recovery steps in #21) |
 | 12 | No contradictions: if rule A says "always X" and rule B says "never X" for the same scenario, remove one |
 | 14 | Multi-step workflows (≥3 steps): steps numbered, ordered, inter-step dependencies stated |
 | 15 | Most consequential rules (irreversible actions, hard constraints) at the top of `## Key Instructions` |

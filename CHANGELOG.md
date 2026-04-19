@@ -8,6 +8,38 @@ Pre-restructure releases used a single version. Post-restructure, each plugin
 
 ## [Unreleased]
 
+## [build-0.2.0] - 2026-04-18
+
+### Changed
+
+- **`build:build-skill` simplified — eval and description-optimization
+  subsystems removed.** The skill now focuses on the core loop:
+  interview → draft → try → revise. Dropped the full eval workflow
+  (test cases, baseline runs, iteration directories, blind comparison,
+  grader/comparator/analyzer subagents, eval-viewer) and the
+  description-optimization loop. `SKILL.md` drops from 326 to 214 lines.
+
+  Deleted: `references/eval-workflow.md`, `description-optimization.md`,
+  `schemas.md`; `agents/`; `eval-viewer/`; `assets/eval_review.html`;
+  `scripts/aggregate_benchmark.py`, `generate_report.py`, `run_eval.py`,
+  `run_loop.py`, `improve_description.py`.
+
+  Kept: `scripts/package_skill.py`, `quick_validate.py`, `utils.py`;
+  `references/skill-writing-guide.md`, `platform-notes.md`. General
+  writing guidance from the old "Improving the skill" section preserved
+  under a new `## Iterating` section. `platform-notes.md` pruned of
+  eval-specific and description-opt sections.
+
+- **`build:check-skill` criterion #10 repurposed from persona framing to
+  affirmative rule phrasing.** "Don't X" must be rewritten as "Do Y
+  instead" or paired with the affirmative alternative. Exceptions named
+  for #11 (scope boundaries) and #21 (recovery steps). Count remains at
+  22 criteria. Mirrored in `build-skill/references/skill-writing-guide.md`
+  quality checklist. Applied to the build-skill and check-skill SKILL.md
+  bodies themselves (7 rewrites). `build:refine-prompt`'s persona-framing
+  guidance left unchanged — persona framing may still be an anti-pattern
+  for prompts, distinct from instruction phrasing inside skills.
+
 ## [wiki-0.1.7, work-0.1.5, build-0.1.4] - 2026-04-16
 
 ### Changed
