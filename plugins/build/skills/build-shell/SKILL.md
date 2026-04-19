@@ -271,15 +271,24 @@ Offer the audit:
 
 ## Key Instructions
 
-- Refuse cleanly on FX.1 signals. Do not scaffold a script when shell
-  is the wrong tool and then apologize in comments.
-- Do not write any file before the Review Gate passes.
-- Do not invent a save path. Elicit it.
-- Strip bash-only features when the target is `posix-sh`; do not leave
-  them in with a disclaimer.
+- Refuse cleanly on FX.1 signals. Scaffolding a script when shell is
+  the wrong tool actively harms the codebase — apologizing in comments
+  afterward does not recover the harm.
+- Write files to disk only after the Review Gate passes.
+- Elicit the save path from the user. Do not invent one.
+- Strip bash-only features when the target is `posix-sh`; rewrite the
+  scaffold section rather than leaving bash syntax in with a
+  disclaimer.
 - The dependency preflight must name the missing tool and emit a
   platform-specific install hint to stderr. Silent `exit 1` is a
   failure of this skill's core contract.
+- Won't scaffold scripts for Claude Code hook events — route to
+  `/build:build-hook`, which handles hook wiring and payload schema.
+- Won't scaffold when any FX.1 signal fires — recommend the
+  appropriate alternative (Python, a different primitive) instead.
+- Recovery if a script is written in error: `rm <path>` removes it
+  cleanly. The scaffold is self-contained (no settings.json entry, no
+  hook registration), so removal leaves no dangling state.
 
 ## Handoff
 

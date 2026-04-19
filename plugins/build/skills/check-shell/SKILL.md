@@ -270,15 +270,22 @@ fix in place.
 
 ## Key Instructions
 
-- Read-only: do not write, edit, or reformat the script under audit.
+- Read-only: report findings only; do not write, edit, or reformat
+  the script under audit.
 - Always run all 14 FX lints, even when every external tool is
   available — the FX lints catch things shellcheck does not (filename
   drift, undocumented exits, `mktemp`-before-`trap`, bare TODO).
 - The Missing Tools preamble is part of the contract. If a relevant
   tool is absent, naming it loudly with a platform-specific install
   command is the fail-fast mechanism.
-- Severity classification is fixed per the lint catalog above — do
-  not downgrade a `fail` to `warn` because the script is small.
+- Severity classification is fixed per the lint catalog above —
+  preserve `fail` at `fail` even when the script is small.
+- Won't audit Claude Code hook scripts — route to `/build:check-hook`,
+  which handles hook-specific checks (matcher casing, Stop hook loop
+  risk, jq field paths on `tool_input`).
+- Won't modify the script — chain to `/build:build-shell` when a
+  rewrite is cheaper than remediation, or leave the user to apply
+  fixes in place.
 
 ## Handoff
 
