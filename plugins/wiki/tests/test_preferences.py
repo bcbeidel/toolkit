@@ -75,10 +75,10 @@ class TestRenderPreferences:
         with pytest.raises(ValueError, match="Unknown level"):
             render_preferences({"directness": "nonexistent"})
 
-    def test_compatible_with_render_wos_section(self) -> None:
-        from wiki.agents_md import render_preferences, render_wos_section
+    def test_compatible_with_render_wiki_section(self) -> None:
+        from wiki.agents_md import render_preferences, render_wiki_section
 
         prefs = render_preferences({"directness": "blunt"})
-        result = render_wos_section(areas=[], preferences=prefs)
+        result = render_wiki_section(areas=[], preferences=prefs)
         assert "### Preferences" in result
         assert "- **Directness:**" in result

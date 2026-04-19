@@ -98,7 +98,7 @@ def render_preferences(prefs: Dict[str, str]) -> List[str]:
 
     Each string is formatted as ``**Dimension:** instruction`` without
     a bullet prefix. Pass the returned list to
-    ``render_wos_section(preferences=...)`` which adds bullets.
+    ``render_wiki_section(preferences=...)`` which adds bullets.
 
     Args:
         prefs: Mapping of dimension name to level.
@@ -228,8 +228,8 @@ def read_layout_hint(content: str) -> Optional[str]:
     if begin_idx == -1 or end_idx == -1:
         return None
 
-    wos_section = content[begin_idx:end_idx]
-    match = _LAYOUT_RE.search(wos_section)
+    section = content[begin_idx:end_idx]
+    match = _LAYOUT_RE.search(section)
     if match:
         layout = match.group(1)
         if layout in VALID_LAYOUTS:
@@ -240,7 +240,7 @@ def read_layout_hint(content: str) -> Optional[str]:
 # ── Render ───────────────────────────────────────────────────────
 
 
-def render_wos_section(
+def render_wiki_section(
     areas: List[Dict[str, str]],
     preferences: Optional[List[str]] = None,
     layout: Optional[str] = None,
@@ -361,8 +361,8 @@ def extract_preferences(content: str) -> List[str]:
     if begin_idx == -1 or end_idx == -1:
         return []
 
-    wos_section = content[begin_idx:end_idx]
-    lines = wos_section.split("\n")
+    section = content[begin_idx:end_idx]
+    lines = section.split("\n")
 
     in_preferences = False
     prefs: List[str] = []
@@ -401,8 +401,8 @@ def extract_areas(content: str) -> List[Dict[str, str]]:
     if begin_idx == -1 or end_idx == -1:
         return []
 
-    wos_section = content[begin_idx:end_idx]
-    lines = wos_section.split("\n")
+    section = content[begin_idx:end_idx]
+    lines = section.split("\n")
 
     in_areas = False
     areas: List[Dict[str, str]] = []
@@ -461,5 +461,5 @@ def update_agents_md(
     if layout is None:
         layout = read_layout_hint(content)
 
-    section = render_wos_section(areas, preferences, layout=layout)
+    section = render_wiki_section(areas, preferences, layout=layout)
     return replace_marker_section(content, BEGIN_MARKER, END_MARKER, section)
