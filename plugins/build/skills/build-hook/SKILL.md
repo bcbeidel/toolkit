@@ -34,16 +34,21 @@ Determine whether a hook is the right primitive before asking hook-specific ques
 
 ## 2. Elicit
 
+If `$ARGUMENTS` is non-empty, parse it as `[hook-event] [enforcement-goal]` —
+pre-fill the two fields below from the tokens, confirm them with the user, and
+only ask the handler-type question. Otherwise:
+
 Ask three things, one question at a time:
 
 **1. Hook event** — which lifecycle moment should trigger this hook?
 
 | Category | Events |
 |----------|--------|
-| Tool execution | `PreToolUse` (fires before; can block), `PostToolUse` (fires after; cannot prevent), `PostToolUseFailure` |
-| Session lifecycle | `SessionStart`, `SessionEnd`, `UserPromptSubmit`, `PreCompact`, `PostCompact` |
-| Agent coordination | `Stop`, `SubagentStop`, `SubagentStart` |
-| Permission | `Notification` (observability only), `PermissionRequest`, `PermissionDenied` |
+| Tool execution | `PreToolUse` (blockable), `PostToolUse` (cannot prevent), `PostToolUseFailure` |
+| Session lifecycle | `SessionStart`, `SessionEnd`, `UserPromptSubmit` (blockable), `PreCompact` (blockable), `PostCompact`, `InstructionsLoaded`, `ConfigChange` (blockable), `CwdChanged`, `FileChanged` |
+| Agent coordination | `Stop` (blockable), `StopFailure`, `SubagentStart`, `SubagentStop` (blockable), `TeammateIdle` (blockable) |
+| Tasks & worktrees | `TaskCreated` (blockable), `TaskCompleted` (blockable), `WorktreeCreate` (**any** non-zero exit fails creation), `WorktreeRemove` |
+| Permission & MCP | `Notification` (observability only), `PermissionRequest` (blockable), `PermissionDenied`, `Elicitation` (blockable), `ElicitationResult` (blockable) |
 
 If the goal is to *block* or *prevent* something, the event must be
 `PreToolUse` — `PostToolUse` fires after execution and cannot prevent it.
@@ -119,8 +124,8 @@ trap 'echo "Error on line ${LINENO}: ${BASH_COMMAND}" >&2' ERR
 trap 'rm -f "${TMPFILE:-}"' EXIT
 ```
 
-Never include `set -x` in production hooks — it floods stderr and can leak
-payload values from the JSON input in traces. Use it only during local debugging.
+Use `set -x` only during local debugging — in production it floods stderr and
+can leak payload values from the JSON input in traces.
 
 **Style:** Use `lower_case_with_underscores` for local variables and functions;
 `UPPER_CASE_WITH_UNDERSCORES` for exported variables and constants. When the
@@ -142,6 +147,29 @@ of blocking, print JSON to stdout on exit 0:
 This replaces the entire `tool_input` before execution. Use this when the goal is
 to strip dangerous flags rather than refuse the operation entirely.
 
+**Broader JSON output contract.** stdout on exit 0 may carry these fields; stdout
+on any non-zero exit is ignored. stdout must be **only** the JSON object — any
+leading text triggers "JSON validation failed."
+
+- `hookSpecificOutput.hookEventName` (required) — echo the event name.
+- `permissionDecision: "allow" | "deny" | "ask" | "defer"` plus
+  `permissionDecisionReason` — PreToolUse / PermissionRequest block-or-allow
+  channel. Precedence across hooks: `deny > defer > ask > allow`.
+- `decision: "block"` + `reason` — top-level field for UserPromptSubmit,
+  PostToolUse, Stop, SubagentStop, PreCompact, ConfigChange, TaskCreated,
+  TaskCompleted.
+- `additionalContext` — extra text injected into Claude's view; capped at
+  10,000 characters (spec-wide truncation rule).
+- `continue: false` + `stopReason` — halts the entire conversation.
+- `systemMessage` — user-visible message.
+- `suppressOutput: true` — omits hook output from the debug log (keeps
+  functional effects like `additionalContext` / `decision` intact).
+- `sessionTitle` (UserPromptSubmit only) — auto-names the session.
+- `retry: true` (PermissionDenied only) — tells Claude it may retry the
+  denied tool call.
+- `worktreePath` (WorktreeCreate, HTTP handlers) — required return field;
+  command handlers print the path to stdout instead.
+
 **Artifact 2: settings.json entry**
 
 ```json
@@ -153,7 +181,7 @@ to strip dangerous flags rather than refuse the operation entirely.
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/[name].sh",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/[name].sh",
             "timeout": 60
           }
         ]
@@ -163,10 +191,19 @@ to strip dangerous flags rather than refuse the operation entirely.
 }
 ```
 
-Set `"timeout"` generously (60–120s is typical). A hook that exceeds its
-timeout is treated as non-blocking — the operation proceeds and a hook
-error appears in the transcript. Slow hooks that approach their timeout
+Spec defaults: 600 s for command hooks, 30 s for prompt, 60 s for agent.
+Lower `"timeout"` for tight gates (10–60 s typical) so a stuck hook fails
+fast; raise only when the enforcement step genuinely needs it. A hook that
+exceeds its timeout is treated as non-blocking — the operation proceeds
+and a hook error appears in the transcript. Slow synchronous hooks
 accumulate session sluggishness and create pressure to bypass enforcement.
+
+Optional command-handler fields: `"shell": "bash" | "powershell"` (explicit
+shell selection for cross-platform hooks); `"statusMessage": "..."` (spinner
+text shown while the hook runs); `"asyncRewake": true` (async hook that wakes
+Claude on exit 2 with stderr/stdout, implies `async: true`). HTTP handlers
+accept `"headers"` and `"allowedEnvVars"`; prompt/agent handlers accept
+`"model"` (defaults to the fast model for prompt).
 
 Include `matcher` when the event is tool-scoped (PreToolUse, PostToolUse).
 Matcher syntax: simple name (`"Bash"`), pipe-separated (`"Write|Edit|MultiEdit"`),
@@ -176,6 +213,12 @@ wildcard (`"*"`), or regex (`"mcp__memory__.*"`).
 - `"*"`, `""`, or omitted → wildcard: fires on every tool call for this event
 - Alphanumeric + pipe only (e.g., `"Write|Edit|MultiEdit"`) → exact match or pipe-separated list
 - Any other character (e.g., `"mcp__memory__.*"`, `"^Notebook"`) → JavaScript regex (not POSIX; case-sensitive)
+
+**FileChanged matcher exception.** `FileChanged` treats `matcher` as a
+`|`-separated list of literal filenames, not a regex. `".envrc|.env"` watches
+those two files; regex syntax there is not interpreted. An MCP matcher like
+`"mcp__memory"` (no trailing `.*`) is exact-match and matches nothing — use
+`"mcp__memory__.*"` for regex scope.
 
 **`if` field** (v2.1.85+): filters individual handlers by tool name and arguments. The hook
 process does not spawn at all when `if` doesn't match — tighter than `matcher` alone and
@@ -268,9 +311,20 @@ This check is mandatory for any Stop/SubagentStop hook that may exit 2.
 
 **Important:** `stop_hook_active` is a **SubagentStop-only** field — it is
 absent from `Stop` event payloads (which include `stop_reason` instead). The
-guard above works for SubagentStop. For `Stop` hooks, implement an equivalent
-re-entry guard (e.g., check a session-scoped temp file or track that the hook
-has already fired) and exit 0 if re-entry is detected.
+guard above works for SubagentStop. For `Stop` hooks, use one of three
+loop-break layers (all three is belt-and-suspenders for production gates):
+
+1. **`stop_hook_active` field** — SubagentStop only; exits 0 on re-entry.
+2. **Progress-indicator check on `last_assistant_message`** (SubagentStop
+   payload field) — exit 0 if the subagent is making progress toward the
+   hook's requirement, so the block resolves when the subagent completes
+   the work.
+3. **Session-scoped guard file** keyed to `session_id` — touch a temp file
+   on first block; exit 0 if it already exists. Necessary for `Stop` hooks
+   since its payload lacks `stop_hook_active`.
+
+Without at least one layer, a blocking Stop/SubagentStop hook loops until the
+session is killed.
 
 ## Security Note
 
@@ -283,17 +337,34 @@ Operational implication: treat hook additions to `settings.json` with the
 same code-review scrutiny as executable source files. The enhanced warning
 dialog Anthropic added after the CVE is the last line of defense.
 
+**Recursive-loop safety (spec warning).** Avoid invoking `claude` or
+`claude-code` from inside a hook command — each spawn re-fires hooks on the
+nested session and compounds exponentially. This is distinct from the
+Stop-hook infinite-loop case (§5): even non-Stop hooks that shell out to
+Claude can cause runaway spawning. If LLM-mediated decisions genuinely need
+to run inside a hook, use `type: "prompt"` or `type: "agent"` handlers
+instead of a shell-out to `claude`.
+
 ## Known Limitations
 
-Two permanent limitations that affect hook design decisions:
+Three permanent limitations that affect hook design decisions:
 
-- **Path expansion:** `$HOME` is not expanded in `settings.json` `"command"` values.
-  A command like `"$HOME/.claude/hooks/script.sh"` silently fails to load. Use
-  absolute paths or `~` expansion. Verify the hook appears in `/hooks` after any
-  path change.
-- **Non-interactive mode:** `PermissionRequest` hooks do not fire when Claude Code
-  runs with the `-p` flag (non-interactive / CI). Any enforcement that must work in
-  CI must use `PreToolUse` instead.
+- **Path expansion:** Use `$CLAUDE_PROJECT_DIR` (or an absolute path) in
+  `settings.json` `"command"` values. `$CLAUDE_PROJECT_DIR` is guaranteed
+  to resolve to the project root regardless of cwd; `$HOME` and `~` have
+  been observed to expand inconsistently across versions and silently fail
+  to load the script. Verify the hook appears in `/hooks` after any path
+  change. Plugin-bundled hooks additionally get `${CLAUDE_PLUGIN_ROOT}`
+  (install dir, changes on update) and `${CLAUDE_PLUGIN_DATA}` (persistent
+  data dir, survives updates). `$CLAUDE_ENV_FILE` is available inside
+  `SessionStart`, `CwdChanged`, and `FileChanged` hook scripts for
+  persisting environment variables into the session.
+- **Non-interactive mode:** Under `claude -p` (non-interactive / CI), the
+  `AskUserQuestion` and `ExitPlanMode` tools block because there is no user to
+  answer them. The documented workaround is a `PreToolUse` hook that returns
+  `permissionDecision: "allow"` with an `updatedInput` supplying the answer.
+  Anchor CI-critical enforcement on `PreToolUse`, not on interactive-only
+  events.
 - **Shell profile pollution:** `~/.bashrc` or `~/.zshrc` statements that emit
   output unconditionally corrupt the stdin JSON pipe and cause hook parse
   failures. Fix by guarding interactive-only output:
@@ -320,11 +391,11 @@ decides.
 
 Present both artifacts — the complete hook script and the settings.json
 snippet — and wait for explicit user approval before writing any file to
-disk. Do not write anything before this gate passes.
+disk. Write only after this gate passes.
 
 If the user requests changes, revise and re-present. Continue this loop
-until the user explicitly approves the artifacts or cancels. Do not
-proceed to Save on anything short of explicit approval.
+until the user explicitly approves the artifacts or cancels. Proceed to
+Save only on explicit approval.
 
 ## 8. Save
 
@@ -369,6 +440,7 @@ After testing, offer:
 - Won't build a hook when `permissions.deny` covers the goal — unconditional permanent blocks don't need logic or a script
 - Won't build a hook for advisory guidance or preferences — suggest CLAUDE.md or a skill instead
 - Won't skip the Safety Check — run all eleven criteria before declaring the draft ready
+- Recovery if a hook is written in error: run `chmod -x .claude/hooks/<name>.sh` to disable without deleting, or remove the file and the matching `settings.json` entry; a configured hook whose script is missing or non-executable silently fails and leaves normal tool flow intact
 
 ## Handoff
 

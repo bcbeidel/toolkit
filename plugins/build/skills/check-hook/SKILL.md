@@ -20,11 +20,10 @@ findings but does not modify any files.
 
 ## 1. Input
 
-Read hooks from both of these locations (use whichever exist):
+If `$ARGUMENTS` is non-empty, read the settings file at that path. Otherwise,
+read hooks from both of these default locations (use whichever exist):
 - `.claude/settings.json`
 - `.claude/settings.local.json`
-
-If a file path argument was provided, read that file instead.
 
 If neither location exists, or neither contains a `hooks:` key, report
 this as the first finding before running any checks:
@@ -90,6 +89,8 @@ Also flag as `warn` for Python hook scripts that use `sys.exit(1)` to signal val
 
 Also flag as `warn` if a hook writes structured JSON output (`hookSpecificOutput`, `systemMessage`, or raw stdout) that could exceed 10,000 characters in practice — hook stdout is capped at 10,000 characters and truncated silently, which corrupts structured JSON responses.
 
+Also flag as `warn` if a hook emits JSON on stdout but any non-zero exit path precedes or follows the emission — Claude Code parses stdout only on exit 0; stdout on any non-zero exit is discarded, so a JSON block emitted on exit 2 is silently lost. For the same reason, flag as `warn` if a JSON-emitting hook omits `hookSpecificOutput.hookEventName` (spec-required field) or emits leading non-JSON text (e.g., `echo "info" ; jq -n '...'`) — "JSON validation failed" errors surface in the transcript with no block effect.
+
 ### 4. Stop hook loop risk
 
 For any `Stop` or `SubagentStop` hook that may exit 2, check whether a re-entry guard is present.
@@ -99,6 +100,8 @@ For any `Stop` or `SubagentStop` hook that may exit 2, check whether a re-entry 
 **`Stop`:** The payload does not include `stop_hook_active` (it includes `stop_reason` instead). An equivalent re-entry guard is still required — check that the script uses a session-scoped mechanism (e.g., a temp file keyed to `session_id`) to detect and short-circuit repeated firing.
 
 Flag as `fail` for any Stop or SubagentStop hook that may exit 2 but contains no re-entry guard of either form.
+
+Also flag as `warn` for SubagentStop hooks that exit 2 and use `stop_hook_active` alone without inspecting `last_assistant_message` (the subagent's most recent output) for progress indicators. Spec recommends layering both: `stop_hook_active` shortcircuits the infinite re-fire, while the `last_assistant_message` check lets the block resolve naturally once the subagent satisfies the requirement — without it the hook remains a hard gate that the subagent cannot learn to pass.
 
 ### 5. Stdin correctness
 
@@ -110,7 +113,7 @@ Also check that each command hook's script file is executable (`chmod +x`). A no
 
 For each hook with a `matcher` field, verify the tool name uses exact canonical casing: `Bash`, `Write`, `Edit`, `MultiEdit`, `Read`, `Glob`, `Grep`, `WebFetch`, `WebSearch`, `Agent`, `NotebookEdit`, `NotebookRead`. A matcher on `bash` or `write` silently matches nothing, disabling the hook without any error. Flag as `fail`.
 
-Also check each hook's `"command"` field in `settings.json` for `$HOME`. `$HOME` is not expanded in JSON command fields; a hook using `"$HOME/.claude/hooks/script.sh"` silently fails to load. Use `~` or an absolute path instead. Flag as `fail`.
+Also check each hook's `"command"` field in `settings.json` for `$HOME` or `~`. Both have been observed to expand inconsistently across versions and silently fail to load the script; the spec's reference pattern is `"$CLAUDE_PROJECT_DIR"/.claude/hooks/<name>.sh` (or an absolute path), which resolves regardless of cwd. Flag as `warn`.
 
 ### 7. Enforcement intent on PostToolUse
 
@@ -119,7 +122,7 @@ Also check each hook's `"command"` field in `settings.json` for `$HOME`. `$HOME`
 fails to enforce. Flag as `warn` for any `PostToolUse` hook whose script
 or description suggests a blocking or gating intent.
 
-Also flag as `warn` if any hook uses the `PermissionRequest` event and the project may run in CI or non-interactive mode (`claude -p`). `PermissionRequest` hooks do not fire in non-interactive mode — enforcement silently absent. Use `PreToolUse` for enforcement that must work in automation.
+Also flag as `warn` if the project may run under `claude -p` and uses `AskUserQuestion` or `ExitPlanMode` without a `PreToolUse` hook that returns `permissionDecision: "allow"` plus an `updatedInput` supplying the answer. Per spec, those tools block in non-interactive mode; the documented workaround is a PreToolUse hook that pre-answers them. Enforcement logic that must fire under `-p` must be anchored on `PreToolUse`, not on interactive-only events.
 
 Also flag as `warn` if more than one `PreToolUse` hook targeting the same tool name returns `updatedInput`. Hooks run in parallel; the last to finish wins. Multiple hooks rewriting the same tool's input produce non-deterministic results with no runtime warning — consolidate input modifications for a given tool into one hook.
 
