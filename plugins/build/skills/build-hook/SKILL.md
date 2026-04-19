@@ -332,7 +332,7 @@ dialog Anthropic added after the CVE is the last line of defense.
 
 ## Known Limitations
 
-Two permanent limitations that affect hook design decisions:
+Three permanent limitations that affect hook design decisions:
 
 - **Path expansion:** Use `$CLAUDE_PROJECT_DIR` (or an absolute path) in
   `settings.json` `"command"` values. `$CLAUDE_PROJECT_DIR` is guaranteed
@@ -340,9 +340,12 @@ Two permanent limitations that affect hook design decisions:
   been observed to expand inconsistently across versions and silently fail
   to load the script. Verify the hook appears in `/hooks` after any path
   change.
-- **Non-interactive mode:** `PermissionRequest` hooks do not fire when Claude Code
-  runs with the `-p` flag (non-interactive / CI). Any enforcement that must work in
-  CI must use `PreToolUse` instead.
+- **Non-interactive mode:** Under `claude -p` (non-interactive / CI), the
+  `AskUserQuestion` and `ExitPlanMode` tools block because there is no user to
+  answer them. The documented workaround is a `PreToolUse` hook that returns
+  `permissionDecision: "allow"` with an `updatedInput` supplying the answer.
+  Anchor CI-critical enforcement on `PreToolUse`, not on interactive-only
+  events.
 - **Shell profile pollution:** `~/.bashrc` or `~/.zshrc` statements that emit
   output unconditionally corrupt the stdin JSON pipe and cause hook parse
   failures. Fix by guarding interactive-only output:
@@ -369,11 +372,11 @@ decides.
 
 Present both artifacts — the complete hook script and the settings.json
 snippet — and wait for explicit user approval before writing any file to
-disk. Do not write anything before this gate passes.
+disk. Write only after this gate passes.
 
 If the user requests changes, revise and re-present. Continue this loop
-until the user explicitly approves the artifacts or cancels. Do not
-proceed to Save on anything short of explicit approval.
+until the user explicitly approves the artifacts or cancels. Proceed to
+Save only on explicit approval.
 
 ## 8. Save
 
