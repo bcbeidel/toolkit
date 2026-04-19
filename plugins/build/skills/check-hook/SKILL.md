@@ -113,7 +113,7 @@ Also check that each command hook's script file is executable (`chmod +x`). A no
 
 For each hook with a `matcher` field, verify the tool name uses exact canonical casing: `Bash`, `Write`, `Edit`, `MultiEdit`, `Read`, `Glob`, `Grep`, `WebFetch`, `WebSearch`, `Agent`, `NotebookEdit`, `NotebookRead`. A matcher on `bash` or `write` silently matches nothing, disabling the hook without any error. Flag as `fail`.
 
-Also check each hook's `"command"` field in `settings.json` for `$HOME`. `$HOME` is not expanded in JSON command fields; a hook using `"$HOME/.claude/hooks/script.sh"` silently fails to load. Use `~` or an absolute path instead. Flag as `fail`.
+Also check each hook's `"command"` field in `settings.json` for `$HOME` or `~`. Both have been observed to expand inconsistently across versions and silently fail to load the script; the spec's reference pattern is `"$CLAUDE_PROJECT_DIR"/.claude/hooks/<name>.sh` (or an absolute path), which resolves regardless of cwd. Flag as `warn`.
 
 ### 7. Enforcement intent on PostToolUse
 
