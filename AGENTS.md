@@ -62,4 +62,8 @@ LLMs lose attention mid-document — first and last sections are what agents ret
 
 ## Working Agreements
 
-You are not allowed to do one-off work. If I ask you to do something and it's the kind of thing that will need to happen again, you must: do it manually the first time on 3 to 10 items. Show me the output. If I approve, codify it into a skill file. If it should run automatically, put it on a cron. The test: if I have to ask you for something twice, you failed.
+- **Codify repetition.** If something will happen again, do it manually
+  once on 3–10 items and show the output. If I approve, codify into a
+  skill, hook, or cron. The test: if I have to ask twice, you failed.
+- **Watch for patterns.** When you notice recurring work across
+  sessions, propose codifying it proactively — don't wait to be asked.
