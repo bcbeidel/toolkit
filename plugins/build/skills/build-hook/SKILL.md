@@ -162,6 +162,13 @@ leading text triggers "JSON validation failed."
   10,000 characters (spec-wide truncation rule).
 - `continue: false` + `stopReason` — halts the entire conversation.
 - `systemMessage` — user-visible message.
+- `suppressOutput: true` — omits hook output from the debug log (keeps
+  functional effects like `additionalContext` / `decision` intact).
+- `sessionTitle` (UserPromptSubmit only) — auto-names the session.
+- `retry: true` (PermissionDenied only) — tells Claude it may retry the
+  denied tool call.
+- `worktreePath` (WorktreeCreate, HTTP handlers) — required return field;
+  command handlers print the path to stdout instead.
 
 **Artifact 2: settings.json entry**
 
@@ -330,6 +337,14 @@ Operational implication: treat hook additions to `settings.json` with the
 same code-review scrutiny as executable source files. The enhanced warning
 dialog Anthropic added after the CVE is the last line of defense.
 
+**Recursive-loop safety (spec warning).** Avoid invoking `claude` or
+`claude-code` from inside a hook command — each spawn re-fires hooks on the
+nested session and compounds exponentially. This is distinct from the
+Stop-hook infinite-loop case (§5): even non-Stop hooks that shell out to
+Claude can cause runaway spawning. If LLM-mediated decisions genuinely need
+to run inside a hook, use `type: "prompt"` or `type: "agent"` handlers
+instead of a shell-out to `claude`.
+
 ## Known Limitations
 
 Three permanent limitations that affect hook design decisions:
@@ -339,7 +354,11 @@ Three permanent limitations that affect hook design decisions:
   to resolve to the project root regardless of cwd; `$HOME` and `~` have
   been observed to expand inconsistently across versions and silently fail
   to load the script. Verify the hook appears in `/hooks` after any path
-  change.
+  change. Plugin-bundled hooks additionally get `${CLAUDE_PLUGIN_ROOT}`
+  (install dir, changes on update) and `${CLAUDE_PLUGIN_DATA}` (persistent
+  data dir, survives updates). `$CLAUDE_ENV_FILE` is available inside
+  `SessionStart`, `CwdChanged`, and `FileChanged` hook scripts for
+  persisting environment variables into the session.
 - **Non-interactive mode:** Under `claude -p` (non-interactive / CI), the
   `AskUserQuestion` and `ExitPlanMode` tools block because there is no user to
   answer them. The documented workaround is a `PreToolUse` hook that returns
