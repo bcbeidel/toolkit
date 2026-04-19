@@ -92,7 +92,6 @@ Severity: **warn**
 
 **Category:** best-practice.
 
-
 Does the description imply capabilities not covered by the effective tool
 set? Apply the same effective-set logic as Check 1 — a tool removed via
 `disallowedTools` is absent even if not explicitly missing from `tools`.
@@ -374,7 +373,7 @@ are user-judgment calls and may be skipped without regret.
 
 - Won't auto-fix findings — audit produces a report; fixes require explicit user action or invocation of `build-subagent`
 - Won't flag broad tool sets without anchoring the assessment to the agent's stated description — over-permissioning is relative to purpose, not an absolute count
-- Won't pass generic or placeholder handoff fields — `**Receives:** inputs` is a fail, not a pass
+- Won't pass generic or placeholder handoff fields — placeholder text (`<inputs>`, "TBD", empty values) fails Check 4; generic category descriptors ("data", "output", "results") warn on Check 4; concrete descriptors ("list of failing test names with stack traces") pass
 
 ## Handoff
 
