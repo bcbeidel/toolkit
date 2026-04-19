@@ -28,8 +28,9 @@ Find all rule files in scope:
 | Cursor | `.cursor/rules/*.mdc` |
 | Claude Code | `## Rule:` sections in `CLAUDE.md` |
 
-If a path argument is provided, scope discovery to that file or directory.
-If no argument, scan the project for all three formats.
+When `$ARGUMENTS` resolves to a path, scope discovery to that file or
+directory. When `$ARGUMENTS` is empty, scan the project for all three
+formats.
 
 Report: "Found N rules across [formats]. Auditing..."
 
@@ -77,8 +78,11 @@ cannot conflict. This reduces the number of comparisons for large libraries.
 ### 5. Report Findings
 
 Output all findings in `scripts/lint.py` format (file, issue, severity).
-Sort: FAIL findings first, WARN findings second, alphabetically by file within
-each severity tier.
+Sort within each severity tier: Tier-1 deterministic findings first, then
+Tier-2 dimensions in numerical order (Dim 1 → Dim 6), then Tier-3
+conflicts; ties break alphabetically by file path. FAIL findings precede
+WARN findings overall. This mirrors check-skill's structural-before-content
+ordering so the most actionable findings (frontmatter / sections) lead.
 
 Each FAIL or WARN finding must include a `Recommendation:` line with a specific,
 actionable repair drawn from [repair-playbook.md](references/repair-playbook.md).
@@ -97,23 +101,46 @@ Close with a summary line:
 - Findings present: `N rules audited, M findings (X fail, Y warn)`
 - No findings: `N rules audited — no findings`
 
+### 6. Opt-In Repair Loop
+
+After presenting findings, ask:
+
+> "Apply fixes? Enter y (all), n (skip), or comma-separated numbers."
+
+For each selected finding, draw the canonical repair from
+[repair-playbook.md](references/repair-playbook.md) — the playbook is
+indexed by dimension and failure signal, so each finding maps to a
+specific repair recipe. Then:
+
+1. Read the relevant section of the rule file
+2. Apply the canonical repair from the playbook (if the finding has no
+   playbook entry, skip and flag for manual review — do not improvise)
+3. Show the diff
+4. Write the change only on user confirmation
+5. Re-run Tier-1 deterministic checks after each applied fix to confirm
+   the repair didn't break a different check
+
+Per-change confirmation is required — bulk application removes the
+user's ability to review individual repairs and conflicts with the
+playbook's intent-preservation gate.
+
 ## Key Instructions
 
-- Run deterministic checks before invoking the LLM — do not send malformed rules to LLM evaluation
-- Present all six semantic dimensions as a locked rubric in one call per rule; never make per-dimension calls
-- Include the full rule file verbatim in every LLM evaluation — never summarize
-- Only compare rules with overlapping scope globs for conflict detection
-- Default-closed: borderline evidence surfaces as WARN, never silently PASS
+- Run Tier-1 deterministic checks first; gate LLM evaluation on structural validity so malformed rules surface as findings, not as expensive LLM calls
+- Present all six semantic dimensions as a locked rubric in a single call per rule — per-dimension calls degrade agreement by ~11.5 points (RULERS, Hong et al. 2026)
+- Include the full rule file verbatim in every LLM evaluation so the evaluator sees the same anchors a human reviewer would
+- Limit conflict comparison to rule pairs with overlapping `scope` globs — non-overlapping rules cannot contradict and the comparison is wasted budget
+- Surface borderline evidence as WARN (default-closed) so ambiguous cases enter the report rather than silently passing
 
 ## Anti-Pattern Guards
 
-1. **Per-dimension LLM calls** — degrades accuracy by 11.5 points; always use complete rubric in one call
-2. **LLM-evaluating format compliance** — deterministic parse is faster, cheaper, and more reliable
-3. **Treating ambiguous compliance as PASS** — default-closed; surface as WARN
-4. **Reporting vague findings** — every FAIL/WARN must cite the specific rule file and the exact criterion that failed
-5. **Comparing non-overlapping rules for conflicts** — only rules whose scope globs overlap can contradict each other
-6. **Generic repair suggestions** — "fix this" or "improve specificity" with no actionable instruction; every Recommendation must name the specific change (what to add, remove, or replace, and what with)
-7. **Omitting the criterion statement from the evaluation prompt** — this is the highest-leverage element; removing it drops correlation with human judgment from 0.666 to 0.487; always include the behavioral definition from audit-dimensions.md verbatim
+1. **Per-dimension LLM call** — collapse into one locked-rubric call per rule (per-dimension splits degrade agreement by 11.5 points, RULERS)
+2. **LLM-evaluating format compliance** — handle frontmatter / section presence with deterministic parse (Tier 1); send only structurally valid rules to the LLM
+3. **Ambiguous compliance reported as PASS** — surface as WARN (default-closed) so the user sees the borderline case
+4. **Vague finding text** — cite the specific rule file and the exact criterion that failed; every finding names a file path and a rubric line
+5. **Conflict-comparing non-overlapping rules** — gate Tier 3 on `scope`-glob overlap so the comparison budget goes to pairs that can actually contradict
+6. **Generic repair text** ("fix this", "improve specificity") — every Recommendation names the specific change (what to add, remove, or replace, and what with) drawn from `repair-playbook.md`
+7. **Evaluation prompt missing the criterion statement** — this is the highest-leverage element (its removal drops human-correlation from 0.666 → 0.487); include the behavioral definition from `audit-dimensions.md` verbatim in every Tier-2 call
 
 ## Example
 

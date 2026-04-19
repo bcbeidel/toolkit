@@ -9,8 +9,39 @@ Rule auditing uses the three-tier grading hierarchy: deterministic checks first
 (no LLM), then semantic evaluation (one LLM call per rule, full rubric in one pass),
 then cross-rule conflict detection (separate LLM pass over rule pairs).
 
-**Do not use LLM evaluation for deterministic checks.** Parsing required fields
-and sections is faster, cheaper, and more reliable with code-style grep/read.
+Handle deterministic checks (frontmatter fields, section presence, glob syntax)
+with code-style grep/read — faster, cheaper, and more reliable than asking the
+LLM to parse them.
+
+## Table of Contents
+
+- [Category Tiers](#category-tiers)
+- [Tier 1: Deterministic Format Checks](#tier-1-deterministic-format-checks)
+- [Tier 2: Semantic Dimensions (One LLM Call per Rule)](#tier-2-semantic-dimensions-one-llm-call-per-rule)
+  - [Dimension 1: Specificity](#dimension-1-specificity)
+  - [Dimension 2: Research Grounding](#dimension-2-research-grounding)
+  - [Dimension 3: Staleness](#dimension-3-staleness)
+  - [Dimension 4: Fix-Safety Classification](#dimension-4-fix-safety-classification)
+  - [Dimension 5: Rubric Instability Risk](#dimension-5-rubric-instability-risk)
+  - [Dimension 6: Intent Completeness](#dimension-6-intent-completeness)
+- [Evaluation Prompt Template](#evaluation-prompt-template)
+- [Tier 3: Cross-Rule Conflict Detection (Separate LLM Pass)](#tier-3-cross-rule-conflict-detection-separate-llm-pass)
+- [Output Format](#output-format)
+
+---
+
+## Category Tiers
+
+Every check below carries a category tier so users can distinguish
+spec-backed findings from house-style guidance.
+
+| Tier | Meaning |
+|------|---------|
+| **toolkit-opinion** | Recommended by this toolkit; no upstream Anthropic spec exists. Rules are a toolkit-internal primitive — *every* rule audit dimension is toolkit-opinion at root. |
+| **research-grounded** | A toolkit-opinion check whose design is supported by published research (cited in `.research/rule-best-practices.md`). |
+| **canonical-mirror** | Mirrors a deterministic check that exists in `check-skill` (e.g., glob syntactic validity) so rule artifacts get the same hygiene as skill artifacts. |
+
+The tier appears in parentheses after each dimension heading.
 
 ---
 
@@ -28,6 +59,7 @@ Do not pass structurally invalid rules to the LLM step.
 | Severity value | `severity` field is not `warn` or `fail` | fail |
 | Test file present | Co-located `<slug>.tests.md` does not exist alongside the rule file | warn |
 | Concern prefix | Rule `name` field has no domain prefix (e.g., `quality-`, `style-`, `security-`, `compliance-`) when the rule library contains >5 rules | warn |
+| Glob syntactic validity | `scope` (WOS / Claude Code) or `globs` (Cursor) has malformed glob syntax — unmatched brackets, invalid wildcards, empty pattern. Mirrors check-skill's `paths` validity check so rules and skills get the same hygiene. | fail |
 
 For Toolkit `.rule.md` files: parse frontmatter between `---` delimiters and check body headings.
 For Cursor `.mdc` files: check `description`, `globs`, `alwaysApply` fields and body headings.
@@ -55,6 +87,8 @@ change). Default-closed: when evidence is borderline, surface as WARN, not PASS.
 
 ### Dimension 1: Specificity
 
+*(research-grounded — Hong et al. 2026 RULERS; specificity tuning evidence in `.research/rule-best-practices.md`)*
+
 **What it checks:** Whether the rule's criterion is defined precisely enough to
 produce consistent verdicts across evaluators.
 
@@ -73,6 +107,8 @@ produce consistent verdicts across evaluators.
 - *Vague criterion:* Replace each anchor-free term with a behavioral definition. Example: instead of "well-structured Intent section" → "Intent section contains all five required components: violation, failure cost, principle, exception policy, fix-safety signal."
 
 ### Dimension 2: Research Grounding
+
+*(research-grounded — locked-rubric and example-order findings from RULERS and ESLint deprecation analysis)*
 
 **What it checks:** Whether the rule's design violates known best practices for
 LLM evaluation rules.
@@ -95,6 +131,8 @@ LLM evaluation rules.
 - *Multiple dimensions:* Split into two rules — one criterion per rule. If the description contains "and," it encodes two rules.
 
 ### Dimension 3: Staleness
+
+*(toolkit-opinion — drift-detection convention; no upstream spec)*
 
 **What it checks:** Whether the rule references tools, APIs, patterns, or file
 structures that are no longer present in the codebase.
@@ -123,6 +161,8 @@ Do not delete unless the convention is definitively retired — archive preserve
 
 ### Dimension 4: Fix-Safety Classification
 
+*(research-grounded — Ruff safe/unsafe-fix model; cross-ecosystem convention with Biome and Clippy per `.research/rule-best-practices.md`)*
+
 **What it checks:** Whether the rule declares whether its findings are
 auto-remediable or require human judgment.
 
@@ -140,6 +180,8 @@ auto-remediable or require human judgment.
 - Downgrade to `auto-remediable` only when the fix provably preserves all observable behavior (formatting, pure renames, import ordering).
 
 ### Dimension 5: Rubric Instability Risk
+
+*(research-grounded — evidence-anchored rubrics deliver +0.17 QWK over inference-only; single canonical example per section reduces conflicting signals)*
 
 **What it checks:** Whether the rule's examples and phrasing are stable enough
 to produce consistent evaluations over time.
@@ -166,6 +208,8 @@ to produce consistent evaluations over time.
 ---
 
 ### Dimension 6: Intent Completeness
+
+*(toolkit-opinion — five-component Intent prevents enforcement-without-education failure mode; direct disable-rate evidence is thin per `.research/rule-best-practices.md`)*
 
 **What it checks:** Whether the Intent section contains all five required components
 that prevent enforcement-without-education failure mode.

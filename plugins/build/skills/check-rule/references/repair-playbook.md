@@ -11,6 +11,16 @@ Verify the proposed repair still enforces the same criterion. If the repair woul
 what files are in scope, what behavior is required, or what constitutes a violation —
 flag it as requiring human review before applying.
 
+## Table of Contents
+
+- [Dimension 1: Specificity](#dimension-1-specificity)
+- [Dimension 2: Research Grounding](#dimension-2-research-grounding)
+- [Dimension 3: Staleness](#dimension-3-staleness)
+- [Dimension 4: Fix-Safety Classification](#dimension-4-fix-safety-classification)
+- [Dimension 5: Rubric Instability](#dimension-5-rubric-instability)
+- [Dimension 6: Intent Completeness](#dimension-6-intent-completeness)
+- [Conflicts](#conflicts)
+
 ---
 
 ## Dimension 1: Specificity

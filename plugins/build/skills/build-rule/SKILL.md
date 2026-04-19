@@ -64,7 +64,10 @@ Use the category to set structural defaults before drafting:
 
 ### 3. Elicit Pattern
 
-Determine the intake mode from the user's input:
+Treat `$ARGUMENTS` as the user's initial input — a code pattern, behavior
+description, or existing rule draft. If `$ARGUMENTS` is empty, prompt for
+one of those three intake modes. Determine the intake mode from
+`$ARGUMENTS`:
 
 | Input | Mode |
 |-------|------|
@@ -128,27 +131,45 @@ or the user explicitly requests it.
 
 Before presenting, self-check against all twelve criteria. Fix any gap before presenting.
 
-**Four structural requirements** (`llm-rule-structural-characteristics.context.md`):
+**Four structural requirements** (see [rule-format-guide.md](references/rule-format-guide.md) — *Writing Effective Rules*):
 1. **Specificity** — all key terms have explicit behavioral definitions; no vague words like "good", "clean", "clear", "appropriate"
-2. **Scale matching** — binary PASS/FAIL for this rule type (not 1-5 or percentage)
+2. **Scale matching** — binary PASS/FAIL for this rule type (not 1-5 or percentage). *Drafting-time only — the rule file itself does not record its scale, so check-rule cannot independently verify it.*
 3. **Scope isolation** — exactly one convention; no "and" in the description
 4. **Behavioral anchoring** — both examples demonstrate observable, citable behaviors
 
-**Five linter patterns** (`linter-patterns-transferable-to-llm-rules.context.md`):
+**Five linter patterns** (audited by check-rule — see [audit-dimensions.md](../check-rule/references/audit-dimensions.md)):
 5. **Meta/create separation** — criterion defined separately from evaluation context (Intent section exists and explains the criterion, not the enforcement mechanism)
 6. **Start-narrow** — scope targets the specific file pattern where the known failure occurs; not `**/*` or `**/*.ext` without directory prefix
 7. **Default-closed** — rule declares how uncertain cases resolve (WARN, not PASS)
 8. **Fix-safety classification** — `fix-safety` field is set to `auto-remediable` or `requires-review`
 9. **Concern-prefix** (if library has >5 rules) — rule name prefixed by domain (e.g., `quality-`, `safety-`, `compliance-`, `style-`)
 
-**Three new quality checks** (from this session's research):
+**Three Intent / example quality checks** (audited by check-rule Dim 5–6; research grounding in [.research/rule-best-practices.md](../../../../.research/rule-best-practices.md)):
 10. **Intent completeness** — Intent section contains all five components: violation, failure cost, principle, exception policy, fix-safety signal; no weak signals present (hedging language, prohibition-without-consequence, no exception policy)
 11. **Single canonical example** — primary example is one canonical instance; flag if multiple examples risk introducing conflicting signals
 12. **Example realism** — examples have file path comments or domain-specific identifiers; flag if synthetic (generic `foo`/`bar` identifiers, no file path context)
 
 ### 7. Present for Approval
 
-Show the complete rule file to the user. Iterate on feedback. Do not write until approved.
+Before showing the complete file, narrate the design choices in 3–6
+bullets so the user can disagree with any structural decision before it
+gets written:
+
+- **Category and severity defaults** — name the category picked in Step 2
+  and the severity / fix-safety defaults it triggered.
+- **Scope choice** — which directory the glob targets and why (start-narrow
+  rationale).
+- **Intent components** — confirm all five are present; call out which
+  exception case was named.
+- **Example sourcing** — real codebase code or constructed; file path
+  comments included.
+- **What was skipped and why** — patterns considered but rejected (e.g.,
+  "did not split into two rules — single criterion holds even though
+  description mentions 'X and Y'; the 'and' is descriptive, not a second
+  criterion").
+
+Then show the complete rule file. Iterate on feedback. Hold the write
+until the user approves.
 
 ### 8. Write the Rule
 
@@ -233,28 +254,28 @@ Validates all 12 criteria — passes. Presents for approval. On approval, writes
 
 ## Key Instructions
 
-- Every rule MUST have both a non-compliant and compliant example. Refuse to write without both.
-- Won't replace a traditional linter: if the user's request is syntax, formatting, import ordering, or naming case, recommend the appropriate linter tool instead and stop.
-- Intent must contain all five components. Missing failure cost (component 2) or exception policy (component 4) — stop and require them before drafting.
-- Default severity is `warn`. False positives from `fail` rules erode trust faster than missed violations from `warn` rules.
-- Start narrow: scope targets the specific known-failure pattern. Broaden only after validating negative examples.
-- Default-closed: every rule declares how uncertain cases resolve. Rules without this default to PASS, hiding violations.
-- Fix-safety is mandatory: always declare `auto-remediable` or `requires-review`.
-- Never skip the conflict check. Undetected contradictions degrade the entire rule library.
-- Do not write the file until the user approves the drafted rule.
-- Always write the co-located test file. A rule without test cases cannot be validated before deployment.
+- Won't write a rule that lacks both a non-compliant and a compliant example — examples improve enforcement reliability ~4×, so the gate is hard. *(scope boundary)*
+- Won't replace a traditional linter — if the request is syntax, formatting, import ordering, or naming case, redirect to the appropriate linter and stop. *(scope boundary)*
+- Require all five Intent components before drafting (violation, failure cost, principle, exception policy, fix-safety signal) — failure cost (#2) and exception policy (#4) are load-bearing because their absence drives developers to disable rules rather than fix code.
+- Default severity to `warn` — false positives from `fail` rules erode trust faster than missed violations from `warn` rules.
+- Start narrow on scope — target the specific known-failure pattern; broaden only after validating against negative examples.
+- Declare a default-closed stance ("prefer WARN over PASS when borderline") in every Intent — without it, evaluators silently default to PASS and hide violations.
+- Set `fix-safety` on every rule (`auto-remediable` or `requires-review`) so automated tools can decide safely.
+- Run the conflict check (Step 4) before drafting — undetected contradictions degrade the entire rule library.
+- Hold the write until the user approves the drafted rule (Step 7 gate).
+- Write the co-located test file alongside the rule — a rule without test cases cannot be validated before deployment.
 
 ## Anti-Pattern Guards
 
-1. **Rules without both examples** — refuse to write; examples improve enforcement reliability 4×
-2. **Overly broad scope** — `**/*` or `**/*.ext` without directory prefix fires on unrelated files; flag and require narrowing
-3. **Multiple conventions in one rule** — any "and" in the description is a split signal
-4. **Linter-appropriate checks** — syntax, formatting, import ordering belong in a linter, not here
-5. **Missing default-closed stance** — rules without uncertainty handling default to PASS; always require a declaration
-6. **Skipping conflict check** — contradictions in the rule library produce unpredictable enforcement
-7. **Missing fix-safety** — without this, automated tools cannot safely apply fixes
-8. **Incomplete Intent section** — an Intent that states only what the rule catches (not why it matters, not when to disable it) produces enforcement-without-education and workaround behavior
-9. **Missing test file** — a rule without a co-located `.tests.md` file cannot be validated before deployment; this is a delivery failure, not optional polish
+1. **Rule with only one example side** — refuse to write; require both non-compliant and compliant examples (improves enforcement reliability ~4×)
+2. **Glob without a directory prefix** (`**/*` or `**/*.ext`) — narrow to the architectural layer named in Intent before accepting the rule
+3. **Multiple conventions packed into one rule** — any "and" in the description is a split signal; produce two rules instead
+4. **Convention enforceable by a traditional linter** (syntax, formatting, import ordering) — redirect to the linter and stop
+5. **Intent without a default-closed declaration** — append "When evidence is borderline, prefer WARN over PASS" so uncertain cases surface as WARN, not silently PASS
+6. **Conflict check skipped** — run Step 4 before drafting; undetected contradictions in the rule library produce unpredictable enforcement
+7. **Frontmatter without `fix-safety`** — set `auto-remediable` or `requires-review` so automated tools can decide safely
+8. **Intent that states only what the rule catches** — add failure cost, principle, exception policy, and fix-safety signal so the rule educates rather than mandates blindly
+9. **Rule shipped without a co-located `.tests.md`** — write the test file before reporting completion; an unvalidated rule is a delivery failure, not optional polish
 
 ## Handoff
 

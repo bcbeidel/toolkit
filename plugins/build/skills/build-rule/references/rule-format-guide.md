@@ -9,6 +9,17 @@ Rules are semantic enforcement documents evaluated by an LLM — they capture
 patterns too nuanced for traditional linters. Three formats are in common use
 depending on project tooling. This guide covers all three.
 
+## Table of Contents
+
+- [Rule Categories](#rule-categories)
+- [Format Detection](#format-detection)
+- [Format 1: WOS Rule (`.rule.md`)](#format-1-wos-rule-rulemd)
+- [Format 2: Cursor Rule (`.mdc`)](#format-2-cursor-rule-mdc)
+- [Format 3: Claude Code Rule (CLAUDE.md section)](#format-3-claude-code-rule-claudemd-section)
+- [Fix-Safety Classification](#fix-safety-classification)
+- [Intent Section Template](#intent-section-template)
+- [Writing Effective Rules](#writing-effective-rules)
+
 ## Rule Categories
 
 Classify the rule before drafting to set the right structural defaults.
