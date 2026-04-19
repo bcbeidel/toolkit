@@ -40,7 +40,7 @@ Pay attention to context cues to understand how to phrase your communication. It
 
 ## Creating a skill
 
-### Confirm Primitive
+### 1. Confirm Primitive
 
 Before eliciting, confirm a skill is the right artifact. Full decision matrix: [primitive-routing.md](../../_shared/references/primitive-routing.md).
 
@@ -52,7 +52,7 @@ Ask: "Building this as a **skill** (triggered instruction set) — right primiti
 
 Proceed without a gate if intent is unambiguous; ask one clarifying question if uncertain.
 
-### Capture Intent
+### 2. Capture Intent
 
 Start by understanding the user's intent. If `$ARGUMENTS` is non-empty, use it as the initial skill name and description signal — for example, `/build-skill processing-pdfs` → propose `processing-pdfs` as the name and ask for the description. The current conversation might already contain a workflow the user wants to capture (e.g., they say "turn this into a skill"). If so, extract answers from the conversation history first — the tools used, the sequence of steps, corrections the user made, input/output formats observed. The user may need to fill the gaps, and should confirm before proceeding to the next step.
 
@@ -60,7 +60,7 @@ Start by understanding the user's intent. If `$ARGUMENTS` is non-empty, use it a
 2. When should this skill trigger? (what user phrases/contexts)
 3. What's the expected output format?
 
-### Interview and Research
+### 3. Interview and Research
 
 Proactively ask questions about edge cases, input/output formats, example files, success criteria, and dependencies.
 
@@ -88,7 +88,7 @@ Also probe for structural decisions that shape how the skill is built — derive
 
 Check available MCPs — if useful for research (searching docs, finding similar skills, looking up best practices), research in parallel via subagents if available, otherwise inline. Come prepared with context to reduce burden on the user.
 
-### Write the SKILL.md
+### 4. Write the SKILL.md
 
 Before drafting the body, read `references/skill-writing-guide.md` → **Lifecycle & Compaction**. Skills are standing instructions that persist throughout a conversation, not one-time steps. First 5K tokens are the only part guaranteed to survive compaction, so lead with load-bearing content.
 
@@ -117,7 +117,7 @@ Based on the user interview, fill in these components. Most skills need only `na
 
 Read-only single-step skills generally don't need any of these sections. Add them only when the trigger conditions apply.
 
-### Skill Writing Guide
+### 5. Skill Writing Guide
 
 Read `references/skill-writing-guide.md` before drafting. It covers anatomy,
 progressive disclosure patterns, on-demand hooks, config.json setup, skill
@@ -128,7 +128,7 @@ quality requirements checklist.
 (`path/to/file`) — Windows-style backslashes (`path\to\file`) are rejected by
 `check-skill` as they don't round-trip across platforms.
 
-### Narrate the Draft
+### 6. Narrate the Draft
 
 Before running lint or asking for approval, walk the user through the key design choices in the draft. Keep it to 3–6 bullets. Cover:
 
@@ -145,7 +145,7 @@ The goal is that a user who doesn't know skill authoring can read the narration 
 > - No reference files yet — the workflow fits in the body at ~80 lines; would split if it grows
 > - Didn't use `context: fork` — you'll want to see tool calls while we're still iterating on the skill
 
-### WOS Quality Check
+### 7. WOS Quality Check
 
 Before writing to disk, run lint and reindex:
 
@@ -171,6 +171,8 @@ After the user tries the skill on a realistic prompt and gives feedback, make it
 4. **Look for repeated work.** If a skill keeps making the model independently write the same helper script or take the same multi-step approach, that's a strong signal the skill should bundle that script. Write it once, put it in `scripts/`, and tell the skill to use it.
 
 Take your time. Write a draft revision, then read it fresh before finalizing. Get into the head of the user: understand what they actually want and why they're asking.
+
+Stop iterating when the skill holds up across the user's realistic test cases, feedback runs out, or further changes stop producing improvement. Convergence is the signal — trust it and move on.
 
 ---
 
