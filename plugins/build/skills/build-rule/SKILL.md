@@ -81,28 +81,28 @@ Check for:
 If overlap found, ask: "This overlaps with `[existing rule]`. Merge,
 replace, or keep both with explicit boundaries?"
 
-### 4. Draft the Body
+### 4. Pick a Body Pattern
 
-Write concrete, verifiable markdown instructions. Anthropic's guidance
-for rule and CLAUDE.md content applies:
+Decide which pattern fits the rule. Both are plain markdown — Anthropic
+doesn't prescribe body structure beyond "specific over vague" and "use
+markdown headers/bullets". The choice is toolkit-opinion guidance.
 
+| Pattern | Use when | Body shape |
+|---------|----------|------------|
+| **Directive** (Anthropic's example pattern) | Rule tells Claude what to do; no judgment needed | Headers + bullet list of verifiable directives |
+| **Enforcement** (toolkit-opinion structured shape) | Rule asks Claude to *judge* whether a file complies | `## Why` (failure cost + exception policy) → `## Compliant` example → `## Non-compliant` example |
+
+Apply Anthropic's guidance to both:
 - **Specific over vague.** "Use 2-space indentation" beats "Format code
-  properly". "Run `npm test` before committing" beats "Test your
-  changes". Vague rules ("be clean", "be consistent") produce uneven
+  properly". Vague rules ("be clean", "be consistent") produce uneven
   adherence.
-- **Markdown structure.** Use headers and bullets to group related
-  instructions; Claude scans structure the way readers do.
-- **Size.** Target under 200 lines per rule file. Larger rules consume
-  more context and reduce adherence.
-- **Concrete examples beat abstract guidance.** A short code snippet
-  showing the expected pattern is more reliable than a description of
-  the pattern.
+- **Markdown structure.** Headers and bullets group related instructions.
+- **Size.** Target under 200 lines per rule file.
+- **One topic per file.** A rule covering two unrelated conventions is
+  two rules — split them.
 
-A semantic-enforcement rule — one where Claude needs to *judge*
-whether a file matches the convention, not just follow a directive —
-benefits from non-compliant + compliant example sections. See
-[rule-format-guide.md](references/rule-format-guide.md) for that
-structured shape. It's an option, not a requirement.
+For the **Enforcement pattern**, the structured `## Why` section
+benefits from four components — see [rule-format-guide.md](references/rule-format-guide.md) → *Toolkit Recommendation: Structured Intent for Enforcement Rules* for the template, real-code example guidance, and default-closed declaration. These are toolkit-opinion conventions; they layer on top of the canonical primitive without introducing new frontmatter or required headings at the Anthropic-spec level.
 
 ### 5. Present for Approval
 

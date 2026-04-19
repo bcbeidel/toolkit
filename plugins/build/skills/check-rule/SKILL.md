@@ -50,18 +50,32 @@ malformed rules don't reach the LLM step.
 
 ### 3. Tier 2 — Per-Rule Semantic Checks (One LLM Call per Rule)
 
-For each structurally valid rule, one locked-rubric LLM call assesses two
-dimensions simultaneously:
+For each structurally valid rule, one locked-rubric LLM call assesses
+the dimensions in [audit-dimensions.md](references/audit-dimensions.md).
+Three always-on dimensions plus three trigger-gated dimensions for rules
+that opt into the toolkit-opinion structured shape (`## Why` +
+`## Compliant` / `## Non-compliant` example pair).
 
-1. **Specificity** — directives are concrete and verifiable, not vague.
-   Anthropic's own example: "Use 2-space indentation" passes; "Format
-   code properly" fails.
-2. **Single concern** — rule covers one topic. Multiple unrelated
-   conventions in one file is a split signal.
+**Always-on (every rule):**
+1. **Specificity** *(canonical)* — directives are concrete and verifiable,
+   not vague. Anthropic's own example: "Use 2-space indentation" passes;
+   "Format code properly" fails.
+2. **Single Concern** *(toolkit-opinion)* — rule covers one topic.
+3. **Staleness** *(toolkit-opinion)* — `paths:` globs and example code
+   reference the current codebase, not retired layers.
 
-Include the full rule file verbatim — never summarize. Present both
-dimensions in one call (per-dimension calls degrade agreement by ~11.5
-points per RULERS, Hong et al. 2026).
+**Trigger-gated (when rule uses structured-Intent shape):**
+4. **Intent Completeness** — `## Why` covers the four components
+   (violation, failure cost, principle, exception policy).
+5. **Example Pair Quality** — non-compliant before compliant; both use
+   real code with file path comments; one canonical instance per
+   section.
+6. **Default-Closed Declaration** — Intent contains "When evidence is
+   borderline, prefer WARN over PASS" (or equivalent).
+
+Include the full rule file verbatim — never summarize. Present all
+applicable dimensions in one call (per-dimension calls degrade agreement
+by ~11.5 points per RULERS, Hong et al. 2026).
 
 Output format per dimension: `evidence (quoted from rule) → reasoning →
 verdict (WARN or PASS) → recommendation`. Default-closed: borderline
@@ -89,8 +103,10 @@ Claude may pick one arbitrarily."*
 
 Output all findings in `scripts/lint.py` format (file, issue, severity).
 Sort within each severity tier: Tier-1 deterministic first, then Tier-2
-in dimension order (Specificity → Single concern), then Tier-3 conflicts;
-ties break alphabetically by file path. FAIL precedes WARN overall.
+in dimension order (Specificity → Single Concern → Staleness → Intent
+Completeness → Example Pair Quality → Default-Closed Declaration), then
+Tier-3 conflicts; ties break alphabetically by file path. FAIL precedes
+WARN overall.
 
 Each FAIL or WARN finding must include a `Recommendation:` line with a
 specific, actionable repair drawn from
@@ -132,7 +148,7 @@ user's ability to review individual repairs.
 ## Key Instructions
 
 - Run Tier-1 deterministic checks first; gate LLM evaluation on structural validity so malformed rules surface as findings, not as expensive LLM calls
-- Present both Tier-2 dimensions as a locked rubric in a single call per rule — per-dimension calls degrade agreement by ~11.5 points (RULERS, Hong et al. 2026)
+- Present every applicable Tier-2 dimension (always-on plus any trigger-gated) as a single locked-rubric call per rule — per-dimension calls degrade agreement by ~11.5 points (RULERS, Hong et al. 2026)
 - Include the full rule file verbatim in every LLM evaluation so the evaluator sees the same anchors a human reviewer would
 - Limit conflict comparison to rule pairs that could co-fire (both always-on, or overlapping `paths:` globs) — non-overlapping scoped rules cannot contradict and the comparison is wasted budget
 - Surface borderline evidence as WARN (default-closed) so ambiguous cases enter the report rather than silently passing
@@ -159,8 +175,8 @@ Step 2 — Tier 1 deterministic check:
 - testing.md: 287 lines → WARN (proceeds to Tier 2 anyway)
 
 Step 3 — Tier 2 semantic on 2 rules:
-- code-style.md: contains "format code properly" → WARN (specificity)
-- testing.md: covers unit, integration, AND e2e — three distinct topics → WARN (single concern)
+- code-style.md: directive pattern only (no `## Compliant` / `## Non-compliant` sections) — applies always-on dimensions only. Contains "format code properly" → WARN (specificity)
+- testing.md: covers unit, integration, AND e2e — three distinct topics → WARN (single concern). Has `## Compliant` and `## Non-compliant` sections → trigger-gated dimensions also fire. Examples use `foo`/`bar` with no file path comment → WARN (example pair quality)
 
 Step 4 — Tier 3 conflict detection: code-style.md (always-on) and
 testing.md (always-on) both fire on every session. No directive
@@ -176,8 +192,10 @@ WARN  .claude/rules/testing.md — File length 287 lines exceeds 200-line guidan
   Recommendation: Split into testing-unit.md + testing-integration.md + testing-e2e.md
 WARN  .claude/rules/testing.md — Single concern: covers three distinct topics (unit, integration, e2e)
   Recommendation: Same split as above resolves both findings
+WARN  .claude/rules/testing.md — Example pair quality: examples use `foo`/`bar` without file path comments
+  Recommendation: Replace with real codebase code; add `// path/to/file.ext` comment
 
-3 rules audited, 4 findings (1 fail, 3 warn)
+3 rules audited, 5 findings (1 fail, 4 warn)
 ```
 </example>
 

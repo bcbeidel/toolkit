@@ -15,8 +15,14 @@ requiring human review before applying.
 ## Table of Contents
 
 - [Tier 1: Deterministic Format Repairs](#tier-1-deterministic-format-repairs)
-- [Tier 2 — Dimension 1: Specificity](#tier-2--dimension-1-specificity)
-- [Tier 2 — Dimension 2: Single Concern](#tier-2--dimension-2-single-concern)
+- [Tier 2 — Always-on Dimensions](#tier-2--always-on-dimensions)
+  - [Dimension 1: Specificity](#dimension-1-specificity)
+  - [Dimension 2: Single Concern](#dimension-2-single-concern)
+  - [Dimension 3: Staleness](#dimension-3-staleness)
+- [Tier 2 — Trigger-gated Dimensions (structured-Intent rules)](#tier-2--trigger-gated-dimensions-structured-intent-rules)
+  - [Dimension 4: Intent Completeness](#dimension-4-intent-completeness)
+  - [Dimension 5: Example Pair Quality](#dimension-5-example-pair-quality)
+  - [Dimension 6: Default-Closed Declaration](#dimension-6-default-closed-declaration)
 - [Tier 3: Conflicts](#tier-3-conflicts)
 
 ---
@@ -86,7 +92,9 @@ paths:
 
 ---
 
-## Tier 2 — Dimension 1: Specificity
+## Tier 2 — Always-on Dimensions
+
+### Dimension 1: Specificity
 
 ### Anchor-Free Directive
 
@@ -108,7 +116,7 @@ paths:
 
 ---
 
-## Tier 2 — Dimension 2: Single Concern
+### Dimension 2: Single Concern
 
 ### Multiple Topics in One File
 
@@ -144,6 +152,101 @@ paths:
 with separate API-section and test-section bodies
 **TO:** Two files, one with `paths: "src/api/**/*.ts"` and one with `paths: "tests/**/*.test.ts"`
 **REASON:** Path-scoping wastes effort if Claude loads the API section when reading test files (and vice versa). Splitting halves the loaded context and tightens the rule's relevance.
+
+### Dimension 3: Staleness
+
+#### Reference to a Path That No Longer Exists
+
+**Signal:** `paths:` glob, file-path comment in an example, or prose names a directory or file that is not in the current codebase
+
+**CHANGE:** Update the reference to the current path, or delete the rule
+**FROM:** `paths: "app/legacy/**/*.rb"` (directory removed in v3 refactor)
+**TO:** `paths: "app/services/**/*.rb"` (replacement layer)
+**REASON:** A rule that scopes itself to a non-existent directory never fires. Either the convention still applies under the new layout (update) or the convention is retired with the layer (delete).
+
+#### Stale Command or Import in Examples
+
+**Signal:** Example code uses an import path or command that has been replaced
+
+**CHANGE:** Rewrite the example using current imports / commands
+**FROM:** `import { Logger } from '@old-org/logging'` (package replaced 6 months ago)
+**TO:** `import { Logger } from '@new-org/observability'`
+**REASON:** Stale examples mislead Claude — they teach the wrong pattern. If no current pattern exists, the rule itself is likely stale and should be deleted.
+
+---
+
+## Tier 2 — Trigger-gated Dimensions (structured-Intent rules)
+
+These repairs apply only when the rule opts into the toolkit-opinion
+structured-Intent shape (`## Why` and/or `## Compliant` + `## Non-compliant`
+sections). Rules that don't opt in skip these dimensions entirely.
+
+### Dimension 4: Intent Completeness
+
+#### Missing Failure Cost (load-bearing)
+
+**Signal:** Why section names the violation only ("Avoid `console.log`") with no description of what breaks or who bears the cost
+
+**CHANGE:** Add a sentence naming the specific consequence and who bears it
+**FROM:** "Avoid using `console.log` in production code. It creates noise."
+**TO:** "`console.log` in production builds exposes internal state to end users via browser developer tools and adds measurable latency in high-frequency call paths."
+**REASON:** Without failure cost, developers weigh the rule as bureaucratic overhead rather than a real risk. Rules without failure cost have higher disable rates.
+
+#### Missing Exception Policy (load-bearing)
+
+**Signal:** Why section has no `Exception:` line naming a legitimate bypass case
+
+**CHANGE:** Append an `Exception:` line naming at least one legitimate case
+**FROM:** Why section ends without exception language
+**TO:** Append: `"Exception: <name at least one legitimate case — e.g., 'Exception: test files', 'Exception: scripts in tools/ that are never bundled for production'>."`
+**REASON:** Rules with no named exception appear to admit no flexibility, causing developers to disable them entirely rather than follow them in the 95% case.
+
+#### Missing Principle
+
+**Signal:** Why section names what the rule catches and what goes wrong, but not the underlying value
+
+**CHANGE:** Add a sentence naming the principle being enforced
+**FROM:** Why section without principle
+**TO:** Add: `"This enforces the principle that <value — e.g., 'production code does not leak implementation details'>."`
+**REASON:** A named principle anchors the rule when its specifics don't quite fit a new situation. The principle survives changes the specifics can't.
+
+### Dimension 5: Example Pair Quality
+
+#### Synthetic Examples
+
+**Signal:** Examples use generic identifiers (`foo`, `bar`, `myFunction`) or have no file path comment
+
+**CHANGE:** Replace synthetic examples with real codebase code
+**FROM:** `function foo(x) { return bar(x) }`
+**TO:** `// src/api/handlers/users.ts\nasync function getUser(userId: string) { return db.users.findById(userId) }`
+**REASON:** Evidence-anchored rubrics produce more consistent evaluations (+0.17 QWK per RULERS) than pure-inference rubrics. Real code with domain context reduces ambiguity.
+
+#### Wrong Example Order
+
+**Signal:** Compliant example appears before non-compliant example
+
+**CHANGE:** Swap the two example sections
+**FROM:** `## Compliant` ... `## Non-compliant`
+**TO:** `## Non-compliant` ... `## Compliant`
+**REASON:** Listing the rejection case first improves LLM classification accuracy. The compliant example anchors the accepted case after the evaluator has seen what failure looks like.
+
+#### Multiple Examples Per Section
+
+**Signal:** Multiple code snippets in a single Non-Compliant or Compliant section
+
+**CHANGE:** Reduce to one canonical example per section
+**FROM:** Non-Compliant section with three different snippets showing different violation patterns
+**TO:** Keep the single most clear-cut instance and remove the extras.
+**REASON:** Multiple examples encode subtly different behavioral patterns. A single canonical example produces a stronger, less ambiguous anchor.
+
+### Dimension 6: Default-Closed Declaration
+
+**Signal:** Why section has no "When evidence is borderline…" line
+
+**CHANGE:** Append the default-closed declaration to the Why section
+**FROM:** Why section ends without uncertainty handling
+**TO:** Append: `"When evidence is borderline, prefer WARN over PASS."`
+**REASON:** Without this declaration, LLM evaluators silently default to PASS on ambiguous cases, hiding real violations.
 
 ---
 

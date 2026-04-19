@@ -113,14 +113,26 @@ gives for CLAUDE.md and rules:
 
 ---
 
-## Optional: Structured Intent for Semantic-Enforcement Rules
+## Toolkit Recommendation: Structured Intent for Enforcement Rules
 
-When a rule asks Claude to *judge* whether a file complies (rather
-than just follow a directive), an example-anchored structure helps the
-LLM evaluator stay consistent. This is toolkit guidance, not Anthropic
-spec — use it when the rule is a binary PASS/FAIL convention check.
+This section is **toolkit opinion**, layered on top of Anthropic's
+canonical spec. It does not add frontmatter fields, change file
+location, or require any heading Anthropic doesn't allow. It opts the
+rule into a body shape that helps the LLM evaluator stay consistent
+when the rule asks Claude to *judge* a file's compliance.
 
-### Suggested sections
+### When to use this pattern
+
+Use the structured Intent shape when the rule is an **enforcement
+rule** — Claude reads the file, applies the rule, and produces a
+PASS/FAIL verdict. Skip it for:
+
+- Procedural rules ("run X before Y") — bullet list is enough
+- Style rules ("use 2-space indentation") — single line is enough
+- Reference rules ("API handlers live in `src/api/handlers/`") — Anthropic's
+  example pattern handles them cleanly
+
+### Body shape
 
 ````markdown
 ---
@@ -132,10 +144,11 @@ paths:
 
 ## Why
 
-[VIOLATION — what pattern does this rule catch?]
-[FAILURE COST — what specifically goes wrong, and who bears it?]
-[PRINCIPLE — what underlying value does this enforce?]
-Exception: [name at least one legitimate bypass case].
+<VIOLATION — what pattern does this rule catch?>
+<FAILURE COST — what specifically goes wrong, and who bears it?>
+<PRINCIPLE — what underlying value does this enforce?>
+Exception: <name at least one legitimate bypass case>.
+
 When evidence is borderline, prefer WARN over PASS.
 
 ## Compliant
@@ -151,24 +164,26 @@ When evidence is borderline, prefer WARN over PASS.
 ```
 ````
 
-### Why structured Intent helps for semantic-enforcement rules
+### Why each piece earns its place
 
-- **Failure cost** named explicitly drives adherence — developers
-  weigh the rule against real risk, not as bureaucratic overhead.
-- **Exception policy** named explicitly prevents developers from
-  disabling the rule entirely when the 5% case appears.
-- **Real-code examples with file path comments** anchor the
-  evaluation to concrete cases, which research shows produces more
-  consistent verdicts than synthetic `foo`/`bar` examples.
-- **Default-closed declaration** keeps borderline cases visible
-  rather than silently passing.
+| Piece | Why it helps |
+|-------|--------------|
+| **`## Why` lead-in** | Names the rule's purpose so a reader (human or Claude) understands the *why*, not just the *what*. Anthropic's specificity guidance applies — the Why section should be concrete, not "this rule keeps things clean". |
+| **Failure cost** (load-bearing) | Without it, developers weigh the rule as bureaucratic overhead. Naming what breaks and who bears the cost drives adherence over disable behavior. |
+| **Exception policy** (load-bearing) | Rules that admit no exception get disabled wholesale when the legitimate edge case appears. Naming one case keeps the rule alive. |
+| **Principle** | Anchors the rule to a value (type safety, security, maintainability). When the rule's specifics don't quite fit a new situation, the principle still guides. |
+| **`## Compliant` and `## Non-compliant` examples** | Anchor the evaluation to concrete cases. Research-grounded: evidence-anchored rubrics deliver +0.17 QWK over inference-only (per `.research/rule-best-practices.md`). |
+| **Real code with file path comments** | Synthetic `foo`/`bar` examples produce weaker anchors than domain-specific identifiers from the actual codebase. |
+| **Default-closed declaration** | Without it, evaluators silently default to PASS on ambiguous cases. The line keeps borderline cases visible. |
 
-### When *not* to use structured Intent
+### How check-rule audits the structured shape
 
-- Procedural rules ("run X before Y") — bullet list is enough
-- Style rules ("use 2-space indentation") — single line is enough
-- Anything Anthropic's example pattern handles cleanly — match
-  Anthropic's structure unless you need the extra anchoring
+When `check-rule` detects a rule that opts into this shape (presence
+of `## Compliant` AND `## Non-compliant` sections, OR a `## Why`
+section), it audits the additional toolkit-opinion dimensions —
+Intent completeness, example pair quality, default-closed declaration.
+Rules that don't use the structured shape skip those dimensions
+entirely. Trigger-gated, mirroring `check-skill`'s pattern.
 
 ---
 
