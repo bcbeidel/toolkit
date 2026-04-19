@@ -9,6 +9,7 @@ argument-hint: "[project root — defaults to CWD]"
 user-invocable: true
 references:
   - references/capture-workflow.md
+  - references/working-agreements-capture.md
 ---
 
 # Wiki Setup
@@ -183,7 +184,31 @@ Show the current settings to the user. Ask: "Want to change any of these?"
 - If yes → re-run the capture workflow
 - If no → move on
 
-### 6. CLAUDE.md pointer
+### 6. Working Agreements
+
+Capture or skip per-project Working Agreements.
+
+**If `has_working_agreements(content)` returns `True`** (section already
+exists anywhere in AGENTS.md, inside or outside markers):
+
+No-op. Skip this step entirely — do not prompt, do not diff, do not
+overwrite.
+
+**If no `## Working Agreements` section exists:**
+
+Run the capture workflow in `references/working-agreements-capture.md`:
+
+1. Show the seed list verbatim
+2. Ask: adopt / edit / skip
+3. On adopt or edit, append the section *after* the managed
+   `<!-- wiki:end -->` marker (or at end of file if no markers
+   present). Include a blank line before the heading.
+4. On skip, write nothing.
+
+The section is user-owned after the first write. The skill never
+re-renders it.
+
+### 7. CLAUDE.md pointer
 
 If `CLAUDE.md` does not exist, create it with:
 
@@ -194,7 +219,7 @@ If `CLAUDE.md` does not exist, create it with:
 If `CLAUDE.md` exists but does not contain `@AGENTS.md`, add the reference
 at the top of the file.
 
-### 7. Report
+### 8. Report
 
 Report what was done:
 
@@ -203,6 +228,7 @@ Report what was done:
 - **Updated:** note if AGENTS.md managed section was refreshed (mention
   if legacy `wos:` markers were auto-migrated to `wiki:`)
 - **Preferences:** note if preferences were set or unchanged
+- **Working Agreements:** note if seed was adopted, edited, skipped, or already present
 - **CLAUDE.md:** note if pointer was added or already present
 - **Onboarding:** note if `.gitignore`, `README.md` were created or skipped
 - **Next step:** note the suggested skill sequence, if any
