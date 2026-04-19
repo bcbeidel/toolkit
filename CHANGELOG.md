@@ -8,6 +8,60 @@ Pre-restructure releases used a single version. Post-restructure, each plugin
 
 ## [Unreleased]
 
+## [build-0.4.0] - 2026-04-19
+
+### Added
+
+- **`build:build-shell` / `build:check-shell` skill pair (#322).** Two
+  new skills in the `build` plugin that scaffold and audit
+  general-purpose shell scripts. Shell scripts are the deterministic
+  structural layer of agent-driven workflows in this toolkit; this
+  pair exists so the scripts produced by and with the toolkit are
+  consistent, safe, and legible to humans auditing agent-produced
+  automation.
+  - **`build-shell`** scaffolds a shell script with a strict-mode
+    preamble, structured file header (purpose / usage / exit codes /
+    dependencies), `PROGNAME`/`PROGDIR` globals, `main` function with
+    a self-sourcing guard, and a dependency-preflight array that emits
+    platform-specific install hints (`brew`/`apt`/`dnf`) to stderr
+    when a required command is missing. Refuses at intake — "FX.1
+    scope gate" — when the request signals structured records,
+    JSON/YAML beyond a `jq` one-liner, projected >100 LOC of business
+    logic, Windows compatibility need, or concurrency. Target-shell
+    declaration (`bash-3.2-portable` default for macOS safety,
+    `bash-4+`, `bash-5+`, or `posix-sh`) scopes scaffold features and
+    downstream lint rules.
+  - **`check-shell`** audits a shell script against 19 curated lints
+    grouped into **Portability** (3), **Safety** (10), and
+    **Documentation** (6). Detect-and-use integration with
+    `shellcheck`, `shfmt`, and `checkbashisms` (POSIX-sh target only);
+    subprocesses whichever are on `PATH` and merges findings into one
+    report. When any tool is absent, emits a **Missing Tools**
+    preamble at the top of the report naming the tool, providing
+    `brew`/`apt`/`dnf` install commands, and enumerating the coverage
+    gap so the user can resolve the gap deliberately. Never
+    hard-fails on a missing tool — the preamble is the fail-fast
+    mechanism.
+  - **Position.** Not for Claude Code hooks — route to
+    `/build:build-hook` / `/build:check-hook` for scripts with
+    `settings.json` wiring and a `tool_input` contract. `build-shell`
+    and `check-shell` own general-purpose shell automation: CLI
+    tools, glue scripts, CI steps, Makefile targets.
+  - **Design principle loosening.** The core "depend on nothing"
+    principle is explicitly lifted for `shellcheck`, `shfmt`, and
+    `checkbashisms`. All three are T1-cited across the research
+    motivating these skills and already recommended in
+    `build-hook`'s Safety Check; the Missing Tools preamble keeps
+    users informed when the lift is active. No Python runtime
+    dependencies are added.
+  - **Artifacts shipped.** `plugins/build/skills/build-shell/`
+    (SKILL.md + `references/scope-gate.md`),
+    `plugins/build/skills/check-shell/` (SKILL.md +
+    `references/external-tools.md` +
+    `references/fixtures/{portability,safety,documentation}-lints.sh`
+    covering all 19 lints with `# LINT:` markers), build plugin
+    version `0.3.0 → 0.4.0`, `AGENTS.md` skill table updated.
+
 ## [build-0.3.0, wiki-0.2.0, work-0.2.0] - 2026-04-19
 
 ### Changed
