@@ -23,9 +23,12 @@ then offer an opt-in repair loop.
 ### 2. Run Static Checks
 
 ```bash
-# Prerequisite: pip install -e plugins/build
-python3 <plugin-scripts-dir>/../../src/check/lint.py --root <project-root> --no-urls
+# Prerequisites: pip install -e plugins/build -e plugins/wiki
+python3 plugins/wiki/scripts/lint.py --root <project-root> --no-urls
 ```
+
+The linter lives in the wiki plugin and imports the `check` package from the
+build plugin — both must be installed.
 
 Extract findings for the target skill(s). Static checks run deterministically
 and always precede LLM checks. They cover:
@@ -114,23 +117,23 @@ For each selected finding:
 2. Propose a minimal specific edit — fix the finding without restructuring surrounding content
 3. Show the diff
 4. Write the change only on user confirmation
-5. Re-run `scripts/lint.py` after each applied fix
+5. Re-run `lint.py` after each applied fix
 
 ## Anti-Pattern Guards
 
-1. **Running LLM checks before `scripts/lint.py`** — static checks are deterministic and fast; always run them first
+1. **Running LLM checks before `lint.py`** — static checks are deterministic and fast; always run them first
 2. **Applying all fixes at once** — per-change confirmation is required; bulk application removes the user's ability to review individual changes
 3. **Auditing `skills/_shared/`** — this directory holds shared references, not invocable skills; exclude it from all-skill audits
 
 ## Handoff
 
 **Receives:** Path to a SKILL.md (or no argument for all-skills audit)
-**Produces:** Structured findings table in `scripts/lint.py` format (file, issue, severity); optionally, targeted edits applied to the audited skill(s)
+**Produces:** Structured findings table in `lint.py` format (file, issue, severity); optionally, targeted edits applied to the audited skill(s)
 **Chainable to:** build-skill (to create a replacement), start-work (for bulk repair across skills)
 
 ## Key Instructions
 
 - Exclude `skills/_shared/` from all-skill audits
-- Treat `wos/skill_audit.py` as read-only — the static checks are authoritative; this skill adds LLM-level judgment on top
+- Treat `plugins/build/src/check/skill.py` as read-only — the static checks are authoritative; this skill adds LLM-level judgment on top
 - When proposing edits, keep changes minimal — fix the finding without restructuring surrounding content
 - Checks 8 and 9 (vagueness, removal test) are the highest-value content-quality checks; prioritize surfacing them clearly

@@ -150,8 +150,8 @@ The goal is that a user who doesn't know skill authoring can read the narration 
 Before writing to disk, run lint and reindex:
 
 ```bash
-python scripts/lint.py --root <project-root> --no-urls   # fix any skill quality findings
-python scripts/reindex.py --root <project-root>           # update _index.md navigation
+python3 plugins/wiki/scripts/lint.py --root <project-root> --no-urls   # fix any skill quality findings
+python3 plugins/wiki/scripts/reindex.py --root <project-root>           # update _index.md navigation
 ```
 
 Write to the full path determined by the scope decision in the Interview step (e.g. `.claude/skills/<name>/SKILL.md` for a project skill). Write only after the user approves the draft. After writing, invoke `/check-skill` on the new skill — surface any findings and offer the repair loop before moving on.
