@@ -1,6 +1,6 @@
 ---
 name: Rule Format Guide (build-rule)
-description: Complete specification for rule file formats across WOS, Cursor, and Claude Code — fields, structure, and detection heuristics
+description: Complete specification for rule file formats across Toolkit, Cursor, and Claude Code — fields, structure, and detection heuristics
 ---
 
 # Rule Format Guide
@@ -36,15 +36,15 @@ Detect the project's rule format automatically before drafting:
 |--------|--------|
 | `.cursor/` directory exists | Cursor (`.mdc`) |
 | `CLAUDE.md` exists AND no `docs/rules/` directory | Claude Code (CLAUDE.md section) |
-| `docs/rules/` exists OR neither signal present | WOS (`.rule.md`) |
+| `docs/rules/` exists OR neither signal present | Toolkit (`.rule.md`) |
 
 Always report the detected format to the user and allow override.
 
 ---
 
-## Format 1: WOS Rule (`.rule.md`)
+## Format 1: Toolkit Rule (`.rule.md`)
 
-Used in WOS-managed projects. Stored at `docs/rules/<slug>.rule.md`.
+Used in Toolkit-managed projects. Stored at `docs/rules/<slug>.rule.md`.
 
 ### File Naming
 
@@ -127,7 +127,7 @@ alwaysApply: false
 
 ### Body
 
-Same three sections as WOS format: **Intent**, **Non-Compliant Example**, **Compliant Example**.
+Same three sections as Toolkit format: **Intent**, **Non-Compliant Example**, **Compliant Example**.
 
 Add a `fix-safety` line in the body under Intent (no frontmatter field in `.mdc`):
 

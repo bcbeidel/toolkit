@@ -145,7 +145,7 @@ The goal is that a user who doesn't know skill authoring can read the narration 
 > - No reference files yet — the workflow fits in the body at ~80 lines; would split if it grows
 > - Didn't use `context: fork` — you'll want to see tool calls while we're still iterating on the skill
 
-### 7. WOS Quality Check
+### 7. Toolkit Quality Check
 
 Before writing to disk, run lint and reindex:
 

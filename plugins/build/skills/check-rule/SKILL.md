@@ -24,7 +24,7 @@ Find all rule files in scope:
 
 | Format | Location |
 |--------|----------|
-| WOS | `docs/rules/*.rule.md` |
+| Toolkit | `docs/rules/*.rule.md` |
 | Cursor | `.cursor/rules/*.mdc` |
 | Claude Code | `## Rule:` sections in `CLAUDE.md` |
 
