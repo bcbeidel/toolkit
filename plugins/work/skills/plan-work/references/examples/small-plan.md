@@ -43,7 +43,7 @@ focused scope, 3 tasks with TDD verification.
     check, no Python enum type.
 
     **File Changes:**
-    - Modify: `wos/document.py` (add field to dataclass, parse + validate in parse_document)
+    - Modify: `plugins/wiki/src/wiki/document.py` (add field to dataclass, parse + validate in parse_document)
     - Modify: `tests/test_document.py` (add status tests, update test_unknown_fields_ignored)
 
     **Branch:** `feat/157-plan-document-format`
@@ -53,7 +53,7 @@ focused scope, 3 tasks with TDD verification.
     ### Task 1: Add status field to Document dataclass
 
     **Files:**
-    - Modify: `wos/document.py`
+    - Modify: `plugins/wiki/src/wiki/document.py`
     - Test: `tests/test_document.py`
 
     - [ ] Write failing test: Document accepts `status` kwarg, defaults to None
@@ -65,7 +65,7 @@ focused scope, 3 tasks with TDD verification.
     ### Task 2: Parse and validate status from frontmatter
 
     **Files:**
-    - Modify: `wos/document.py`
+    - Modify: `plugins/wiki/src/wiki/document.py`
     - Test: `tests/test_document.py`
 
     - [ ] Write failing test: parse_document extracts status from frontmatter

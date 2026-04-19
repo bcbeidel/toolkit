@@ -1,8 +1,8 @@
 ---
 name: setup
 description: >
-  Initialize or update WOS project context. Use when starting a new project
-  with WOS, setting up context structure, configuring project documentation,
+  Initialize or update project context. Use when starting a new project,
+  setting up context structure, configuring project documentation,
   or re-run to verify and repair an existing setup. Idempotent — safe to
   run multiple times.
 argument-hint: "[project root — defaults to CWD]"
@@ -11,27 +11,33 @@ references:
   - references/capture-workflow.md
 ---
 
-# Init WOS
+# Wiki Setup
 
-Initialize or update WOS project context. Idempotent — safe to re-run.
+Initialize or update project context. Idempotent — safe to re-run.
+
+> **Legacy markers auto-migrate.** If AGENTS.md still uses the pre-rename
+> `<!-- wos:begin -->` / `<!-- wos:end -->` / `<!-- wos:layout: ... -->`
+> markers, this skill rewrites them to `<!-- wiki:* -->` in place. No
+> user action is required beyond re-running `/wiki:setup`.
 
 ## Workflow
 
 ### 1. Check current state
 
-Check which parts of the WOS structure already exist:
+Check which parts of the project structure already exist:
 
-- `AGENTS.md` with WOS markers (`<!-- wos:begin -->` / `<!-- wos:end -->`)
-- `### Preferences` subsection in the WOS-managed section
-- Layout hint (`<!-- wos:layout: ... -->`) in the WOS section
+- `AGENTS.md` with managed-section markers (`<!-- wiki:begin -->` /
+  `<!-- wiki:end -->`; legacy `<!-- wos:* -->` markers auto-migrate)
+- `### Preferences` subsection in the managed section
+- Layout hint (`<!-- wiki:layout: ... -->`) in the managed section
 - `CLAUDE.md` with `@AGENTS.md` reference
 - `.gitignore`
 - `README.md`
 - Any existing `docs/` directory structure
 
 Also check whether the repo is **empty** — no source files, no `README.md`,
-no `.gitignore` beyond what WOS just created. If the repo is empty, steps
-2.5–2.7 below will activate. If the repo already has content, skip them.
+no `.gitignore` beyond what this skill just created. If the repo is empty,
+steps 2.5–2.7 below will activate. If the repo already has content, skip them.
 
 ### 2. Choose layout pattern
 
@@ -103,7 +109,7 @@ After scaffolding is complete, ask:
 
 > "What problem are you trying to solve with this project?"
 
-Based on the response, suggest a concrete WOS skill sequence:
+Based on the response, suggest a concrete skill sequence:
 
 - **Research-oriented** (exploring a domain, comparing options, investigating):
   `/wiki:research` → `/wiki:ingest`
@@ -144,16 +150,16 @@ preserving any human-written area descriptions.
 
 If `AGENTS.md` does not exist, create it with a `# AGENTS.md` heading.
 
-Write the WOS-managed section between `<!-- wos:begin -->` / `<!-- wos:end -->`
+Write the managed section between `<!-- wiki:begin -->` / `<!-- wiki:end -->`
 markers. This section includes:
-- Layout hint comment (`<!-- wos:layout: <pattern> -->`)
+- Layout hint comment (`<!-- wiki:layout: <pattern> -->`)
 - Context navigation (dynamically generated from discovered document locations)
 - Areas table
 - File metadata format
 - Document standards
 - Preferences
 
-The markers enable automated updates — never place WOS-managed content
+The markers enable automated updates — never place managed content
 outside them.
 
 If markers already exist, the section is replaced with the latest version
@@ -163,7 +169,7 @@ If markers already exist, the section is replaced with the latest version
 
 Capture or review communication preferences.
 
-**If no `### Preferences` subsection exists** in the WOS section:
+**If no `### Preferences` subsection exists** in the managed section:
 
 Run the full capture workflow in `references/capture-workflow.md`:
 1. Ask the freeform communication style question
@@ -194,29 +200,30 @@ Report what was done:
 
 - **Layout:** note the selected pattern
 - **Created:** list any directories or files that were created
-- **Updated:** note if AGENTS.md WOS section was refreshed
+- **Updated:** note if AGENTS.md managed section was refreshed (mention
+  if legacy `wos:` markers were auto-migrated to `wiki:`)
 - **Preferences:** note if preferences were set or unchanged
 - **CLAUDE.md:** note if pointer was added or already present
 - **Onboarding:** note if `.gitignore`, `README.md` were created or skipped
 - **Next step:** note the suggested skill sequence, if any
 - **Already present:** note anything that was already in place
 
-If everything was already set up, confirm: "WOS is up to date. No changes needed."
+If everything was already set up, confirm: "Project context is up to date. No changes needed."
 
 ## Key Instructions
 
-- **Won't overwrite content outside WOS markers** — only the section between `<!-- wos:begin -->` / `<!-- wos:end -->` is managed; content the user wrote outside these markers is never touched
+- **Won't overwrite content outside managed markers** — only the section between `<!-- wiki:begin -->` / `<!-- wiki:end -->` is managed; content the user wrote outside these markers is never touched
 - **Won't silently select a layout** — layout choice requires explicit user confirmation; no default is applied without asking
 
 ## Anti-Pattern Guards
 
 1. **Running setup with uncommitted changes in the repo** — setup writes AGENTS.md and CLAUDE.md. Check for tracked modified files (`git diff --name-only HEAD`) before proceeding. Untracked-only changes are advisory — note them but do not block. If tracked modifications exist, warn the user: setup writes to AGENTS.md and CLAUDE.md, making the diff ambiguous and recovery harder if setup fails partway. Suggest `git stash` as remediation and wait for the user to decide whether to stash, continue anyway, or abort.
 2. **Silent layout selection** — if no layout hint exists, always present the four layout options and wait for explicit selection. Applying a default layout without asking embeds a structural decision that is costly to reverse once docs have been created.
-3. **Overwriting content outside WOS markers** — only the section between `<!-- wos:begin -->` and `<!-- wos:end -->` markers is WOS-managed. Content written by the user outside these markers must not be touched. A full AGENTS.md rewrite is always wrong.
+3. **Overwriting content outside managed markers** — only the section between `<!-- wiki:begin -->` and `<!-- wiki:end -->` markers is managed. Content written by the user outside these markers must not be touched. A full AGENTS.md rewrite is always wrong.
 4. **Skipping the current-state check** — setup is idempotent, but it must check what already exists before writing. Presenting layout options when a layout hint already exists confuses the user; showing the current layout and asking if it should change is the correct flow.
 
 ## Handoff
 
 **Receives:** Project root path (new or existing); optional communication preferences
-**Produces:** Initialized WOS project structure — AGENTS.md, docs/ directories, `_index.md` files
+**Produces:** Initialized project structure — AGENTS.md, docs/ directories, `_index.md` files
 **Chainable to:** lint

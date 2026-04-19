@@ -51,10 +51,10 @@ too abstract.
 List every file created, modified, or deleted. For modifications, include
 what changes (not just the file path).
 
-    - Create: `wos/new_module.py`
-    - Modify: `wos/validators.py` (add severity filter to validate_project)
-    - Modify: `tests/test_validators.py` (add filter tests)
-    - Delete: `wos/old_module.py`
+    - Create: `plugins/wiki/src/wiki/new_module.py`
+    - Modify: `plugins/wiki/src/wiki/validators.py` (add severity filter to validate_project)
+    - Modify: `plugins/wiki/tests/test_validators.py` (add filter tests)
+    - Delete: `plugins/wiki/src/wiki/old_module.py`
 
 Include line references for targeted modifications when the file is large.
 

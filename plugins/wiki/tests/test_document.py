@@ -1,4 +1,4 @@
-"""Tests for wos/document.py — Document base class, subclasses, and Document.parse()."""
+"""Tests for document.py — Document base class, subclasses, and Document.parse()."""
 
 from __future__ import annotations
 

@@ -3,7 +3,7 @@
 # requires-python = ">=3.9"
 # dependencies = []
 # ///
-"""Create _index.md files for WOS-managed areas and the wiki/ subtree.
+"""Create _index.md files for managed areas and the wiki/ subtree.
 
 Reads directories from the AGENTS.md areas table and creates a
 <dir>/_index.md listing all managed documents with their descriptions.
@@ -171,7 +171,7 @@ def _reindex_wiki(wiki_dir: Path, root: Path) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(
         description=(
-            "Create _index.md files for WOS-managed areas and refresh "
+            "Create _index.md files for managed areas and refresh "
             "the AGENTS.md areas table."
         ),
     )
@@ -197,7 +197,7 @@ def main() -> None:
 
     # Determine which directories to index
     if existing_desc:
-        # Option B: only index directories already registered as WOS areas
+        # Option B: only index directories already registered as managed areas
         dirs = [
             root / rel for rel in existing_desc
             if (root / rel).is_dir()

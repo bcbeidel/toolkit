@@ -3,7 +3,7 @@
 # requires-python = ">=3.9"
 # dependencies = []
 # ///
-"""Run WOS validation checks on a project.
+"""Run validation checks on a project.
 
 Usage:
     python scripts/lint.py [FILE] [--root DIR] [--no-urls] [--json]
@@ -32,7 +32,7 @@ def _relative_path(file_path: str, root: Path) -> str:
 def main() -> None:
     warnings.filterwarnings("ignore")
     parser = argparse.ArgumentParser(
-        description="Run WOS validation checks on a project.",
+        description="Run validation checks on a project.",
     )
     parser.add_argument(
         "file",

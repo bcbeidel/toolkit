@@ -52,4 +52,3 @@ Note: `ruff` may not be installed locally; CI runs it via GitHub Actions.
 - Python 3.9 — use `from __future__ import annotations` for type hints
 - `ValueError` + stdlib exceptions only (no custom exception hierarchy)
 - Tests use inline markdown strings and `tmp_path` fixtures
-

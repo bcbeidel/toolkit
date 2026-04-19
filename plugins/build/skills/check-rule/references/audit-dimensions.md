@@ -29,7 +29,7 @@ Do not pass structurally invalid rules to the LLM step.
 | Test file present | Co-located `<slug>.tests.md` does not exist alongside the rule file | warn |
 | Concern prefix | Rule `name` field has no domain prefix (e.g., `quality-`, `style-`, `security-`, `compliance-`) when the rule library contains >5 rules | warn |
 
-For WOS `.rule.md` files: parse frontmatter between `---` delimiters and check body headings.
+For Toolkit `.rule.md` files: parse frontmatter between `---` delimiters and check body headings.
 For Cursor `.mdc` files: check `description`, `globs`, `alwaysApply` fields and body headings.
 For CLAUDE.md sections: check that each `## Rule: <name>` block contains Intent, Non-Compliant, and Compliant subsections.
 
@@ -127,7 +127,7 @@ Do not delete unless the convention is definitively retired — archive preserve
 auto-remediable or require human judgment.
 
 **Fail signals (→ WARN):**
-- WOS `.rule.md` frontmatter has no `fix-safety` field
+- Toolkit `.rule.md` frontmatter has no `fix-safety` field
 - Cursor `.mdc` body has no `**Fix-safety:**` line under Intent
 - CLAUDE.md section has no `**Fix-safety:**` line
 - `fix-safety` value is not `auto-remediable` or `requires-review`
@@ -242,7 +242,7 @@ FAIL anchor: scope references `app/legacy/` which does not exist; examples use d
 
 ## Dimension 4: Fix-Safety Classification
 Criterion: Is `fix-safety` declared as `auto-remediable` or `requires-review`?
-For WOS: frontmatter field. For Cursor: `**Fix-safety:**` line in body. For CLAUDE.md: `**Fix-safety:**` line.
+For Toolkit: frontmatter field. For Cursor: `**Fix-safety:**` line in body. For CLAUDE.md: `**Fix-safety:**` line.
 
 PASS anchor: frontmatter contains `fix-safety: requires-review`
 FAIL anchor: no `fix-safety` field anywhere in the rule

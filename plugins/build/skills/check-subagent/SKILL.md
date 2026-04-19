@@ -152,7 +152,7 @@ Subagents are full context forks — high overhead compared to skills or
 inline execution.
 
 Flag when:
-- The described workflow maps cleanly to an existing WOS skill
+- The described workflow maps cleanly to an existing toolkit skill
 - No parallelism, permission isolation, or context-window pressure is
   mentioned or implied by the description
 - The agent's scope is narrow enough for a single inline tool call

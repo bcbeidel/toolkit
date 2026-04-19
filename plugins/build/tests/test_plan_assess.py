@@ -1,4 +1,4 @@
-"""Tests for wos/plan/assess_plan.py."""
+"""Tests for plan/assess_plan.py."""
 
 from __future__ import annotations
 

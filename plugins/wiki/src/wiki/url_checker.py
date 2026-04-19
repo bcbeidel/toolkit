@@ -24,7 +24,7 @@ class UrlCheckResult:
     reason: Optional[str] = None
 
 
-_HEADERS = {"User-Agent": "wos-url-checker/1.0"}
+_HEADERS = {"User-Agent": "toolkit-url-checker/1.0"}
 _TIMEOUT = 10
 
 

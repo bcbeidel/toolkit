@@ -1,4 +1,4 @@
-"""Tests for wos/validators.py — per-file and project-wide validation checks."""
+"""Tests for validators.py — per-file and project-wide validation checks."""
 
 from __future__ import annotations
 
@@ -46,7 +46,7 @@ class TestCheckProjectFiles:
         from wiki.project import check_project_files
 
         (tmp_path / "AGENTS.md").write_text(
-            "# Agents\n\n<!-- wos:begin -->\nWOS content\n<!-- wos:end -->\n"
+            "# Agents\n\n<!-- wiki:begin -->\nmanaged content\n<!-- wiki:end -->\n"
         )
         issues = check_project_files(tmp_path)
         agents_issues = [i for i in issues if i["file"] == "AGENTS.md"]
@@ -118,9 +118,9 @@ class TestValidateProject:
         area.mkdir(parents=True)
         topic = area / "unit-tests.md"
         topic.write_text(_md("Unit Tests", "Guide to unit tests"))
-        # Create AGENTS.md with WOS markers and CLAUDE.md with @AGENTS.md
+        # Create AGENTS.md with managed-section markers and CLAUDE.md with @AGENTS.md
         (tmp_path / "AGENTS.md").write_text(
-            "# Agents\n\n<!-- wos:begin -->\nWOS\n<!-- wos:end -->\n"
+            "# Agents\n\n<!-- wiki:begin -->\nmanaged\n<!-- wiki:end -->\n"
         )
         (tmp_path / "CLAUDE.md").write_text(
             "# Project\n\n@AGENTS.md\n"
@@ -142,7 +142,7 @@ class TestValidateProject:
             sources=["https://example.com"],
         ))
         (tmp_path / "AGENTS.md").write_text(
-            "# Agents\n\n<!-- wos:begin -->\nWOS\n<!-- wos:end -->\n"
+            "# Agents\n\n<!-- wiki:begin -->\nmanaged\n<!-- wiki:end -->\n"
         )
         (tmp_path / "CLAUDE.md").write_text("# Project\n\n@AGENTS.md\n")
 
@@ -243,7 +243,7 @@ class TestCompoundSuffixValidation:
         ))
         # Create AGENTS.md and CLAUDE.md
         (tmp_path / "AGENTS.md").write_text(
-            "# Agents\n\n<!-- wos:begin -->\nWOS\n<!-- wos:end -->\n"
+            "# Agents\n\n<!-- wiki:begin -->\nmanaged\n<!-- wiki:end -->\n"
         )
         (tmp_path / "CLAUDE.md").write_text("# Project\n\n@AGENTS.md\n")
 

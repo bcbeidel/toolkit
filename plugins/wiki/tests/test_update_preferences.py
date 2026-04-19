@@ -28,7 +28,7 @@ class TestUpdatePreferencesWritesAgentsMd:
         docs_dir = tmp_path / "docs" / "context"
         docs_dir.mkdir(parents=True)
 
-        # Create AGENTS.md with WOS markers
+        # Create AGENTS.md with managed-section markers
         agents_path = tmp_path / "AGENTS.md"
         agents_path.write_text(
             f"# AGENTS.md\n\n{BEGIN_MARKER}\nold\n{END_MARKER}\n"

@@ -2,7 +2,7 @@
 
 How to write effective skills for Claude Code. This guide covers
 structure, conventions, and quality criteria. It also serves as the
-rubric when `/wos:lint` evaluates skill quality.
+rubric when `/wiki:lint` evaluates skill quality.
 
 ## The Loading Model
 
@@ -207,7 +207,7 @@ Consider namespacing package-level skill names to avoid confusion: `frontend-rev
 ## Required Structural Sections
 
 Every SKILL.md body must include these three sections. Their presence
-and content are audited by `/wos:check-skill`.
+and content are audited by `/build:check-skill`.
 
 ### `## Handoff`
 
@@ -354,7 +354,7 @@ When evaluating a skill, check these criteria:
 
 ### Judgment (Claude — guided by this document)
 
-**Structural sections** (checked by `/wos:check-skill` criteria 3–7, 11, 13–16):
+**Structural sections** (checked by `/build:check-skill` criteria 3–7, 11, 13–16):
 
 | Check | What to evaluate |
 |-------|-----------------|
@@ -366,7 +366,7 @@ When evaluating a skill, check these criteria:
 | Workflow ordering | If ≥3 sequential steps: numbered, explicitly ordered, dependencies stated — not implied? |
 | Edge case handling | At least one failure mode addressed (missing input, ambiguous input, failed precondition, mid-workflow error)? |
 
-**Content quality** (checked by `/wos:check-skill` criteria 8–10, 12):
+**Content quality** (checked by `/build:check-skill` criteria 8–10, 12):
 
 | Check | What to evaluate |
 |-------|-----------------|

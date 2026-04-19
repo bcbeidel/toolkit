@@ -32,7 +32,7 @@ sufficient context for unambiguous interpretation.
 
 Present three choices when infeasibility is detected:
 
-1. **Return to scope-work** — invoke `wos:scope-work` with the plan file
+1. **Return to scope-work** — invoke `/work:scope-work` with the plan file
    path as input. Scope-work reads the `## Feedback` section and revises
    the design through its normal workflow. **Recommend this for
    design-level problems** (wrong approach, missing capability, incorrect

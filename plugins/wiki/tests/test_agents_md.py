@@ -1,4 +1,4 @@
-"""Tests for wos/agents_md.py — AGENTS.md marker-based section manager."""
+"""Tests for agents_md.py — AGENTS.md marker-based section manager."""
 
 from __future__ import annotations
 
@@ -87,58 +87,58 @@ class TestDiscoverAreas:
         assert paths == ["docs/alpha", "docs/middle", "docs/zebra"]
 
 
-# ── render_wos_section ──────────────────────────────────────────
+# ── render_wiki_section ──────────────────────────────────────────
 
 
 class TestRenderWithAreas:
     def test_renders_area_table(self) -> None:
-        from wiki.agents_md import render_wos_section
+        from wiki.agents_md import render_wiki_section
 
         areas = [
             {"name": "Python Basics", "path": "docs/context/python-basics"},
             {"name": "Testing", "path": "docs/context/testing"},
         ]
-        result = render_wos_section(areas)
+        result = render_wiki_section(areas)
         assert "| Area | Path |" in result
         assert "| Python Basics | docs/context/python-basics |" in result
         assert "| Testing | docs/context/testing |" in result
 
     def test_areas_section_omitted_when_empty(self) -> None:
-        from wiki.agents_md import render_wos_section
+        from wiki.agents_md import render_wiki_section
 
-        result = render_wos_section(areas=[])
+        result = render_wiki_section(areas=[])
         assert "### Areas" not in result
         assert "| Area | Path |" not in result
 
 
 class TestRenderWithPreferences:
     def test_renders_preferences(self) -> None:
-        from wiki.agents_md import render_wos_section
+        from wiki.agents_md import render_wiki_section
 
         prefs = ["Be concise", "Prefer bullet points"]
-        result = render_wos_section(areas=[], preferences=prefs)
+        result = render_wiki_section(areas=[], preferences=prefs)
         assert "### Preferences" in result
         assert "- Be concise" in result
         assert "- Prefer bullet points" in result
 
     def test_preferences_omitted_when_none(self) -> None:
-        from wiki.agents_md import render_wos_section
+        from wiki.agents_md import render_wiki_section
 
-        result = render_wos_section(areas=[], preferences=None)
+        result = render_wiki_section(areas=[], preferences=None)
         assert "### Preferences" not in result
 
     def test_preferences_omitted_when_empty_list(self) -> None:
-        from wiki.agents_md import render_wos_section
+        from wiki.agents_md import render_wiki_section
 
-        result = render_wos_section(areas=[], preferences=[])
+        result = render_wiki_section(areas=[], preferences=[])
         assert "### Preferences" not in result
 
 
 class TestRenderMetadataFormat:
     def test_renders_metadata_format_section(self) -> None:
-        from wiki.agents_md import render_wos_section
+        from wiki.agents_md import render_wiki_section
 
-        result = render_wos_section(areas=[])
+        result = render_wiki_section(areas=[])
         assert "### File Metadata Format" in result
         assert "name: Title" in result
         assert "description: What this covers" in result
@@ -149,9 +149,9 @@ class TestRenderMetadataFormat:
 
 class TestRenderLostInTheMiddleCue:
     def test_renders_navigation_cue(self) -> None:
-        from wiki.agents_md import render_wos_section
+        from wiki.agents_md import render_wiki_section
 
-        result = render_wos_section(areas=[])
+        result = render_wiki_section(areas=[])
         # The "lost in the middle" cue: key info at start and end
         assert "## Context Navigation" in result
         assert "Read the `description` field before reading the full file." in result
@@ -160,79 +160,120 @@ class TestRenderLostInTheMiddleCue:
 
 class TestRenderDocumentStandards:
     def test_renders_document_standards_section(self) -> None:
-        from wiki.agents_md import render_wos_section
+        from wiki.agents_md import render_wiki_section
 
-        result = render_wos_section(areas=[])
+        result = render_wiki_section(areas=[])
         assert "### Document Standards" in result
 
     def test_renders_structure_guidance(self) -> None:
-        from wiki.agents_md import render_wos_section
+        from wiki.agents_md import render_wiki_section
 
-        result = render_wos_section(areas=[])
+        result = render_wiki_section(areas=[])
         assert "Key insights first" in result
         assert "detail in the middle" in result
         assert "takeaways at the bottom" in result
 
     def test_renders_word_count_guidance(self) -> None:
-        from wiki.agents_md import render_wos_section
+        from wiki.agents_md import render_wiki_section
 
-        result = render_wos_section(areas=[])
+        result = render_wiki_section(areas=[])
         assert "200-800 words" in result
 
     def test_renders_linking_guidance(self) -> None:
-        from wiki.agents_md import render_wos_section
+        from wiki.agents_md import render_wiki_section
 
-        result = render_wos_section(areas=[])
+        result = render_wiki_section(areas=[])
         assert "bidirectional" in result.lower()
 
     def test_renders_one_concept_per_file(self) -> None:
-        from wiki.agents_md import render_wos_section
+        from wiki.agents_md import render_wiki_section
 
-        result = render_wos_section(areas=[])
+        result = render_wiki_section(areas=[])
         assert "one concept per file" in result.lower()
 
 
 class TestExtractPreferences:
-    def test_extracts_preferences_from_wos_section(self) -> None:
-        from wiki.agents_md import extract_preferences, render_wos_section
+    def test_extracts_preferences_from_managed_section(self) -> None:
+        from wiki.agents_md import extract_preferences, render_wiki_section
 
         prefs = ["**Directness:** Be direct.", "**Tone:** Keep it casual."]
-        content = f"# AGENTS.md\n\n{render_wos_section(areas=[], preferences=prefs)}"
+        content = f"# AGENTS.md\n\n{render_wiki_section(areas=[], preferences=prefs)}"
         result = extract_preferences(content)
         assert result == prefs
 
     def test_returns_empty_when_no_markers(self) -> None:
         from wiki.agents_md import extract_preferences
 
-        result = extract_preferences("# AGENTS.md\n\nNo WOS section here.\n")
+        result = extract_preferences("# AGENTS.md\n\nNo managed section here.\n")
         assert result == []
 
     def test_returns_empty_when_no_preferences_section(self) -> None:
-        from wiki.agents_md import extract_preferences, render_wos_section
+        from wiki.agents_md import extract_preferences, render_wiki_section
 
-        content = render_wos_section(areas=[], preferences=None)
+        content = render_wiki_section(areas=[], preferences=None)
         result = extract_preferences(content)
         assert result == []
 
     def test_preserves_preference_content_exactly(self) -> None:
-        from wiki.agents_md import extract_preferences, render_wos_section
+        from wiki.agents_md import extract_preferences, render_wiki_section
 
         prefs = [
             "**Directness:** Be direct. State problems and disagreements "
             "plainly without hedging or softening."
         ]
-        content = render_wos_section(areas=[], preferences=prefs)
+        content = render_wiki_section(areas=[], preferences=prefs)
         result = extract_preferences(content)
         assert result == prefs
 
 
 class TestRenderMarkers:
     def test_output_wrapped_in_markers(self) -> None:
-        from wiki.agents_md import BEGIN_MARKER, END_MARKER, render_wos_section
+        from wiki.agents_md import BEGIN_MARKER, END_MARKER, render_wiki_section
 
-        result = render_wos_section(areas=[])
+        result = render_wiki_section(areas=[])
         assert result.startswith(BEGIN_MARKER)
         assert result.rstrip().endswith(END_MARKER)
+
+
+# ── legacy-marker migration ────────────────────────────────────
+
+
+class TestMigrateLegacyMarkers:
+    def test_migrates_legacy_wos_markers(self) -> None:
+        from wiki.agents_md import update_agents_md
+
+        legacy = (
+            "# AGENTS.md\n"
+            "preamble\n"
+            "<!-- wos:begin -->\n"
+            "<!-- wos:layout: flat -->\n"
+            "## Context Navigation\n"
+            "old body\n"
+            "<!-- wos:end -->\n"
+            "epilogue\n"
+        )
+        result = update_agents_md(legacy, areas=[])
+        assert "<!-- wos:begin -->" not in result
+        assert "<!-- wos:end -->" not in result
+        assert "<!-- wos:layout:" not in result
+        assert "<!-- wiki:begin -->" in result
+        assert "<!-- wiki:end -->" in result
+        assert "<!-- wiki:layout: flat -->" in result
+        # Content outside markers preserved
+        assert "preamble" in result
+        assert "epilogue" in result
+
+    def test_idempotent_on_current_markers(self) -> None:
+        from wiki.agents_md import _migrate_legacy_markers
+
+        content = (
+            "# AGENTS.md\n"
+            "<!-- wiki:begin -->\n"
+            "<!-- wiki:layout: separated -->\n"
+            "body\n"
+            "<!-- wiki:end -->\n"
+        )
+        assert _migrate_legacy_markers(content) == content
 
 
 # ── update_agents_md ────────────────────────────────────────────
@@ -317,13 +358,13 @@ class TestUpdatePreferencesPreserved:
 class TestExtractAreas:
     def test_round_trip(self) -> None:
         """Areas rendered then extracted produce identical name/path values."""
-        from wiki.agents_md import extract_areas, render_wos_section
+        from wiki.agents_md import extract_areas, render_wiki_section
 
         areas = [
             {"name": "How agents plan tasks", "path": "docs/context/planning"},
             {"name": "API reference", "path": "docs/context/api"},
         ]
-        content = f"# AGENTS.md\n\n{render_wos_section(areas)}"
+        content = f"# AGENTS.md\n\n{render_wiki_section(areas)}"
         result = extract_areas(content)
         assert result == areas
 
@@ -352,13 +393,13 @@ class TestExtractAreas:
     def test_returns_empty_when_no_markers(self) -> None:
         from wiki.agents_md import extract_areas
 
-        result = extract_areas("# AGENTS.md\n\nNo WOS section here.\n")
+        result = extract_areas("# AGENTS.md\n\nNo managed section here.\n")
         assert result == []
 
     def test_returns_empty_when_no_areas_table(self) -> None:
-        from wiki.agents_md import extract_areas, render_wos_section
+        from wiki.agents_md import extract_areas, render_wiki_section
 
-        content = render_wos_section(areas=[])
+        content = render_wiki_section(areas=[])
         result = extract_areas(content)
         assert result == []
 
@@ -382,9 +423,9 @@ class TestUpdateAgentsMdAreasNone:
 
     def test_produces_no_areas_section_when_none_exist(self) -> None:
         """When areas=None and no Areas table present, output has no Areas table."""
-        from wiki.agents_md import extract_areas, render_wos_section, update_agents_md
+        from wiki.agents_md import extract_areas, render_wiki_section, update_agents_md
 
-        base = render_wos_section(areas=[])
+        base = render_wiki_section(areas=[])
         content = f"# AGENTS.md\n\n{base}"
         assert extract_areas(content) == []
         result = update_agents_md(content)

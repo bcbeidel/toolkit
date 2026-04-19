@@ -70,7 +70,7 @@ templates and approach comparison format.
 - Calibrate depth to task complexity — a paragraph for simple tasks, full
   structured spec for multi-system changes.
 - Save location depends on the project's layout hint (read from AGENTS.md
-  `<!-- wos:layout: ... -->` comment):
+  `<!-- wiki:layout: ... -->` comment):
   - **separated**: `.designs/YYYY-MM-DD-<name>.design.md`
   - **co-located**: same directory as related documents
   - **flat**: `docs/YYYY-MM-DD-<name>.design.md`
@@ -143,7 +143,7 @@ feedback format and revision-vs-supersede decision tree.
 
 ## Output Format
 
-Design docs use WOS frontmatter:
+Design docs use the standard frontmatter format:
 
     ---
     name: Feature Name

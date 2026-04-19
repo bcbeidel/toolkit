@@ -43,7 +43,7 @@ testable software on its own.
 ### 3. Write the Plan
 
 Save location depends on the project's layout hint (read from AGENTS.md
-`<!-- wos:layout: ... -->` comment):
+`<!-- wiki:layout: ... -->` comment):
 - **separated**: `.plans/YYYY-MM-DD-<feature-name>.plan.md`
 - **co-located**: same directory as the related design doc
 - **flat**: `docs/YYYY-MM-DD-<feature-name>.plan.md`
@@ -168,7 +168,7 @@ ready for execution by an agent with zero prior context.
 
 ## Output Format
 
-Plan documents use WOS frontmatter:
+Plan documents use the standard frontmatter format:
 
     ---
     name: Feature Name

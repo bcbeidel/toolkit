@@ -108,7 +108,7 @@ makes changes to versioned files that require a clean working copy:
 > it a clean working copy to prevent write conflicts."
 
 **`skills`** — raise only if the workflow implies needing project-specific
-context or WOS procedures:
+context or toolkit procedures:
 > "Parent session skills aren't inherited. If this agent needs [skill]
 > procedures, list it explicitly in the `skills` field."
 

@@ -26,7 +26,7 @@ def _make_md(path: Path, name: str = "", description: str = "") -> None:
 def _agents_with_areas(
     tmp_path: Path, areas: list[tuple[str, str]]
 ) -> Path:
-    """Write AGENTS.md with a WOS section listing the given (desc, path) areas."""
+    """Write AGENTS.md with a managed section listing the given (desc, path) areas."""
     rows = "\n".join(f"| {desc} | {path} |" for desc, path in areas)
     content = (
         f"# AGENTS.md\n\n"

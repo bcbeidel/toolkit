@@ -37,7 +37,7 @@ Check the project structure to determine rule format:
 
 - `.cursor/` exists → **Cursor** (`.mdc` in `.cursor/rules/`)
 - `CLAUDE.md` exists and no `docs/rules/` → **Claude Code** (CLAUDE.md section)
-- Otherwise → **WOS** (`docs/rules/<slug>.rule.md`)
+- Otherwise → **Toolkit** (`docs/rules/<slug>.rule.md`)
 
 Report the detected format: "Detected format: **[format]** — proceed with this
 or override?" Wait for confirmation before drafting.
@@ -158,7 +158,7 @@ Show the complete rule file to the user. Iterate on feedback. Do not write until
 
   | Format | Test file location |
   |--------|--------------------|
-  | WOS | `docs/rules/<slug>.tests.md` |
+  | Toolkit | `docs/rules/<slug>.tests.md` |
   | Cursor | `.cursor/rules/<slug>.tests.md` |
   | Claude Code | `docs/rules/<slug>.tests.md` (create directory if needed) |
 
@@ -170,7 +170,7 @@ Show the complete rule file to the user. Iterate on feedback. Do not write until
 <example>
 User: "I want staging models to only do casts, renames, and deduplication"
 
-Assistant detects WOS format (docs/rules/ exists). Classifies rule type: Convention/Style
+Assistant detects Toolkit format (docs/rules/ exists). Classifies rule type: Convention/Style
 (enforcing architectural layer purity). Fix-safety default: requires-review. Framing: warn-first.
 Asks: "Which files should this apply to?"
 User: "models/staging/**/*.sql". Asks: "Should violations block (fail) or just warn?"

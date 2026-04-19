@@ -29,7 +29,7 @@ related:
   approved, executing, completed, abandoned)
 - `related` — links to design docs, context files, other plans (optional)
 
-Note: the WOS frontmatter parser does not strip quotes. Use unquoted values.
+Note: the frontmatter parser does not strip quotes. Use unquoted values.
 
 ## Required Sections
 
@@ -83,4 +83,4 @@ approved → abandoned
 | Checkbox task format | [Codex PLANS.md](https://developers.openai.com/cookbook/articles/codex_exec_plans/); [Effective Harnesses](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents) (Anthropic, 2025) | Checkbox convergence across all 6 tools studied |
 | "Middle altitude" tasks | [Codex PLANS.md](https://developers.openai.com/cookbook/articles/codex_exec_plans/) | Observable outcomes, not implementation prescriptions |
 | Lifecycle in frontmatter | Comparative analysis across 6 tools | No existing tool tracks plan status as queryable metadata |
-| Status validation in document.py | WOS convention | Same module as existing required-field checks; catches typos early |
+| Status validation in document.py | toolkit convention | Same module as existing required-field checks; catches typos early |

@@ -1,4 +1,4 @@
-"""Document base class for WOS documents.
+"""Document base class.
 
 Provides a Document base class. Document.parse() is the single factory —
 it routes to the right subclass based on frontmatter type and file suffix
@@ -57,7 +57,7 @@ def parse_frontmatter(
 def _parse_yaml_subset(
     yaml_text: str,
 ) -> Dict[str, Union[str, List[str], None]]:
-    """Parse the restricted YAML subset used in WOS frontmatter.
+    """Parse the restricted YAML subset used in frontmatter.
 
     Handles:
     - key: value  → string (no type coercion)
@@ -146,7 +146,7 @@ _REGISTRY: dict[str, type[Document]] = {}
 
 @dataclass
 class Document:
-    """Base class for all WOS documents.
+    """Base class for all documents.
 
     Holds common frontmatter fields and implements base validation
     (non-empty name/description). Typed subclasses add structured fields

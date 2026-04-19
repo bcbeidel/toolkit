@@ -17,7 +17,7 @@ Categorize changed files:
 
 | Category | Pattern | Validation signal |
 |----------|---------|-------------------|
-| Source code | `src/`, `lib/`, `wos/`, `app/` | Run tests covering these modules |
+| Source code | `src/`, `lib/`, `plugins/`, `app/` | Run tests covering these modules |
 | Tests | `tests/`, `test_*`, `*_test.*` | Run the modified tests directly |
 | Config | `pyproject.toml`, `package.json`, `Cargo.toml` | Lint + build checks |
 | Docs | `*.md`, `docs/` | Human review for accuracy |

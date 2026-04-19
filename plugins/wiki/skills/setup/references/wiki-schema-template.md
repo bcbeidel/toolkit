@@ -1,7 +1,7 @@
 # SCHEMA.md
 
 Define the structure of this project's wiki.
-Validated automatically by `/wos:lint` when `wiki/SCHEMA.md` is present.
+Validated automatically by `/wiki:lint` when `wiki/SCHEMA.md` is present.
 
 ## Page Types
 - concept

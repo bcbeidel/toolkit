@@ -1,6 +1,6 @@
-"""AGENTS.md manager — marker-based WOS section rendering and updates.
+"""AGENTS.md manager — marker-based managed section rendering and updates.
 
-Renders the WOS-managed section for AGENTS.md (context navigation,
+Renders the managed section for AGENTS.md (context navigation,
 areas table, file metadata format, preferences) and updates the file
 content using marker-based replacement.
 
@@ -98,7 +98,7 @@ def render_preferences(prefs: Dict[str, str]) -> List[str]:
 
     Each string is formatted as ``**Dimension:** instruction`` without
     a bullet prefix. Pass the returned list to
-    ``render_wos_section(preferences=...)`` which adds bullets.
+    ``render_wiki_section(preferences=...)`` which adds bullets.
 
     Args:
         prefs: Mapping of dimension name to level.
@@ -160,12 +160,37 @@ def replace_marker_section(
     return content.rstrip("\n") + "\n\n" + section
 
 
-BEGIN_MARKER = "<!-- wos:begin -->"
-END_MARKER = "<!-- wos:end -->"
+BEGIN_MARKER = "<!-- wiki:begin -->"
+END_MARKER = "<!-- wiki:end -->"
 
-_LAYOUT_RE = re.compile(r"<!--\s*wos:layout:\s*(\S+)\s*-->")
+_LAYOUT_RE = re.compile(r"<!--\s*wiki:layout:\s*(\S+)\s*-->")
 
 VALID_LAYOUTS = frozenset({"separated", "co-located", "flat", "none"})
+
+# Legacy markers from the `wos:` naming era. ``update_agents_md`` rewrites
+# any occurrence in place so repeat runs of /wiki:setup heal old installs.
+_LEGACY_BEGIN_MARKER = "<!-- wos:begin -->"
+_LEGACY_END_MARKER = "<!-- wos:end -->"
+_LEGACY_LAYOUT_RE = re.compile(r"<!--\s*wos:layout:\s*(\S+)\s*-->")
+
+
+def _migrate_legacy_markers(content: str) -> str:
+    """Rewrite pre-rename ``wos:`` markers to their ``wiki:`` equivalents.
+
+    Idempotent — returns content unchanged when no legacy markers are present.
+    """
+    if (
+        _LEGACY_BEGIN_MARKER not in content
+        and _LEGACY_END_MARKER not in content
+        and not _LEGACY_LAYOUT_RE.search(content)
+    ):
+        return content
+    content = content.replace(_LEGACY_BEGIN_MARKER, BEGIN_MARKER)
+    content = content.replace(_LEGACY_END_MARKER, END_MARKER)
+    content = _LEGACY_LAYOUT_RE.sub(
+        lambda m: f"<!-- wiki:layout: {m.group(1)} -->", content
+    )
+    return content
 
 
 # ── Discovery ────────────────────────────────────────────────────
@@ -211,9 +236,9 @@ def discover_areas(root: Path) -> List[Dict[str, str]]:
 
 
 def read_layout_hint(content: str) -> Optional[str]:
-    """Extract layout pattern from AGENTS.md WOS section.
+    """Extract layout pattern from AGENTS.md managed section.
 
-    Looks for ``<!-- wos:layout: <pattern> -->`` within the WOS-managed
+    Looks for ``<!-- wiki:layout: <pattern> -->`` within the managed
     section.
 
     Args:
@@ -228,8 +253,8 @@ def read_layout_hint(content: str) -> Optional[str]:
     if begin_idx == -1 or end_idx == -1:
         return None
 
-    wos_section = content[begin_idx:end_idx]
-    match = _LAYOUT_RE.search(wos_section)
+    section = content[begin_idx:end_idx]
+    match = _LAYOUT_RE.search(section)
     if match:
         layout = match.group(1)
         if layout in VALID_LAYOUTS:
@@ -240,12 +265,12 @@ def read_layout_hint(content: str) -> Optional[str]:
 # ── Render ───────────────────────────────────────────────────────
 
 
-def render_wos_section(
+def render_wiki_section(
     areas: List[Dict[str, str]],
     preferences: Optional[List[str]] = None,
     layout: Optional[str] = None,
 ) -> str:
-    """Render the WOS-managed section for AGENTS.md.
+    """Render the managed section for AGENTS.md.
 
     Args:
         areas: List of dicts with 'name' and 'path' keys.
@@ -259,7 +284,7 @@ def render_wos_section(
 
     # ── Layout hint (if set) ──────────────────────────────────────
     if layout and layout in VALID_LAYOUTS:
-        lines.append(f"<!-- wos:layout: {layout} -->")
+        lines.append(f"<!-- wiki:layout: {layout} -->")
 
     # ── Context Navigation header ────────────────────────────────
     lines.append("## Context Navigation")
@@ -344,9 +369,9 @@ def render_wos_section(
 
 
 def extract_preferences(content: str) -> List[str]:
-    """Extract preference strings from an AGENTS.md WOS section.
+    """Extract preference strings from an AGENTS.md managed section.
 
-    Parses the ``### Preferences`` subsection between WOS markers and
+    Parses the ``### Preferences`` subsection between managed markers and
     returns the list of preference strings (without ``- `` bullet prefix).
     Used by reindex and update_preferences to preserve existing preferences.
 
@@ -361,8 +386,8 @@ def extract_preferences(content: str) -> List[str]:
     if begin_idx == -1 or end_idx == -1:
         return []
 
-    wos_section = content[begin_idx:end_idx]
-    lines = wos_section.split("\n")
+    section = content[begin_idx:end_idx]
+    lines = section.split("\n")
 
     in_preferences = False
     prefs: List[str] = []
@@ -383,11 +408,11 @@ def extract_preferences(content: str) -> List[str]:
 
 
 def extract_areas(content: str) -> List[Dict[str, str]]:
-    """Extract area entries from an AGENTS.md WOS section.
+    """Extract area entries from an AGENTS.md managed section.
 
-    Parses the ``### Areas`` table between WOS markers and returns the
+    Parses the ``### Areas`` table between managed markers and returns the
     list of area dicts with 'name' and 'path' keys.  Used to preserve
-    human-written area descriptions when rewriting the WOS section.
+    human-written area descriptions when rewriting the managed section.
 
     Args:
         content: Full AGENTS.md file content.
@@ -401,8 +426,8 @@ def extract_areas(content: str) -> List[Dict[str, str]]:
     if begin_idx == -1 or end_idx == -1:
         return []
 
-    wos_section = content[begin_idx:end_idx]
-    lines = wos_section.split("\n")
+    section = content[begin_idx:end_idx]
+    lines = section.split("\n")
 
     in_areas = False
     areas: List[Dict[str, str]] = []
@@ -433,7 +458,7 @@ def update_agents_md(
     preferences: Optional[List[str]] = None,
     layout: Optional[str] = None,
 ) -> str:
-    """Replace or append the WOS section in AGENTS.md content.
+    """Replace or append the managed section in AGENTS.md content.
 
     If markers exist, replaces the content between them (inclusive).
     If markers don't exist, appends the section to the end.
@@ -451,8 +476,12 @@ def update_agents_md(
         layout: Optional layout pattern. If None, preserves existing.
 
     Returns:
-        Updated AGENTS.md content with the new WOS section.
+        Updated AGENTS.md content with the new managed section.
     """
+    # Migrate legacy wos: markers before anything else so downstream
+    # extraction and replacement see the canonical wiki: form.
+    content = _migrate_legacy_markers(content)
+
     # Preserve existing areas if not explicitly provided
     if areas is None:
         areas = extract_areas(content)
@@ -461,5 +490,5 @@ def update_agents_md(
     if layout is None:
         layout = read_layout_hint(content)
 
-    section = render_wos_section(areas, preferences, layout=layout)
+    section = render_wiki_section(areas, preferences, layout=layout)
     return replace_marker_section(content, BEGIN_MARKER, END_MARKER, section)

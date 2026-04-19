@@ -1,4 +1,4 @@
-"""Tests for wos/wiki.py — WikiDocument and wiki validation."""
+"""Tests for wiki.py — WikiDocument and wiki validation."""
 
 from __future__ import annotations
 

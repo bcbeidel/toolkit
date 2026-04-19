@@ -1,4 +1,4 @@
-"""Tests for wos.url_checker — HTTP HEAD/GET URL reachability checks.
+"""Tests for wiki.url_checker — HTTP HEAD/GET URL reachability checks.
 
 All HTTP calls are mocked. No network traffic in tests.
 """

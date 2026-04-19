@@ -94,13 +94,15 @@ class Project:
 
         Checks:
         - AGENTS.md missing
-        - AGENTS.md exists but lacks ``<!-- wos:begin -->`` marker
+        - AGENTS.md exists but lacks the managed-section begin marker
         - CLAUDE.md missing
         - CLAUDE.md exists but doesn't reference ``@AGENTS.md``
 
         Returns:
             List of issue dicts. Empty if all checks pass.
         """
+        from wiki.agents_md import _LEGACY_BEGIN_MARKER, BEGIN_MARKER
+
         issues: List[dict] = []
         root = self.root
 
@@ -108,7 +110,7 @@ class Project:
         if not agents_path.is_file():
             issues.append({
                 "file": "AGENTS.md",
-                "issue": "No AGENTS.md found. Run /wos:setup to initialize.",
+                "issue": "No AGENTS.md found. Run /wiki:setup to initialize.",
                 "severity": "warn",
             })
         else:
@@ -116,11 +118,11 @@ class Project:
                 content = agents_path.read_text(encoding="utf-8")
             except OSError:
                 content = ""
-            if "<!-- wos:begin -->" not in content:
+            if BEGIN_MARKER not in content and _LEGACY_BEGIN_MARKER not in content:
                 issues.append({
                     "file": "AGENTS.md",
                     "issue": (
-                        "AGENTS.md lacks WOS markers."
+                        "AGENTS.md lacks managed-section markers."
                         " Navigation updates won't work."
                     ),
                     "severity": "warn",
@@ -130,7 +132,7 @@ class Project:
         if not claude_path.is_file():
             issues.append({
                 "file": "CLAUDE.md",
-                "issue": "No CLAUDE.md found. Run /wos:setup to initialize.",
+                "issue": "No CLAUDE.md found. Run /wiki:setup to initialize.",
                 "severity": "warn",
             })
         else:

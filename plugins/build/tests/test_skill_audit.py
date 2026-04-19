@@ -1,4 +1,4 @@
-"""Tests for wos/skill.py — skill size auditing."""
+"""Tests for skill.py — skill size auditing."""
 
 from __future__ import annotations
 

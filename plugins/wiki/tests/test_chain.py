@@ -1,4 +1,4 @@
-"""Tests for wos/chain.py — SkillChainDocument parsing and validation."""
+"""Tests for chain.py — SkillChainDocument parsing and validation."""
 
 from __future__ import annotations
 

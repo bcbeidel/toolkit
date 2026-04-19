@@ -3,7 +3,7 @@
 # requires-python = ">=3.9"
 # dependencies = []
 # ///
-"""Check URL reachability using wos.url_checker.
+"""Check URL reachability using wiki.url_checker.
 
 Usage:
     python scripts/check_url.py URL [URL ...]

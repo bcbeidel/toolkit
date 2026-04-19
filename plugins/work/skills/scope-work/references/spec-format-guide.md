@@ -19,7 +19,7 @@ works internally. Architecture decisions belong in the plan.
       - .context/relevant-file.md
     ---
 
-Use unquoted values. The WOS frontmatter parser does not strip quotes.
+Use unquoted values. The frontmatter parser does not strip quotes.
 
 ## Spec Sections
 

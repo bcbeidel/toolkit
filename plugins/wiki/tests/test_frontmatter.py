@@ -1,4 +1,4 @@
-"""Tests for the frontmatter parser in wos/document.py."""
+"""Tests for the frontmatter parser in document.py."""
 
 from __future__ import annotations
 

@@ -45,7 +45,7 @@ Use this workflow to capture communication preferences from the user.
    python <plugin-scripts-dir>/update_preferences.py --root . directness=blunt verbosity=terse
    ```
 
-   This updates the `### Preferences` subsection inside the WOS-managed
+   This updates the `### Preferences` subsection inside the managed
    section of AGENTS.md.
 
 ## Notes

@@ -9,7 +9,7 @@ description: >
   request to conduct a structured investigation.
 argument-hint: "[topic or question to investigate]"
 user-invocable: true
-compatibility: "Requires Python 3 (stdlib only), WOS plugin (audit, reindex), WebSearch, WebFetch"
+compatibility: "Requires Python 3 (stdlib only), wiki plugin (lint, reindex), WebSearch, WebFetch"
 references:
   - references/frame.md
   - references/resumption.md
@@ -272,7 +272,7 @@ STOP at each gate. If the condition is not met, complete it before proceeding.
 
 The final research document is saved with a `{date}-{slug}.research.md`
 filename. Save location depends on the project's layout hint (read from
-AGENTS.md `<!-- wos:layout: ... -->` comment):
+AGENTS.md `<!-- wiki:layout: ... -->` comment):
 - **separated**: `.research/`
 - **co-located**: same directory as related documents
 - **flat**: `docs/`
