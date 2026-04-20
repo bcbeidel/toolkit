@@ -1,0 +1,8 @@
+{
+  "name": "dummy",
+  "version": "0.1.0",
+  "description": "Scratch plugin validating the --as-tool invocation pattern. Temporary; remove after #327 lands.",
+  "author": {
+    "name": "Brandon Beidel"
+  }
+}

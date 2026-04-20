@@ -23,6 +23,11 @@
       "name": "consider",
       "source": "./plugins/consider",
       "description": "Structured mental models for decision-making — first principles, Occam's razor, inversion, and more."
+    },
+    {
+      "name": "dummy",
+      "source": "./plugins/dummy",
+      "description": "Scratch plugin validating the --as-tool skill invocation pattern (issue #327). Temporary; will be removed after validation lands."
     }
   ],
   "recommended": {
