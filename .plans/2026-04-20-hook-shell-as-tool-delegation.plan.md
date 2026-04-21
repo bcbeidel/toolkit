@@ -92,38 +92,44 @@ No files created. No files deleted. No Python source changes.
 **Files:**
 - Modify: `plugins/build/skills/build-shell/SKILL.md`
 
-- [ ] **Step 1:** Add `skill-invocable: true` to frontmatter. Add `../../_shared/references/as-tool-contract.md` to `references:`.
-- [ ] **Step 2:** Insert two-modes intro paragraph immediately after the H1/one-line purpose, per `as-tool-scaffolding.md`: "Two invocation modes: Human — prompts for missing info, shows the result, asks for approval. `--as-tool` — structured emission per the shared contract. No prompts, no approval."
-- [ ] **Step 3:** Add `## --as-tool contract` H2 near the end of the body (before `## Anti-Pattern Guards`). Populate subsections: **Required fields:** `target-shell`, `purpose`, `invocation-style`, `setuid`, `deps` (one-line description each); **Return shape:** ARTIFACT; **Artifact types:** `text/x-shellscript`; three bullets for Success (metadata shape + one fenced ```bash block carries the scaffold), NeedsMoreInfo (JSON only; `missing`, `hint`), Refusal (JSON only; `reason`, `category`; enumerate categories: `scope-gate`, `invalid-combo`); **Side effects:** reads intake; no file writes under `--as-tool`; **Parallel-safe:** yes.
-- [ ] **Step 4:** Modify §2 FX.1 Scope Gate: add a sub-note that under `--as-tool`, a tripped signal returns a structured `Refusal` (category `scope-gate`, reason citing the signal) instead of halting interactively.
-- [ ] **Step 5:** Split §6 Review Gate → §6a Human (current prose) and §6b `--as-tool` ("skipped; caller owns approval"). Same for §7 Save → §7a Human / §7b `--as-tool` (emission: output the JSON envelope with `artifact_types: ["text/x-shellscript"]` and `metadata: {target_shell, invocation_style}`, followed by one fenced ```bash block carrying the scaffold). Same for §8 Test → §8a/8b ("skipped under `--as-tool`").
-- [ ] **Step 6:** Add three Key Instructions entries per the scaffolding recipe: (a) under `--as-tool` emit per the contract (JSON envelope + one fenced ```bash block); (b) hard-fail with `NeedsMoreInfo` when any required field is missing; (c) `NeedsMoreInfo` and `Refusal` emit JSON only, never fenced blocks.
-- [ ] **Step 7:** Verify: `grep -c "skill-invocable: true" plugins/build/skills/build-shell/SKILL.md` returns 1; `grep -c "^## --as-tool contract" plugins/build/skills/build-shell/SKILL.md` returns 1; `grep -c "Required fields\|Return shape\|Artifact types\|Side effects\|Parallel-safe" plugins/build/skills/build-shell/SKILL.md` returns ≥ 5.
-- [ ] **Step 8:** Commit: `feat(build-shell): opt into --as-tool as ARTIFACT provider (text/x-shellscript)`.
+- [x] Task 1 complete <!-- sha:4d91093 -->
+
+- [x] **Step 1:** Add `skill-invocable: true` to frontmatter. Add `../../_shared/references/as-tool-contract.md` to `references:`.
+- [x] **Step 2:** Insert two-modes intro paragraph immediately after the H1/one-line purpose, per `as-tool-scaffolding.md`: "Two invocation modes: Human — prompts for missing info, shows the result, asks for approval. `--as-tool` — structured emission per the shared contract. No prompts, no approval."
+- [x] **Step 3:** Add `## --as-tool contract` H2 near the end of the body (before `## Anti-Pattern Guards`). Populate subsections: **Required fields:** `target-shell`, `purpose`, `invocation-style`, `setuid`, `deps` (one-line description each); **Return shape:** ARTIFACT; **Artifact types:** `text/x-shellscript`; three bullets for Success (metadata shape + one fenced ```bash block carries the scaffold), NeedsMoreInfo (JSON only; `missing`, `hint`), Refusal (JSON only; `reason`, `category`; enumerate categories: `scope-gate`, `invalid-combo`); **Side effects:** reads intake; no file writes under `--as-tool`; **Parallel-safe:** yes.
+- [x] **Step 4:** Modify §2 FX.1 Scope Gate: add a sub-note that under `--as-tool`, a tripped signal returns a structured `Refusal` (category `scope-gate`, reason citing the signal) instead of halting interactively.
+- [x] **Step 5:** Split §6 Review Gate → §6a Human (current prose) and §6b `--as-tool` ("skipped; caller owns approval"). Same for §7 Save → §7a Human / §7b `--as-tool` (emission: output the JSON envelope with `artifact_types: ["text/x-shellscript"]` and `metadata: {target_shell, invocation_style}`, followed by one fenced ```bash block carrying the scaffold). Same for §8 Test → §8a/8b ("skipped under `--as-tool`").
+- [x] **Step 6:** Add three Key Instructions entries per the scaffolding recipe: (a) under `--as-tool` emit per the contract (JSON envelope + one fenced ```bash block); (b) hard-fail with `NeedsMoreInfo` when any required field is missing; (c) `NeedsMoreInfo` and `Refusal` emit JSON only, never fenced blocks.
+- [x] **Step 7:** Verify: `grep -c "skill-invocable: true" plugins/build/skills/build-shell/SKILL.md` returns 1; `grep -c "^## --as-tool contract" plugins/build/skills/build-shell/SKILL.md` returns 1; `grep -c "Required fields\|Return shape\|Artifact types\|Side effects\|Parallel-safe" plugins/build/skills/build-shell/SKILL.md` returns ≥ 5.
+- [x] **Step 8:** Commit: `feat(build-shell): opt into --as-tool as ARTIFACT provider (text/x-shellscript)`.
 
 #### Task 2: Opt `check-shell` into `--as-tool` and add S11 lint
 
 **Files:**
 - Modify: `plugins/build/skills/check-shell/SKILL.md`
 
-- [ ] **Step 1:** Add `skill-invocable: true` to frontmatter. Add `../../_shared/references/as-tool-contract.md` to `references:`.
-- [ ] **Step 2:** Insert two-modes intro paragraph after the H1/purpose.
-- [ ] **Step 3:** Add new lint **S11: Missing strict-mode preamble (warn)** under §4 Checks → Safety subsection (after S10). Body per design: "Script does not begin (after the shebang and header) with `set -Eeuo pipefail` (bash) or `set -eu` (posix-sh). Without strict mode, commands that exit non-zero proceed silently and unset-variable dereferences expand to empty strings, producing actions on wrong inputs. Fix: add the appropriate strict-mode line near the top of the script."
-- [ ] **Step 4:** Split §5 Report into §5a Human (current table + Missing Tools preamble prose) and §5b `--as-tool` (emit a single JSON envelope — no fenced blocks — per the DATA schema in the design: `{type: "Success", value: {path, target_shell, summary, findings: [...], external_tools: {...}}}`, with severity ∈ `{fail, warn}`, line nullable for file-level findings, `external_tools` keyed per tool with `present`/`output`/`install_hint`).
-- [ ] **Step 5:** Add `## --as-tool contract` H2 before `## Anti-Pattern Guards`: **Required fields:** `path`; **Return shape:** DATA; three bullets (Success with `value` schema; NeedsMoreInfo; Refusal — category examples: `file-not-found`, `not-a-shell-script`); **Side effects:** reads the script at `path`, probes `PATH` for `shellcheck`/`shfmt`/`checkbashisms`, runs whichever are present; **Parallel-safe:** yes.
-- [ ] **Step 6:** Add three Key Instructions entries per the scaffolding recipe (DATA variant).
-- [ ] **Step 7:** Verify: `grep -c "skill-invocable: true" plugins/build/skills/check-shell/SKILL.md` returns 1; `grep -c "^## --as-tool contract" plugins/build/skills/check-shell/SKILL.md` returns 1; `grep -c "S11\." plugins/build/skills/check-shell/SKILL.md` returns ≥ 1; `grep "strict-mode preamble" plugins/build/skills/check-shell/SKILL.md` non-empty.
-- [ ] **Step 8:** Commit: `feat(check-shell): opt into --as-tool as DATA provider; add S11 strict-mode preamble lint`.
+- [x] Task 2 complete <!-- sha:cf7cbbe -->
+
+- [x] **Step 1:** Add `skill-invocable: true` to frontmatter. Add `../../_shared/references/as-tool-contract.md` to `references:`.
+- [x] **Step 2:** Insert two-modes intro paragraph after the H1/purpose.
+- [x] **Step 3:** Add new lint **S11: Missing strict-mode preamble (warn)** under §4 Checks → Safety subsection (after S10). Body per design: "Script does not begin (after the shebang and header) with `set -Eeuo pipefail` (bash) or `set -eu` (posix-sh). Without strict mode, commands that exit non-zero proceed silently and unset-variable dereferences expand to empty strings, producing actions on wrong inputs. Fix: add the appropriate strict-mode line near the top of the script."
+- [x] **Step 4:** Split §5 Report into §5a Human (current table + Missing Tools preamble prose) and §5b `--as-tool` (emit a single JSON envelope — no fenced blocks — per the DATA schema in the design: `{type: "Success", value: {path, target_shell, summary, findings: [...], external_tools: {...}}}`, with severity ∈ `{fail, warn}`, line nullable for file-level findings, `external_tools` keyed per tool with `present`/`output`/`install_hint`).
+- [x] **Step 5:** Add `## --as-tool contract` H2 before `## Anti-Pattern Guards`: **Required fields:** `path`; **Return shape:** DATA; three bullets (Success with `value` schema; NeedsMoreInfo; Refusal — category examples: `file-not-found`, `not-a-shell-script`); **Side effects:** reads the script at `path`, probes `PATH` for `shellcheck`/`shfmt`/`checkbashisms`, runs whichever are present; **Parallel-safe:** yes.
+- [x] **Step 6:** Add three Key Instructions entries per the scaffolding recipe (DATA variant).
+- [x] **Step 7:** Verify: `grep -c "skill-invocable: true" plugins/build/skills/check-shell/SKILL.md` returns 1; `grep -c "^## --as-tool contract" plugins/build/skills/check-shell/SKILL.md` returns 1; `grep -c "S11\." plugins/build/skills/check-shell/SKILL.md` returns ≥ 1; `grep "strict-mode preamble" plugins/build/skills/check-shell/SKILL.md` non-empty.
+- [x] **Step 8:** Commit: `feat(check-shell): opt into --as-tool as DATA provider; add S11 strict-mode preamble lint`.
 
 #### Task 3: Self-audit Chunk 1 SKILL.md files
 
 **Depends on:** Task 1, Task 2
 
-- [ ] **Step 1:** Invoke `/build:check-skill --as-tool path=plugins/build/skills/build-shell/SKILL.md` and confirm zero fail-level findings on checks 23-31.
-- [ ] **Step 2:** Invoke `/build:check-skill --as-tool path=plugins/build/skills/check-shell/SKILL.md` and confirm zero fail-level findings on checks 23-31.
-- [ ] **Step 3:** If fails: fix in place. Re-audit. If warnings are acceptable (pre-existing or explicit), document in Notes.
-- [ ] **Step 4:** Verify: the two `/build:check-skill` invocations each show 0 fail findings on 23-31.
-- [ ] **Step 5:** Commit (only if fixes needed): `fix(build): resolve check-skill findings on build-shell/check-shell opt-in`.
+- [x] Task 3 complete <!-- sha:72f7e55 -->
+
+- [x] **Step 1:** Invoke `/build:check-skill --as-tool path=plugins/build/skills/build-shell/SKILL.md` and confirm zero fail-level findings on checks 23-31.
+- [x] **Step 2:** Invoke `/build:check-skill --as-tool path=plugins/build/skills/check-shell/SKILL.md` and confirm zero fail-level findings on checks 23-31.
+- [x] **Step 3:** If fails: fix in place. Re-audit. If warnings are acceptable (pre-existing or explicit), document in Notes.
+- [x] **Step 4:** Verify: the two `/build:check-skill` invocations each show 0 fail findings on 23-31.
+- [x] **Step 5:** Commit (only if fixes needed): `fix(build): resolve check-skill findings on build-shell/check-shell opt-in`.
 
 ### Chunk 2: build-hook Draft step refactor
 
@@ -134,25 +140,29 @@ No files created. No files deleted. No Python source changes.
 
 **Depends on:** Task 1 (inner `build-shell --as-tool` must exist).
 
-- [ ] **Step 1:** Add `skill-invocable: true` to frontmatter. Add `../../_shared/references/as-tool-contract.md` to `references:`.
-- [ ] **Step 2:** Insert two-modes intro paragraph after the H1/purpose.
-- [ ] **Step 3:** Refactor §3 Draft:
+- [x] Task 4 complete <!-- sha:846da0e -->
+
+- [x] **Step 1:** Add `skill-invocable: true` to frontmatter. Add `../../_shared/references/as-tool-contract.md` to `references:`.
+- [x] **Step 2:** Insert two-modes intro paragraph after the H1/purpose.
+- [x] **Step 3:** Refactor §3 Draft:
   - Artifact 1 (hook script): under human mode, retain current scaffold. Under both modes, the scaffold is now generated by invoking `/build:build-shell --as-tool target-shell=bash-3.2-portable purpose="<derived from enforcement-goal>" invocation-style=glue setuid=no deps=jq`; receive the ARTIFACT envelope + fenced ```bash block; layer hook-specific content onto it: `INPUT=$(cat)` near the top, `jq -r '.tool_input.<field>'` extraction per `tool_name` (table preserved), optional ERR/EXIT traps, `updatedInput` JSON output contract (preserved), tool-name case/matcher handling.
   - Artifact 2 (settings.json entry): unchanged generation; emitted as a fenced ```json block under `--as-tool`.
   - Document that a `NeedsMoreInfo` or `Refusal` from the inner `build-shell` invocation propagates up as the outer skill's own envelope.
-- [ ] **Step 4:** Split §7 Review Gate → §7a Human / §7b `--as-tool` ("skipped; caller owns approval"). §8 Save → §8a Human (retain current: write script, chmod +x, show settings snippet) / §8b `--as-tool` (skipped; emit MULTI-ARTIFACT Success with `artifact_types: ["text/x-shellscript", "application/json"]` and `metadata: {hook_event, matcher, handler_type}`, then the two fenced blocks in declared order: ```bash hook script first, ```json settings entry second). §9 Test → §9a/9b.
-- [ ] **Step 5:** Add `## --as-tool contract` H2 before `## Anti-Pattern Guards`: **Required fields:** `hook-event`, `handler-type`, `enforcement-goal`, `matcher` (note: pass `"*"` for non-tool events); **Return shape:** ARTIFACT; **Artifact types:** `text/x-shellscript, application/json`; three bullets (Success with metadata = 3 keys and two fenced blocks; NeedsMoreInfo; Refusal — categories: `wrong-primitive`, `inner-refusal`); **Side effects:** invokes `/build:build-shell --as-tool` with pinned `target-shell=bash-3.2-portable`; **Parallel-safe:** yes.
-- [ ] **Step 6:** Add three Key Instructions entries per the scaffolding recipe (ARTIFACT variant).
-- [ ] **Step 7:** Verify: `grep -c "skill-invocable: true" plugins/build/skills/build-hook/SKILL.md` returns 1; `grep -c "^## --as-tool contract" plugins/build/skills/build-hook/SKILL.md` returns 1; `grep -c "/build:build-shell --as-tool" plugins/build/skills/build-hook/SKILL.md` returns ≥ 1; `grep -c "text/x-shellscript.*application/json\|application/json.*text/x-shellscript" plugins/build/skills/build-hook/SKILL.md` returns ≥ 1.
-- [ ] **Step 8:** Commit: `feat(build-hook): opt into --as-tool as MULTI-ARTIFACT provider; delegate scaffold to build-shell`.
+- [x] **Step 4:** Split §7 Review Gate → §7a Human / §7b `--as-tool` ("skipped; caller owns approval"). §8 Save → §8a Human (retain current: write script, chmod +x, show settings snippet) / §8b `--as-tool` (skipped; emit MULTI-ARTIFACT Success with `artifact_types: ["text/x-shellscript", "application/json"]` and `metadata: {hook_event, matcher, handler_type}`, then the two fenced blocks in declared order: ```bash hook script first, ```json settings entry second). §9 Test → §9a/9b.
+- [x] **Step 5:** Add `## --as-tool contract` H2 before `## Anti-Pattern Guards`: **Required fields:** `hook-event`, `handler-type`, `enforcement-goal`, `matcher` (note: pass `"*"` for non-tool events); **Return shape:** ARTIFACT; **Artifact types:** `text/x-shellscript, application/json`; three bullets (Success with metadata = 3 keys and two fenced blocks; NeedsMoreInfo; Refusal — categories: `wrong-primitive`, `inner-refusal`); **Side effects:** invokes `/build:build-shell --as-tool` with pinned `target-shell=bash-3.2-portable`; **Parallel-safe:** yes.
+- [x] **Step 6:** Add three Key Instructions entries per the scaffolding recipe (ARTIFACT variant).
+- [x] **Step 7:** Verify: `grep -c "skill-invocable: true" plugins/build/skills/build-hook/SKILL.md` returns 1; `grep -c "^## --as-tool contract" plugins/build/skills/build-hook/SKILL.md` returns 1; `grep -c "/build:build-shell --as-tool" plugins/build/skills/build-hook/SKILL.md` returns ≥ 1; `grep -c "text/x-shellscript.*application/json\|application/json.*text/x-shellscript" plugins/build/skills/build-hook/SKILL.md` returns ≥ 1.
+- [x] **Step 8:** Commit: `feat(build-hook): opt into --as-tool as MULTI-ARTIFACT provider; delegate scaffold to build-shell`.
 
 #### Task 5: Self-audit `build-hook` SKILL.md
 
 **Depends on:** Task 4
 
-- [ ] **Step 1:** Invoke `/build:check-skill --as-tool path=plugins/build/skills/build-hook/SKILL.md`; confirm zero fail findings on checks 23-31.
-- [ ] **Step 2:** If fails: fix in place. Re-audit.
-- [ ] **Step 3:** Commit (only if fixes): `fix(build-hook): resolve check-skill findings on --as-tool opt-in`.
+- [x] Task 5 complete <!-- sha:846da0e verified — 0 fail, 2 pre-existing warn -->
+
+- [x] **Step 1:** Invoke `/build:check-skill --as-tool path=plugins/build/skills/build-hook/SKILL.md`; confirm zero fail findings on checks 23-31.
+- [x] **Step 2:** If fails: fix in place. Re-audit.
+- [x] **Step 3:** Commit (only if fixes): `fix(build-hook): resolve check-skill findings on --as-tool opt-in`.
 
 ### Chunk 3: check-hook Checks step refactor
 
@@ -163,26 +173,30 @@ No files created. No files deleted. No Python source changes.
 
 **Depends on:** Task 2 (inner `check-shell --as-tool` must exist).
 
-- [ ] **Step 1:** Add `skill-invocable: true` to frontmatter. Add `../../_shared/references/as-tool-contract.md` to `references:`.
-- [ ] **Step 2:** Insert two-modes intro paragraph after the H1/purpose.
-- [ ] **Step 3:** Refactor §4 Checks:
+- [x] Task 6 complete <!-- sha:ec5269d -->
+
+- [x] **Step 1:** Add `skill-invocable: true` to frontmatter. Add `../../_shared/references/as-tool-contract.md` to `references:`.
+- [x] **Step 2:** Insert two-modes intro paragraph after the H1/purpose.
+- [x] **Step 3:** Refactor §4 Checks:
   - For each `"type": "command"` hook script found in `settings-path`: invoke `/build:check-shell --as-tool path=<hook-script-path>`; collect its findings (labeled `source: "check-shell"` on merge).
   - Remove delegated check bodies: **14** (ShellCheck + shfmt) fully; **11** (script safety preamble) fully — the generic `set -Eeuo pipefail` concern is now owned by `check-shell` S11; the `|| true` guards on `grep`/`diff` etc. also belong to `check-shell`; **15** (script style — stderr, `[[` vs `[`, `set -x`, shebang form) fully; **12's unquoted-variable portion** — map to `check-shell` S1; retain only the `eval`-on-payload branch and PATH-override branch under `check-hook` 12 (since these depend on `tool_input` semantics).
   - Renumber remaining checks OR preserve original IDs with explicit "delegated" notes per existing convention — pick whichever yields a cleaner file; document choice in Notes.
   - Retained checks: 1 (PreToolUse gap), 2 (destructive ops), 3 (async+blocking), 4 (Stop hook loop), 5 (stdin + executable bit), 6 (tool-name case + path expansion), 7 (PostToolUse enforcement intent), 8 (rule overlap vs CLAUDE.md), 9 (idempotency), 10 (latency), 12 (eval-on-payload + PATH-override only), 13 (jq availability + `tool_input` field-path), 16 (settings.json attack surface).
-- [ ] **Step 4:** Split §5 Report into §5a Human (current table, with a new `source` column prepended; include `check-shell` findings interleaved; external-tool preamble preserved) and §5b `--as-tool` (emit single JSON envelope per design DATA schema: `{type: "Success", value: {settings_path, summary, findings: [{source, check|lint, severity, event|null, hook, line|null, message}, ...]}}`).
-- [ ] **Step 5:** Add `## --as-tool contract` H2 before `## Anti-Pattern Guards`: **Required fields:** `settings-path`; **Return shape:** DATA; three bullets (Success schema; NeedsMoreInfo; Refusal — categories: `file-not-found`, `no-hooks`, `parse-error`); **Side effects:** reads `settings-path`; invokes `/build:check-shell --as-tool` once per `"type": "command"` hook script; **Parallel-safe:** yes (inner `check-shell` calls are parallel-safe; document that concurrent outer calls on the same `settings-path` are redundant but correct).
-- [ ] **Step 6:** Add three Key Instructions entries per the scaffolding recipe (DATA variant). Plus one skill-specific instruction: "Under `--as-tool`, every finding carries a `source` field — `check-hook` or `check-shell` — so callers can trace ownership."
-- [ ] **Step 7:** Verify: `grep -c "skill-invocable: true" plugins/build/skills/check-hook/SKILL.md` returns 1; `grep -c "^## --as-tool contract" plugins/build/skills/check-hook/SKILL.md` returns 1; `grep -c "/build:check-shell --as-tool" plugins/build/skills/check-hook/SKILL.md` returns ≥ 1; `grep -c "source.*check-shell\|source.*check-hook" plugins/build/skills/check-hook/SKILL.md` returns ≥ 2.
-- [ ] **Step 8:** Commit: `feat(check-hook): opt into --as-tool as DATA provider; delegate shell-hygiene to check-shell`.
+- [x] **Step 4:** Split §5 Report into §5a Human (current table, with a new `source` column prepended; include `check-shell` findings interleaved; external-tool preamble preserved) and §5b `--as-tool` (emit single JSON envelope per design DATA schema: `{type: "Success", value: {settings_path, summary, findings: [{source, check|lint, severity, event|null, hook, line|null, message}, ...]}}`).
+- [x] **Step 5:** Add `## --as-tool contract` H2 before `## Anti-Pattern Guards`: **Required fields:** `settings-path`; **Return shape:** DATA; three bullets (Success schema; NeedsMoreInfo; Refusal — categories: `file-not-found`, `no-hooks`, `parse-error`); **Side effects:** reads `settings-path`; invokes `/build:check-shell --as-tool` once per `"type": "command"` hook script; **Parallel-safe:** yes (inner `check-shell` calls are parallel-safe; document that concurrent outer calls on the same `settings-path` are redundant but correct).
+- [x] **Step 6:** Add three Key Instructions entries per the scaffolding recipe (DATA variant). Plus one skill-specific instruction: "Under `--as-tool`, every finding carries a `source` field — `check-hook` or `check-shell` — so callers can trace ownership."
+- [x] **Step 7:** Verify: `grep -c "skill-invocable: true" plugins/build/skills/check-hook/SKILL.md` returns 1; `grep -c "^## --as-tool contract" plugins/build/skills/check-hook/SKILL.md` returns 1; `grep -c "/build:check-shell --as-tool" plugins/build/skills/check-hook/SKILL.md` returns ≥ 1; `grep -c "source.*check-shell\|source.*check-hook" plugins/build/skills/check-hook/SKILL.md` returns ≥ 2.
+- [x] **Step 8:** Commit: `feat(check-hook): opt into --as-tool as DATA provider; delegate shell-hygiene to check-shell`.
 
 #### Task 7: Self-audit `check-hook` SKILL.md
 
 **Depends on:** Task 6
 
-- [ ] **Step 1:** Invoke `/build:check-skill --as-tool path=plugins/build/skills/check-hook/SKILL.md`; confirm zero fail findings on checks 23-31.
-- [ ] **Step 2:** If fails: fix in place. Re-audit.
-- [ ] **Step 3:** Commit (only if fixes): `fix(check-hook): resolve check-skill findings on --as-tool opt-in`.
+- [x] Task 7 complete <!-- sha:ec5269d verified — 0 fail, 1 pre-existing warn -->
+
+- [x] **Step 1:** Invoke `/build:check-skill --as-tool path=plugins/build/skills/check-hook/SKILL.md`; confirm zero fail findings on checks 23-31.
+- [x] **Step 2:** If fails: fix in place. Re-audit.
+- [x] **Step 3:** Commit (only if fixes): `fix(check-hook): resolve check-skill findings on --as-tool opt-in`.
 
 ### Chunk 4: Release
 
@@ -190,10 +204,12 @@ No files created. No files deleted. No Python source changes.
 
 **Depends on:** Task 3, Task 5, Task 7
 
-- [ ] **Step 1:** Invoke `/build:check-skill` (human mode) or run the lint script (`python3 plugins/wiki/scripts/lint.py --root . --no-urls`) across the full repo.
-- [ ] **Step 2:** Confirm zero new fail-level findings on the 41 pre-existing non-hook/non-shell SKILL.md files that are attributable to checks 23-31. Existing warn-level findings that predate this plan are acceptable.
-- [ ] **Step 3:** Verify: `python3 plugins/wiki/scripts/lint.py --root . --no-urls 2>&1 | grep -E "(skill_invocable|contract_|check_2[3-9]|check_3[01])" | grep -c "fail"` returns 0.
-- [ ] **Step 4:** Commit (only if regressions require a fix): `fix(build): resolve regressions from --as-tool opt-ins`.
+- [x] Task 8 complete <!-- sha:4728b99 verified — repo-wide 0 fails; 140 tests pass -->
+
+- [x] **Step 1:** Invoke `/build:check-skill` (human mode) or run the lint script (`python3 plugins/wiki/scripts/lint.py --root . --no-urls`) across the full repo.
+- [x] **Step 2:** Confirm zero new fail-level findings on the 41 pre-existing non-hook/non-shell SKILL.md files that are attributable to checks 23-31. Existing warn-level findings that predate this plan are acceptable.
+- [x] **Step 3:** Verify: `python3 plugins/wiki/scripts/lint.py --root . --no-urls 2>&1 | grep -E "(skill_invocable|contract_|check_2[3-9]|check_3[01])" | grep -c "fail"` returns 0.
+- [x] **Step 4:** Commit (only if regressions require a fix): `fix(build): resolve regressions from --as-tool opt-ins`.
 
 #### Task 9: Bump build plugin version to 0.6.0
 
@@ -203,10 +219,12 @@ No files created. No files deleted. No Python source changes.
 
 **Depends on:** Tasks 1–8
 
-- [ ] **Step 1:** Edit `plugins/build/pyproject.toml`: `version = "0.5.0"` → `version = "0.6.0"`.
-- [ ] **Step 2:** Edit `plugins/build/.claude-plugin/plugin.json`: `"version": "0.5.0"` → `"version": "0.6.0"`.
-- [ ] **Step 3:** Verify: `grep version plugins/build/pyproject.toml plugins/build/.claude-plugin/plugin.json` — both show `0.6.0`.
-- [ ] **Step 4:** Commit: `chore(build): bump to 0.6.0 for hook/shell --as-tool delegation`.
+- [x] Task 9 complete <!-- sha:4728b99 -->
+
+- [x] **Step 1:** Edit `plugins/build/pyproject.toml`: `version = "0.5.0"` → `version = "0.6.0"`.
+- [x] **Step 2:** Edit `plugins/build/.claude-plugin/plugin.json`: `"version": "0.5.0"` → `"version": "0.6.0"`.
+- [x] **Step 3:** Verify: `grep version plugins/build/pyproject.toml plugins/build/.claude-plugin/plugin.json` — both show `0.6.0`.
+- [x] **Step 4:** Commit: `chore(build): bump to 0.6.0 for hook/shell --as-tool delegation`.
 
 #### Task 10: Open PR
 
@@ -326,5 +344,17 @@ After all tasks complete:
 ## Notes
 
 - **Superseded plan.** `.plans/2026-04-19-hook-shell-structured-invocation.plan.md` (branch `explore/327-structured-invocation-thinking`) is pre-refinement exploration. Do not use it as implementation basis. This plan is the authoritative one for #327.
-- **Renumbering vs preserving check IDs in `check-hook`.** Task 6 Step 3 leaves this as an execution-time judgment call. Document the choice here once made.
-- **Inner-skill `Refusal` propagation.** When `/build:build-shell --as-tool` returns a `Refusal` (e.g., FX.1 scope gate fires for an inner call), `build-hook --as-tool` must wrap it as its own `Refusal` with `category: "inner-refusal"` and `reason` citing the inner refusal. Document the wrapping behavior explicitly in `build-hook`'s contract section (Task 4 Step 5).
+- **Renumbering in `check-hook`.** Chose to renumber checks rather than
+  preserve original IDs with "delegated" stubs. Old → new mapping:
+  1-10 unchanged; old 11 (script safety preamble) removed; old 12
+  (injection safety) reshaped to keep eval-on-payload + PATH-override
+  only, renumbered to 11; old 13 (jq availability) → 12; old 14
+  (ShellCheck/shfmt) removed; old 15 (script style) removed; old 16
+  (settings.json attack surface) → 13. A short delegation note under
+  §4 Checks lists what moved to `check-shell`.
+- **Pre-existing D6 false-positive fix.** Task 3 self-audit surfaced a
+  pre-existing fail on `check-shell` line 217 (on main): the D6
+  example `printf '...\n' >&2` tripped `_check_body_paths`'s Windows-
+  path regex because `..\n` matches the `..\<name>` pattern. Fixed by
+  rewording to `printf 'message\n' >&2`; SHA 72f7e55.
+- **Inner-skill `Refusal` propagation.** When `/build:build-shell --as-tool` returns a `Refusal` (e.g., FX.1 scope gate fires for an inner call), `build-hook --as-tool` wraps it as its own `Refusal` with `category: "inner-refusal"` and `reason` echoing the inner envelope. Documented in `build-hook`'s contract section.
