@@ -6,11 +6,13 @@ description: >
   problems in a skill", or "improve a skill".
 argument-hint: "[path/to/SKILL.md — omit to audit all skills]"
 user-invocable: true
+references:
+  - ../../_shared/references/as-tool-contract.md
 ---
 
 # Check Skill
 
-Audit one skill or all skills against twenty-two research-backed quality criteria,
+Audit one skill or all skills against thirty-one research-backed quality criteria,
 then offer an opt-in repair loop.
 
 ## Workflow
@@ -84,6 +86,24 @@ For each skill, read the SKILL.md body and assess the remaining twenty criteria:
 | 16 | Edge case handling | best-practice | The skill explicitly addresses at least one failure mode: missing or ambiguous input, a precondition that isn't met, or a mid-workflow failure. A gate check (#5) that blocks on missing input counts; a Workflow step that says "if X is unavailable, do Y" counts. Silence on all failure modes is a fail. |
 | 21 | Reversibility | best-practice | If the skill performs irreversible or high-impact operations (file deletion, git reset, commit, deploy, external API write), `## Key Instructions` or `## Handoff` documents how to revert or recover from an unintended execution (e.g., "use `git reflog` to recover", "review with `/diff` before confirming"). |
 
+**`--as-tool` contract checks (23–31):** dual-invocation support. These checks
+only fire when a skill declares `skill-invocable: true` in frontmatter
+(default is off). Skills without the field are unaffected — no migration
+burden on the existing 41 skills. The shared mechanism spec lives at
+[`../../_shared/references/as-tool-contract.md`](../../_shared/references/as-tool-contract.md).
+
+| # | Check | Category | Severity | Pass condition |
+|---|-------|----------|----------|---------------|
+| 23 | `skill-invocable` frontmatter shape | canonical | warn | When `skill-invocable` is present, its value is boolean (`true`/`false` — YAML true/false literals or quoted strings). Non-boolean values warn. |
+| 24 | `## --as-tool contract` section present | canonical | **fail** | When `skill-invocable: true`, the body contains a `## --as-tool contract` (or `## \`--as-tool\` contract`) H2 section, and that section is not empty. A declared-but-missing contract is runtime-breaking — callers cannot know the invocation shape. |
+| 25 | Return shape declared | canonical | **fail** | Inside the contract section, a `**Return shape:**` line declares either `DATA` or `ARTIFACT`. |
+| 26 | All three envelope cases documented | canonical | **fail** | The contract section mentions all three cases by name: `Success`, `NeedsMoreInfo`, `Refusal`. Missing any case fails — the envelope is a closed-set union and every case must be declared. |
+| 27 | ARTIFACT declares `Artifact types:` | canonical | **fail** | When `**Return shape:** ARTIFACT`, the section contains a `**Artifact types:**` line with at least one MIME type (e.g., `text/x-shellscript`, `application/json`). Without it, callers can't know which language tag to expect per fenced block. |
+| 28 | Required fields documented | toolkit-opinion | warn | Contract section has a `**Required fields:**` subsection (list or `none`). |
+| 29 | Side effects documented | toolkit-opinion | warn | Contract section has a `**Side effects:**` subsection (list or `none`). |
+| 30 | Parallel-safe documented | toolkit-opinion | warn | Contract section has a `**Parallel-safe:**` subsection (default `yes`; non-default values must explain why). |
+| 31 | Non-invocable pathology | toolkit-opinion | warn | Skills declaring `user-invocable: false` without also declaring `skill-invocable: true` are not invocable by humans or other skills — likely misplaced in `skills/`. Either move to a non-skill location or set `skill-invocable: true` to make them callable programmatically. |
+
 **Note on directive density (check #2):** newer frontier models respond better
 to rationale-based instructions than directives. When flagging ALL-CAPS density
 ≥3: (a) if `tested_with` is present and lists only sub-frontier models (e.g.,
@@ -104,7 +124,7 @@ Output a findings table:
 ```
 
 Summary line at top and bottom: `N fail, N warn` across N skills.
-Sort: fail before warn; structural (checks 3–7, 11, 13–15, 17, 18, 20, 22, 23) before content-quality (8–10, 12, 16, 21).
+Sort: fail before warn; structural (checks 3–7, 11, 13–15, 17, 18, 20, 22, 23–27, 31) before content-quality (8–10, 12, 16, 21, 28–30).
 
 ### 5. Opt-In Repair Loop
 
