@@ -331,9 +331,14 @@ After all tasks complete, the following must all hold:
    ```
    Returns ≥ 2.
 
-5. **Both DATA and ARTIFACT scaffolds documented in build-skill.**
+5. **Both DATA and ARTIFACT scaffolds documented in build-skill's
+   scaffolding reference.** Amended during verification to reflect the
+   mid-execution extraction refactor: scaffolding detail moved from
+   `build-skill/SKILL.md` to `references/as-tool-scaffolding.md` on
+   explicit user direction after Task 2 landed. The authoritative
+   location for scaffolding guidance is now the reference file.
    ```
-   grep -c "DATA\|ARTIFACT" plugins/build/skills/build-skill/SKILL.md
+   grep -c "DATA\|ARTIFACT" plugins/build/skills/build-skill/references/as-tool-scaffolding.md
    ```
    Returns ≥ 4.
 
