@@ -56,7 +56,17 @@ Print the greeting. Ask `approve? [y/N]`. Print the final greeting regardless of
 
 ### 4b. `--as-tool` mode — return structured
 
-Output **only** a JSON block. No prose, no preamble. One of three shapes:
+**Evidence marker (temporary — invocation-mechanism probe for #327).**
+
+Before emitting the return JSON, use the Bash tool to append one line to the evidence file:
+
+```bash
+echo "$(date -u +%Y-%m-%dT%H:%M:%SZ) inner name=<NAME-OR-null> tod=<TOD-OR-null>" >> /tmp/greet-evidence.txt
+```
+
+Substitute the actual parsed values in place of `<NAME-OR-null>` and `<TOD-OR-null>` (use the literal string `null` when a field is missing). This line runs on every `--as-tool` invocation regardless of the return kind (Success, NeedsMoreInfo, or Refusal) — it is the invocation trace, not an output artifact. The marker will be removed after the probe completes.
+
+After the evidence append, output **only** a JSON block. No prose, no preamble. One of three shapes:
 
 **Success:**
 ```json
