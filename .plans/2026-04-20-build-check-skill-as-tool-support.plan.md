@@ -113,7 +113,7 @@ grep -c "^## " plugins/build/_shared/references/as-tool-contract.md    # returns
 
 #### Task 2: Update `build-skill` SKILL.md
 
-- [ ] Task 2: Update `build-skill` SKILL.md
+- [x] Task 2: Update `build-skill` SKILL.md <!-- sha:919ea28 -->
 
 Modify `plugins/build/skills/build-skill/SKILL.md`:
 
@@ -140,7 +140,7 @@ grep -c "DATA\|ARTIFACT" plugins/build/skills/build-skill/SKILL.md       # ≥ 4
 
 #### Task 3: Update `skill-writing-guide.md`
 
-- [ ] Task 3: Update `skill-writing-guide.md`
+- [x] Task 3: Update `skill-writing-guide.md` <!-- sha:0226efe -->
 
 Modify `plugins/build/skills/build-skill/references/skill-writing-guide.md`:
 
@@ -164,7 +164,7 @@ grep "plugins/dummy/skills/greet" plugins/build/skills/build-skill/references/sk
 
 #### Task 4: Add 9 new `_check_*` functions in Python
 
-- [ ] Task 4: Add 9 new `_check_*` functions in Python
+- [x] Task 4: Add 9 new `_check_*` functions in Python <!-- sha:025236f -->
 
 Modify `plugins/build/src/check/skill.py`. Add these functions following the existing `_check_*` style (return `List[dict]` with `check_id`, `severity`, `message`, `line` fields matching existing checks):
 
@@ -193,7 +193,7 @@ ruff check plugins/build/src/check/skill.py
 
 #### Task 5: Add tests for each new check
 
-- [ ] Task 5: Add tests for each new check
+- [x] Task 5: Add tests for each new check <!-- sha:830517f -->
 
 Modify `plugins/build/tests/test_skill_audit.py`. For each of the 9 new `_check_*` functions, add at least one **pass-case** (clean input, no findings) and one **fail-case** (triggering input, produces finding with correct severity). Use inline markdown fixtures per the existing test style (no file I/O for fixtures beyond `tmp_path`).
 
@@ -223,7 +223,7 @@ All tests pass, including the new ones.
 
 #### Task 6: Update `check-skill` SKILL.md
 
-- [ ] Task 6: Update `check-skill` SKILL.md
+- [x] Task 6: Update `check-skill` SKILL.md <!-- sha:e6ca1e2 -->
 
 Modify `plugins/build/skills/check-skill/SKILL.md`:
 
@@ -243,7 +243,7 @@ grep -E "thirty|31|twenty-two|22" plugins/build/skills/check-skill/SKILL.md | he
 
 #### Task 7: Regression-check existing skills
 
-- [ ] Task 7: Regression-check existing skills
+- [x] Task 7: Regression-check existing skills <!-- sha:e6ca1e2 verified --> (lint.py clean; 0 new fail findings across 41 existing skills)
 
 Run `/build:check-skill` (or invoke the lint script directly: `python3 plugins/wiki/scripts/lint.py --root . --no-urls`) against the repo to confirm zero new fail-level findings on the 41 existing skills.
 
@@ -262,7 +262,7 @@ python3 plugins/wiki/scripts/lint.py --root . --no-urls 2>&1 | \
 
 #### Task 8: Self-audit modified SKILL.md files
 
-- [ ] Task 8: Self-audit modified SKILL.md files
+- [x] Task 8: Self-audit modified SKILL.md files <!-- sha:e6ca1e2 verified --> (lint.py clean on build-skill/SKILL.md, check-skill/SKILL.md; 0 fails)
 
 Run `/build:check-skill` against each of the four modified SKILL.md files:
 - `plugins/build/skills/build-skill/SKILL.md`
