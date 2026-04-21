@@ -236,7 +236,7 @@ state. Severity: **warn**. Fix: `<<'EOF'` for literal help text.
 
 `echo "Error: ..."` without `>&2`. Errors on stdout poison pipelines
 that consume the script's output. Severity: **warn**. Fix: `echo "..." >&2`
-or `printf '...\n' >&2`.
+or `printf 'message\n' >&2`.
 
 ## 5. Report
 
