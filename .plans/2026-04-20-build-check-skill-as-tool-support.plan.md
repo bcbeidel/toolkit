@@ -277,7 +277,7 @@ For any fail-level finding, fix in place and re-audit. Warns acceptable if pre-e
 
 #### Task 9: Bump build plugin version to 0.5.0
 
-- [ ] Task 9: Bump build plugin version to 0.5.0
+- [x] Task 9: Bump build plugin version to 0.5.0 <!-- sha:7ae9b86 -->
 
 Edit `plugins/build/pyproject.toml`: `version = "0.4.0"` → `version = "0.5.0"`.
 Edit `plugins/build/.claude-plugin/plugin.json`: `"version": "0.4.0"` → `"version": "0.5.0"`.
