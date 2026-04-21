@@ -1,7 +1,7 @@
 ---
 name: check-shell
 description: >
-  Audits a general-purpose shell script against 15 curated lints grouped
+  Audits a general-purpose shell script against 14 curated lints grouped
   into Portability / Safety / Documentation, detects and merges findings
   from shellcheck / shfmt / checkbashisms when present, and surfaces a
   Missing Tools preamble with install hints when any are absent. Use
@@ -10,28 +10,16 @@ description: >
   script safe". Not for hook scripts — route to `/build:check-hook`.
 argument-hint: "[script path]"
 user-invocable: true
-skill-invocable: true
 references:
   - references/external-tools.md
-  - ../../_shared/references/as-tool-contract.md
 ---
 
 # Check Shell
 
 Inspect a general-purpose shell script for portability, safety, and
-documentation problems. Run 15 curated lints plus output from
+documentation problems. Run 14 curated lints plus output from
 `shellcheck` / `shfmt` / `checkbashisms` when they are installed.
 Read-only — reports findings but does not modify the script.
-
-Two invocation modes:
-
-- **Human** — prompts for a path if none supplied, runs the lints and
-  external tools, renders a findings table with the Missing Tools
-  preamble.
-- **`--as-tool`** — skill-caller mode. Structured DATA emission per
-  [`as-tool-contract.md`](../../_shared/references/as-tool-contract.md):
-  a single JSON envelope carrying `findings` and `external_tools`. No
-  prompts, no rendering.
 
 This skill is not for Claude Code hooks — `/build:check-hook` owns that
 lifecycle. Route there when the script is wired to a hook event.
@@ -99,7 +87,7 @@ the visibility of the preamble at the top of the report.
 
 ## 4. Checks
 
-Run 15 lints scoped to the detected target shell, plus output from
+Run 14 lints scoped to the detected target shell, plus output from
 whichever external tools are available. Each lint entry below names
 the pattern, why it is wrong, severity, and fix guidance.
 
@@ -191,16 +179,6 @@ Variables assigned inside a function leak to global scope when
 `local` is omitted. Severity: **warn**. Fix: declare with `local`
 (bash) or use a subshell `( ... )` (POSIX sh).
 
-#### S11. Missing strict-mode preamble
-
-Script does not begin (after the shebang and header) with
-`set -Eeuo pipefail` (bash targets) or `set -eu` (`posix-sh` target).
-Without strict mode, commands that exit non-zero proceed silently and
-unset-variable dereferences expand to empty strings, producing actions
-on wrong inputs. Severity: **warn**. Fix: add the appropriate
-strict-mode line near the top of the script; bash targets should also
-carry `IFS=$'\n\t'` when the script handles whitespace-heavy input.
-
 ### Documentation
 
 #### D1. Missing top-of-file header
@@ -236,11 +214,9 @@ state. Severity: **warn**. Fix: `<<'EOF'` for literal help text.
 
 `echo "Error: ..."` without `>&2`. Errors on stdout poison pipelines
 that consume the script's output. Severity: **warn**. Fix: `echo "..." >&2`
-or `printf 'message\n' >&2`.
+or `printf '...\n' >&2`.
 
 ## 5. Report
-
-### 5a. Human mode
 
 Present findings as a table, preceded by the Missing Tools preamble
 when applicable. Summary count at the top:
@@ -259,46 +235,12 @@ Documentation | D1   | Missing top-of-file header                  | -
 ```
 
 When `shellcheck`, `shfmt`, or `checkbashisms` were run, append their
-output as a separate section below the 15-lint table (one section per
+output as a separate section below the 14-lint table (one section per
 tool), preserving the tool's native output format so the user can
 correlate with upstream documentation.
 
-If zero findings: "Script looks clean (against the 15 lints and the
+If zero findings: "Script looks clean (against the 14 lints and the
 available external tools)."
-
-### 5b. `--as-tool` mode
-
-Emit a single JSON envelope — no fenced blocks, no prose. Schema:
-
-    {"type": "Success", "value": {
-      "path": "scripts/foo.sh",
-      "target_shell": "bash-3.2-portable",
-      "summary": {"fail": 2, "warn": 3, "total": 5},
-      "findings": [
-        {"group": "Safety", "lint": "S1", "severity": "fail", "line": 57, "message": "Unquoted $INPUT expansion"},
-        {"group": "Documentation", "lint": "D1", "severity": "warn", "line": null, "message": "Missing top-of-file header"}
-      ],
-      "external_tools": {
-        "shellcheck":    {"present": true,  "output": "..."},
-        "shfmt":         {"present": false, "install_hint": "brew install shfmt | apt install shfmt"},
-        "checkbashisms": {"present": false, "install_hint": "apt install devscripts"}
-      }
-    }}
-
-Rules:
-
-- `severity` ∈ `{fail, warn}`; identical to the human-mode catalog.
-- `line` is `null` for file-level findings (e.g., missing header).
-- `external_tools` carries one entry per tool probed (`shellcheck`,
-  `shfmt`, `checkbashisms`). When present, `output` carries the tool's
-  raw stdout as a string so the caller can surface it verbatim. When
-  absent, `install_hint` carries the platform-specific install command
-  from the human-mode Missing Tools preamble.
-- `findings` are ordered by severity (fail first) then by line number
-  ascending.
-
-Zero-findings case: same envelope with `summary: {"fail": 0, "warn": 0, "total": 0}`
-and `findings: []`.
 
 ## 6. Handoff
 
@@ -311,38 +253,11 @@ Only suggest this when the severity mix is heavy on `fail`-level
 structural issues; for a handful of `warn` findings, the user should
 fix in place.
 
-## --as-tool contract
-
-**Required fields:**
-
-- `path` — filesystem path to the shell script to audit.
-
-**Return shape:** DATA.
-
-**Success** — JSON envelope with a `value` object carrying `path`,
-`target_shell` (detected or `"ambiguous"` if inference failed),
-`summary` (counts by severity), `findings` (flat array per the schema
-in §5b), and `external_tools` (per-tool availability + raw output or
-install hint).
-
-**NeedsMoreInfo** — JSON only (no fenced block): `missing: ["path"]`,
-`hint:` a reminder that `path` is the sole required field.
-
-**Refusal** — JSON only: `reason:` one-sentence explanation; `category:`
-one of `file-not-found` (path doesn't exist or isn't readable),
-`not-a-shell-script` (shebang absent or non-shell; e.g., `#!/usr/bin/env python3`).
-
-**Side effects:** reads the file at `path`; probes `PATH` for
-`shellcheck`, `shfmt`, `checkbashisms`; executes whichever are present
-against the script. Read-only on the filesystem — no writes, no `chmod`.
-
-**Parallel-safe:** yes.
-
 ## Anti-Pattern Guards
 
 1. **Hard-failing on a missing external tool** — a missing
    `shellcheck` should produce a Missing Tools block, not an error
-   exit. The 15 FX lints run independently of tool availability.
+   exit. The 14 FX lints run independently of tool availability.
 2. **Silent coverage-gap reporting** — the Missing Tools block must be
    prominent (top of report, named tools, install commands, coverage
    gap description). A one-liner note at the end fails the fail-fast
@@ -355,17 +270,9 @@ against the script. Read-only on the filesystem — no writes, no `chmod`.
 
 ## Key Instructions
 
-- Under `--as-tool`: emit per the contract — a single JSON envelope with
-  a `value` object carrying `findings` and `external_tools`. No fenced
-  blocks, no prose, no preamble. Failure envelopes are JSON-only too.
-- Under `--as-tool`: hard-fail with `NeedsMoreInfo` (JSON only) when
-  `path` is missing. Do not prompt.
-- `NeedsMoreInfo` and `Refusal` emit JSON only. Never emit a fenced
-  block on a failure path — the envelope is uniform across DATA and
-  ARTIFACT shapes.
 - Read-only: report findings only; do not write, edit, or reformat
   the script under audit.
-- Always run all 15 FX lints, even when every external tool is
+- Always run all 14 FX lints, even when every external tool is
   available — the FX lints catch things shellcheck does not (filename
   drift, undocumented exits, `mktemp`-before-`trap`, bare TODO).
 - The Missing Tools preamble is part of the contract. If a relevant

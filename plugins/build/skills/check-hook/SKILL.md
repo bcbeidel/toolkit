@@ -8,10 +8,8 @@ description: >
   "are my hooks safe".
 argument-hint: "[settings.json path]"
 user-invocable: true
-skill-invocable: true
 references:
   - references/platform-limitations.md
-  - ../../_shared/references/as-tool-contract.md
 ---
 
 # Check Hook
@@ -19,17 +17,6 @@ references:
 Inspect a project's Claude Code hooks configuration for coverage gaps,
 misconfigurations, unsafe patterns, and redundancy. Read-only — reports
 findings but does not modify any files.
-
-Two invocation modes:
-
-- **Human** — prompts for a path if none supplied, runs hook-specific
-  checks, invokes `/build:check-shell` per command-hook script for
-  shell-hygiene coverage, renders a merged findings table.
-- **`--as-tool`** — skill-caller mode. Structured DATA emission per
-  [`as-tool-contract.md`](../../_shared/references/as-tool-contract.md):
-  a single JSON envelope with `findings` merged from `check-hook` and
-  `check-shell` sources. Every finding carries `source:` so callers can
-  trace ownership.
 
 ## 1. Input
 
@@ -65,35 +52,7 @@ These checks target Claude Code (`settings.json` / `settings.local.json`). If th
 
 ## 4. Checks
 
-Run thirteen hook-specific checks, plus delegate shell-hygiene coverage
-to `/build:check-shell` for every `"type": "command"` hook script.
-
-**Delegation to `check-shell`.** For each hook whose entry has
-`"type": "command"` and resolves to a script on disk, invoke:
-
-    /build:check-shell --as-tool path=<resolved hook-script path>
-
-Collect the returned `findings` and `external_tools` from each inner
-call. Merge the findings into the outer report under `source:
-"check-shell"`; retain the outer skill's findings under `source:
-"check-hook"`. The external-tool Missing Tools preamble from
-`check-shell` bubbles up unchanged — no hook-side tool detection
-needed.
-
-**Checks owned by `check-shell` (removed from this skill):**
-
-- Script safety preamble (`set -Eeuo pipefail`, `|| true` guards) —
-  covered by `check-shell` S11 + existing safety lints.
-- ShellCheck / shfmt integration — covered by `check-shell`'s external-tool
-  probe.
-- Script style conventions (stderr vs stdout, `[[` vs `[`, `set -x`,
-  shebang form) — covered by `check-shell`'s safety and style lints.
-- Unquoted variable expansion on payload-derived values — covered by
-  `check-shell` S1.
-
-The thirteen retained checks below focus on *hook-specific* semantics:
-tool_input payload handling, event-lifecycle correctness, blocking-intent
-discipline, and Claude Code configuration attack-surface concerns.
+Run sixteen checks. For each configured hook, apply all relevant checks.
 
 ### 1. No hooks / PreToolUse gap
 
@@ -201,54 +160,49 @@ Flag as `warn` per pattern found.
 
 For each synchronous hook (no `async: true`), check whether the command calls an LLM, makes a network request, or runs a slow external process (e.g., `curl`, `claude`, a Python script that imports large models). Synchronous hooks block Claude while they run; slow hooks create session sluggishness that accumulates across a session and generates pressure to bypass hooks entirely. Flag as `warn` for any hook whose command string suggests a network call or LLM invocation in the hot path.
 
-### 11. Injection safety (hook-payload specific)
+### 11. Script safety preamble
 
-For each hook script, flag as `fail` if the script passes a payload-derived variable to `eval` (e.g., `eval "$command"` where `command` is extracted from `tool_input`). Hook payloads are user-influenced — `tool_input.command` in Bash hooks reflects what the user asked Claude to run — and `eval` on user-controlled data is a shell injection vector with no safe sanitization path.
+For each readable hook script (command type), check whether it begins with `set -Eeuo pipefail`. This preamble converts silent failures — commands exiting non-zero without aborting the script — into explicit exits. Flag as `warn` if absent. Also flag as `warn` any detection command (`grep`, `diff`, `test`, `[`) that appears outside an `if` condition without a `|| true` guard; these commands' legitimate non-zero exits trip `-e` and abort the hook prematurely, producing false-positive blocks on normal operations.
 
-Evidence suggests bare command names (`jq`, `grep`) are susceptible to PATH override in adversarial environments — flag as `warn` for hooks defined in project-level `settings.json` (where any collaborator with commit access can influence the environment) or hooks with evidence of CI usage (e.g., a `.github/` directory exists), where PATH may be injected by the build environment (MODERATE confidence from a single T5 source).
+### 12. Injection safety
 
-*(Generic unquoted-variable findings are delegated to `check-shell` S1
-and surface under `source: "check-shell"` in the merged report.)*
+For each hook script, flag as `fail` if the script passes a payload-derived variable to `eval` (e.g., `eval "$command"` where `command` is extracted from `tool_input`). Hook payloads are user-influenced — `tool_input.command` in Bash hooks reflects what the user asked Claude to run — and `eval` on user-controlled data is a shell injection vector with no safe sanitization path. Also flag as `warn` for unquoted variable expansions on payload-derived values (`$var` instead of `"${var}"`); unquoted variables undergo word-splitting and globbing that payload content can exploit. Evidence suggests bare command names (`jq`, `grep`) are susceptible to PATH override in adversarial environments — flag as `warn` for hooks defined in project-level `settings.json` (where any collaborator with commit access can influence the environment) or hooks with evidence of CI usage (e.g., a `.github/` directory exists), where PATH may be injected by the build environment (MODERATE confidence from a single T5 source).
 
-### 12. jq availability and field path correctness
+### 13. jq availability and field path correctness
 
 For each hook script that calls `jq`, check whether `jq` availability is verified before use (e.g., `command -v jq &>/dev/null`). Claude Code runs hooks with a restricted PATH; `jq` is not guaranteed on all systems. A missing `jq` causes the hook to fail in an uncontrolled way — silently passing (exit 0) or blocking everything (exit 2) — depending on script structure. Flag as `warn` if no availability check is present. Also check that jq field paths match the target tool's `tool_input` schema: `jq -r '.tool_input.command'` is correct for Bash hooks but returns `null` silently for Write hooks (`.tool_input.file_path`). Flag as `warn` for scripts whose matcher targets a tool whose `tool_input` structure differs from what the jq path assumes.
 
 If the hook may run on Copilot, flag as `fail`: Copilot serializes tool arguments as `toolArgs` (a JSON string), not as `tool_input` (an object). Hooks using `jq '.tool_input.*'` fail silently on Copilot — cross-platform hooks require a platform detection branch or separate configurations.
 
-*(ShellCheck and shfmt integration — previously checks 14 — are now
-delegated to `check-shell`'s external-tool probe; findings surface
-under `source: "check-shell"`. Generic script-style findings —
-previously check 15: stderr vs stdout, `[[` vs `[`, `set -x`, shebang
-form — are also delegated to `check-shell`.)*
+### 14. ShellCheck static analysis
 
-### 13. settings.json as attack surface
+For each hook script (command type), check whether there is evidence it has been run through ShellCheck (e.g., a CI step, a pre-commit hook, or a comment). ShellCheck is the de facto static analysis standard for bash — it catches quoting issues, deprecated backtick syntax, incorrect conditionals, and command misuse. Flag as `warn` if no ShellCheck integration is apparent. Note: ShellCheck passing is a floor, not a ceiling — wrong exit code intent and incorrect jq field paths are logic errors invisible to static analysis.
+
+Also flag as `warn` if ShellCheck appears to be disabled wholesale (e.g., `# shellcheck disable` with no rule number, or ShellCheck absent from CI). Hook scripts commonly trigger false positives on jq-assigned variables (SC2034) and intentionally single-quoted JSON strings (SC2016) — these should be suppressed inline or via `.shellcheckrc`, not by disabling ShellCheck entirely.
+
+Also flag as `warn` if `shfmt` is absent from the project's formatting or CI pipeline alongside ShellCheck. ShellCheck catches bugs; `shfmt` enforces consistent formatting — both together constitute complete static analysis coverage for bash hook scripts.
+
+### 15. Script style conventions
+
+Evidence suggests several MODERATE-confidence style conventions reduce silent failures in hook scripts. Flag as `warn` if: (a) error or blocking messages go to stdout rather than stderr (`>&2`) — stdout is for structured JSON output on exit 0; stderr is what Claude reads on blocking exits and what appears in the transcript; (b) conditionals use `[` instead of `[[` in bash scripts — `[[` does not word-split unquoted variables and supports `=~` for regex matching; (c) `set -x` appears in a committed hook script — in production it floods stderr with trace output and can leak sensitive payload values; (d) the shebang is `#!/bin/bash` rather than `#!/usr/bin/env bash` — the `env` form locates whichever `bash` is active in `$PATH` and is more portable across NixOS, Homebrew-managed bash, and other non-standard installations where bash is not at `/bin/bash`.
+
+### 16. settings.json as attack surface
 
 Check whether hooks are defined in project-level `.claude/settings.json` (checked into the repo) versus `.claude/settings.local.json` (gitignored, personal only). Project-level hook entries execute automatically on any developer who opens the repo — a collaborator with commit access can inject arbitrary commands (CVE-2025-59536). Flag as `warn` for any hook in project `settings.json` that has not been treated with the same code-review scrutiny as executable source files. Flag as `warn` if security-sensitive hooks (credentials protection, command blocking) live in `settings.json` where they are also visible and modifiable by the full team — suggest moving personal-only enforcement to `settings.local.json`.
 
 ## 5. Report
 
-### 5a. Human mode
-
-Present findings as a table with a summary count at the top. Include a
-`source` column so hook-specific findings (from `check-hook`) and
-shell-hygiene findings (delegated to `check-shell`) are distinguishable
-at a glance:
+Present findings as a table with a summary count at the top:
 
 ```
 N issues across M hooks (X fail, Y warn)
 
-source       | event          | hook command          | check             | finding
--------------+----------------+-----------------------+-------------------+---------------------------
-check-hook   | PostToolUse    | .claude/hooks/gate.sh | Event coverage    | PostToolUse cannot block; use PreToolUse for enforcement
-check-hook   | Stop           | .claude/hooks/stop.sh | Stop hook loop    | No stop_hook_active guard — infinite loop risk
-check-shell  | -              | .claude/hooks/gate.sh | S1                | Unquoted ${TOOL_NAME} expansion (line 12)
-check-hook   | PostToolUse    | lint-after-write.sh   | Async + blocking  | async:true with exit 2 — hook will never block
+event          | hook command          | check             | finding
+---------------+-----------------------+-------------------+---------------------------
+PostToolUse    | .claude/hooks/gate.sh | Event coverage    | PostToolUse cannot block; use PreToolUse for enforcement
+Stop           | .claude/hooks/stop.sh | Stop hook loop    | No stop_hook_active guard — infinite loop risk
+PostToolUse    | lint-after-write.sh   | Async + blocking  | async:true with exit 2 — hook will never block
 ```
-
-The `external_tools` Missing Tools preamble from `check-shell` surfaces
-unchanged at the top of the report when any of `shellcheck` / `shfmt` /
-`checkbashisms` is absent.
 
 If cross-platform gaps were identified in Platform Scope, append a separate section to the report:
 ```
@@ -258,78 +212,6 @@ If cross-platform gaps were identified in Platform Scope, append a separate sect
 If no issues are found, confirm:
 > "Hooks look well-configured."
 
-### 5b. `--as-tool` mode
-
-Emit a single JSON envelope — no fenced blocks, no prose. Schema:
-
-    {"type": "Success", "value": {
-      "settings_path": ".claude/settings.json",
-      "summary": {"fail": 1, "warn": 4, "total": 5},
-      "findings": [
-        {"source": "check-hook", "check": "4", "severity": "fail", "event": "Stop", "hook": ".claude/hooks/stop.sh", "line": null, "message": "No stop_hook_active guard — infinite loop risk"},
-        {"source": "check-shell", "lint": "S1", "severity": "fail", "event": null, "hook": ".claude/hooks/gate.sh", "line": 12, "message": "Unquoted ${TOOL_NAME} expansion"}
-      ],
-      "external_tools": {
-        "shellcheck": {"present": true, "output": "..."},
-        "shfmt":      {"present": false, "install_hint": "..."}
-      }
-    }}
-
-Rules:
-
-- `source` ∈ `{"check-hook", "check-shell"}` on every finding — callers
-  rely on it to attribute the finding to the owning skill.
-- `check-hook` findings carry a `check` field (numeric, as a string);
-  `check-shell` findings carry a `lint` field (e.g., `"S1"`, `"S11"`).
-- `event` is set on `check-hook` findings when the finding is
-  event-specific; `null` otherwise. `check-shell` findings always
-  carry `event: null`.
-- `line` is `null` for findings that are not line-scoped (most
-  `check-hook` findings; some `check-shell` file-level findings).
-- `external_tools` bubbles up the merged set from each inner
-  `check-shell` call. When the same tool is absent across all inner
-  calls, emit it once with a single `install_hint`.
-- `findings` are ordered by severity (fail first), then by source
-  (check-hook before check-shell for the same severity), then by hook
-  path and line.
-
-Zero-findings case: same envelope with `summary: {"fail": 0, "warn": 0, "total": 0}`
-and `findings: []`.
-
-## --as-tool contract
-
-**Required fields:**
-
-- `settings-path` — path to `.claude/settings.json` (or
-  `.claude/settings.local.json`, or an explicit user-supplied settings
-  file). No default under `--as-tool`; human mode retains the
-  dual-path default behavior.
-
-**Return shape:** DATA.
-
-**Success** — JSON envelope with `value` carrying `settings_path`,
-`summary`, `findings` (merged from `check-hook` and `check-shell`
-sources; every entry carries `source`), and `external_tools` (bubbled
-up from inner `check-shell` calls). See §5b for the full schema.
-
-**NeedsMoreInfo** — JSON only: `missing: ["settings-path"]`, `hint:`
-reminder that `settings-path` is the sole required field.
-
-**Refusal** — JSON only: `reason:` one-sentence explanation;
-`category:` one of `file-not-found` (settings path absent or
-unreadable), `no-hooks` (file loaded but contains no `hooks:` key),
-`parse-error` (settings JSON is malformed).
-
-**Side effects:** reads the file at `settings-path`; scans `CLAUDE.md`
-(if present) for rule-overlap detection; invokes
-`/build:check-shell --as-tool path=<hook-script>` once per `"type":
-"command"` hook script referenced by the settings file. Read-only on
-the filesystem.
-
-**Parallel-safe:** yes. Inner `check-shell` calls are parallel-safe;
-concurrent outer calls on the same `settings-path` are redundant but
-correct.
-
 ## Anti-Pattern Guards
 
 1. **Treating rule overlap as always wrong** — hook + CLAUDE.md duplication can be intentional belt-and-suspenders; flag for user decision, don't recommend removal
@@ -338,17 +220,6 @@ correct.
 
 ## Key Instructions
 
-- Under `--as-tool`: emit per the contract — a single JSON envelope
-  with a `value` object carrying merged `findings` (each with a
-  `source` field) and `external_tools`. No fenced blocks, no prose,
-  no preamble.
-- Under `--as-tool`: hard-fail with `NeedsMoreInfo` (JSON only) when
-  `settings-path` is missing. Do not prompt — the caller will retry.
-- `NeedsMoreInfo` and `Refusal` emit JSON only, never followed by
-  fenced blocks.
-- Every finding carries a `source` field — `"check-hook"` or
-  `"check-shell"` — so callers can trace ownership across the
-  delegation boundary.
 - Read-only — do not modify any files; report findings only
 - Always run Primitive Routing before numbered checks, even when no hooks are configured
 - Stop hook loop risk (check 4) is a fail, not a warn — an unguarded blocking Stop hook creates an infinite loop that requires a session kill to recover

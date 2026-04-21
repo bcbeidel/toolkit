@@ -9,10 +9,8 @@ description: >
   script". Not for Claude Code hooks — route to `/build:build-hook`.
 argument-hint: "[target-shell] [purpose]"
 user-invocable: true
-skill-invocable: true
 references:
   - references/scope-gate.md
-  - ../../_shared/references/as-tool-contract.md
 ---
 
 # Build Shell
@@ -21,15 +19,6 @@ Scaffold a general-purpose shell script: a deterministic automation unit
 with a consistent structural shape (strict mode, structured header,
 dependency preflight, `main` + self-sourcing guard) scoped to a declared
 target shell.
-
-Two invocation modes:
-
-- **Human** — prompts for missing info, shows the scaffolded script, asks
-  for approval, writes the file, offers the audit.
-- **`--as-tool`** — skill-caller mode. Structured emission per
-  [`as-tool-contract.md`](../../_shared/references/as-tool-contract.md):
-  JSON envelope plus one fenced `bash` block carrying the scaffold. No
-  prompts, no approval, no file writes.
 
 This skill is not for Claude Code hooks — `/build:build-hook` owns that
 lifecycle. Route there when the script has an event trigger and
@@ -80,11 +69,6 @@ Probe for any of:
 If any signal fires, state the signal, quote the recommendation, and
 stop. Do not proceed to Elicit. The skill's value is in refusing cleanly
 as much as in scaffolding cleanly.
-
-Under `--as-tool`, a tripped signal does **not** halt interactively.
-Return a structured `Refusal` envelope instead (`category:
-"scope-gate"`, `reason:` citing the signal and its recommendation). See
-§7b below and the shared contract's envelope rules.
 
 ## 3. Elicit
 
@@ -219,7 +203,7 @@ Present both artifacts to the user before any safety checks.
 
 ## 5. Safety Check
 
-Review the draft against the 15 lints `/build:check-shell` enforces,
+Review the draft against the 14 lints `/build:check-shell` enforces,
 grouped:
 
 **Portability.** Target-shell features match declaration. `mktemp`
@@ -243,8 +227,6 @@ alternative.
 
 ## 6. Review Gate
 
-### 6a. Human mode
-
 Present both artifacts and wait for explicit user approval before
 writing any file to disk. Write only after this gate passes.
 
@@ -252,13 +234,7 @@ If the user requests changes, revise and re-present. Continue until
 the user explicitly approves the artifacts or cancels. Proceed to Save
 only on explicit approval.
 
-### 6b. `--as-tool` mode
-
-Skipped. The caller owns approval; proceed directly to §7b.
-
 ## 7. Save
-
-### 7a. Human mode
 
 Write the approved script to the user-supplied path from Elicit. Make
 it executable:
@@ -270,79 +246,12 @@ chmod +x <path>
 Show the suggested invocation line for the user to wire into their
 Makefile, CI config, or README.
 
-### 7b. `--as-tool` mode
-
-Skipped — no file is written. Emit the structured return per the
-shared contract: a single JSON envelope followed by exactly one fenced
-`bash` block carrying the scaffold.
-
-**Success:**
-
-    {"type": "Success", "artifact_types": ["text/x-shellscript"], "metadata": {"target_shell": "<picked>", "invocation_style": "<picked>"}}
-    ```bash
-    #!/usr/bin/env bash
-    # ... full scaffold ...
-    ```
-
-**NeedsMoreInfo** (any of the five required fields missing; JSON only,
-no fenced block):
-
-    {"type": "NeedsMoreInfo", "missing": ["target-shell"], "hint": "pass target-shell, purpose, invocation-style, setuid, deps under --as-tool"}
-
-**Refusal** (FX.1 scope-gate signal fired, or input combination is
-unsatisfiable; JSON only, no fenced block):
-
-    {"type": "Refusal", "reason": "scope-gate: concurrency need — recommend Python concurrent.futures", "category": "scope-gate"}
-
 ## 8. Test
-
-### 8a. Human mode
 
 Offer the audit:
 
 > "Run `/build:check-shell <path>` to audit the scaffolded script
-> against the 15 lints plus `shellcheck` / `shfmt` (when installed)?"
-
-### 8b. `--as-tool` mode
-
-Skipped. The caller decides whether to chain to `check-shell`.
-
-## --as-tool contract
-
-**Required fields:**
-
-- `target-shell` — one of `bash-3.2-portable`, `bash-4+`, `bash-5+`, `posix-sh`.
-- `purpose` — one-sentence description of what the script does.
-- `invocation-style` — one of `cli`, `glue`, `library`.
-- `setuid` — `yes` or `no`. Controls shebang form.
-- `deps` — comma-separated list of runtime commands (or empty string for none). Populates `REQUIRED_CMDS`.
-
-`save-path` is **not** required under `--as-tool` — the caller owns the
-Save step and writes the file itself.
-
-**Return shape:** ARTIFACT.
-
-**Artifact types:** `text/x-shellscript`.
-
-**Success** — JSON envelope with `artifact_types: ["text/x-shellscript"]`
-and `metadata` carrying at minimum `target_shell` and `invocation_style`,
-followed by exactly one fenced ```bash block with the full scaffold.
-
-**NeedsMoreInfo** — JSON only (no fenced block): `missing: [...]` with
-the field names that were absent from `--as-tool` args; `hint:` a
-one-sentence reminder that `target-shell`, `purpose`, `invocation-style`,
-`setuid`, and `deps` are all required.
-
-**Refusal** — JSON only (no fenced block): `reason:` one-sentence
-explanation; `category:` one of `scope-gate` (FX.1 signal fired;
-`reason` cites the signal and its alternative recommendation),
-`invalid-combo` (inputs are internally inconsistent, e.g., setuid +
-posix-sh when setuid handling requires bash).
-
-**Side effects:** reads intake fields. No file writes, no `chmod`, no
-network, no external commands executed under `--as-tool`.
-
-**Parallel-safe:** yes.
+> against the 14 lints plus `shellcheck` / `shfmt` (when installed)?"
 
 ## Anti-Pattern Guards
 
@@ -362,16 +271,6 @@ network, no external commands executed under `--as-tool`.
 
 ## Key Instructions
 
-- Under `--as-tool`: emit per the contract — a JSON envelope with
-  `artifact_types: ["text/x-shellscript"]` followed by one fenced
-  ```bash block carrying the scaffold. No prose, no preamble, no
-  approval step.
-- Under `--as-tool`: hard-fail with `NeedsMoreInfo` (JSON only) when
-  any of the five required fields is missing. Do not prompt — the
-  caller will retry with the missing field filled in.
-- `NeedsMoreInfo` and `Refusal` emit JSON only, never followed by a
-  fenced block. The failure envelope is identical across DATA and
-  ARTIFACT shapes — callers rely on this uniformity.
 - Refuse cleanly on FX.1 signals. Scaffolding a script when shell is
   the wrong tool actively harms the codebase — apologizing in comments
   afterward does not recover the harm.
@@ -398,4 +297,4 @@ invocation style, setuid intent, runtime dependencies, save path).
 **Produces:** an executable shell script at the user-supplied path
 plus a suggested invocation line.
 **Chainable to:** `/build:check-shell` (audit the scaffold against
-the 15 lints and available external tools).
+the 14 lints and available external tools).

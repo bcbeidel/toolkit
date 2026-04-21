@@ -8,29 +8,14 @@ description: >
   after tool use", or "block dangerous operations automatically".
 argument-hint: "[hook event] [enforcement goal]"
 user-invocable: true
-skill-invocable: true
 references:
   - ../../_shared/references/primitive-routing.md
-  - ../../_shared/references/as-tool-contract.md
 ---
 
 # Build Hook
 
 Scaffold a Claude Code hook: an event-driven script that enforces quality
 gates deterministically, bypassing LLM interpretation.
-
-Two invocation modes:
-
-- **Human** — prompts for `hook-event`, `handler-type`, and
-  `enforcement-goal`, generates the scaffold by calling
-  `/build:build-shell` internally, layers hook-specific content, presents
-  both artifacts for approval, writes the script, shows the settings
-  snippet.
-- **`--as-tool`** — skill-caller mode. Structured MULTI-ARTIFACT emission
-  per [`as-tool-contract.md`](../../_shared/references/as-tool-contract.md):
-  a JSON envelope declaring `artifact_types: ["text/x-shellscript", "application/json"]`
-  followed by two fenced blocks (hook script, then settings entry). No
-  prompts, no approval, no file writes.
 
 **Workflow sequence:** 1. Route → 2. Elicit → 3. Draft → 4. Safety Check → (5. Stop Hook Guard if Stop/SubagentStop) → 6. Rule Overlap → 7. Review Gate → 8. Save → 9. Test
 
@@ -83,42 +68,7 @@ detect? Confirm the goal before drafting.
 
 Produce two artifacts.
 
-**Base scaffold via `/build:build-shell --as-tool`.** Instead of
-hand-rolling the shell scaffold, delegate to `/build:build-shell`:
-
-    /build:build-shell --as-tool \
-      target-shell=bash-3.2-portable \
-      purpose="<one-line summary derived from enforcement-goal>" \
-      invocation-style=glue \
-      setuid=no \
-      deps=jq
-
-`target-shell` is pinned to `bash-3.2-portable` for hook scripts —
-Apple still ships bash 3.2, and hooks run on every developer's box.
-`deps=jq` is the default (hooks parse the stdin JSON payload);
-add more deps when the enforcement logic calls other tools.
-
-The inner call returns an ARTIFACT envelope + one fenced ```bash
-block carrying a strict-mode scaffold (shebang, header, `set -Eeuo
-pipefail`, `IFS=$'\n\t'`, `REQUIRED_CMDS`, preflight, `main`,
-self-sourcing guard). Layer hook-specific content onto that base —
-see the checklist below.
-
-If the inner call returns `NeedsMoreInfo` or `Refusal`, propagate it:
-wrap the inner envelope as this skill's own return (category
-`inner-refusal` for Refusal) under `--as-tool`; halt interactively
-under human mode.
-
-**Artifact 1: Hook script** (for `command` type — adapt for other types).
-Layer these hook-specific elements onto the base scaffold:
-
-- `INPUT=$(cat)` near the top of `main` to consume the stdin JSON payload.
-- `jq -r '.tool_input.<field>'` extractions per the tool-specific table
-  below.
-- Enforcement logic (the reason this hook exists).
-- `exit 2` for blocking paths (PreToolUse) / `exit 0` for pass.
-
-Reference scaffold after layering:
+**Artifact 1: Hook script** (for `command` type — adapt for other types)
 
 ```bash
 #!/usr/bin/env bash
@@ -439,8 +389,6 @@ decides.
 
 ## 7. Review Gate
 
-### 7a. Human mode
-
 Present both artifacts — the complete hook script and the settings.json
 snippet — and wait for explicit user approval before writing any file to
 disk. Write only after this gate passes.
@@ -449,13 +397,7 @@ If the user requests changes, revise and re-present. Continue this loop
 until the user explicitly approves the artifacts or cancels. Proceed to
 Save only on explicit approval.
 
-### 7b. `--as-tool` mode
-
-Skipped. The caller owns approval; proceed directly to §8b.
-
 ## 8. Save
-
-### 8a. Human mode
 
 Write the approved hook to `.claude/hooks/<name>.sh` (or a path the user
 specifies). Make it executable:
@@ -472,48 +414,7 @@ should not be overwritten.
 > entry shown above to `.claude/settings.json` (or settings.local.json
 > for local-only enforcement) to activate it."
 
-### 8b. `--as-tool` mode
-
-Skipped — no file is written. Emit the structured return per the
-shared contract: a MULTI-ARTIFACT Success envelope followed by exactly
-two fenced blocks in declared order (hook script first, settings entry
-second).
-
-**Success:**
-
-    {"type": "Success", "artifact_types": ["text/x-shellscript", "application/json"], "metadata": {"hook_event": "PreToolUse", "matcher": "Bash", "handler_type": "command"}}
-    ```bash
-    #!/usr/bin/env bash
-    # ... hook script (base scaffold + hook-specific content) ...
-    ```
-    ```json
-    {"hooks": {"PreToolUse": [{"matcher": "Bash", "hooks": [{"type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/<name>.sh", "timeout": 60}]}]}}
-    ```
-
-`metadata` carries exactly three keys: `hook_event`, `matcher`,
-`handler_type`. Anything else the caller needs (command path,
-timeout, async flag, matcher regex) is already in the settings.json
-fenced block.
-
-**NeedsMoreInfo** (any of the four required fields missing; JSON only,
-no fenced blocks):
-
-    {"type": "NeedsMoreInfo", "missing": ["matcher"], "hint": "pass hook-event, handler-type, enforcement-goal, matcher under --as-tool (use matcher=\"*\" for non-tool events)"}
-
-**Refusal** (Route step rejected the primitive, or the inner
-`/build:build-shell --as-tool` returned a Refusal; JSON only, no
-fenced blocks):
-
-    {"type": "Refusal", "reason": "goal fits permissions.deny — no hook logic needed", "category": "wrong-primitive"}
-
-Categories: `wrong-primitive` (Route suggested `permissions.deny`,
-CLAUDE.md, a skill, or a rule instead), `inner-refusal` (inner
-`build-shell` scope-gate or invalid-combo fired; `reason` echoes the
-inner envelope's reason).
-
 ## 9. Test
-
-### 9a. Human mode
 
 Read `references/hook-testing.md` and follow the three-layer verification
 procedure (configuration, logic isolation, execution trace) before activating
@@ -523,48 +424,6 @@ After testing, offer:
 
 > "Run `/build:check-hook` to audit the configuration for coverage gaps,
 > misconfigurations, and safety issues?"
-
-### 9b. `--as-tool` mode
-
-Skipped. The caller decides whether to chain to `/build:check-hook`.
-
-## --as-tool contract
-
-**Required fields:**
-
-- `hook-event` — Claude Code lifecycle event (`PreToolUse`,
-  `PostToolUse`, `Stop`, `SessionStart`, etc.).
-- `handler-type` — one of `command`, `http`, `prompt`, `agent`.
-- `enforcement-goal` — one-sentence description of what the hook
-  enforces or detects.
-- `matcher` — tool-name pattern for tool-scoped events (`Bash`,
-  `Write|Edit|MultiEdit`, `mcp__memory__.*`, or `*`). Pass `"*"` for
-  non-tool events (`SessionStart`, `Stop`, etc.) — required regardless
-  to keep the schema flat.
-
-**Return shape:** ARTIFACT.
-
-**Artifact types:** `text/x-shellscript, application/json`.
-
-**Success** — JSON envelope declaring `artifact_types: ["text/x-shellscript", "application/json"]`
-and `metadata: {hook_event, matcher, handler_type}`, followed by exactly
-two fenced blocks in declared order: ```bash (the hook script) then
-```json (the settings.json entry).
-
-**NeedsMoreInfo** — JSON only: `missing: [...]` lists absent required
-fields; `hint` reminds callers that all four fields are required.
-
-**Refusal** — JSON only: `reason:` one-sentence explanation;
-`category:` one of `wrong-primitive` (Route step rejected the hook
-primitive; reason cites the suggested alternative) or `inner-refusal`
-(inner `/build:build-shell --as-tool` call returned a Refusal; reason
-echoes the inner envelope).
-
-**Side effects:** invokes `/build:build-shell --as-tool` once per call,
-with pinned `target-shell=bash-3.2-portable`. No filesystem writes, no
-`chmod`, no network.
-
-**Parallel-safe:** yes.
 
 ## Anti-Pattern Guards
 
@@ -576,16 +435,6 @@ with pinned `target-shell=bash-3.2-portable`. No filesystem writes, no
 
 ## Key Instructions
 
-- Under `--as-tool`: emit per the contract — a JSON envelope declaring
-  `artifact_types: ["text/x-shellscript", "application/json"]` followed
-  by exactly two fenced blocks in declared order (```bash hook script,
-  then ```json settings entry). No prose, no preamble, no approval.
-- Under `--as-tool`: hard-fail with `NeedsMoreInfo` (JSON only) when
-  any of the four required fields is missing. Do not prompt — the
-  caller will retry with the missing field filled in.
-- `NeedsMoreInfo` and `Refusal` emit JSON only, never followed by
-  fenced blocks. Inner `/build:build-shell --as-tool` Refusals
-  propagate as outer Refusals with `category: "inner-refusal"`.
 - Do not write any file to disk before the Review Gate passes — present both artifacts first, wait for explicit user approval
 - Do not auto-patch `settings.json`; always show the snippet for the user to apply manually
 - Won't build a hook when `permissions.deny` covers the goal — unconditional permanent blocks don't need logic or a script
