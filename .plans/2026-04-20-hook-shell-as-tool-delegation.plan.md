@@ -360,3 +360,10 @@ After all tasks complete:
   path regex because `..\n` matches the `..\<name>` pattern. Fixed by
   rewording to `printf 'message\n' >&2`; SHA 72f7e55.
 - **Inner-skill `Refusal` propagation.** When `/build:build-shell --as-tool` returns a `Refusal` (e.g., FX.1 scope gate fires for an inner call), `build-hook --as-tool` wraps it as its own `Refusal` with `category: "inner-refusal"` and `reason` echoing the inner envelope. Documented in `build-hook`'s contract section.
+- **Post-deploy validation pending.** Verify-work run on 2026-04-21 confirmed 16 of 24 criteria automatically; the remaining 8 (criteria 8-16: four `--as-tool` envelope smokes + four human-mode regressions) require the plugin to be installed from main (or this branch) before they can be executed. `/build:*` commands resolve against the installed plugin, not the working tree, so a fresh session after merge + reinstall is needed. Plan stays in `executing` until those smokes run.
+  - Criterion 8: `/build:build-shell --as-tool target-shell=bash-3.2-portable purpose="echo hello" invocation-style=glue setuid=no deps=` → ARTIFACT envelope + one ```bash block with `#!/usr/bin/env bash` and `set -Eeuo pipefail`.
+  - Criterion 9: `/build:check-shell --as-tool path=<script-without-preamble>` → DATA envelope with an S11 warn finding.
+  - Criterion 10: `/build:build-hook --as-tool hook-event=PreToolUse handler-type=command enforcement-goal="block rm -rf" matcher=Bash` → MULTI-ARTIFACT envelope + ```bash then ```json blocks; metadata exactly `{hook_event, matcher, handler_type}`.
+  - Criterion 11: `/build:check-hook --as-tool settings-path=<fixture>` against a fixture containing a command hook with an unquoted variable → DATA envelope with `findings` containing both `source: "check-hook"` and `source: "check-shell"` entries.
+  - Criterion 12: NeedsMoreInfo for each skill when a required field is omitted.
+  - Criteria 13-16: human-mode spot-check each of the four skills (intake flow, Review Gate, Save, and report rendering unchanged).
