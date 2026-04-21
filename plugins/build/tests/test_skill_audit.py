@@ -784,3 +784,353 @@ class TestCheckReferenceToc:
         assert _check_reference_toc(d, "f") == []
 
 
+# ── --as-tool contract checks ───────────────────────────────────────
+
+_CONTRACT_FULL = (
+    "## `--as-tool` contract\n\n"
+    "**Required fields:**\n- `name` — who to greet\n\n"
+    "**Return shape:** DATA\n"
+    "- `Success` — `{text, name}`\n"
+    "- `NeedsMoreInfo` — `missing`, `hint`\n"
+    "- `Refusal` — `reason`, `category`\n\n"
+    "**Side effects:** none\n\n"
+    "**Parallel-safe:** yes\n"
+)
+
+_CONTRACT_ARTIFACT = (
+    "## `--as-tool` contract\n\n"
+    "**Required fields:**\n- `target` — target shell\n\n"
+    "**Return shape:** ARTIFACT\n\n"
+    "**Artifact types:** text/x-shellscript\n\n"
+    "- `Success` — envelope + bash fenced block\n"
+    "- `NeedsMoreInfo` — JSON only\n"
+    "- `Refusal` — JSON only\n\n"
+    "**Side effects:** reads reference files\n\n"
+    "**Parallel-safe:** yes\n"
+)
+
+
+class TestCheckSkillInvocableBoolean:
+    def test_absent_no_issue(self) -> None:
+        from check.skill import _check_skill_invocable_boolean
+        assert _check_skill_invocable_boolean({}, "f") == []
+
+    def test_true_boolean_no_issue(self) -> None:
+        from check.skill import _check_skill_invocable_boolean
+        assert _check_skill_invocable_boolean({"skill-invocable": True}, "f") == []
+
+    def test_false_boolean_no_issue(self) -> None:
+        from check.skill import _check_skill_invocable_boolean
+        assert _check_skill_invocable_boolean({"skill-invocable": False}, "f") == []
+
+    def test_string_true_no_issue(self) -> None:
+        from check.skill import _check_skill_invocable_boolean
+        assert _check_skill_invocable_boolean({"skill-invocable": "true"}, "f") == []
+
+    def test_non_boolean_value_warns(self) -> None:
+        from check.skill import _check_skill_invocable_boolean
+        issues = _check_skill_invocable_boolean({"skill-invocable": "maybe"}, "f")
+        assert len(issues) == 1
+        assert issues[0]["severity"] == "warn"
+        assert "boolean" in issues[0]["issue"]
+
+
+class TestCheckContractSectionPresent:
+    def test_not_opted_in_no_issue(self) -> None:
+        from check.skill import _check_contract_section_present
+        assert _check_contract_section_present({}, "body", "f") == []
+        assert _check_contract_section_present(
+            {"skill-invocable": False}, "body without contract", "f",
+        ) == []
+
+    def test_opted_in_with_contract_no_issue(self) -> None:
+        from check.skill import _check_contract_section_present
+        assert _check_contract_section_present(
+            {"skill-invocable": True}, _CONTRACT_FULL, "f",
+        ) == []
+
+    def test_opted_in_without_contract_fails(self) -> None:
+        from check.skill import _check_contract_section_present
+        issues = _check_contract_section_present(
+            {"skill-invocable": True}, "# Skill\n\n## Workflow\n\nSteps.", "f",
+        )
+        assert len(issues) == 1
+        assert issues[0]["severity"] == "fail"
+        assert "no `## --as-tool contract`" in issues[0]["issue"]
+
+    def test_opted_in_empty_contract_fails(self) -> None:
+        from check.skill import _check_contract_section_present
+        body = "## `--as-tool` contract\n\n## Next section\n"
+        issues = _check_contract_section_present(
+            {"skill-invocable": True}, body, "f",
+        )
+        assert len(issues) == 1
+        assert issues[0]["severity"] == "fail"
+
+
+class TestCheckContractReturnShapeDeclared:
+    def test_not_opted_in_no_issue(self) -> None:
+        from check.skill import _check_contract_return_shape_declared
+        assert _check_contract_return_shape_declared({}, "anything", "f") == []
+
+    def test_declared_data_no_issue(self) -> None:
+        from check.skill import _check_contract_return_shape_declared
+        assert _check_contract_return_shape_declared(
+            {"skill-invocable": True}, _CONTRACT_FULL, "f",
+        ) == []
+
+    def test_declared_artifact_no_issue(self) -> None:
+        from check.skill import _check_contract_return_shape_declared
+        assert _check_contract_return_shape_declared(
+            {"skill-invocable": True}, _CONTRACT_ARTIFACT, "f",
+        ) == []
+
+    def test_contract_without_return_shape_fails(self) -> None:
+        from check.skill import _check_contract_return_shape_declared
+        body = (
+            "## `--as-tool` contract\n\n"
+            "**Required fields:**\n- `x` — foo\n\n"
+            "- `Success` — ...\n- `NeedsMoreInfo` — ...\n- `Refusal` — ...\n"
+        )
+        issues = _check_contract_return_shape_declared(
+            {"skill-invocable": True}, body, "f",
+        )
+        assert len(issues) == 1
+        assert issues[0]["severity"] == "fail"
+        assert "Return shape" in issues[0]["issue"]
+
+
+class TestCheckContractAllThreeCases:
+    def test_not_opted_in_no_issue(self) -> None:
+        from check.skill import _check_contract_all_three_cases
+        assert _check_contract_all_three_cases({}, "anything", "f") == []
+
+    def test_all_three_present_no_issue(self) -> None:
+        from check.skill import _check_contract_all_three_cases
+        assert _check_contract_all_three_cases(
+            {"skill-invocable": True}, _CONTRACT_FULL, "f",
+        ) == []
+
+    def test_missing_needs_more_info_fails(self) -> None:
+        from check.skill import _check_contract_all_three_cases
+        body = (
+            "## `--as-tool` contract\n\n"
+            "**Return shape:** DATA\n\n"
+            "- `Success` — ok\n"
+            "- `Refusal` — nope\n"
+        )
+        issues = _check_contract_all_three_cases(
+            {"skill-invocable": True}, body, "f",
+        )
+        assert len(issues) == 1
+        assert issues[0]["severity"] == "fail"
+        assert "NeedsMoreInfo" in issues[0]["issue"]
+
+
+class TestCheckContractArtifactTypes:
+    def test_data_shape_no_issue(self) -> None:
+        from check.skill import _check_contract_artifact_types
+        assert _check_contract_artifact_types(
+            {"skill-invocable": True}, _CONTRACT_FULL, "f",
+        ) == []
+
+    def test_artifact_with_types_no_issue(self) -> None:
+        from check.skill import _check_contract_artifact_types
+        assert _check_contract_artifact_types(
+            {"skill-invocable": True}, _CONTRACT_ARTIFACT, "f",
+        ) == []
+
+    def test_artifact_without_types_fails(self) -> None:
+        from check.skill import _check_contract_artifact_types
+        body = (
+            "## `--as-tool` contract\n\n"
+            "**Return shape:** ARTIFACT\n\n"
+            "- `Success` — ...\n- `NeedsMoreInfo` — ...\n- `Refusal` — ...\n"
+        )
+        issues = _check_contract_artifact_types(
+            {"skill-invocable": True}, body, "f",
+        )
+        assert len(issues) == 1
+        assert issues[0]["severity"] == "fail"
+        assert "Artifact types" in issues[0]["issue"]
+
+
+class TestCheckContractRequiredFields:
+    def test_present_no_issue(self) -> None:
+        from check.skill import _check_contract_required_fields
+        assert _check_contract_required_fields(
+            {"skill-invocable": True}, _CONTRACT_FULL, "f",
+        ) == []
+
+    def test_missing_warns(self) -> None:
+        from check.skill import _check_contract_required_fields
+        body = (
+            "## `--as-tool` contract\n\n"
+            "**Return shape:** DATA\n\n"
+            "- `Success` — ...\n- `NeedsMoreInfo` — ...\n- `Refusal` — ...\n"
+            "**Side effects:** none\n**Parallel-safe:** yes\n"
+        )
+        issues = _check_contract_required_fields(
+            {"skill-invocable": True}, body, "f",
+        )
+        assert len(issues) == 1
+        assert issues[0]["severity"] == "warn"
+        assert "Required fields" in issues[0]["issue"]
+
+
+class TestCheckContractSideEffects:
+    def test_present_no_issue(self) -> None:
+        from check.skill import _check_contract_side_effects
+        assert _check_contract_side_effects(
+            {"skill-invocable": True}, _CONTRACT_FULL, "f",
+        ) == []
+
+    def test_missing_warns(self) -> None:
+        from check.skill import _check_contract_side_effects
+        body = (
+            "## `--as-tool` contract\n\n"
+            "**Required fields:**\n- `x` — foo\n\n"
+            "**Return shape:** DATA\n\n"
+            "- `Success` — ...\n- `NeedsMoreInfo` — ...\n- `Refusal` — ...\n"
+            "**Parallel-safe:** yes\n"
+        )
+        issues = _check_contract_side_effects(
+            {"skill-invocable": True}, body, "f",
+        )
+        assert len(issues) == 1
+        assert issues[0]["severity"] == "warn"
+        assert "Side effects" in issues[0]["issue"]
+
+
+class TestCheckContractParallelSafe:
+    def test_present_no_issue(self) -> None:
+        from check.skill import _check_contract_parallel_safe
+        assert _check_contract_parallel_safe(
+            {"skill-invocable": True}, _CONTRACT_FULL, "f",
+        ) == []
+
+    def test_missing_warns(self) -> None:
+        from check.skill import _check_contract_parallel_safe
+        body = (
+            "## `--as-tool` contract\n\n"
+            "**Required fields:**\n- `x` — foo\n\n"
+            "**Return shape:** DATA\n\n"
+            "- `Success` — ...\n- `NeedsMoreInfo` — ...\n- `Refusal` — ...\n"
+            "**Side effects:** none\n"
+        )
+        issues = _check_contract_parallel_safe(
+            {"skill-invocable": True}, body, "f",
+        )
+        assert len(issues) == 1
+        assert issues[0]["severity"] == "warn"
+        assert "Parallel-safe" in issues[0]["issue"]
+
+
+class TestCheckNonInvocablePathology:
+    def test_both_invocable_no_issue(self) -> None:
+        from check.skill import _check_non_invocable_pathology
+        assert _check_non_invocable_pathology(
+            {"user-invocable": True, "skill-invocable": True}, "f",
+        ) == []
+
+    def test_only_user_invocable_no_issue(self) -> None:
+        from check.skill import _check_non_invocable_pathology
+        assert _check_non_invocable_pathology({"user-invocable": True}, "f") == []
+
+    def test_only_skill_invocable_no_issue(self) -> None:
+        from check.skill import _check_non_invocable_pathology
+        assert _check_non_invocable_pathology(
+            {"user-invocable": False, "skill-invocable": True}, "f",
+        ) == []
+
+    def test_pathology_warns(self) -> None:
+        from check.skill import _check_non_invocable_pathology
+        issues = _check_non_invocable_pathology({"user-invocable": False}, "f")
+        assert len(issues) == 1
+        assert issues[0]["severity"] == "warn"
+        assert "not invocable" in issues[0]["issue"]
+
+    def test_both_false_warns(self) -> None:
+        from check.skill import _check_non_invocable_pathology
+        issues = _check_non_invocable_pathology(
+            {"user-invocable": False, "skill-invocable": False}, "f",
+        )
+        assert len(issues) == 1
+        assert issues[0]["severity"] == "warn"
+
+
+class TestAsToolFullFixtures:
+    """End-to-end fixtures: parse a SKILL.md and confirm issues()."""
+
+    def _make_skill(
+        self, tmp_path: Path, frontmatter: str, body: str,
+    ) -> Path:
+        d = tmp_path / "example"
+        d.mkdir()
+        (d / "SKILL.md").write_text(f"---\n{frontmatter}\n---\n\n{body}")
+        return d
+
+    def _as_tool_issues(self, issues: list) -> list:
+        keywords = (
+            "--as-tool", "skill-invocable", "contract", "Parallel-safe",
+            "Side effects", "Required fields", "Return shape",
+            "Artifact types", "NeedsMoreInfo",
+        )
+        return [
+            i for i in issues
+            if any(kw in i["issue"] for kw in keywords)
+        ]
+
+    def test_opt_out_skill_no_new_findings(self, tmp_path: Path) -> None:
+        from check.skill import check_skill_meta
+        fm = (
+            "name: example\n"
+            "description: A human-only skill. Triggers on 'do thing'.\n"
+            "user-invocable: true\n"
+        )
+        body = "# Example\n\n## Workflow\n\n1. Do the thing.\n"
+        d = self._make_skill(tmp_path, fm, body)
+        issues = check_skill_meta(d)
+        as_tool = self._as_tool_issues(issues)
+        assert as_tool == [], (
+            f"opt-out skill should produce no --as-tool findings; got: {as_tool}"
+        )
+
+    def test_data_opted_in_complete_no_new_fails(self, tmp_path: Path) -> None:
+        from check.skill import check_skill_meta
+        fm = (
+            "name: greet\n"
+            "description: Greets a person by name. Triggers on 'hello', 'greet'.\n"
+            "user-invocable: true\n"
+            "skill-invocable: true\n"
+        )
+        body = "# Greet\n\n## Workflow\n\n1. Compose greeting.\n\n" + _CONTRACT_FULL
+        d = self._make_skill(tmp_path, fm, body)
+        issues = check_skill_meta(d)
+        fails = [i for i in self._as_tool_issues(issues) if i["severity"] == "fail"]
+        assert fails == [], (
+            f"complete DATA skill should have no --as-tool fails; got: {fails}"
+        )
+
+    def test_artifact_opted_in_complete_no_new_fails(
+        self, tmp_path: Path,
+    ) -> None:
+        from check.skill import check_skill_meta
+        fm = (
+            "name: build-thing\n"
+            "description: Builds a shell script. Triggers on 'build a shell script'.\n"
+            "user-invocable: true\n"
+            "skill-invocable: true\n"
+        )
+        body = (
+            "# Build Thing\n\n## Workflow\n\n1. Emit a shell script.\n\n"
+            + _CONTRACT_ARTIFACT
+        )
+        d = self._make_skill(tmp_path, fm, body)
+        issues = check_skill_meta(d)
+        fails = [i for i in self._as_tool_issues(issues) if i["severity"] == "fail"]
+        assert fails == [], (
+            f"complete ARTIFACT skill should have no --as-tool fails; got: {fails}"
+        )
+
+
