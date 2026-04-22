@@ -8,6 +8,46 @@ Pre-restructure releases used a single version. Post-restructure, each plugin
 
 ## [Unreleased]
 
+### Removed
+
+- **`--as-tool` dual-invocation pattern reverted (#333, #334, #335, #336).**
+  The pattern — which let one skill invoke another at runtime with a
+  structured JSON envelope in and out (`skill-invocable: true`
+  frontmatter, `## --as-tool contract` section, DATA vs ARTIFACT return
+  shapes) — was shipped across four PRs and then reverted.
+
+  **What we observed.** In testing, the structured-invocation contract
+  turned out to be heavily reliant on the agent following the skill's
+  own instructions precisely: emit exactly this JSON shape, skip these
+  steps, fenced blocks in this order. That discipline is brittle and
+  model-specific — what works on one Claude version may drift on the
+  next, and there's no deterministic enforcement mechanism underneath
+  the markdown contract. A pattern whose correctness hinges on
+  interpretive adherence is not the foundation we want for shared
+  domain expertise.
+
+  **What we're trying instead.** Rather than designating a single
+  "front door" skill as the owner of a shared concern (e.g., a
+  `build-shell` skill that every other skill must call to produce a
+  shell script), we're moving to a reference-file pattern: a best-
+  practices document per domain, importable by any skill that needs
+  it. No runtime invocation between skills; the expertise travels as
+  prose the LLM reads directly.
+
+  **Follow-on work.** Enable a resolver pattern where the LLM
+  dynamically selects which best-practices references it needs for a
+  given task and compiles the relevant details inline — rather than
+  hard-coding reference paths in every skill. The auditing skills
+  (`check-*`) will reference the same best-practices docs and keep
+  running their deterministic validation checks against them, so
+  producing and auditing stay aligned without a structured-invocation
+  bridge.
+
+  Reverted commits: `acc5295` (#336, build-0.6.0), `40f6b4e` (#335,
+  build-0.5.0), `680a4b8` (#334), `d21001e` (#333). Build plugin
+  returns to 0.4.0. `plugins/dummy/` removed. Design and plan
+  artifacts for the reverted effort removed with them.
+
 ## [wiki-0.3.0] - 2026-04-19
 
 Retroactive entry for #325, which merged ahead of v0.43.0 without a

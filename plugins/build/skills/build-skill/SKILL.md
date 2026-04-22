@@ -12,9 +12,7 @@ tested_with: [sonnet]
 references:
   - references/platform-notes.md
   - references/skill-writing-guide.md
-  - references/as-tool-scaffolding.md
   - ../../_shared/references/primitive-routing.md
-  - ../../_shared/references/as-tool-contract.md
 ---
 
 # Skill Creator
@@ -80,7 +78,6 @@ Also probe for structural decisions that shape how the skill is built — derive
   - **Destructive or irreversible** (deploy, rm -rf, DROP TABLE, force-push) → **low-freedom** — scripts, explicit gates, no variation.
 
   Calibrate specificity to task fragility. Fragile tasks get low-freedom; routine tasks get high-freedom. Over-specifying a routine task produces brittle skills that break on edge cases Claude could have handled.
-- **Should this skill be invocable by other skills via `--as-tool`?** Default **no** — most skills are human-only. Set `skill-invocable: true` in frontmatter when the skill's computation is reusable by another skill as a pure function (structured args in, structured return out, no human ceremony). If yes, ask a follow-up: **does this skill return structured data (DATA) or a text artifact like a script/markdown/config (ARTIFACT)?** If ARTIFACT, also ask for the list of MIME types produced (e.g., `text/x-shellscript`, `text/markdown`, `application/json`). Skip entirely for exploratory, interactive-by-design, or judgment-heavy skills. See `../../_shared/references/as-tool-contract.md` for the full mechanism, DATA/ARTIFACT emission rules, and parallel-safety convention. *(check-skill #23–31)*
 - **Where should this skill live?** Pick a scope before drafting:
   - **project** — `.claude/skills/<name>/SKILL.md` (default when working in a repo with a `.claude/` directory; ships with the codebase)
   - **personal** — `~/.claude/skills/<name>/SKILL.md` (single-user, all projects)
@@ -111,7 +108,6 @@ Based on the user interview, fill in these components. Most skills need only `na
 - **allowed-tools** _(optional)_: Tools that run without per-use confirmation when this skill is active. Canonical forms: **space-separated string** (`Grep Read`) or **YAML list** (`[Grep, Read]` or block form). **Never comma-separated as a string** (`Grep, Read`) — YAML parses it as one literal value and the field silently does nothing.
 - **tested_with** _(optional)_: Model tiers verified against (e.g., `[sonnet, haiku]`); omit if untested. *(check-skill #2)*
 - **references** _(optional)_: Reference files or assets in the skill directory for progressive disclosure.
-- **skill-invocable** _(optional; parallels `user-invocable`)_: Default `false` — **omit** unless the skill opted in to the `--as-tool` dual-invocation pattern during Interview. Set `true` when the skill should be callable by another skill. Independent of `user-invocable` — a skill can be both, either, or neither. **If set to `true`, apply the scaffolding recipe in [`references/as-tool-scaffolding.md`](references/as-tool-scaffolding.md)** (frontmatter additions, workflow split, mandatory `## --as-tool contract` section, Key Instructions entries). *(check-skill #23–31)*
 
 **Optional toolkit sections.** Add these when trigger conditions apply — they're house-style scaffolding, not canonical requirements. See [check-skill criteria](../../check-skill/SKILL.md) for the exact triggers.
 
