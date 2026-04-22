@@ -4,6 +4,7 @@ description: Check a Claude Code rule library under `.claude/rules/` for path-gl
 argument-hint: "[path to rule file or directory — scans .claude/rules/ if omitted]"
 user-invocable: true
 references:
+  - ../../_shared/references/rules-best-practices.md
   - references/audit-dimensions.md
   - references/repair-playbook.md
 ---
@@ -12,9 +13,15 @@ references:
 
 Evaluate the quality of an existing Claude Code rule library. Three tiers,
 in order: deterministic format checks (no LLM), per-rule semantic checks
-(specificity + vague phrasing), then cross-rule conflict detection.
+(eight always-on dimensions in a single locked-rubric call), then
+cross-rule conflict detection.
 
 This skill evaluates the rules themselves — not files against rules.
+
+The audit rubric mirrors the authoring principles in
+[rules-best-practices.md](../../_shared/references/rules-best-practices.md).
+Each Tier-2 dimension cites its source principle. When the principles doc
+changes, the dimensions should follow.
 
 ## Workflow
 
@@ -38,48 +45,44 @@ the full table. The checks:
 - **Extension** — file uses `.md` (not `.rule.md` or `.mdx`)
 - **`paths:` glob validity** — when `paths:` is present, every glob
   parses (no unmatched brackets, valid wildcards, non-empty)
-- **File size** — warn at >200 non-blank lines; Anthropic's CLAUDE.md
-  guidance applies analogously (larger rules consume context and reduce
-  adherence)
+- **File size** — WARN at >200 non-blank lines, FAIL at >500 non-blank lines
 - **Frontmatter shape** — only `paths:` is documented by Anthropic;
   flag unknown top-level keys as informational
+- **Shape hints** — scan for keywords that signal a judgment-based rule
+  (`compliant`, `non-compliant`, `violation`, `exception`, `failure`,
+  fenced code blocks). These do not produce findings; they inform the
+  Tier-2 prompt so the evaluator knows to weigh Why Adequacy and Example
+  Realism more closely
 
 Emit findings immediately. Rules with FAIL-severity findings (location,
-extension, malformed `paths:`) are reported and excluded from Tier 2 —
-malformed rules don't reach the LLM step.
+extension, malformed `paths:`, oversize) are reported and excluded from
+Tier 2 — malformed rules don't reach the LLM step.
 
 ### 3. Tier 2 — Per-Rule Semantic Checks (One LLM Call per Rule)
 
 For each structurally valid rule, one locked-rubric LLM call assesses
-the dimensions in [audit-dimensions.md](references/audit-dimensions.md).
-Three always-on dimensions plus three trigger-gated dimensions for rules
-that opt into the toolkit-opinion structured shape (`## Why` +
-`## Compliant` / `## Non-compliant` example pair).
+the eight always-on dimensions in
+[audit-dimensions.md](references/audit-dimensions.md):
 
-**Always-on (every rule):**
-1. **Specificity** *(canonical)* — directives are concrete and verifiable,
-   not vague. Anthropic's own example: "Use 2-space indentation" passes;
-   "Format code properly" fails.
-2. **Single Concern** *(toolkit-opinion)* — rule covers one topic.
-3. **Staleness** *(toolkit-opinion)* — `paths:` globs and example code
-   reference the current codebase, not retired layers.
-
-**Trigger-gated (when rule uses structured-Intent shape):**
-4. **Intent Completeness** — `## Why` covers the four components
-   (violation, failure cost, principle, exception policy).
-5. **Example Pair Quality** — non-compliant before compliant; both use
-   real code with file path comments; one canonical instance per
-   section.
-6. **Default-Closed Declaration** — Intent contains "When evidence is
-   borderline, prefer WARN over PASS" (or equivalent).
+1. **Framing** — positive statement of what to do; no hedged phrasing
+2. **Specificity** — directive is concrete and falsifiable
+3. **Single Concern** — body covers one topic
+4. **Why Adequacy** — reasoning present; judgment-based rules name failure cost + legitimate exception
+5. **Scope Tightness** — `paths:` matches the rule's actual reach; unscoped rules that name a specific directory get flagged
+6. **Staleness** — globs resolve to real paths; examples look current
+7. **Judgment-Not-Linter** — rule doesn't restate what a formatter or type-checker already catches
+8. **Example Realism** — if examples present, they use domain-specific identifiers from the codebase, not synthetic `foo`/`bar`
 
 Include the full rule file verbatim — never summarize. Present all
-applicable dimensions in one call (per-dimension calls degrade agreement
-by ~11.5 points per RULERS, Hong et al. 2026).
+eight dimensions in one call (per-dimension calls degrade agreement
+by ~11.5 points per RULERS, Hong et al. 2026). Dimensions that don't
+apply to the specific rule return PASS silently — e.g., Example Realism
+PASSes on a rule with no examples.
 
 Output format per dimension: `evidence (quoted from rule) → reasoning →
 verdict (WARN or PASS) → recommendation`. Default-closed: borderline
-evidence surfaces as WARN, not PASS.
+evidence surfaces as WARN, not PASS — this is evaluator policy; rules
+themselves don't declare it.
 
 ### 4. Tier 3 — Cross-Rule Conflict Detection
 
@@ -103,10 +106,10 @@ Claude may pick one arbitrarily."*
 
 Output all findings in `scripts/lint.py` format (file, issue, severity).
 Sort within each severity tier: Tier-1 deterministic first, then Tier-2
-in dimension order (Specificity → Single Concern → Staleness → Intent
-Completeness → Example Pair Quality → Default-Closed Declaration), then
-Tier-3 conflicts; ties break alphabetically by file path. FAIL precedes
-WARN overall.
+in dimension order (Framing → Specificity → Single Concern → Why
+Adequacy → Scope Tightness → Staleness → Judgment-Not-Linter → Example
+Realism), then Tier-3 conflicts; ties break alphabetically by file path.
+FAIL precedes WARN overall.
 
 Each FAIL or WARN finding must include a `Recommendation:` line with a
 specific, actionable repair drawn from
@@ -120,6 +123,8 @@ WARN  .claude/rules/code-style.md — Specificity: "format code properly" is anc
   Recommendation: Replace with a verifiable directive (e.g., "Use 2-space indentation; run prettier --check")
 WARN  .claude/rules/testing.md — File length 287 lines exceeds 200-line guidance
   Recommendation: Split into topic files (e.g., testing-unit.md + testing-integration.md)
+WARN  .claude/rules/api-errors.md — Framing: rule states only what to avoid, no positive action named
+  Recommendation: Restate as a positive directive (e.g., "Return structured error responses via `ApiError`") instead of "Don't throw raw errors"
 ```
 
 Close with a summary line:
@@ -148,10 +153,11 @@ user's ability to review individual repairs.
 ## Key Instructions
 
 - Run Tier-1 deterministic checks first; gate LLM evaluation on structural validity so malformed rules surface as findings, not as expensive LLM calls
-- Present every applicable Tier-2 dimension (always-on plus any trigger-gated) as a single locked-rubric call per rule — per-dimension calls degrade agreement by ~11.5 points (RULERS, Hong et al. 2026)
+- Include the Tier-1 shape-hints keyword sniff as context in the Tier-2 prompt — it informs the evaluator, not the dimension set (all eight dimensions always run)
+- Present all eight Tier-2 dimensions as a single locked-rubric call per rule — per-dimension calls degrade agreement by ~11.5 points (RULERS, Hong et al. 2026)
 - Include the full rule file verbatim in every LLM evaluation so the evaluator sees the same anchors a human reviewer would
 - Limit conflict comparison to rule pairs that could co-fire (both always-on, or overlapping `paths:` globs) — non-overlapping scoped rules cannot contradict and the comparison is wasted budget
-- Surface borderline evidence as WARN (default-closed) so ambiguous cases enter the report rather than silently passing
+- Surface borderline evidence as WARN (default-closed) so ambiguous cases enter the report rather than silently passing — this is evaluator policy, not a per-rule requirement
 
 ## Anti-Pattern Guards
 
@@ -161,6 +167,7 @@ user's ability to review individual repairs.
 4. **Vague finding text** — cite the specific rule file and the exact phrasing or field that triggered the finding
 5. **Conflict-comparing non-overlapping rules** — gate Tier 3 on co-fire potential (always-on pair, or overlapping `paths:`)
 6. **Generic repair text** ("fix this", "improve specificity") — every Recommendation names the specific change, drawn from `repair-playbook.md`
+7. **Trigger-gating Tier-2 dimensions** — don't skip dimensions based on whether the rule "opts into" a shape; run all eight always. Dimensions that don't apply return PASS silently
 
 ## Example
 
@@ -172,11 +179,11 @@ Step 1 — Discovers 3 rules: code-style.md, api-design.md, testing.md
 Step 2 — Tier 1 deterministic check:
 - code-style.md: 47 lines, no frontmatter (always-on) — passes to Tier 2
 - api-design.md: `paths: "src/api/**/*.{ts"` — unclosed brace → FAIL (excluded from Tier 2)
-- testing.md: 287 lines → WARN (proceeds to Tier 2 anyway)
+- testing.md: 287 lines → WARN (proceeds to Tier 2 anyway; below 500-line FAIL threshold)
 
 Step 3 — Tier 2 semantic on 2 rules:
-- code-style.md: directive pattern only (no `## Compliant` / `## Non-compliant` sections) — applies always-on dimensions only. Contains "format code properly" → WARN (specificity)
-- testing.md: covers unit, integration, AND e2e — three distinct topics → WARN (single concern). Has `## Compliant` and `## Non-compliant` sections → trigger-gated dimensions also fire. Examples use `foo`/`bar` with no file path comment → WARN (example pair quality)
+- code-style.md: contains "format code properly" → WARN (Specificity). Rule is entirely positive → PASS (Framing). Covers only code style → PASS (Single Concern). No examples → PASS (Example Realism, N/A).
+- testing.md: covers unit, integration, AND e2e → WARN (Single Concern). Has compliant/non-compliant examples using `foo`/`bar` → WARN (Example Realism). Rule phrased as "Don't write flaky tests" with no positive counterpart → WARN (Framing).
 
 Step 4 — Tier 3 conflict detection: code-style.md (always-on) and
 testing.md (always-on) both fire on every session. No directive
@@ -190,12 +197,14 @@ WARN  .claude/rules/code-style.md — Specificity: "format code properly" is anc
   Recommendation: Replace with a verifiable directive (e.g., "Use 2-space indentation; run prettier --check")
 WARN  .claude/rules/testing.md — File length 287 lines exceeds 200-line guidance
   Recommendation: Split into testing-unit.md + testing-integration.md + testing-e2e.md
-WARN  .claude/rules/testing.md — Single concern: covers three distinct topics (unit, integration, e2e)
+WARN  .claude/rules/testing.md — Single Concern: covers three distinct topics (unit, integration, e2e)
   Recommendation: Same split as above resolves both findings
-WARN  .claude/rules/testing.md — Example pair quality: examples use `foo`/`bar` without file path comments
-  Recommendation: Replace with real codebase code; add `// path/to/file.ext` comment
+WARN  .claude/rules/testing.md — Framing: "Don't write flaky tests" states only what to avoid
+  Recommendation: Restate positively (e.g., "Write tests that produce the same result given the same inputs")
+WARN  .claude/rules/testing.md — Example Realism: examples use `foo`/`bar` placeholders
+  Recommendation: Replace with real code from the codebase
 
-3 rules audited, 5 findings (1 fail, 4 warn)
+3 rules audited, 6 findings (1 fail, 5 warn)
 ```
 </example>
 
