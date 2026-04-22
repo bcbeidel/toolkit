@@ -77,6 +77,15 @@ The strongest enforcement pattern combines tiers. The hook catches the determini
 
 The hook should exit non-zero only on unambiguous violations. Anything requiring interpretation stays in the rule. A hook that blocks on judgment calls generates bypass culture faster than no hook at all.
 
+## Safety
+
+Rule files are a trusted-instruction channel — loaded automatically, committed to git, read by Claude with implicit trust. That makes them a leak surface for secrets and a prompt-injection vector for pasted content.
+
+- **No secrets.** Never include API keys, tokens, credentials, or private URLs in a rule file. Rule files carry the same exposure as any other committed config.
+- **Destructive commands require explicit confirmation.** Rules that reference `rm -rf`, `git push --force`, `DROP`, `TRUNCATE`, migrations, production deploys, or data backfills must name the confirmation gate. Agents default to helpful, not cautious.
+- **Guardrails, not shortcuts.** A rule adds a constraint. Never encode instructions that weaken security, validation, logging, or error handling.
+- **Don't paste untrusted content.** Issue bodies, third-party docs, user-submitted text — paraphrase or link. Pasted content becomes a trusted instruction and opens a prompt-injection path.
+
 ## Review and Decay
 
 A rule library should compound, not accumulate. Every rule present should still earn its place.

@@ -38,7 +38,23 @@ Report: "Found N rules. Auditing..."
 
 For each rule file, parse frontmatter and check structural facts. No
 LLM call. See [audit-dimensions.md](references/audit-dimensions.md) for
-the full table. The checks:
+the full table. Each check has a corresponding script under `scripts/`
+that can be invoked standalone or orchestrated as a pipeline:
+
+| Check | Script |
+|---|---|
+| Location, Extension, Frontmatter shape | `scripts/check_structure.sh` |
+| `paths:` glob validity | `scripts/check_paths_glob.sh` |
+| File size (200 warn / 500 fail) | `scripts/check_size.sh` |
+| Secrets Safety | `scripts/scan_secrets.sh` |
+| Shape hints (informational, feeds Tier-2) | `scripts/emit_shape_hints.sh` |
+
+Each script reads files or directories as positional args, emits
+findings in the standard `FAIL|WARN|INFO|HINT  <path> — <check>: <detail>`
+format to stdout, and exits non-zero on FAIL findings. Concatenating
+output from all five gives the full Tier-1 report.
+
+The checks:
 
 - **Location** — file is under `.claude/rules/` (or `~/.claude/rules/`); files
   at other paths are not loaded by Claude Code as rules
@@ -48,6 +64,14 @@ the full table. The checks:
 - **File size** — WARN at >200 non-blank lines, FAIL at >500 non-blank lines
 - **Frontmatter shape** — only `paths:` is documented by Anthropic;
   flag unknown top-level keys as informational
+- **Secrets Safety** — scan the rule body for committed-secret patterns
+  (AWS keys `AKIA[0-9A-Z]{16}`, GitHub tokens `ghp_[A-Za-z0-9]{36}` /
+  `github_pat_[A-Za-z0-9_]{82}`, OpenAI keys `sk-[A-Za-z0-9]{48}`,
+  Anthropic keys `sk-ant-[A-Za-z0-9]{80,}`, Stripe live keys
+  `sk_live_[A-Za-z0-9]{24}`, generic high-entropy strings assigned to
+  variables named `password`, `secret`, `token`, `api_key`, `access_key`,
+  `private_key` with non-empty string values). Any hit is **FAIL** — rule
+  files sit in git and inherit the same exposure as any committed config
 - **Shape hints** — scan for keywords that signal a judgment-based rule
   (`compliant`, `non-compliant`, `violation`, `exception`, `failure`,
   fenced code blocks). These do not produce findings; they inform the

@@ -15,6 +15,7 @@ requiring human review before applying.
 ## Table of Contents
 
 - [Tier 1: Deterministic Format Repairs](#tier-1-deterministic-format-repairs)
+  - [Secret Detected in Rule Body](#secret-detected-in-rule-body)
 - [Tier 2: Semantic Dimensions](#tier-2-semantic-dimensions)
   - [Dimension 1: Framing](#dimension-1-framing)
   - [Dimension 2: Specificity](#dimension-2-specificity)
@@ -74,6 +75,21 @@ requiring human review before applying.
 **FROM:** `.claude/rules/architecture.md` (650 lines — mixes rule text with extended rationale and design history)
 **TO:** `.claude/rules/architecture-layering.md` + `.claude/rules/service-boundaries.md` (rules); move the long-form rationale to `.context/architecture-rationale.md` or a CLAUDE.md section
 **REASON:** At 500+ lines the file is a document, not a rule. Rules should be scannable at the point of application; documents belong in `.context/` or CLAUDE.md where they carry different expectations.
+
+### Secret Detected in Rule Body
+
+**Signal:** Tier-1 secret-pattern scan matched a committed-secret shape (AWS key, GitHub token, API key, or a variable named `password`/`secret`/`token`/`api_key` with a non-empty quoted value)
+
+**CHANGE:** Remove the secret from the rule file; rotate the credential; paraphrase or link to the secret's location instead
+**FROM:**
+```markdown
+Use the staging API key `sk-ant-abc123def456...` when testing.
+```
+**TO:**
+```markdown
+Use the staging API key stored in `$ANTHROPIC_API_KEY_STAGING` (see `.env.staging.example` for the variable name).
+```
+**REASON:** Rule files are committed to git and loaded automatically by Claude. A secret in a rule file has the same exposure as a secret in any committed config — and rotating is mandatory once the secret appears in git history. Reference the secret by env var name or vault path; never include the value.
 
 ### Unknown Frontmatter Key
 

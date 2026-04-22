@@ -65,6 +65,7 @@ immediately. Rules with FAIL findings are excluded from Tier 2.
 | File size (warn) | principle — *Prefer short* | File exceeds 200 non-blank lines | warn |
 | File size (fail) | principle — *Prefer short* | File exceeds 500 non-blank lines | fail |
 | Frontmatter shape | canonical | Frontmatter contains top-level keys other than `paths:` | info |
+| Secrets Safety | principle — *Safety / No secrets* | Rule body matches a committed-secret pattern (see below) | fail |
 | Shape hints (informational) | — | Scan for keywords (`compliant`, `non-compliant`, `violation`, `exception`, `failure`, fenced code blocks); no finding. The hit set is appended to the Tier-2 prompt as context so the evaluator weighs Why Adequacy and Example Realism more closely when present | none |
 
 ### Notes
@@ -78,6 +79,18 @@ immediately. Rules with FAIL findings are excluded from Tier 2.
   as a WARN; 500 lines is a hard FAIL — at that length the file is a
   document, not a rule, and belongs elsewhere (CLAUDE.md, a context
   doc, or split into multiple rules).
+- **Secrets Safety patterns (FAIL on any match):**
+  - AWS access keys: `AKIA[0-9A-Z]{16}`
+  - GitHub personal access tokens: `ghp_[A-Za-z0-9]{36}`
+  - GitHub fine-grained PATs: `github_pat_[A-Za-z0-9_]{82}`
+  - OpenAI API keys: `sk-[A-Za-z0-9]{48}`
+  - Anthropic API keys: `sk-ant-[A-Za-z0-9\-_]{80,}`
+  - Stripe live keys: `sk_live_[A-Za-z0-9]{24}`
+  - Generic high-entropy strings assigned to variables matching
+    `(password|secret|token|api_key|access_key|private_key)`
+    followed by `=`/`:` and a non-empty quoted string
+  Rule files are committed config — secrets in them inherit the same
+  exposure as any other committed file. Any match is FAIL, not WARN.
 - **Shape hints:** the keyword sniff is *not* a trigger gate. All eight
   Tier-2 dimensions run on every rule. Hints are context for the
   evaluator, not dimension filters.
