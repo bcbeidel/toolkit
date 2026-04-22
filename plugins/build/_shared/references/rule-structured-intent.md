@@ -42,16 +42,16 @@ Exception: <name at least one legitimate bypass case>.
 
 When evidence is borderline, prefer WARN over PASS.
 
-## Compliant
-
-```<lang>
-// real code from the codebase, with file path comment
-```
-
 ## Non-compliant
 
 ```<lang>
 // real code that violates the rule
+```
+
+## Compliant
+
+```<lang>
+// real code from the codebase, with file path comment
 ```
 ````
 
