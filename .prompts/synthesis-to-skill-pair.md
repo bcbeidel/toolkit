@@ -42,6 +42,7 @@ The synthesis' Section 5 (*Shared Deterministic Checks*) is the direct source fo
 - **Scripts live at `plugins/<plugin>/skills/check-<X>/scripts/*.sh`.** Claude resolves absolute paths at invocation time; do not rely on `$CLAUDE_PLUGIN_ROOT` (documented for hooks, not skills). Use a `${SKILL_DIR}` placeholder in SKILL.md and document the resolution convention.
 - **Output lint format is fixed:** `SEVERITY  <path> — <check>: <detail>` on one line, followed by `  Recommendation: <specific change>` on the next. Severities: `FAIL`, `WARN`, `INFO`, `HINT`. Exit 0 on clean / WARN / INFO / HINT-only; exit 1 on FAIL; exit 64 on arg error; exit 69 on missing dependency.
 - **Commit in vertical slices, one PR.** Each phase below that produces artifacts lands as its own commit. Self-review then human review before merge.
+- **Skill-chain relationships are declared, not inferred.** Every `build-<X>` and `check-<X>` SKILL.md ends with a `## Handoff` section carrying `Receives:` / `Produces:` / `Chainable to:` fields. The default chain is bidirectional: `build-<X>` is chainable to `check-<X>` (audit the just-built artifact); `check-<X>` is chainable to `build-<X>` (rebuild after flagged repairs). Preserve any chain relationships the legacy skills declared — if the old `build-<X>` chained into another skill (e.g., `verify-work`, `finish-work`), that linkage carries over unless the ensemble or project docs explicitly deprecate it. Chain relationships are part of the project-fact content extracted in Phase 1.
 
 ## What to produce (outputs)
 
@@ -134,6 +135,7 @@ The **only** thing to preserve from the legacy skill is **project-fact content**
 | Output conventions | Lint format `SEVERITY  <path> — <check>: <detail>`; exit-code contract; severity naming |
 | Test conventions | `tmp_path` fixtures; stdlib-only; inline markdown strings |
 | Version/release conventions | `pyproject.toml` + `.claude-plugin/plugin.json` bump pattern |
+| **Skill-chain relationships** | "`build-<X>` chained to `check-<X>`"; any third-party chain targets (e.g., "`build-rule` → `check-rule` → `verify-work`"); custom `Receives:` / `Produces:` contracts beyond the default |
 
 Produce a short artifact at `plans/<date>-legacy-facts-<topic>.md` — bulleted list, one fact per line, citing the legacy file and line where each was found. Commit this as the first vertical slice of the PR. It serves as the audit trail: a reviewer can see exactly what was preserved from the legacy skill and why.
 
@@ -176,8 +178,8 @@ Pre-filter scripts for Tier-2 dimensions (hedges / prohibitions / synthetic plac
 
 Write all four skill artifacts:
 
-- `build-<X>/SKILL.md` — workflow (primitive check → intake → scope → conflict check → draft → approval gate → write), plus anti-pattern guards each citing a principle by name. Reference frontmatter points at the shared principles doc and `primitive-routing.md`.
-- `check-<X>/SKILL.md` — three-tier workflow. Tier-1 section lists scripts (placeholder — scripts not yet written). Tier-2 lists all dimensions, always-on. Tier-3 describes cross-entity conflict detection.
+- `build-<X>/SKILL.md` — workflow (primitive check → intake → scope → conflict check → draft → approval gate → write), plus anti-pattern guards each citing a principle by name. Reference frontmatter points at the shared principles doc and `primitive-routing.md`. End with a `## Handoff` section: `Receives:` / `Produces:` / `Chainable to:` (minimally `check-<X>`; plus any chain relationships preserved from Phase 1's legacy-facts extraction).
+- `check-<X>/SKILL.md` — three-tier workflow. Tier-1 section lists scripts (placeholder — scripts not yet written). Tier-2 lists all dimensions, always-on. Tier-3 describes cross-entity conflict detection. End with a `## Handoff` section: `Receives:` / `Produces:` / `Chainable to:` (minimally `build-<X>` to rebuild after repairs; plus any preserved chain relationships).
 - `audit-dimensions.md` — Tier-1 check table + Tier-2 dimension descriptions. Each dimension cites its source principle by name from the shared doc.
 - `repair-playbook.md` — one recipe per Tier-1 finding type (including each subtype a script might emit) + one recipe per Tier-2 dimension failure + one per Tier-3 conflict. Each recipe: Signal → CHANGE → FROM → TO → REASON. Note at top that HINT output is feed-forward context, not a finding requiring repair.
 
@@ -298,6 +300,7 @@ Self-review the entire PR commit-by-commit. Then hand off to a human reviewer.
 ## Acceptance criteria
 
 - Every Core principle meets the inclusion bar: cross-family support (≥2 families per `coverage-llm.md`) AND (Haiku raised it OR the check is mechanically deterministic). Advanced/strong-minority rules are not preserved — they are dropped.
+- Every SKILL.md in the pair ends with a `## Handoff` section declaring `Receives:` / `Produces:` / `Chainable to:`. `build-<X>` minimally chains to `check-<X>`; `check-<X>` minimally chains to `build-<X>`. Any additional chain relationships extracted from legacy skills in Phase 1 are preserved unless explicitly deprecated.
 - Every principle in the shared doc maps to exactly one audit dimension OR explicit author-time-only.
 - Every Tier-2 dimension cites its source principle by name.
 - Every Tier-1 script finding (including each subtype a script emits) has a repair-playbook recipe.
