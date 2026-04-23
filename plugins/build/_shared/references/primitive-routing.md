@@ -73,3 +73,30 @@ Wrong-primitive failures don't announce themselves as configuration errors. They
 ---
 
 **Diagnostic for existing failures:** Paste the failing rule as the first message (outside CLAUDE.md). If Claude follows it there but not in CLAUDE.md — the issue is primitive delivery, change the primitive. If Claude still doesn't follow it — the issue is the rule itself, rewrite it. This isolates whether you have a delivery problem or a quality problem.
+
+## Language Selection — when the answer is "a script"
+
+When the routing test lands on "a script" (glue code, a CLI tool, a hook body), one more decision follows: shell or Python? Both are scripts; they fail in different directions.
+
+**Pick shell when:**
+- The task is *glue* — stitching CLI tools (`git`, `curl`, `jq`, `find`, `xargs`) through pipelines
+- The task is genuinely one-shot and will not acquire business logic
+- The work operates on text streams, not structured records
+- The execution environment cannot be relied on to ship Python (bare containers, minimal CI images)
+
+**Pick Python when:**
+- The task manipulates structured data — arrays of typed records, nested JSON, schema-validated payloads
+- Projected logic exceeds ~100 LOC of business code (not counting help or boilerplate)
+- The script needs testable seams — `pytest` against `main()`
+- Real error recovery is required — typed exceptions, retry with backoff, context managers
+- Cross-platform correctness matters — Windows compatibility, path normalization
+- The work needs concurrency, or calls HTTP APIs with JSON and retry semantics
+- The argument surface has subcommands or interdependent flags
+
+**Cost axes.** Shell scripts are genuinely painful to unit-test; if the script lives past a quarter, Python's testing story pays back. Pure-POSIX shell runs anywhere; a Python script with third-party deps needs a virtualenv, a PEP 723 runner, or `pipx`. Shell fails silently (unquoted variables, `set -e` surprises, broken pipes ignored); Python fails loudly (`ImportError`, typed exceptions). Pick based on which failure mode your environment catches better.
+
+**Tiebreaker.** When the decision is genuinely balanced — 20–100 LOC of mixed glue and light logic, no strong environment constraint — **pick Python**. Interpretability wins: `subprocess.run([...], check=True)` reads more clearly than `cmd1 | while IFS= read -r line; do ...`, and the next maintainer will thank you.
+
+**Escalation — start as a script, graduate to a package.** Either language: when the script grows a second entry point, acquires shared state across invocations, runs as a long-lived service, or its test coverage exceeds its code, convert to a proper package. Both Scope Gates flag these signals explicitly.
+
+Route: `/build:build-shell` for shell; `/build:build-python-script` for Python.
