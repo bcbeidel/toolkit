@@ -194,8 +194,8 @@ Before writing any SKILL.md, confirm frontmatter fields against the current Clau
 
 **Author both SKILL.md files via `/build:build-skill`** — do not hand-draft from a template. For each of `build-<X>` and `check-<X>`:
 
-1. Invoke `/build:build-skill <name> <intent phrase>` with the topic's intent.
-2. Provide the principles doc and the peer skill reference during intake so `/build:build-skill`'s interview produces a shape consistent with the rubric.
+1. Invoke `/build:build-skill <name> <short intent phrase>` — keep the args string under ~300 characters. `argument-hint`-driven substitution inserts the full args into the loaded skill body four times inside Step 4's documentation; long intents degrade that step's readability for the rest of the workflow. Pass rich context (chain relationships, architecture summary, principles-doc path) in the post-intake interview, not the args.
+2. Provide the principles doc and the peer skill reference during intake so `/build:build-skill`'s interview produces a shape consistent with the rubric. Skip any explicit pre-narration before invoking — `/build:build-skill`'s Step 6 narrates design choices itself, so a synthesis-prompt-side pre-narration duplicates work.
 3. Accept the skill's approval gate before writing.
 4. `/build:build-skill` will chain to `/build:check-skill` after writing — process its findings before moving on.
 
@@ -217,6 +217,11 @@ The four artifacts and their contents:
 5. Update any external wiring the legacy code had (e.g., `plugins/wiki/scripts/lint.py` imports, pyproject `include` directives) — verify no other module still imports the deleted code.
 
 Bump the plugin version (minor for substantive rework).
+
+**Before committing — two toolkit-specific watch-outs:**
+
+- **AGENTS.md auto-region drift.** `build-skill`'s Step 7 runs `reindex.py`, which rewrites the `<!-- wiki:begin/end -->` region. Hand-curated content that drifted into the region gets stripped silently. After lint+reindex, run `git diff AGENTS.md` and verify no hand-curated sections (Plugin Structure tables, project-specific Preferences) disappeared. Restore outside the auto-region if so.
+- **Pre-commit hook is tree-wide.** The toolkit's pre-commit hook runs `ruff check plugins/` against the entire tree, not just staged files. Any new Python file (including hybrid AST helpers from Phase 6) must pass ruff before the *first* commit lands, regardless of which slice that commit covers. Run `python3 -m ruff check plugins/ && python3 -m ruff format --check plugins/` before staging the first commit; finding ruff errors mid-commit-loop wastes a commit attempt.
 
 **Commit and push.**
 
@@ -268,7 +273,9 @@ Either path, each script:
 - `exit 0` from a match block still runs the `END` block. A naïve `END { exit 1 }` overrides the found-case. Use `exit found ? 0 : 1` in END, not a bare `exit 1`.
 - When a script's own text describes its regex (e.g., a script-to-check table that lists the hedging wordlist), the regex may self-match on the SKILL.md that documents it. Strip inline code spans (`` `...` ``) before matching, or scope the check to fenced blocks only, depending on the check's intent.
 
-Smoke-test each script against a real `.md` file after writing. Verify the `-h` flag prints usage; verify exit 1 on fixture FAIL and exit 0 on clean.
+Smoke-test each script against a real fixture (`.md` for rule/skill skills; `.py` for Python-script skills; etc.) after writing. Verify the `-h` flag prints usage; verify exit 1 on fixture FAIL and exit 0 on clean.
+
+**Hybrid-pattern ruff gate.** When the script set uses bash-entry + Python-AST-helper (per Phase 3's hybrid decision), run `python3 -m ruff check <helper>.py && python3 -m ruff format --check <helper>.py` before staging — the toolkit's tree-wide pre-commit hook will block the *first* commit otherwise. Long recommendation strings inside `emit()` calls are the most common E501 offender; wrap or shorten before committing.
 
 **Commit scripts as one unit** (or a small number of vertical slices if the set is large — 2–3 scripts per commit is a natural grouping when the set is 5–7 scripts).
 
@@ -326,7 +333,9 @@ Skip this phase if Tier-2 is already cheap or if no obvious-case patterns emerge
 
 ### Phase 10: End-to-end validation (do not skip)
 
-Create a small fixture — 3–5 `.md` files covering:
+**Precondition: install any wrapped external tools.** When the audit skill wraps an external tool (`ruff`, `gitleaks`, `markdownlint`, `bandit`, `shellcheck`), e2e validation needs the tool installed locally to exercise the full-coverage path. The graceful-degradation branch (`tool-missing` INFO + exit 0) only confirms the absent-tool path. CI install commands are the source of truth for what to install — match them locally before running Phase 10. Skipping this means full deterministic coverage is only ever exercised in CI, where a regression is the worst place to discover it.
+
+Create a small fixture — 3–5 files (use the artifact extension the skill audits: `.md` for rules/skills, `.py` for Python scripts, `.sh` for shell scripts, etc.) covering:
 - One clean file that should pass all checks
 - One with a deterministic FAIL (secret, bad glob, wrong location)
 - One with a Tier-2-detectable problem (hedged language, prohibition-only)
@@ -345,7 +354,12 @@ Fix integration issues.
 
 ### Phase 11: PR review
 
-Self-review the entire PR commit-by-commit. Then hand off to a human reviewer.
+Self-review the entire PR commit-by-commit. Two extra checks before handoff:
+
+- **AGENTS.md / wiki-region check.** Confirm the AGENTS.md auto-region watch-out from Phase 4 actually held — `git diff main -- AGENTS.md` should show only intended changes, no silently-stripped hand-curated content. If `reindex.py` was run more than once across the work, it's the most likely culprit.
+- **Pre-existing scripts audit (when adding a routing rule).** If the principles doc or a shared reference introduced a routing rule that affects existing scripts — for example, a "Language Selection" decision that could flip an existing shell script to Python, or a structural convention existing files should now follow — walk those existing files against the new rule. Surface candidates for change in the PR description; do *not* rewrite without explicit user approval. The rule is forward-looking, and pre-emptive churn violates "don't refactor without a reason." Existing scripts port when they need substantive changes anyway.
+
+Then hand off to a human reviewer.
 
 ## Acceptance criteria
 
