@@ -3,27 +3,15 @@
 <!-- wiki:begin -->
 ## Context Navigation
 
-- `.context/` -- Project context documents covering domain knowledge, patterns, and conventions.
-- `.plans/` -- Implementation plans for toolkit features.
-- `.prompts/` -- Saved and refined prompts for skill development and maintenance tasks.
-- `.research/` -- Research investigations using the SIFT framework.
+Each directory has an `_index.md` listing all files with descriptions.
+- `.context/_index.md` -- Project context documents covering domain knowledge, patterns, and conventions.
+- `.plans/_index.md` -- Implementation plans for toolkit features.
+- `.prompts/_index.md` -- Saved and refined prompts for skill development and maintenance tasks.
+- `.research/_index.md` -- Research investigations using the SIFT framework.
 
 Each `.md` file starts with YAML metadata (between `---` lines).
 Read the `description` field before reading the full file.
 Documents put key insights first and last; supplemental detail in the middle.
-
-### Plugin Structure
-
-| Plugin | Path | Skills |
-|--------|------|--------|
-| `build` | `plugins/build/` | `build-skill`, `build-rule`, `build-hook`, `build-subagent`, `build-shell`, `refine-prompt`, `check-skill`, `check-rule`, `check-hook`, `check-subagent`, `check-shell`, `check-skill-chain` |
-| `wiki` | `plugins/wiki/` | `setup`, `research`, `ingest`, `lint` |
-| `work` | `plugins/work/` | `scope-work`, `plan-work`, `start-work`, `verify-work`, `finish-work` |
-| `consider` | `plugins/consider/` | 16 mental models + meta |
-
-Each plugin's skills live at `plugins/<plugin>/skills/<name>/SKILL.md`.
-Python package: `plugins/wiki/src/wiki/` (editable install).
-Shared scripts: `plugins/wiki/scripts/`.
 
 ### Areas
 | Area | Path |
@@ -53,12 +41,26 @@ LLMs lose attention mid-document — first and last sections are what agents ret
 - Context files target 200-800 words. Over 800, consider splitting.
 - One concept per file. Multiple distinct topics should be separate files.
 - Link bidirectionally — if A references B in `related`, B should reference A.
+<!-- wiki:end -->
 
-### Preferences
+## Plugin Structure
+
+| Plugin | Path | Skills |
+|--------|------|--------|
+| `build` | `plugins/build/` | `build-skill`, `build-rule`, `build-hook`, `build-subagent`, `build-shell`, `build-python-script`, `refine-prompt`, `check-skill`, `check-rule`, `check-hook`, `check-subagent`, `check-shell`, `check-python-script`, `check-skill-chain` |
+| `wiki` | `plugins/wiki/` | `setup`, `research`, `ingest`, `lint` |
+| `work` | `plugins/work/` | `scope-work`, `plan-work`, `start-work`, `verify-work`, `finish-work` |
+| `consider` | `plugins/consider/` | 16 mental models + meta |
+
+Each plugin's skills live at `plugins/<plugin>/skills/<name>/SKILL.md`.
+Python package: `plugins/wiki/src/wiki/` (editable install).
+Shared scripts: `plugins/wiki/scripts/`.
+
+## Preferences
+
 - **Directness:** Be direct. State problems and disagreements plainly without hedging or softening.
 - **Verbosity:** Keep responses concise. Skip preamble and unnecessary elaboration.
 - **Depth:** Explain the reasoning and principles behind recommendations. Help me learn, not just execute.
-<!-- wiki:end -->
 
 ## Working Agreements
 
