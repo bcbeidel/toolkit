@@ -1,6 +1,6 @@
 ---
 name: Audit Rule Dimensions
-description: Evaluation criteria for auditing a Claude Code `.claude/rules/` library — Tier-1 deterministic format checks, Tier-2 two-dimension semantic rubric, and Tier-3 cross-rule conflict detection.
+description: Evaluation criteria for auditing a Claude Code `.claude/rules/` library — Tier-1 deterministic format checks, Tier-2 eight-dimension semantic rubric mirroring the authoring principles, and Tier-3 cross-rule conflict detection.
 ---
 
 # Audit Rule Dimensions
@@ -11,22 +11,26 @@ then cross-rule conflict detection (separate LLM pass over rule pairs that
 could co-fire).
 
 Handle deterministic checks (file location, glob syntax, file size) with
-code-style grep/read — faster, cheaper, and more reliable than asking the
-LLM to parse them.
+code — faster, cheaper, and more reliable than asking the LLM to parse them.
+
+The Tier-2 rubric mirrors the authoring principles in
+[rules-best-practices.md](../../../_shared/references/rules-best-practices.md).
+Each dimension cites its source principle. When a principle changes, the
+dimension follows.
 
 ## Table of Contents
 
 - [Category Tiers](#category-tiers)
 - [Tier 1: Deterministic Format Checks](#tier-1-deterministic-format-checks)
 - [Tier 2: Semantic Dimensions (One LLM Call per Rule)](#tier-2-semantic-dimensions-one-llm-call-per-rule)
-  - [Always-on dimensions (every rule)](#always-on-dimensions-every-rule)
-    - [Dimension 1: Specificity](#dimension-1-specificity)
-    - [Dimension 2: Single Concern](#dimension-2-single-concern)
-    - [Dimension 3: Staleness](#dimension-3-staleness)
-  - [Trigger-gated dimensions (structured-Intent rules only)](#trigger-gated-dimensions-structured-intent-rules-only)
-    - [Dimension 4: Intent Completeness](#dimension-4-intent-completeness)
-    - [Dimension 5: Example Pair Quality](#dimension-5-example-pair-quality)
-    - [Dimension 6: Default-Closed Declaration](#dimension-6-default-closed-declaration)
+  - [Dimension 1: Framing](#dimension-1-framing)
+  - [Dimension 2: Specificity](#dimension-2-specificity)
+  - [Dimension 3: Single Concern](#dimension-3-single-concern)
+  - [Dimension 4: Why Adequacy](#dimension-4-why-adequacy)
+  - [Dimension 5: Scope Tightness](#dimension-5-scope-tightness)
+  - [Dimension 6: Staleness](#dimension-6-staleness)
+  - [Dimension 7: Judgment-Not-Linter](#dimension-7-judgment-not-linter)
+  - [Dimension 8: Example Realism](#dimension-8-example-realism)
 - [Evaluation Prompt Template](#evaluation-prompt-template)
 - [Tier 3: Cross-Rule Conflict Detection](#tier-3-cross-rule-conflict-detection)
 - [Output Format](#output-format)
@@ -41,8 +45,8 @@ findings from house-style guidance.
 | Tier | Meaning |
 |------|---------|
 | **canonical** | Enforces a documented Anthropic rule for `.claude/rules/` (location, extension, `paths:` field) |
-| **research-grounded** | Toolkit-opinion check whose design is supported by published research (cited in `.research/rule-best-practices.md`) |
-| **toolkit-opinion** | Recommended by this toolkit; no upstream spec |
+| **principle** | Mirrors a principle from `rules-best-practices.md` |
+| **research-grounded** | Toolkit-opinion check whose design is supported by published research |
 
 The tier appears in parentheses after each dimension heading.
 
@@ -55,101 +59,196 @@ immediately. Rules with FAIL findings are excluded from Tier 2.
 
 | Check | Category | Condition | Severity |
 |-------|----------|-----------|----------|
-| Location | canonical | File is not under `.claude/rules/` or `~/.claude/rules/` (Claude Code does not load rules from other paths) | fail |
-| Extension | canonical | File extension is not `.md` (e.g., `.rule.md`, `.mdx`, `.markdown`) | fail |
-| `paths:` glob validity | canonical-mirror | `paths:` is present but a glob has unmatched brackets, invalid wildcards, or empty pattern. Mirrors check-skill's `paths` validity check. | fail |
-| File size | research-grounded | File exceeds 200 non-blank lines (Anthropic's CLAUDE.md guidance applies analogously — larger rules consume context and reduce adherence) | warn |
-| Frontmatter shape | toolkit-opinion | Frontmatter contains top-level keys other than `paths:` — Anthropic documents only `paths:`; unknown keys are inert at best | info |
+| Location | canonical | File is not under `.claude/rules/` or `~/.claude/rules/` | fail |
+| Extension | canonical | File extension is not `.md` (e.g., `.rule.md`, `.mdx`) | fail |
+| `paths:` glob validity | canonical | `paths:` is present but a glob has unmatched brackets, invalid wildcards, or empty pattern | fail |
+| File size (warn) | principle — *Prefer short* | File exceeds 200 non-blank lines | warn |
+| File size (fail) | principle — *Prefer short* | File exceeds 500 non-blank lines | fail |
+| Frontmatter shape | canonical | Frontmatter contains top-level keys other than `paths:` | info |
+| Secrets Safety | principle — *Safety / No secrets* | Rule body matches a committed-secret pattern (see below) | fail |
+| Prose pre-check (Hedges) | principle — *Direct, definite voice* / *Specific enough to be falsifiable* | Body (outside code blocks) contains hedging language: `prefer`, `generally`, `usually`, `consider`, `where appropriate`, `as appropriate`, `where it makes sense` | warn |
+| Prose pre-check (Prohibition opener) | principle — *Frame in the positive* | Rule statement begins with `Don't` / `Never` / `Avoid` (heuristic — legitimate exceptions exist) | warn |
+| Prose pre-check (Synthetic placeholder) | principle — *Domain-specific examples over synthetic placeholders* | Code block contains `foo`+`bar` pair, `myFunction`/`myClass`/etc., `Widget`/`SomeClass`, `placeholder`, or `example_*` identifiers | warn |
+| Shape hints (informational) | — | Scan for keywords (`compliant`, `non-compliant`, `violation`, `exception`, `failure`, fenced code blocks); no finding. The hit set is appended to the Tier-2 prompt as context so the evaluator weighs Why Adequacy and Example Realism more closely when present | none |
 
 ### Notes
 
-- **Location check:** the project's `.claude/rules/` and the user's
-  `~/.claude/rules/` are the only canonical locations. Files at `docs/rules/`,
-  project root, or other paths are not picked up by Claude Code.
+- **Location check:** `.claude/rules/` and `~/.claude/rules/` are the
+  only canonical locations. Files at `docs/rules/`, project root, or
+  other paths are not picked up by Claude Code.
 - **Glob validity:** parse each glob in `paths:` with the same logic
-  check-skill uses for `paths:` on skills — both fields share the
-  same Anthropic semantics.
-- **Size warning:** the 200-line threshold mirrors Anthropic's CLAUDE.md
-  guidance. Rules above this should be split into topic files.
+  check-skill uses for `paths:` — both fields share Anthropic semantics.
+- **Size thresholds:** 200 lines follows the "prefer short" principle
+  as a WARN; 500 lines is a hard FAIL — at that length the file is a
+  document, not a rule, and belongs elsewhere (CLAUDE.md, a context
+  doc, or split into multiple rules).
+- **Secrets Safety patterns (FAIL on any match):**
+  - AWS access keys: `AKIA[0-9A-Z]{16}`
+  - GitHub personal access tokens: `ghp_[A-Za-z0-9]{36}`
+  - GitHub fine-grained PATs: `github_pat_[A-Za-z0-9_]{82}`
+  - OpenAI API keys: `sk-[A-Za-z0-9]{48}`
+  - Anthropic API keys: `sk-ant-[A-Za-z0-9\-_]{80,}`
+  - Stripe live keys: `sk_live_[A-Za-z0-9]{24}`
+  - Generic high-entropy strings assigned to variables matching
+    `(password|secret|token|api_key|access_key|private_key)`
+    followed by `=`/`:` and a non-empty quoted string
+  Rule files are committed config — secrets in them inherit the same
+  exposure as any other committed file. Any match is FAIL, not WARN.
+- **Shape hints:** the keyword sniff is *not* a trigger gate. All eight
+  Tier-2 dimensions run on every rule. Hints are context for the
+  evaluator, not dimension filters.
 
 ---
 
 ## Tier 2: Semantic Dimensions (One LLM Call per Rule)
 
-Present every applicable dimension as a locked rubric in a single call
-per rule. Include the full rule file verbatim — never summarize.
+Present all eight dimensions as a locked rubric in a single call per
+rule. Include the full rule file verbatim — never summarize.
 
 **Per-dimension calls are an anti-pattern.** Per-criterion separate calls
 score 11.5 points lower on average (Hong et al., 2026, RULERS). Present
-all applicable dimensions simultaneously; score each independently
-within the same call.
+all dimensions simultaneously; score each independently within the same
+call.
 
-For each dimension, produce: **verdict** (WARN or PASS), **evidence**
-(specific text from the rule that triggered the verdict), and
-**recommendation** (what to change). Default-closed: when evidence is
-borderline, surface as WARN, not PASS.
+For each dimension, produce: **verdict** (WARN, PASS, or N/A),
+**evidence** (specific text from the rule that triggered the verdict),
+and **recommendation** (what to change). Default-closed: when evidence
+is borderline, surface as WARN, not PASS. Default-closed is evaluator
+policy — the rule itself doesn't declare it.
 
-### Always-on dimensions (every rule)
+Dimensions that don't apply to the rule (e.g., Example Realism on a
+rule with no examples) return PASS silently with verdict "N/A".
 
-Apply Dimensions 1–3 to every rule. Anthropic-spec compliance plus
-single-topic discipline plus drift detection apply regardless of body
-shape.
+---
 
-#### Dimension 1: Specificity
+### Dimension 1: Framing
 
-*(canonical — Anthropic's "Write effective instructions" guidance: "Use 2-space indentation" passes; "Format code properly" fails)*
+*(principle — [Frame in the positive](../../../_shared/references/rules-best-practices.md))*
 
-**What it checks:** Whether the rule's directives are concrete enough
-that a developer (or Claude) can verify compliance unambiguously.
+**What it checks:** Whether the rule states what to do, not only what
+to avoid. Negations are linguistically fragile — a dropped or
+misattributed `not`/`don't`/`never` inverts the rule. Positive framings
+also name a target; pure prohibitions leave the target implicit.
 
 **Fail signals (→ WARN):**
-- Anchor-free terms used as the directive: "good", "clean", "clear",
+- Rule statement is only a prohibition ("Don't use global state", "Never commit secrets") with no positive counterpart stated
+- Multiple negations stacked in a single sentence ("Don't not return …")
+- Hedged prohibitions ("Try not to …", "Avoid when possible") — vague *and* negative
+
+**Pass signals:**
+- Rule statement names a positive action ("Thread dependencies through constructors")
+- Prohibition is paired with the positive alternative ("Use X; never use Y")
+- Negation is load-bearing and unavoidable (e.g., "Never log PII") — accepted when no clean positive counterpart exists
+
+**Canonical Repair:** See `repair-playbook.md` → Dimension 1.
+
+---
+
+### Dimension 2: Specificity
+
+*(principle — [Specific enough to be falsifiable](../../../_shared/references/rules-best-practices.md) + [Direct, definite voice](../../../_shared/references/rules-best-practices.md); canonical — Anthropic's "Use 2-space indentation" vs. "Format code properly" example)*
+
+**What it checks:** Whether the rule's directives are concrete enough
+that a reviewer (or Claude) can verify compliance unambiguously.
+
+**Fail signals (→ WARN):**
+- Anchor-free terms as the directive: "good", "clean", "clear",
   "appropriate", "well-structured", "properly", "nice", "consistent"
   without a behavioral definition
 - Directives that defer the decision back to the reader ("use your
   judgment", "as appropriate") without a fallback rule
+- Hedged phrasing: "prefer", "generally", "usually", "consider"
 
 **Pass signals:**
-- Directives are verifiable: a numeric threshold, a named tool to run,
-  a specific file path or command, a quoted code pattern
-- Anchor-free terms appear only when paired with a verifiable
-  definition ("clean code: no functions over 50 lines, no nested
-  ternaries")
+- Verifiable directive: numeric threshold, named tool, specific file
+  path or command, quoted code pattern
+- Anchor-free terms paired with a verifiable definition ("clean code:
+  no functions over 50 lines, no nested ternaries")
 
-**Canonical Repair:** Replace each anchor-free term with a verifiable
-directive. Examples:
-- "Format code properly" → "Use 2-space indentation; run `prettier --check`"
-- "Test your changes" → "Run `npm test` before committing"
-- "Keep files organized" → "API handlers live in `src/api/handlers/`"
+**Canonical Repair:** See `repair-playbook.md` → Dimension 2.
 
-#### Dimension 2: Single Concern
+---
 
-*(toolkit-opinion — one topic per file; mirrors Anthropic's "split larger CLAUDE.md into topic-specific rules")*
+### Dimension 3: Single Concern
+
+*(principle — [One claim per file](../../../_shared/references/rules-best-practices.md))*
 
 **What it checks:** Whether the rule covers a single topic. A file
 that mixes unrelated conventions is two rules, not one.
 
 **Fail signals (→ WARN):**
 - Multiple top-level `##` sections covering distinct topics that
-  wouldn't naturally co-evolve (e.g., "API conventions" and
-  "Test conventions" in the same file)
+  wouldn't naturally co-evolve (e.g., "API conventions" and "Test
+  conventions" in the same file)
 - Filename describes one topic but body covers another in addition
 - Two unrelated `paths:` patterns where each `##` section applies to
   only one (split signal)
 
 **Pass signals:**
-- All `##` sections relate to the topic named in the filename
-- `paths:` globs all target files where every directive in the body
-  applies
+- All sections relate to the topic named in the filename
+- `paths:` globs target files where every directive in the body applies
 
-**Canonical Repair:** Split into separate topic files. Move each
-unrelated section to its own `<topic>.md` under `.claude/rules/`.
-Update `paths:` if the original was a union covering multiple file
-types — each split file gets the subset that actually applies.
+**Canonical Repair:** See `repair-playbook.md` → Dimension 3.
 
-#### Dimension 3: Staleness
+---
 
-*(toolkit-opinion — drift detection; mirrors check-skill's time-sensitive-content guidance)*
+### Dimension 4: Why Adequacy
+
+*(principle — [Include the *why*](../../../_shared/references/rules-best-practices.md) — for judgment-based rules, name failure cost + exception)*
+
+**What it checks:** Whether the rule includes reasoning, and for
+judgment-based rules, whether the why names the failure cost (what
+breaks, who bears it) and at least one legitimate exception.
+
+Judgment-based signals from Tier-1 shape hints: presence of
+compliant/non-compliant examples, `violation`/`exception`/`failure`
+vocabulary, or multi-paragraph why prose.
+
+**Fail signals (→ WARN):**
+- No why/reasoning at all (no `**Why:**` line or `## Why` section, no
+  rationale in prose)
+- Judgment-based rule's why names the violation only ("X is bad") with
+  no specific failure cost
+- Judgment-based rule has no exception policy — rules that admit no
+  exception get disabled wholesale when the edge case arrives
+
+**Pass signals:**
+- Simple directive rules ("Use snake_case for table names") — a brief
+  inline why is enough
+- Judgment-based rules name what specifically breaks and who bears it
+- At least one named exception case present
+
+**Canonical Repair:** See `repair-playbook.md` → Dimension 4.
+
+---
+
+### Dimension 5: Scope Tightness
+
+*(principle — [Scope tightly with `paths:`](../../../_shared/references/rules-best-practices.md))*
+
+**What it checks:** Whether the rule's `paths:` scope matches the
+breadth of its actual content. An unscoped rule is a context tax on
+every unrelated task; a rule whose content names a specific directory
+or file type but omits `paths:` wastes budget.
+
+**Fail signals (→ WARN):**
+- Rule is always-on (no `paths:`) but content names a specific
+  directory, file extension, or module (e.g., rule text mentions
+  "React components" or "API handlers" without a corresponding `paths:`)
+- `paths:` glob is wider than the content warrants (e.g., `paths: "**/*"`
+  for a rule that applies only to TypeScript files)
+
+**Pass signals:**
+- Content is project-wide and `paths:` is absent (justified always-on)
+- `paths:` globs target exactly the files the rule applies to, no broader
+
+**Canonical Repair:** See `repair-playbook.md` → Dimension 5.
+
+---
+
+### Dimension 6: Staleness
+
+*(principle — [Describe the codebase as it is](../../../_shared/references/rules-best-practices.md))*
 
 **What it checks:** Whether the rule references file paths, commands,
 or code patterns that no longer exist in the codebase.
@@ -160,101 +259,70 @@ names. Then check the codebase: do those paths exist? Do those
 commands and imports still appear?
 
 **Fail signals (→ WARN):**
-- `paths:` glob references a directory that does not exist in the project
-- Code-block examples reference functions, imports, or modules not found in the codebase
-- Prose references a dependency or framework not in the project's manifest
-- Rule mentions a deprecated convention that has since been replaced
+- `paths:` glob references a directory that does not exist
+- Code-block examples reference functions, imports, or modules not
+  found in the codebase
+- Prose references a dependency or framework not in the project's
+  manifest
+- Rule mentions a deprecated convention that has been replaced
 
 **Pass signals:**
 - All referenced paths exist
-- Commands referenced are still in use (e.g., `npm test` is in `package.json`)
+- Commands referenced are still in use
 - Examples match current code patterns
 
-**Canonical Repair (decision tree, in preference order):**
-1. **Update** — convention still applies; the referenced code has changed. Replace examples with current code, update file paths.
-2. **Delete** — the convention is retired (architectural pattern abandoned, framework replaced). Remove the rule file and document the reason in the commit message.
-
-Anthropic doesn't define an `archived:` status for rules; deletion is the canonical retirement.
+**Canonical Repair:** See `repair-playbook.md` → Dimension 6.
 
 ---
 
-### Trigger-gated dimensions (structured-Intent rules only)
+### Dimension 7: Judgment-Not-Linter
 
-Apply Dimensions 4–6 only when the rule opts into the toolkit-opinion
-structured-Intent shape (see `references/rule-format-guide.md` →
-*Toolkit Recommendation*). The trigger:
+*(principle — [Reserve rules for judgment](../../../_shared/references/rules-best-practices.md))*
 
-- Body contains `## Compliant` AND `## Non-compliant` (or
-  `## Non-Compliant`) sections, OR
-- Body contains `## Why` (or `## Intent`) section
-
-Rules that don't opt in (directive-pattern rules — bullet lists,
-single-line style rules) skip these dimensions entirely. Flagging a
-plain Anthropic-shape rule on Intent completeness or example-pair
-quality would penalize it for not adopting toolkit opinion, which is
-not the rubric's intent.
-
-#### Dimension 4: Intent Completeness
-
-*(toolkit-opinion — four-component Why prevents enforcement-without-education failure mode)*
-
-**What it checks:** Whether the `## Why` (or `## Intent`) section
-contains the four toolkit-opinion components.
-
-**The four components:**
-1. **Violation** — what pattern does this rule catch?
-2. **Failure cost** *(load-bearing)* — what specifically goes wrong, and who bears it?
-3. **Principle** — what underlying value does this enforce?
-4. **Exception policy** *(load-bearing)* — when is disabling this rule legitimate? Name at least one case.
+**What it checks:** Whether the rule restates a check that a formatter,
+linter, or type-checker already enforces. Deterministic checks dilute
+the authority of rules that genuinely need judgment.
 
 **Fail signals (→ WARN):**
-- Why section names the violation only ("Avoid X") with no failure cost
-- Why section uses hedging language ("might", "could") where failure cost should be categorical
-- No exception policy ("Exception: …") present
-- Why section is fewer than 2 sentences — insufficient to carry all four components
+- Rule enforces whitespace/indentation/quote-style (formatter's job)
+- Rule enforces import sorting or unused-import removal (linter/tooling
+  job)
+- Rule enforces type annotations that a type-checker would catch
+- Rule restates a conventional-commits / commitlint / prettier rule
 
 **Pass signals:**
-- Why explicitly states what goes wrong and who bears the cost
-- At least one named exception case ("Exception: …")
-- Principle named (type safety, security, maintainability, etc.)
+- Rule encodes a semantic convention no tool can express ("staging
+  models only cast, rename, dedupe")
+- Rule captures a judgment call a reviewer would make that a linter
+  wouldn't ("error messages name the failing operation and the input
+  that caused it")
 
-**Canonical Repair:** See `repair-playbook.md` → Dimension 4.
+**Canonical Repair:** See `repair-playbook.md` → Dimension 7.
 
-#### Dimension 5: Example Pair Quality
+---
 
-*(research-grounded — evidence-anchored rubrics deliver +0.17 QWK over inference-only)*
+### Dimension 8: Example Realism
 
-**What it checks:** Whether the rule's example pair anchors evaluation
-to concrete, real cases.
+*(principle — [Domain-specific examples over synthetic placeholders](../../../_shared/references/rules-best-practices.md); research-grounded — evidence-anchored rubrics deliver +0.17 QWK over inference-only)*
+
+**What it checks:** Whether example code (when present) uses real
+identifiers from the codebase rather than synthetic placeholders.
+
+**Scope:** Applies only when the rule contains at least one code block.
+Rules with no examples return N/A.
 
 **Fail signals (→ WARN):**
-- Examples use synthetic identifiers (`foo`, `bar`, `myFunction`) without file path comments
-- Compliant example appears before non-compliant (listing exclusions first improves accuracy)
-- Multiple code snippets in a single section (encodes conflicting behavioral signals)
-- One section is missing entirely (compliant present without non-compliant or vice versa)
+- Examples use generic placeholders (`foo`, `bar`, `baz`,
+  `myFunction`, `Thing`, `Widget`) as primary identifiers
+- Code looks synthesized rather than sourced (no domain context,
+  generic variable names, no recognizable module boundaries)
 
 **Pass signals:**
-- Both sections present; non-compliant first
-- Each example uses real codebase code with `// path/to/file.ext` comment
-- Each section has exactly one canonical example
+- Identifiers match the domain vocabulary of the codebase (table names,
+  function signatures, module paths that a reader would recognize)
+- Optional but strong signal: file path comment showing provenance
 
-**Canonical Repair:** See `repair-playbook.md` → Dimension 5.
-
-#### Dimension 6: Default-Closed Declaration
-
-*(toolkit-opinion — keeps borderline cases visible)*
-
-**What it checks:** Whether the Why section declares how borderline /
-uncertain cases should resolve.
-
-**Fail signals (→ WARN):**
-- No "When evidence is borderline…" line (or equivalent default-closed declaration)
-- Declaration is reversed ("when borderline, prefer PASS over WARN")
-
-**Pass signals:**
-- Why contains: "When evidence is borderline, prefer WARN over PASS" (or close paraphrase)
-
-**Canonical Repair:** Append to Why section: `"When evidence is borderline, prefer WARN over PASS."`
+**Canonical Repair:** See `repair-playbook.md` → Dimension 8.
 
 ---
 
@@ -265,72 +333,85 @@ anchor examples come from the rubric above — do not generate them
 per-audit.
 
 ```
-You are auditing a Claude Code rule file. Evaluate every applicable
-dimension below in a single response.
+You are auditing a Claude Code rule file. Evaluate all eight dimensions
+below in a single response.
 
-Dimensions 1–3 always apply. Dimensions 4–6 apply only when the rule
-opts into the toolkit-opinion structured-Intent shape — body contains
-`## Compliant` AND `## Non-compliant` sections, OR a `## Why` (or
-`## Intent`) section. If the rule does not opt in, output "N/A — rule
-does not opt into structured-Intent shape" for Dimensions 4–6.
+Tier-1 shape hints for this rule (use as context, not as dimension
+gating): <keywords found, e.g., "compliant, non-compliant, exception,
+code blocks present">
 
-For each applicable dimension:
+For each dimension:
 1. Quote the specific text from the rule that is most relevant (evidence)
 2. Explain your reasoning
-3. State your verdict: WARN or PASS
+3. State your verdict: WARN, PASS, or N/A
 4. Give a specific Recommendation if WARN (name the exact change)
 
 When evidence is borderline, surface as WARN, not PASS.
 
 ---
 
-## Dimension 1: Specificity (always-on)
+## Dimension 1: Framing
+Criterion: Does the rule state what to do (positive framing), not only
+what to avoid? Negations are fragile — a dropped `not` inverts the rule.
+Pure prohibitions without a positive counterpart earn a WARN.
+
+PASS anchor: "Thread dependencies through constructors."
+FAIL anchor: "Don't use global state." (no positive counterpart)
+
+## Dimension 2: Specificity
 Criterion: Are the rule's directives verifiable? A directive is
 verifiable when a reader can check compliance without subjective
-judgment — a numeric threshold, a named command, a quoted code
-pattern, or a specific file path.
+judgment.
 
-PASS anchor: "Use 2-space indentation; run `prettier --check` before committing"
-FAIL anchor: "Format code properly and keep files organized"
+PASS anchor: "Use 2-space indentation; run `prettier --check` before committing."
+FAIL anchor: "Format code properly and keep files organized."
 
-## Dimension 2: Single Concern (always-on)
-Criterion: Does the rule cover one topic? A rule covers one topic
-when every `##` section in the body advances the same convention,
-and (if `paths:` is present) every glob targets files where every
+## Dimension 3: Single Concern
+Criterion: Does the rule cover one topic? Every `##` section advances
+the same convention; every `paths:` glob targets files where every
 directive applies.
 
-PASS anchor: filename `api-handlers.md`, all sections about API handler conventions, `paths: "src/api/**/*.ts"`
-FAIL anchor: filename `conventions.md`, sections cover API design AND test naming AND deployment process
+PASS anchor: filename `api-handlers.md`, all sections about handlers, `paths: "src/api/**/*.ts"`
+FAIL anchor: filename `conventions.md`, sections cover API design AND test naming AND deployment
 
-## Dimension 3: Staleness (always-on)
-Criterion: Do `paths:` globs and example code reference paths,
-commands, and patterns that exist in the current codebase?
+## Dimension 4: Why Adequacy
+Criterion: Does the rule include reasoning? For judgment-based rules
+(signaled by compliant/non-compliant examples or failure/exception
+vocabulary), does the why name failure cost and at least one exception?
 
-PASS anchor: `paths: "src/api/**/*.ts"` and `src/api/` exists; example code uses imports present in package.json
-FAIL anchor: `paths: "app/legacy/**"` references a directory that no longer exists; example uses a deprecated import
+PASS anchor: "X causes [specific failure] in [specific context]. Exception: [named case]."
+FAIL anchor: "Avoid X. It's not great." — violation only, no failure cost, no exception
 
-## Dimension 4: Intent Completeness (gated)
-Criterion: Does the `## Why` (or `## Intent`) section contain all four
-toolkit-opinion components: violation, failure cost, principle,
-exception policy?
+## Dimension 5: Scope Tightness
+Criterion: Does `paths:` match the breadth of the rule's content? An
+unscoped rule that names a specific directory or file type, or a
+`paths:` glob wider than the content warrants, earns a WARN.
 
-PASS anchor: "X causes [specific failure] in [specific context] (failure cost). This enforces [principle]. Exception: [named case]."
-FAIL anchor: "Avoid X. It's not great." — names violation only
+PASS anchor: always-on rule for project-wide standard; or `paths: "src/api/**/*.ts"` matching a rule about API handlers
+FAIL anchor: unscoped rule whose body begins "For React components…"; or `paths: "**/*"` for a TypeScript-only rule
 
-## Dimension 5: Example Pair Quality (gated)
-Criterion: Does the rule include both `## Compliant` and `## Non-compliant`
-sections (non-compliant first), each with one canonical real-code
-example with a file path comment?
+## Dimension 6: Staleness
+Criterion: Do `paths:` globs and example code reference paths, commands,
+and patterns that exist in the current codebase?
 
-PASS anchor: `## Non-compliant` first, single example with `// src/api/handlers/users.ts` comment, real domain identifiers
-FAIL anchor: examples use `foo`/`bar`, no file path comment; three snippets in one section; compliant before non-compliant
+PASS anchor: `paths: "src/api/**/*.ts"` and `src/api/` exists; example uses imports present in package.json
+FAIL anchor: `paths: "app/legacy/**"` references a directory that no longer exists
 
-## Dimension 6: Default-Closed Declaration (gated)
-Criterion: Does the Why section contain "When evidence is borderline,
-prefer WARN over PASS" (or a close paraphrase)?
+## Dimension 7: Judgment-Not-Linter
+Criterion: Does the rule encode a semantic convention a linter or
+formatter couldn't catch? Rules that restate tool-enforceable checks
+earn a WARN.
 
-PASS anchor: "When evidence is borderline, prefer WARN over PASS."
-FAIL anchor: no borderline-handling line; or "when borderline, prefer PASS"
+PASS anchor: "Staging models only cast, rename, dedupe" (semantic — no tool catches this)
+FAIL anchor: "Use 2-space indentation" when prettier is in the repo (formatter catches this)
+
+## Dimension 8: Example Realism
+Criterion: When examples are present, do they use domain-specific
+identifiers rather than synthetic placeholders? Returns N/A when no
+examples are present.
+
+PASS anchor: example with real codebase identifiers (e.g., `getUser`, `order_id`, `src/api/handlers/users.ts`)
+FAIL anchor: example uses `foo`/`bar`/`Widget` placeholders
 
 ---
 
@@ -338,7 +419,7 @@ FAIL anchor: no borderline-handling line; or "when borderline, prefer PASS"
 
 ---
 
-Output format (one block per applicable dimension):
+Output format (one block per dimension):
 ## Dimension N: [Name]
 Evidence: "[quoted text from rule]"
 Reasoning: [your reasoning]
@@ -349,6 +430,8 @@ Recommendation: [specific change if WARN, else "None"]
 ---
 
 ## Tier 3: Cross-Rule Conflict Detection
+
+*(principle — [Deconflicted rules over overlapping ones](../../../_shared/references/rules-best-practices.md))*
 
 Run after per-rule semantic evaluation. Compare rule pairs that could
 co-fire.
@@ -393,9 +476,10 @@ WARN  .claude/rules/testing.md — File length 287 lines exceeds 200-line guidan
 
 Sort order: FAIL findings first, WARN findings second; within each
 severity, Tier-1 deterministic findings first, then Tier-2 dimensions
-in numerical order (Specificity → Single Concern → Staleness → Intent
-Completeness → Example Pair Quality → Default-Closed Declaration), then
-Tier-3 conflicts; ties break alphabetically by file path.
+in numerical order (Framing → Specificity → Single Concern → Why
+Adequacy → Scope Tightness → Staleness → Judgment-Not-Linter → Example
+Realism), then Tier-3 conflicts; ties break alphabetically by file
+path.
 
 Final summary line: `N rules audited, M findings (X fail, Y warn)` or
 `N rules audited — no findings`.

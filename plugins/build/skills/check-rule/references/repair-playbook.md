@@ -1,28 +1,35 @@
 ---
 name: Rule Repair Playbook (check-rule)
-description: Per-failure-mode repair strategies for check-rule findings against `.claude/rules/` files — canonical fixes for Tier-1 deterministic findings, Tier-2 specificity / single-concern findings, and Tier-3 conflicts.
+description: Per-failure-mode repair strategies for check-rule findings against `.claude/rules/` files — canonical fixes for Tier-1 deterministic findings, Tier-2 semantic dimensions, and Tier-3 conflicts.
 ---
 
 # Rule Repair Playbook
 
-Every check-rule finding maps to a canonical repair. Before applying
-any repair, state the original intent explicitly: **"This rule
+Every FAIL, WARN, and INFO finding maps to a canonical repair. Before
+applying any repair, state the original intent explicitly: **"This rule
 guides Claude to [original directive]."** Verify the proposed repair
 preserves that guidance. If the repair would change what Claude is
 told to do (not just how the directive is phrased), flag it as
 requiring human review before applying.
 
+**HINT output is not a finding.** Lines emitted by `emit_shape_hints.sh`
+are feed-forward context for the Tier-2 LLM evaluator (they help the
+evaluator weigh Why Adequacy and Example Realism). No repair is needed
+for HINTs — they are informational only.
+
 ## Table of Contents
 
 - [Tier 1: Deterministic Format Repairs](#tier-1-deterministic-format-repairs)
-- [Tier 2 — Always-on Dimensions](#tier-2--always-on-dimensions)
-  - [Dimension 1: Specificity](#dimension-1-specificity)
-  - [Dimension 2: Single Concern](#dimension-2-single-concern)
-  - [Dimension 3: Staleness](#dimension-3-staleness)
-- [Tier 2 — Trigger-gated Dimensions (structured-Intent rules)](#tier-2--trigger-gated-dimensions-structured-intent-rules)
-  - [Dimension 4: Intent Completeness](#dimension-4-intent-completeness)
-  - [Dimension 5: Example Pair Quality](#dimension-5-example-pair-quality)
-  - [Dimension 6: Default-Closed Declaration](#dimension-6-default-closed-declaration)
+  - [Secret Detected in Rule Body](#secret-detected-in-rule-body)
+- [Tier 2: Semantic Dimensions](#tier-2-semantic-dimensions)
+  - [Dimension 1: Framing](#dimension-1-framing)
+  - [Dimension 2: Specificity](#dimension-2-specificity)
+  - [Dimension 3: Single Concern](#dimension-3-single-concern)
+  - [Dimension 4: Why Adequacy](#dimension-4-why-adequacy)
+  - [Dimension 5: Scope Tightness](#dimension-5-scope-tightness)
+  - [Dimension 6: Staleness](#dimension-6-staleness)
+  - [Dimension 7: Judgment-Not-Linter](#dimension-7-judgment-not-linter)
+  - [Dimension 8: Example Realism](#dimension-8-example-realism)
 - [Tier 3: Conflicts](#tier-3-conflicts)
 
 ---
@@ -45,25 +52,91 @@ requiring human review before applying.
 **CHANGE:** Rename to `.md`
 **FROM:** `.claude/rules/api-handlers.rule.md`
 **TO:** `.claude/rules/api-handlers.md`
-**REASON:** Anthropic's discovery scans for `.md` files only. Other extensions are skipped.
+**REASON:** Claude Code's rule discovery scans for `.md` files only. Other extensions are skipped.
 
 ### Malformed `paths:` Glob
 
-**Signal:** `paths:` is present but a glob has unmatched brackets, invalid wildcards, or empty pattern
+Covers the four subtypes emitted by `check_paths_glob.sh`. Any of them
+causes Claude Code to either skip loading the rule or load it for the
+wrong file set.
 
-**CHANGE:** Repair the glob syntax
-**FROM:** `paths: "src/api/**/*.{ts"` (unclosed brace)
+#### Unclosed Brace
+
+**Signal:** a `{...}` group in a glob is unmatched (more `{` than `}` or vice versa)
+
+**CHANGE:** Close the brace
+**FROM:** `paths: "src/api/**/*.{ts"`
 **TO:** `paths: "src/api/**/*.{ts,tsx}"`
-**REASON:** Malformed globs silently fail to match — the rule is in the file but Claude never loads it for any real file path.
+**REASON:** Malformed braces cause the glob to silently fail to match. The rule never loads for any real file path.
 
-### File Too Large
+#### Unclosed Bracket
 
-**Signal:** File exceeds 200 non-blank lines
+**Signal:** a `[...]` character class in a glob is unmatched
+
+**CHANGE:** Close the bracket (intended character class)
+**FROM:** `paths: "src/**/*.[ch"`
+**TO:** `paths: "src/**/*.[ch]"`
+**REASON:** Unmatched brackets are a parse error in minimatch-style globs. The rule fails to load.
+
+#### Empty Pattern
+
+**Signal:** a `paths:` entry is empty (`""`), whitespace-only, or missing after a `-` in block-list form
+
+**CHANGE:** Remove the empty entry or replace with a real glob
+**FROM:**
+```yaml
+paths:
+  - "src/api/**/*.ts"
+  - ""
+```
+**TO:**
+```yaml
+paths:
+  - "src/api/**/*.ts"
+```
+**REASON:** An empty glob matches everything (or nothing, depending on parser), defeating path scoping. Always replace or remove.
+
+#### Control Character in Pattern
+
+**Signal:** a glob contains non-printable control characters (ASCII 0x00–0x1F, excluding tab and newline)
+
+**CHANGE:** Remove the control character
+**FROM:** a glob containing a literal `\x07` (bell) or other cntrl character, typically introduced by a copy-paste error
+**TO:** the same glob with the cntrl character deleted
+**REASON:** Control characters are never valid in file paths and cause silent matching failures. Likely indicates corrupted input; re-type the pattern cleanly.
+
+### File Too Large (WARN at 200)
+
+**Signal:** File exceeds 200 non-blank lines but is under 500
 
 **CHANGE:** Split into topic-specific files
 **FROM:** `.claude/rules/conventions.md` (350 lines covering API + tests + deploy)
 **TO:** `.claude/rules/api-conventions.md` + `.claude/rules/test-conventions.md` + `.claude/rules/deploy-conventions.md`
-**REASON:** Anthropic's CLAUDE.md guidance — "longer files consume more context and reduce adherence" — applies to rules. Splitting also improves the on-demand load path for path-scoped rules.
+**REASON:** Larger rules consume context and reduce adherence. Splitting also improves the on-demand load path for path-scoped rules.
+
+### File Too Large (FAIL at 500)
+
+**Signal:** File exceeds 500 non-blank lines
+
+**CHANGE:** Split into rules + move long-form explanation elsewhere
+**FROM:** `.claude/rules/architecture.md` (650 lines — mixes rule text with extended rationale and design history)
+**TO:** `.claude/rules/architecture-layering.md` + `.claude/rules/service-boundaries.md` (rules); move the long-form rationale to `.context/architecture-rationale.md` or a CLAUDE.md section
+**REASON:** At 500+ lines the file is a document, not a rule. Rules should be scannable at the point of application; documents belong in `.context/` or CLAUDE.md where they carry different expectations.
+
+### Secret Detected in Rule Body
+
+**Signal:** Tier-1 secret-pattern scan matched a committed-secret shape (AWS key, GitHub token, API key, or a variable named `password`/`secret`/`token`/`api_key` with a non-empty quoted value)
+
+**CHANGE:** Remove the secret from the rule file; rotate the credential; paraphrase or link to the secret's location instead
+**FROM:**
+```markdown
+Use the staging API key `sk-ant-abc123def456...` when testing.
+```
+**TO:**
+```markdown
+Use the staging API key stored in `$ANTHROPIC_API_KEY_STAGING` (see `.env.staging.example` for the variable name).
+```
+**REASON:** Rule files are committed to git and loaded automatically by Claude. A secret in a rule file has the same exposure as a secret in any committed config — and rotating is mandatory once the secret appears in git history. Reference the secret by env var name or vault path; never include the value.
 
 ### Unknown Frontmatter Key
 
@@ -88,46 +161,87 @@ paths:
 
 # API Conventions
 ```
-**REASON:** Anthropic documents only `paths:` in rule frontmatter. Other keys (`severity:`, `description:`, `name:`, `type:`) are not consumed by Claude Code and add maintenance noise without behavioral effect.
+**REASON:** Claude Code documents only `paths:` in rule frontmatter. Other keys (`severity:`, `description:`, `name:`, `type:`) are not consumed and add maintenance noise without behavioral effect.
 
 ---
 
-## Tier 2 — Always-on Dimensions
+## Tier 2: Semantic Dimensions
 
-### Dimension 1: Specificity
+### Dimension 1: Framing
 
-### Anchor-Free Directive
+#### Prohibition-Only Directive
+
+**Signal:** Rule statement is only a prohibition ("Don't X", "Never Y", "Avoid Z") with no positive counterpart
+
+**CHANGE:** Restate as a positive action, or pair the prohibition with its positive alternative
+**FROM:** "Don't use global state."
+**TO:** "Thread dependencies through constructors." (positive)
+*or* "Thread dependencies through constructors; never reach for module-level globals." (pair)
+**REASON:** Negations are fragile in English — a dropped or misattributed `not`/`don't`/`never` inverts the rule. Positive framings also name the target action; pure prohibitions leave the target implicit.
+
+#### Stacked Negations
+
+**Signal:** Rule contains multiple negations in a single sentence ("Don't not return …", "Never avoid doing X unless Y")
+
+**CHANGE:** Rewrite with at most one negation, or reframe positively
+**FROM:** "Don't forget to not return null from these handlers."
+**TO:** "Return an empty result object, not null, from these handlers."
+**REASON:** Double negatives compound the fragility — each negation is another token that can be lost or misattributed.
+
+#### Hedged Prohibition
+
+**Signal:** Prohibition uses hedging language ("Try not to …", "Avoid when possible", "Generally don't …")
+
+**CHANGE:** Commit to the rule (positive framing) or remove it
+**FROM:** "Try not to use `any` type annotations."
+**TO:** "Annotate function parameters and return types with specific types. Exception: third-party APIs without type definitions may use `any` at the boundary."
+**REASON:** A hedged prohibition doesn't tell Claude what to do and doesn't commit to what to avoid — it produces inconsistent adherence in both directions.
+
+---
+
+### Dimension 2: Specificity
+
+#### Anchor-Free Directive
 
 **Signal:** Directive uses anchor-free terms ("good", "clean", "clear", "appropriate", "well-structured", "properly", "nice", "consistent") without a verifiable definition
 
 **CHANGE:** Replace each anchor-free term with a verifiable directive
-**FROM:** "Format code properly and keep files organized"
+**FROM:** "Format code properly and keep files organized."
 **TO:** "Use 2-space indentation; run `prettier --check` before committing. API handlers live in `src/api/handlers/`."
-**REASON:** Anthropic's example: *"'Use 2-space indentation' instead of 'Format code properly'"*. Anchor-free directives produce uneven adherence because two readers (or two Claude sessions) can interpret them differently.
+**REASON:** Anchor-free directives produce uneven adherence — two readers (or two Claude sessions) interpret them differently.
 
-### Reader-Defers Directive
+#### Reader-Defers Directive
 
 **Signal:** Directive defers the decision back to the reader without a fallback rule ("use your judgment", "as appropriate", "where it makes sense")
 
 **CHANGE:** Either remove the deferred directive (it carries no information) or add the fallback rule
-**FROM:** "Use TypeScript strict mode where it makes sense"
+**FROM:** "Use TypeScript strict mode where it makes sense."
 **TO:** "Use TypeScript strict mode in all files under `src/`. Exception: generated code in `src/codegen/`."
-**REASON:** A directive that doesn't tell Claude what to do isn't a rule. Either commit to the directive or remove it.
+**REASON:** A directive that doesn't tell Claude what to do isn't a rule. Either commit or remove.
+
+#### Hedged Phrasing
+
+**Signal:** Rule uses "prefer", "generally", "usually", "consider" as its primary directive
+
+**CHANGE:** Commit to the directive; move the hedge into a named exception if one exists
+**FROM:** "Generally prefer composition over inheritance."
+**TO:** "Use composition over inheritance. Exception: when extending a framework base class that requires inheritance (e.g., `React.Component` in legacy code)."
+**REASON:** Hedged rules push judgment back onto Claude at every invocation, defeating the point of writing the rule down.
 
 ---
 
-### Dimension 2: Single Concern
+### Dimension 3: Single Concern
 
-### Multiple Topics in One File
+#### Multiple Topics in One File
 
 **Signal:** Multiple top-level `##` sections cover distinct topics that wouldn't naturally co-evolve
 
 **CHANGE:** Split into separate topic files
 **FROM:** `.claude/rules/conventions.md` with sections "API design", "Test naming", "Deployment process"
 **TO:** `.claude/rules/api-design.md` + `.claude/rules/test-naming.md` + `.claude/rules/deployment.md`
-**REASON:** One topic per file. Each rule should answer one question — "how do we do X?" Mixing topics makes path-scoping impossible (each topic might apply to different files) and grows the file beyond the size guidance.
+**REASON:** One claim per file. Each rule should answer one question — "how do we do X?" Mixing topics makes path-scoping impossible (each topic might apply to different files) and grows the file beyond the size guidance.
 
-### Body Doesn't Match Filename
+#### Body Doesn't Match Filename
 
 **Signal:** Filename describes one topic but body covers another in addition
 
@@ -136,7 +250,7 @@ paths:
 **TO:** `api-design.md` (API only) + `commit-messages.md` (or move into `.claude/CLAUDE.md` if it's a project-wide standard)
 **REASON:** Filename is the discovery handle. Future maintainers grep for `commit-messages.md` when looking for commit conventions; they don't expect to find them inside `api-design.md`.
 
-### `paths:` Union Covers Distinct Topics
+#### `paths:` Union Covers Distinct Topics
 
 **Signal:** `paths:` is a union of unrelated patterns where each `##` section applies to only one of them
 
@@ -153,7 +267,79 @@ with separate API-section and test-section bodies
 **TO:** Two files, one with `paths: "src/api/**/*.ts"` and one with `paths: "tests/**/*.test.ts"`
 **REASON:** Path-scoping wastes effort if Claude loads the API section when reading test files (and vice versa). Splitting halves the loaded context and tightens the rule's relevance.
 
-### Dimension 3: Staleness
+---
+
+### Dimension 4: Why Adequacy
+
+#### Missing Why Entirely
+
+**Signal:** Rule has no reasoning — no `**Why:**` line, no `## Why` section, no rationale in prose
+
+**CHANGE:** Add a brief why. For simple directives a single inline line suffices; for judgment-based rules, include failure cost and an exception.
+**FROM:** "Use snake_case for Postgres table names."
+**TO:** "Use snake_case for Postgres table names. **Why:** case-sensitive identifiers in Postgres require quoting; snake_case avoids the quoting trap across ORMs."
+**REASON:** Reasoning lets Claude extend the rule to edge cases and lets maintainers decide whether the rule is still load-bearing.
+
+#### Missing Failure Cost (judgment-based rule)
+
+**Signal:** Judgment-based rule's why names the violation only ("Avoid `console.log`") with no description of what breaks or who bears the cost
+
+**CHANGE:** Add a sentence naming the specific consequence and who bears it
+**FROM:** "Avoid using `console.log` in production code. It creates noise."
+**TO:** "`console.log` in production builds exposes internal state to end users via browser developer tools and adds measurable latency in high-frequency call paths."
+**REASON:** Without failure cost, developers weigh the rule as bureaucratic overhead rather than a real risk. Rules without failure cost have higher disable rates.
+
+#### Missing Exception Policy (judgment-based rule)
+
+**Signal:** Judgment-based rule's why has no `Exception:` line naming a legitimate bypass case
+
+**CHANGE:** Append an `Exception:` line naming at least one legitimate case
+**FROM:** Why section ends without exception language
+**TO:** Append: `"Exception: <name at least one legitimate case — e.g., 'test files', 'scripts in tools/ that are never bundled for production'>."`
+**REASON:** Rules with no named exception appear to admit no flexibility, causing developers to disable them entirely rather than follow them in the 95% case.
+
+---
+
+### Dimension 5: Scope Tightness
+
+#### Unscoped Rule Names a Specific Directory
+
+**Signal:** Rule has no `paths:` but its body begins "For React components…", "In API handlers…", or otherwise names a specific directory/file-type
+
+**CHANGE:** Add `paths:` matching the content's actual reach
+**FROM:**
+```markdown
+<no frontmatter>
+
+# React Component Conventions
+
+Use named exports for components...
+```
+**TO:**
+```markdown
+---
+paths:
+  - "src/components/**/*.tsx"
+---
+
+# React Component Conventions
+
+Use named exports for components...
+```
+**REASON:** An unscoped rule is a context tax on every unrelated task. When the content names a specific scope, encoding that scope in `paths:` makes the rule load only where it applies.
+
+#### `paths:` Glob Too Wide
+
+**Signal:** `paths:` is broader than the content warrants (e.g., `paths: "**/*"` for a rule that only applies to `.ts` files)
+
+**CHANGE:** Narrow the glob to match the content
+**FROM:** `paths: "**/*"` for a TypeScript-only rule
+**TO:** `paths: "**/*.{ts,tsx}"`
+**REASON:** A too-wide glob makes the rule fire when it shouldn't, consuming context for irrelevant work.
+
+---
+
+### Dimension 6: Staleness
 
 #### Reference to a Path That No Longer Exists
 
@@ -175,78 +361,56 @@ with separate API-section and test-section bodies
 
 ---
 
-## Tier 2 — Trigger-gated Dimensions (structured-Intent rules)
+### Dimension 7: Judgment-Not-Linter
 
-These repairs apply only when the rule opts into the toolkit-opinion
-structured-Intent shape (`## Why` and/or `## Compliant` + `## Non-compliant`
-sections). Rules that don't opt in skip these dimensions entirely.
+#### Rule Restates a Formatter's Job
 
-### Dimension 4: Intent Completeness
+**Signal:** Rule enforces whitespace, indentation, quote style, or other formatting concerns handled by Prettier, Black, gofmt, etc.
 
-#### Missing Failure Cost (load-bearing)
+**CHANGE:** Remove the rule; add the formatter to the project's tooling if not already present
+**FROM:** "Use 2-space indentation. Use single quotes for strings. Trailing commas in multi-line lists."
+**TO:** Delete the rule. Ensure `.prettierrc` (or equivalent) encodes these settings and runs in CI / pre-commit.
+**REASON:** Formatters enforce mechanical rules deterministically. A rule file restating them dilutes the authority of rules that need judgment, and formatter violations get caught deterministically anyway.
 
-**Signal:** Why section names the violation only ("Avoid `console.log`") with no description of what breaks or who bears the cost
+#### Rule Restates a Linter's Job
 
-**CHANGE:** Add a sentence naming the specific consequence and who bears it
-**FROM:** "Avoid using `console.log` in production code. It creates noise."
-**TO:** "`console.log` in production builds exposes internal state to end users via browser developer tools and adds measurable latency in high-frequency call paths."
-**REASON:** Without failure cost, developers weigh the rule as bureaucratic overhead rather than a real risk. Rules without failure cost have higher disable rates.
+**Signal:** Rule enforces import ordering, unused-import removal, or other concerns handled by ESLint, Ruff, etc.
 
-#### Missing Exception Policy (load-bearing)
+**CHANGE:** Remove the rule; configure the linter
+**FROM:** "Sort imports: stdlib, third-party, local. Remove unused imports before committing."
+**TO:** Delete the rule. Configure `ruff` / `eslint` to enforce import ordering and unused-import detection.
+**REASON:** Deterministic checks belong in tooling. Tooling catches violations at edit-time and CI-time; a rule only catches them when Claude happens to re-read the file.
 
-**Signal:** Why section has no `Exception:` line naming a legitimate bypass case
+#### Rule Restates a Type-Checker's Job
 
-**CHANGE:** Append an `Exception:` line naming at least one legitimate case
-**FROM:** Why section ends without exception language
-**TO:** Append: `"Exception: <name at least one legitimate case — e.g., 'Exception: test files', 'Exception: scripts in tools/ that are never bundled for production'>."`
-**REASON:** Rules with no named exception appear to admit no flexibility, causing developers to disable them entirely rather than follow them in the 95% case.
+**Signal:** Rule enforces type annotations that `mypy`, `tsc`, or equivalent would catch
 
-#### Missing Principle
+**CHANGE:** Remove the rule; tighten type-checker config
+**FROM:** "All function parameters must have type annotations."
+**TO:** Delete the rule. Enable `--strict` (TypeScript) or `--disallow-untyped-defs` (mypy) in the project's type-checker config.
+**REASON:** Type-checker violations produce build failures. A rule cannot compete with that enforcement strength.
 
-**Signal:** Why section names what the rule catches and what goes wrong, but not the underlying value
+---
 
-**CHANGE:** Add a sentence naming the principle being enforced
-**FROM:** Why section without principle
-**TO:** Add: `"This enforces the principle that <value — e.g., 'production code does not leak implementation details'>."`
-**REASON:** A named principle anchors the rule when its specifics don't quite fit a new situation. The principle survives changes the specifics can't.
-
-### Dimension 5: Example Pair Quality
+### Dimension 8: Example Realism
 
 #### Synthetic Examples
 
-**Signal:** Examples use generic identifiers (`foo`, `bar`, `myFunction`) or have no file path comment
+**Signal:** Example code uses generic placeholders (`foo`, `bar`, `baz`, `myFunction`, `Thing`, `Widget`) as primary identifiers
 
-**CHANGE:** Replace synthetic examples with real codebase code
-**FROM:** `function foo(x) { return bar(x) }`
-**TO:** `// src/api/handlers/users.ts\nasync function getUser(userId: string) { return db.users.findById(userId) }`
-**REASON:** Evidence-anchored rubrics produce more consistent evaluations (+0.17 QWK per RULERS) than pure-inference rubrics. Real code with domain context reduces ambiguity.
-
-#### Wrong Example Order
-
-**Signal:** Compliant example appears before non-compliant example
-
-**CHANGE:** Swap the two example sections
-**FROM:** `## Compliant` ... `## Non-compliant`
-**TO:** `## Non-compliant` ... `## Compliant`
-**REASON:** Listing the rejection case first improves LLM classification accuracy. The compliant example anchors the accepted case after the evaluator has seen what failure looks like.
-
-#### Multiple Examples Per Section
-
-**Signal:** Multiple code snippets in a single Non-Compliant or Compliant section
-
-**CHANGE:** Reduce to one canonical example per section
-**FROM:** Non-Compliant section with three different snippets showing different violation patterns
-**TO:** Keep the single most clear-cut instance and remove the extras.
-**REASON:** Multiple examples encode subtly different behavioral patterns. A single canonical example produces a stronger, less ambiguous anchor.
-
-### Dimension 6: Default-Closed Declaration
-
-**Signal:** Why section has no "When evidence is borderline…" line
-
-**CHANGE:** Append the default-closed declaration to the Why section
-**FROM:** Why section ends without uncertainty handling
-**TO:** Append: `"When evidence is borderline, prefer WARN over PASS."`
-**REASON:** Without this declaration, LLM evaluators silently default to PASS on ambiguous cases, hiding real violations.
+**CHANGE:** Replace with real code from the codebase — actual table names, function names, module paths
+**FROM:**
+```typescript
+function foo(x) { return bar(x); }
+```
+**TO:**
+```typescript
+// src/api/handlers/users.ts
+async function getUser(userId: string) {
+  return db.users.findById(userId);
+}
+```
+**REASON:** Domain-specific identifiers anchor the rule more strongly than synthetic placeholders. The evaluator (human or Claude) recognizes the context and applies the rule the way they would to new code in the same codebase. File path comments (optional) strengthen provenance.
 
 ---
 
@@ -262,6 +426,6 @@ Resolution strategies in preference order:
 
 3. **Explicit boundary** — add an exception to one rule acknowledging the other: "Exception: in files covered by `[other-rule.md]`, [behavior] is acceptable." This preserves both rules without contradiction.
 
-4. **Deprecate one** — if one rule supersedes the other: delete the older file. (Anthropic doesn't define an `archived:` status for rules; deletion is the canonical retirement.)
+4. **Deprecate one** — if one rule supersedes the other: delete the older file. Claude Code doesn't define an `archived:` status for rules; deletion is the canonical retirement.
 
 **Intent-preservation check for conflict resolution:** Confirm the resolution preserves the behavioral intent of both rules, not just one. A resolution that silently retires one rule's directive must be flagged for human review.
