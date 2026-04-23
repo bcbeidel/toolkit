@@ -1,0 +1,341 @@
+---
+name: build-skill-pair
+description: >
+  Scaffolds a primitive-pair — a matched `build-<primitive>` and
+  `check-<primitive>` skill sharing a single distilled principles doc
+  under `_shared/references/`, a scoreable `audit-dimensions.md`, and
+  a `repair-playbook.md`. Distills best-practice material (files,
+  URLs, pasted text, or the model's own domain knowledge) into one
+  rubric that both halves reference. Use when the user wants to
+  "create a skill pair", "build a primitive pair", "new paired skill",
+  "scaffold build and check skills for X", or "codify best practices
+  for a new primitive". Not for creating a single skill — route to
+  `/build:build-skill`. Not for auditing an existing pair — route to
+  `/build:check-skill` on each half.
+argument-hint: "[primitive-name]"
+references:
+  - ../../_shared/references/skills-best-practices.md
+  - ../../_shared/references/primitive-routing.md
+  - ../../_shared/references/skill-pair-best-practices.md
+---
+
+# Build Skill Pair
+
+Create a primitive-pair: two skills that share a single distilled
+rubric. `build-<primitive>` scaffolds; `check-<primitive>` audits; both
+point at the same principles doc so creation and review never drift.
+The distillation step — reconciling multiple inputs into one
+internally-consistent rubric — is where this skill earns its keep.
+
+**Workflow sequence:** 1. Route → 2. Scope Gate → 3. Intake →
+4. Distill → 5. Draft → 6. Review Gate → 7. Save → 8. Register →
+9. Handoff
+
+## 1. Route
+
+Confirm the user wants a *pair*, not a single skill. Single skills
+route to `/build:build-skill`; auditing an existing pair routes to
+`/build:check-skill` on each half. If the principles doc already
+exists at `plugins/build/_shared/references/<primitive>-best-practices.md`,
+Distill becomes a pass-through — read the existing doc and proceed to
+Draft without regenerating.
+
+## 2. Scope Gate
+
+Refuse — and recommend an alternative — when any of these signal:
+
+1. **Primitive already has a pair.** If
+   `plugins/build/skills/build-<primitive>/` exists, stop. Offer to
+   revise the existing pair (run `/build:check-skill` on both halves
+   and iterate from findings) instead of scaffolding over it.
+2. **No best-practice material at all.** Distillation needs raw
+   material. The skill's value is synthesis, not invention —
+   scaffolding without input produces a rubric indistinguishable
+   from the model's defaults. Material can be files, URLs, pasted
+   text, or the model's own named domain knowledge — but *something*
+   must seed the distillation.
+3. **Name collides with a core Claude Code primitive.** `skill`,
+   `rule`, `hook`, `subagent`, and their existing
+   `build-*`/`check-*` counterparts are owned. A pair for
+   `build-skill` does not make sense — the pair pattern is *for*
+   creating primitives like these, not re-creating them.
+
+If any signal fires, state the signal, name the alternative, and
+stop. Do not proceed to Intake.
+
+## 3. Intake
+
+If `$ARGUMENTS` is non-empty, parse it as `[primitive-name]` and
+pre-fill question 1. Otherwise ask, one question at a time:
+
+**1. Primitive name** — kebab-case noun or noun-phrase
+(`terraform-module`, `dockerfile`, `sql-migration`,
+`github-action-workflow`). Avoid vague tokens (`config`, `thing`,
+`helper`).
+
+**2. One-sentence definition** — what the primitive is and what it
+does. Used verbatim in the principles doc's opening paragraph and as
+the description seed for both skills.
+
+**3. Scope boundary** — what the primitive is *not*. This becomes the
+Scope Gate signals in `build-<primitive>` and the refusal criteria in
+`check-<primitive>`. Example: "bash-script is not POSIX `sh`, not a
+Claude Code hook, not a multi-file application."
+
+**4. Best-practice material** — enumerate the input to distillation.
+Any mix of:
+
+- **Local file paths** — e.g., `docs/style/python.md`, or an existing
+  principles doc to extend
+- **URLs** — fetched via WebFetch (e.g., Google Shell Style Guide,
+  PEP 8, HashiCorp Terraform conventions)
+- **Pasted text excerpts** — book chapters, internal docs, blog posts
+- **Named model knowledge** — e.g., "Claude's knowledge of Kubernetes
+  manifest best practices."
+
+Provenance does not survive into the distilled doc — git history
+(the PR or the commit that landed the pair) is where that lives.
+This intake is purely raw material for the Distill step.
+
+**5. Routing-doc placement** — does the new primitive belong as:
+
+- **A new top-level primitive class** (new category alongside rules,
+  hooks, skills, subagents, scripts) → append a paragraph to
+  *What Each Primitive Was Designed For* and a branch to *Routing
+  Test*.
+- **A variant of an existing class** (e.g., a new script language
+  alongside bash-script and python-script) → extend the relevant
+  sub-section (usually *Language Selection*).
+
+If unclear, read
+[primitive-routing.md](../../_shared/references/primitive-routing.md)
+and propose a placement; confirm with the user.
+
+## 4. Distill
+
+For each piece of input material from Intake #4: extract patterns
+*and the rationale behind each*. Patterns without rationale are
+cargo-culting; refuse to carry them into the rubric.
+
+Reconcile conflicts. When two inputs disagree — say, one recommends
+2-space indent and another 4-space — pick a winner deliberately. The
+resolution does not need to be recorded in the distilled doc (git
+history carries that); what matters is that the final rubric is
+internally consistent.
+
+Produce `plugins/build/_shared/references/<primitive>-best-practices.md`
+with this structure:
+
+```
+---
+name: <Title-Case Primitive> Best Practices
+description: Authoring guide for <primitive> — ... Referenced by build-<primitive> and check-<primitive>.
+---
+
+# <Title-Case Primitive> Best Practices
+
+## What a Good <Primitive> Does
+<narrative: value proposition, when it earns its place, scope>
+
+## Anatomy
+<canonical template with inline comments naming each part>
+
+## Patterns That Work
+<positive patterns, each with a one-line rationale>
+
+## Anti-Patterns
+<what to avoid, with the failure mode named — not "don't do X" but
+"X fails because Y">
+
+## Safety & Maintenance
+<how to keep the primitive honest over time>
+```
+
+## 5. Draft (five artifacts)
+
+Produce all five before the Review Gate — present them together so the
+user sees the whole pair.
+
+**Artifact 1 — Principles doc.** Output of Step 4.
+
+**Artifact 2 — `build-<primitive>/SKILL.md`.** Workflow template:
+Route → Scope Gate → Elicit → Draft → Safety Check → Review Gate →
+Save → Test (handoff to `check-<primitive>`). Frontmatter `references:`
+includes the principles doc and `primitive-routing.md`. The body cites
+the principles doc as "the rubric"; the skill body is "the workflow."
+
+**Artifact 3 — `check-<primitive>/SKILL.md`.** Workflow template:
+Route → Scope → Deterministic Checks (if applicable; Tier-1 shell
+scripts under `scripts/`) → Judgment Checks (Tier-2 against
+`audit-dimensions.md`) → Cross-Entity (Tier-3, if scope is a directory)
+→ Report → Opt-In Repair Loop (handoff to `repair-playbook.md`).
+Frontmatter `references:` includes the principles doc,
+`audit-dimensions.md`, and `repair-playbook.md`.
+
+**Artifact 4 — `check-<primitive>/references/audit-dimensions.md`.**
+One entry per dimension with these fields: *name*, *what it checks*,
+*pass criteria*, *fail criteria*, *severity*, *principles-doc section
+it enforces*. Group into Structure / Safety / Documentation (or
+primitive-appropriate groups).
+
+**Artifact 5 — `check-<primitive>/references/repair-playbook.md`.**
+One entry per dimension: *finding* → *diagnosis* → *fix recipe*
+(code snippet or prose). The repair playbook is what turns an audit
+finding into a pull request; it must be concrete, not advisory.
+
+## 6. Review Gate
+
+Present all five artifacts plus the proposed diff to
+`primitive-routing.md`. Wait for explicit user approval before writing
+any file. If the user requests changes, revise and re-present —
+continue until the user approves or cancels. Proceed to Save only on
+explicit approval.
+
+This gate exists because five new files + a routing-doc change is a
+large commit to land silently. The user needs to see the whole shape,
+not just the parts.
+
+## 7. Save
+
+Write all five files to their paths:
+
+- `plugins/build/_shared/references/<primitive>-best-practices.md`
+- `plugins/build/skills/build-<primitive>/SKILL.md`
+- `plugins/build/skills/check-<primitive>/SKILL.md`
+- `plugins/build/skills/check-<primitive>/references/audit-dimensions.md`
+- `plugins/build/skills/check-<primitive>/references/repair-playbook.md`
+
+Do not `chmod` — these are markdown. Tier-1 deterministic-check
+scripts under `check-<primitive>/scripts/` are out of scope here —
+this skill scaffolds the SKILL.md contract and the rubric, not the
+scripts that enforce deterministic dimensions. Route those to the
+script-building skills; see the Handoff for the dogfooding rule.
+
+## 8. Register
+
+Update `plugins/build/_shared/references/primitive-routing.md`:
+
+- **New top-level primitive class** — add a one-paragraph entry under
+  *What Each Primitive Was Designed For* and extend the *Routing Test*
+  with the case the primitive resolves.
+- **Variant of an existing class** — add to the relevant sub-section
+  (most commonly *Language Selection* for new script languages).
+- **In both cases** — add route lines to the section bottom:
+  `/build:build-<primitive>` and `/build:check-<primitive>`.
+
+The diff was presented at the Review Gate; write it now.
+
+A pair that's not in `primitive-routing.md` is discoverable only by
+grep — the routing doc is how other skills and future authors find
+the new primitive. Skipping this step is how pairs become orphans.
+
+## 9. Handoff
+
+Offer the audit:
+
+> "Run `/build:check-skill plugins/build/skills/build-<name>/SKILL.md`
+> and `/build:check-skill plugins/build/skills/check-<name>/SKILL.md`
+> to audit both halves?"
+
+Also flag follow-on work the user may want: bumping the build plugin
+version, adding the pair to the plugin's skill list in `AGENTS.md`,
+and — if the check half needs Tier-1 deterministic scripts — dogfood
+the script-building skills to scaffold them. **Route language choice
+through the *Language Selection* section of
+[primitive-routing.md](../../_shared/references/primitive-routing.md):**
+use `/build:build-bash-script` for genuine glue of CLI tools, or
+`/build:build-python-script` for anything touching structured data,
+testable seams, or logic beyond a one-liner. The tiebreaker in that
+section — Python wins on interpretability — applies here too. This
+skill is meta-infrastructure; it does not get to bypass its own
+routing.
+
+## Example
+
+Invocation: `/build:build-skill-pair terraform-module`
+
+Intake (pre-filled primitive name):
+
+- Definition: "a reusable Terraform module — a directory of `.tf`
+  files with `main.tf` / `variables.tf` / `outputs.tf` exposing a
+  single resource abstraction consumed via `module` blocks."
+- Scope boundary: "not a root configuration, not a Terragrunt stack,
+  not a provider."
+- Input material: HashiCorp's module composition guide (URL), the
+  in-repo `docs/style/terraform.md` (file), and Claude's knowledge of
+  Terraform module conventions (named knowledge).
+- Routing-doc placement: new top-level primitive class.
+
+Output: five files plus a routing-doc diff adding a paragraph under
+*What Each Primitive Was Designed For* and appending
+`/build:build-terraform-module` / `/build:check-terraform-module`.
+
+## Anti-Pattern Guards
+
+1. **Scaffolding without input material.** Distill is synthesis,
+   not invention. If Intake #4 yields nothing, stop and ask for
+   material — don't manufacture a rubric from model defaults and
+   ship it as "distilled best practices."
+2. **Skipping the Register step.** A pair that isn't in
+   `primitive-routing.md` is discoverable only by grep. Registration
+   is not optional — it is how the pair becomes a first-class
+   citizen.
+3. **Build without check (or vice versa).** The pair is the unit. If
+   the user only wants a scaffolder, route to `/build:build-skill`;
+   if only an auditor, route there too and hand-write the principles
+   doc. Scaffolding one half alone with this skill produces a
+   dangling rubric nothing references.
+4. **Writing before Review Gate approval.** Five files plus a routing
+   diff is a large drop. Present the whole shape first; write only
+   after explicit approval.
+
+## Key Instructions
+
+- Won't scaffold over an existing pair — Scope Gate signal #1 applies
+  without exception. Offer to revise instead.
+- Won't produce a principles doc from zero input material — Scope
+  Gate signal #2 applies. Any mix of files, URLs, pasted text, or
+  named model knowledge clears the gate; *nothing* does not.
+- Won't write any of the five files — or the routing-doc diff —
+  until the Review Gate passes.
+- Principles doc lives in `_shared/references/`, not inside either
+  skill directory. Both halves reference it at the same path so
+  creation and review stay aligned.
+- Won't hand-scaffold Tier-1 deterministic scripts — route to
+  `/build:build-bash-script` or `/build:build-python-script` per
+  *Language Selection* in `primitive-routing.md`. The meta-skill
+  dogfoods the routing it helps maintain; authoring scripts inline
+  would bypass the rubric this skill's whole design tells users to
+  respect.
+- Recovery if the pair is scaffolded in error: `rm -rf
+  plugins/build/skills/build-<name>/ plugins/build/skills/check-<name>/
+  plugins/build/_shared/references/<name>-best-practices.md` and
+  revert the `primitive-routing.md` change. The artifacts are
+  self-contained (no settings.json entries, no shared-module
+  registration beyond the routing doc), so removal leaves no
+  dangling state.
+
+## Handoff
+
+**Receives:** primitive name, one-sentence definition, scope boundary,
+best-practice input material (files / URLs / pasted text /
+named-model-knowledge), and a routing-doc placement decision (new
+top-level class or variant of an existing class).
+
+**Produces:** five files — the distilled principles doc under
+`plugins/build/_shared/references/`, `build-<primitive>/SKILL.md`,
+`check-<primitive>/SKILL.md`,
+`check-<primitive>/references/audit-dimensions.md`, and
+`check-<primitive>/references/repair-playbook.md` — plus one updated
+`primitive-routing.md` registering the new primitive and its two
+routes.
+
+**Chainable to:** `/build:check-skill-pair <primitive>` for
+pair-level integrity (principles doc present, audit/playbook
+dimension coverage, routing registration, shared principles path);
+`/build:check-skill` on each of the two new SKILL.md files (catches
+per-SKILL.md structural issues the Draft step missed);
+`/build:build-bash-script` or `/build:build-python-script` when
+Tier-1 deterministic scripts are needed — language picked per
+*Language Selection* in `primitive-routing.md`, then audited via
+`/build:check-bash-script` or `/build:check-python-script`.

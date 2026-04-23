@@ -9,7 +9,7 @@ The check-bash-script audit runs in three tiers. This document is the
 inventory: every deterministic check Tier-1 emits, every judgment
 dimension Tier-2 evaluates. Every dimension cites the source principle
 it audits from
-[bash-scripts-best-practices.md](../../../_shared/references/bash-scripts-best-practices.md).
+[bash-script-best-practices.md](../../../_shared/references/bash-script-best-practices.md).
 
 ## Tier-1 — Deterministic Checks
 
@@ -203,6 +203,18 @@ none restate code. TODOs are tagged.
 
 **Common fail signal:** No header comment; `# increment counter`
 above `((counter++))`; bare `# TODO: fix this` with no owner.
+
+## Tier-3 — Cross-Entity Collision
+
+### collision
+
+**What it checks:** When the audit scope holds multiple scripts in the
+same directory, look for duplicated helpers / argument-parsing /
+error-handling logic that the maintainer could consolidate.
+**Severity:** WARN.
+**Source principle:** *Keep functions small and single-purpose* +
+*Review and Decay* — duplicated logic is the early warning that the
+script collection wants a real library.
 
 ## Cross-Dimension Notes
 

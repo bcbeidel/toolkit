@@ -6,7 +6,7 @@
 # `shfmt` is optional — when absent, this script emits a single INFO
 # line and exits 0, matching the Missing Tools preamble pattern.
 #
-# Format flags: `-i 2 -ci -bn` per the bash-scripts-best-practices.md
+# Format flags: `-i 2 -ci -bn` per the bash-script-best-practices.md
 # style guidance (2-space indent, switch-case indent, binop on next
 # line). Aligns with Google Shell Style Guide.
 #

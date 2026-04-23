@@ -13,7 +13,7 @@ description: >
 argument-hint: "[purpose]"
 user-invocable: true
 references:
-  - ../../_shared/references/python-scripts-best-practices.md
+  - ../../_shared/references/python-script-best-practices.md
   - ../../_shared/references/primitive-routing.md
 ---
 
@@ -23,7 +23,7 @@ Scaffold a standalone Python 3 script: a single-file program that runs
 from the shell, does one clear thing, and returns a useful exit code.
 The authoring rubric — what makes a script load-bearing, the anatomy
 template, patterns that work — lives in
-[python-scripts-best-practices.md](../../_shared/references/python-scripts-best-practices.md).
+[python-script-best-practices.md](../../_shared/references/python-script-best-practices.md).
 This skill is the workflow; the principles doc is the rubric.
 
 This skill is not for Claude Code hooks (`/build:build-hook` owns that
@@ -242,7 +242,7 @@ Present both artifacts to the user before any safety checks.
 ## 5. Safety Check
 
 Review the draft against the rubric in
-[python-scripts-best-practices.md](../../_shared/references/python-scripts-best-practices.md)
+[python-script-best-practices.md](../../_shared/references/python-script-best-practices.md)
 before presenting. Group the checks:
 
 **Structure.** Shebang is exactly `#!/usr/bin/env python3`. Module

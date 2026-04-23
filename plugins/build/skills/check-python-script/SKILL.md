@@ -15,7 +15,7 @@ description: >
 argument-hint: "[path]"
 user-invocable: true
 references:
-  - ../../_shared/references/python-scripts-best-practices.md
+  - ../../_shared/references/python-script-best-practices.md
   - references/audit-dimensions.md
   - references/repair-playbook.md
 ---
@@ -26,7 +26,7 @@ Audit a standalone Python 3 script for structural soundness, safety,
 and adherence to the project's Python-script conventions. The rubric
 — what makes a script load-bearing, the anatomy template, patterns
 that work — lives in
-[python-scripts-best-practices.md](../../_shared/references/python-scripts-best-practices.md).
+[python-script-best-practices.md](../../_shared/references/python-script-best-practices.md).
 This skill is the audit workflow; the principles doc is what it
 audits against.
 
