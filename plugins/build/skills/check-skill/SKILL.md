@@ -1,139 +1,262 @@
 ---
 name: check-skill
-description: >
-  Audit an existing SKILL.md for quality issues. Use when the user wants
-  to "audit a skill", "review a skill", "check skill quality", "find
-  problems in a skill", or "improve a skill".
-argument-hint: "[path/to/SKILL.md — omit to audit all skills]"
+description: >-
+  Use when the user wants to "audit a skill", "review a skill", "check
+  skill quality", "find problems in a skill", or "improve a skill".
+  Audits a Claude Code SKILL.md for format compliance, content
+  quality, and cross-skill description collisions across three tiers
+  (deterministic scripts → LLM rubric → cross-skill conflict).
+argument-hint: "[path/to/SKILL.md or skills/ directory — scans the plugin's skills when omitted]"
 user-invocable: true
+version: 1.0.0
+owner: build-plugin
+references:
+  - ../../_shared/references/skills-best-practices.md
+  - references/audit-dimensions.md
+  - references/repair-playbook.md
 ---
 
-# Check Skill
+# /build:check-skill
 
-Audit one skill or all skills against twenty-two research-backed quality criteria,
-then offer an opt-in repair loop.
+Evaluate the quality of an existing Claude Code skill. Three tiers,
+in order: deterministic format checks (no LLM), per-skill semantic
+checks (eight always-on dimensions in a single locked-rubric call),
+then cross-skill description collision detection.
 
-## Workflow
+This skill evaluates the skills themselves — not files against skills.
 
-### 1. Determine Scope
+The audit rubric mirrors the authoring principles in
+[skills-best-practices.md](../../_shared/references/skills-best-practices.md).
+Each Tier-2 dimension cites its source principle. When the principles
+doc changes, the dimensions should follow.
 
-- **Argument provided** — audit that single SKILL.md
-- **No argument** — walk `skills/` and audit all non-`_shared` subdirectories
+## When to use
 
-### 2. Run Static Checks
+- The user asks to "audit / review / check" a skill or skill library
+- The user asks "find problems in", "improve", or "is this skill
+  well-formed"
+- After `/build:build-skill` writes a new skill — chain-call to audit
+  the just-written artifact
+- Bulk audits across a plugin's `skills/` directory, as part of
+  `/work:start-work` repair passes
 
-```bash
-# Prerequisites: pip install -e plugins/build -e plugins/wiki
-python3 plugins/wiki/scripts/lint.py --root <project-root> --no-urls
+## Prerequisites
+
+- Seven Tier-1 scripts under `scripts/` relative to this SKILL.md
+  (`check_identity.sh`, `check_frontmatter.sh`, `check_structure.sh`,
+  `check_size.sh`, `check_prose.sh`, `scan_secrets.sh`,
+  `scan_dangerous_patterns.sh`)
+- `bash` 3.2+, POSIX utilities (`awk`, `find`, `basename`, `head`,
+  `grep`, `dirname`)
+- Optional: `gitleaks` on `PATH` for stronger secret scanning
+  (`scan_secrets.sh` falls back to a built-in regex set when absent)
+- `$ARGUMENTS` may carry a `SKILL.md` path, a `skills/` directory, or
+  be empty (scans the current plugin's `skills/` excluding
+  `_shared/`)
+
+## Steps
+
+1. **Discover skills.** Resolve `$ARGUMENTS`. A `SKILL.md` path →
+   audit that one file. A directory → audit every `SKILL.md` under
+   it (excluding `_shared/`). Empty → scan the current plugin's
+   `skills/` directory. Report: "Found N skills. Auditing...".
+
+2. **Run Tier-1 deterministic checks.** Invoke all seven scripts
+   against the discovered skill set. Scripts live in `scripts/`
+   relative to this SKILL.md; Claude resolves the absolute path from
+   the skill's base directory at invocation time. (`$CLAUDE_PLUGIN_ROOT`
+   is documented for hook scripts, not skill-invoked bash; do not
+   rely on it here.)
+
+   ```bash
+   SCRIPTS="${SKILL_DIR}/scripts"
+   TARGETS="$ARGUMENTS"  # path(s) from user; default: plugin's skills/
+
+   bash "$SCRIPTS/check_identity.sh"          $TARGETS
+   bash "$SCRIPTS/check_frontmatter.sh"       $TARGETS
+   bash "$SCRIPTS/check_structure.sh"         $TARGETS
+   bash "$SCRIPTS/check_size.sh"              $TARGETS
+   bash "$SCRIPTS/check_prose.sh"             $TARGETS
+   bash "$SCRIPTS/scan_secrets.sh"            $TARGETS
+   bash "$SCRIPTS/scan_dangerous_patterns.sh" $TARGETS
+   ```
+
+   Emit all Tier-1 output immediately, before any LLM work. Exit
+   codes: 0 on clean / WARN-only, 1 on FAIL, 64 on arg error, 69 on
+   missing dependency. Treat exit 1 as the "exclude from Tier 2"
+   signal.
+
+3. **Apply orchestration rules.** Skills with a FAIL from
+   `check_identity.sh`, `check_frontmatter.sh`, `check_structure.sh`
+   (missing required section or Steps-not-ordered-list),
+   `check_size.sh` (>400 lines), or `scan_secrets.sh` are **excluded
+   from Tier 2** — malformed skills don't reach the LLM step.
+   `check_structure.sh` WARNs (Examples-without-fenced-block,
+   non-sequential Steps), `check_size.sh` WARNs (>300 lines, line
+   length), `check_prose.sh` WARNs, and `scan_dangerous_patterns.sh`
+   WARNs do **not** exclude — they accompany Tier-2 output and feed
+   the Tier-2 prompt as signals (destructive-cmd WARNs inform D7
+   Safety Gating; hedge WARNs inform D4 Clarity and Consistency).
+
+4. **Run Tier-2 semantic checks.** For each structurally valid
+   skill, one locked-rubric LLM call assesses all eight always-on
+   dimensions in
+   [audit-dimensions.md](references/audit-dimensions.md):
+   (1) Description Retrieval Signal, (2) Trigger Conditions,
+   (3) Step Discipline, (4) Clarity and Consistency,
+   (5) Prerequisites and Contract, (6) Failure Handling,
+   (7) Safety Gating, (8) Example Realism. Include the full
+   `SKILL.md` body verbatim — never summarize. Present all eight
+   dimensions in one call; per-dimension calls degrade agreement by
+   ~11.5 points (RULERS, Hong et al. 2026). Dimensions that don't
+   apply return PASS silently (e.g., Safety Gating on a read-only
+   skill). Output per dimension: evidence → reasoning → verdict
+   (WARN / PASS / N/A) → recommendation. Default-closed: borderline
+   evidence surfaces as WARN, not PASS.
+
+5. **Run Tier-3 description-collision detection.** Compare
+   descriptions across the skill collection and flag pairs whose
+   triggers overlap enough to force arbitrary routing selection.
+   Candidates: all skill pairs within the same plugin, plus
+   cross-plugin pairs sharing at least one keyword in the first
+   clause of the description. For each candidate: present both
+   names + descriptions; ask whether the same user request would
+   plausibly route to both; on yes → WARN citing both skill names
+   and an example ambiguous request. Skill-name collisions (two
+   skills sharing a `name` field) are a Tier-1 FAIL under
+   `check_identity.sh`, not a Tier-3 finding.
+
+6. **Report findings.** Output all findings in the standard
+   `SEVERITY  <path> — <check>: <detail>` format with a
+   `Recommendation:` line drawn from
+   [repair-playbook.md](references/repair-playbook.md). Sort within
+   each severity: Tier-1 deterministic first, then Tier-2 in
+   dimension order, then Tier-3 collisions; ties break
+   alphabetically. FAIL precedes WARN overall. Close with a summary
+   line: `N skills audited, M findings (X fail, Y warn)` or
+   `N skills audited — no findings`.
+
+7. **Offer the opt-in repair loop.** Ask: "Apply fixes? Enter y
+   (all), n (skip), or comma-separated numbers." For each selected
+   finding, draw the canonical repair from `repair-playbook.md`.
+   Read the relevant section; apply the minimal specific edit; show
+   the diff; write only on user confirmation; re-run the relevant
+   Tier-1 scripts after each applied fix. Per-change confirmation is
+   required — bulk application removes the user's ability to review
+   individual repairs.
+
+## Failure modes
+
+- **Missing Tier-1 dependency.** Any script exits 69 when a required
+  command isn't installed (e.g., `awk` missing). Recovery: surface
+  the script's install hint; re-run once the dependency is on PATH.
+  `gitleaks` absence specifically triggers the fallback regex path
+  in `scan_secrets.sh` — not a hard failure.
+- **`$ARGUMENTS` path does not exist.** Any script exits 64.
+  Recovery: report the bad path and ask the user to correct it.
+- **No structurally valid skills for Tier 2.** Every audited skill
+  failed Tier-1. Recovery: report the Tier-1 findings and skip
+  Tier 2 / Tier 3 — per-skill semantic audit on malformed skills
+  produces noise.
+- **LLM call returns an unparseable dimension block.** Surface the
+  raw response and mark the skill as "Tier-2 inconclusive — rerun or
+  inspect manually". Do not silently drop findings.
+- **User declines all repair suggestions.** Expected. Close without
+  writing any changes; the findings report is the final artifact.
+
+## Examples
+
+<example>
+User: `/build:check-skill plugins/build/skills/`
+
+Step 1 — Discovers 3 skills: `foo/SKILL.md`, `bar/SKILL.md`,
+`baz/SKILL.md`.
+
+Step 2 — Runs all seven Tier-1 scripts:
+- foo/SKILL.md: 140 lines, clean frontmatter, all sections — passes to Tier 2
+- bar/SKILL.md: `version: 1.0` → FAIL (not semver); description 1180 chars → FAIL. Excluded from Tier 2.
+- baz/SKILL.md: 347 non-blank lines → WARN; Examples has no fenced block → WARN. Proceeds to Tier 2.
+
+Step 4 — Tier 2 on foo and baz:
+- foo/SKILL.md: description reads "Handles tabular conversion" →
+  WARN (D1). Steps fused into multi-sentence paragraphs → WARN (D3).
+  `AWS_PROFILE` referenced in Steps but not declared in
+  Prerequisites → WARN (D5). Other dimensions PASS.
+- baz/SKILL.md: D7 N/A (no destructive ops). Examples use
+  `foo`/`bar` placeholders → WARN (D8). Others PASS.
+
+Step 5 — Tier 3: foo and baz both open "Use when the user asks to convert tabular data" → WARN collision.
+
+Step 6 — Output:
 ```
+FAIL  plugins/build/skills/bar/SKILL.md — Malformed version: "1.0" is not semver
+  Recommendation: Rewrite as `version: 1.0.0` (MAJOR.MINOR.PATCH).
+FAIL  plugins/build/skills/bar/SKILL.md — Description cap exceeded: 1180 chars > 1024
+  Recommendation: Split trigger phrases into `when_to_use` (combined cap 1536) rather than compressing.
+WARN  plugins/build/skills/baz/SKILL.md — Body length 347 lines exceeds 300-line guidance
+  Recommendation: Move long embedded content to sibling files under `references/` or `scripts/`.
+WARN  plugins/build/skills/foo/SKILL.md — Description Retrieval Signal: capability, not trigger
+  Recommendation: Rewrite as "Use when the user asks to <specific phrase>" and name at least one concrete trigger.
+WARN  plugins/build/skills/foo/SKILL.md — Step Discipline: steps fused into multi-sentence paragraphs
+  Recommendation: Split into atomic imperative steps, one action per line.
+WARN  plugins/build/skills/foo/SKILL.md — Prerequisites and Contract: `AWS_PROFILE` referenced but not declared
+  Recommendation: Add AWS_PROFILE to `## Prerequisites` with the required IAM actions.
+WARN  plugins/build/skills/baz/SKILL.md — Example Realism: `foo`/`bar` placeholders
+  Recommendation: Replace with real file paths and realistic parameters from the skill's domain.
+WARN  plugins/build/skills/foo/SKILL.md — Description collides with baz/SKILL.md
+  Recommendation: Narrow foo's description to the specific tabular format it handles (CSV); narrow baz's to its format.
 
-The linter lives in the wiki plugin and imports the `check` package from the
-build plugin — both must be installed.
-
-Extract findings for the target skill(s). Static checks run deterministically
-and always precede LLM checks. They cover:
-
-- **Body length** — warn at >500 non-blank lines (criterion #1)
-- **ALL-CAPS directive density** — warn at ≥3 MUST/NEVER/ALWAYS/REQUIRED/FORBIDDEN (criterion #2)
-- **`allowed-tools` shape** — fail on comma-separated-as-string (canonical: space-separated or YAML list)
-- **Description cap** — fail at >1024 chars; when `when_to_use` is present, fail at >1536 combined
-- **Description quality** — warn on second-person ("you can", "I will"), vague phrasings ("helps with", "processes data"), or XML tags
-- **Reserved words in name** — fail on `anthropic` or `claude` (platform-owned namespaces)
-- **Windows-style paths** — fail on backslash path separators in fenced blocks or inline code (drive-letter prefixes, relative `.\` / `..\` prefixes, or multi-component paths with file extensions)
-- **Substitution usage** — warn when `argument-hint` is set but the body has no `$ARGUMENTS`, `$ARGUMENTS[N]`, or `$N` substitution; without one, the user-supplied argument lands at the end as `ARGUMENTS: <value>`
-- **Gerund/vague naming** — warn on vague tokens (`helper`, `utils`, `tools`, `thing`, etc.) anywhere in the name; warn on names that aren't in gerund (`-ing`) or agent-noun (`-er`) form (style suggestion only)
-- **Reference depth** — warn on files nested more than one level under `references/`; flat structure keeps on-demand loading predictable
-- **Reference TOC** — warn on reference files over 100 non-blank lines without a `## Table of Contents`, `## Contents`, or `## TOC` heading in the first 20 lines
-- **MCP reference format** — warn on raw `mcp__<server>__<tool>` names in prose; prefer the shorter `Server:tool_name` form per Anthropic best-practices (raw form in code is fine — it's the actual invocation string)
-- **Time-sensitive content** — warn on year references (`in 2025`, `as of 2024`) and version references (`v3.2`) outside `<details>` blocks; evergreen bodies should wrap historical content in `<details>` "old patterns" blocks
-- **Embedded-script exits** — warn on bare `sys.exit(N)` or `exit N` in `python` / `bash` / `sh` / `zsh` fenced blocks without an explanatory comment on the same or immediately prior line ("solve don't punt")
-
-### 3. Run LLM Checks
-
-For each skill, read the SKILL.md body and assess the remaining twenty criteria:
-
-**Category key:** **canonical** = enforces a documented Anthropic requirement. **best-practice** = recommended by Anthropic best-practices, not binding. **toolkit-opinion** = house style with no spec backing; flagged only when a trigger condition elevates the finding.
-
-**Structural checks:**
-
-| # | Check | Category | Pass condition |
-|---|-------|----------|---------------|
-| 3 | Handoff completeness | toolkit-opinion | **Trigger:** skill chains to another skill (references another skill by name in Workflow or Handoff), OR Workflow writes files, OR `context: fork` is set. **When triggered:** `## Handoff` section present; all three fields populated (Receives / Produces / Chainable-to); Receives and Produces use concrete, specific descriptors — not generic placeholders like "document", "output", or "data" that leave scope ambiguous. **Otherwise:** not flagged. |
-| 4 | Anti-pattern guards | toolkit-opinion | **Trigger:** Workflow performs destructive or irreversible operations (deploy, rm -rf, DROP TABLE, force-push, external write API), OR external-effect operations (network writes, outbound messages). **When triggered:** `## Anti-Pattern Guards` section present with at least one guard that names a specific failure mode. **Otherwise:** not flagged. |
-| 5 | Gate checks | best-practice | At least one explicit gate (user approval, lint verification, precondition) before a consequential step |
-| 6 | Examples | best-practice | At least one concrete example — illustrative invocation, sample output, or table row with a real case |
-| 7 | Description routing quality | canonical | First sentence front-loads the primary trigger phrase; no second-person ("you can", "you should") or passive voice; description contains a distinct WHAT element (what the skill accomplishes or produces) and a WHEN element (trigger conditions or scenarios), both identifiable without inference. If routing behavior is uncertain after static assessment, flag as "recommend trigger evaluation": generate 8–10 should-trigger queries and 8–10 should-NOT-trigger queries (near-miss cases), test each against the skill's description — pass when both hit rates exceed 80%. |
-| 11 | Won't-do scope | toolkit-opinion | **Trigger:** Workflow performs destructive ops, OR skill's description overlaps with other skills in the same plugin/directory (overlap risk: same verb, similar trigger phrase). **When triggered:** `## Key Instructions` contains at least one explicit scope exclusion ("Won't…", "Does not…", "Excluded:", or equivalent negative boundary statement). **Otherwise:** not flagged. |
-| 13 | Routing guidance placement | canonical | The skill body contains no sections titled or framed as "When to Use This Skill", "When to invoke", or equivalent routing-condition guidance. All trigger conditions must appear in the `description` frontmatter — the body is loaded after triggering and routing guidance inside it is never evaluated at routing time. |
-| 14 | Workflow step ordering | best-practice | If the skill describes a multi-step workflow with ≥3 sequential steps, each step is numbered, explicitly ordered, and any data-flow or dependency between steps is stated — not implied. |
-| 15 | Critical instructions placement | toolkit-opinion | **Trigger:** `## Key Instructions` has ≥5 entries (placement matters at scale). **When triggered:** the most consequential rules (irreversible actions, hard constraints, scope limits) appear at the top of `## Key Instructions`, not buried mid-section. **Otherwise:** not flagged — short Key Instructions sections don't benefit from strict ordering. |
-| 17 | Frontmatter completeness | canonical | `name` and `description` are present and non-empty; if `paths` is set, all glob patterns are syntactically valid (no unmatched brackets, valid wildcard usage). |
-| 18 | Fork isolation boundary | canonical | If `context: fork` appears in frontmatter, `## Key Instructions` explicitly states the subagent's operational scope (read-only, write-gated, requires approval, etc.) and that scope is consistent with the `allowed-tools` field if present. |
-| 20 | Argument-hint present | best-practice | If the skill accepts arguments (evidenced by Workflow steps, Handoff Receives field, or invoke examples referencing user-provided input), `argument-hint` is set in frontmatter with a concrete placeholder (e.g., `[path/to/file]`, `[issue-number]`). |
-| 22 | Iteration termination | toolkit-opinion | **Trigger:** Workflow includes looping or retry logic ("repeat until", "try again", "re-run"). **When triggered:** `## Key Instructions` or the Workflow step states an explicit termination condition (exit criterion, maximum attempt count, or convergence signal). **Otherwise:** not flagged. |
-| 23 | Disable-model-invocation | canonical | If the skill's Workflow or Key Instructions describe operations that are destructive, irreversible, or carry significant unintended-invocation risk (deploy, rm -rf, DROP TABLE, force-push, external write API), `disable-model-invocation: true` is set in frontmatter to prevent auto-triggering. |
-
-**Content-quality checks (from HIGH-evidence research anti-patterns):**
-
-| # | Check | Category | Pass condition |
-|---|-------|----------|---------------|
-| 8 | Vagueness | best-practice | Each rule produces a consistent decision; two developers reading it would make the same choice in the same situation |
-| 9 | Removal test | best-practice | Each significant rule would cause a mistake if removed; rules that restate model defaults or code-visible conventions are noise |
-| 10 | Affirmative rule phrasing | best-practice | Each rule states what *to* do, not what to avoid. "Don't X" must be rewritten as "Do Y instead" or paired with the affirmative alternative in the same rule. Negative phrasings are easier for the model to invert or miss than positive directives. Exceptions: explicit scope boundaries flagged by #11 ("this skill won't X") and failure-recovery steps flagged by #21 — those are identity/recovery statements, not instructional rules. |
-| 12 | Contradiction-free | best-practice | No two rules in the skill body produce explicitly opposite directives for the same scenario. Flag as fail only when Rule A says "always X" and Rule B says "never X" in the same or overlapping trigger context within `## Key Instructions` or `## Anti-Pattern Guards`. Semantic tension and trade-off language ("prefer X unless Y") is not a contradiction. |
-| 16 | Edge case handling | best-practice | The skill explicitly addresses at least one failure mode: missing or ambiguous input, a precondition that isn't met, or a mid-workflow failure. A gate check (#5) that blocks on missing input counts; a Workflow step that says "if X is unavailable, do Y" counts. Silence on all failure modes is a fail. |
-| 21 | Reversibility | best-practice | If the skill performs irreversible or high-impact operations (file deletion, git reset, commit, deploy, external API write), `## Key Instructions` or `## Handoff` documents how to revert or recover from an unintended execution (e.g., "use `git reflog` to recover", "review with `/diff` before confirming"). |
-
-**Note on directive density (check #2):** newer frontier models respond better
-to rationale-based instructions than directives. When flagging ALL-CAPS density
-≥3: (a) if `tested_with` is present and lists only sub-frontier models (e.g.,
-haiku), downgrade to informational — stronger directives are calibrated
-differently for lower-tier targets; (b) for all other cases, suggest the
-transformation pattern: convert "ALWAYS X" to "X — because [reason why X
-matters in this skill's context]." This produces smarter adaptation than
-compliance enforcement.
-
-### 4. Report Findings
-
-Output a findings table:
-
+3 skills audited, 8 findings (2 fail, 6 warn)
 ```
-| File | Issue | Severity |
-|------|-------|----------|
-| skills/foo/SKILL.md | Missing ## Handoff section | warn |
-```
-
-Summary line at top and bottom: `N fail, N warn` across N skills.
-Sort: fail before warn; structural (checks 3–7, 11, 13–15, 17, 18, 20, 22, 23) before content-quality (8–10, 12, 16, 21).
-
-### 5. Opt-In Repair Loop
-
-After presenting findings, ask:
-
-> "Apply fixes? Enter y (all), n (skip), or comma-separated numbers."
-
-For each selected finding:
-1. Read the relevant section of the SKILL.md
-2. Propose a minimal specific edit — fix the finding without restructuring surrounding content
-3. Show the diff
-4. Write the change only on user confirmation
-5. Re-run `lint.py` after each applied fix
-
-## Anti-Pattern Guards
-
-1. **Running LLM checks before `lint.py`** — static checks are deterministic and fast; always run them first
-2. **Applying all fixes at once** — per-change confirmation is required; bulk application removes the user's ability to review individual changes
-3. **Auditing `skills/_shared/`** — this directory holds shared references, not invocable skills; exclude it from all-skill audits
-
-## Handoff
-
-**Receives:** Path to a SKILL.md (or no argument for all-skills audit)
-**Produces:** Structured findings table in `lint.py` format (file, issue, severity); optionally, targeted edits applied to the audited skill(s)
-**Chainable to:** build-skill (to create a replacement), start-work (for bulk repair across skills)
+</example>
 
 ## Key Instructions
 
-- Exclude `skills/_shared/` from all-skill audits
-- Treat `plugins/build/src/check/skill.py` as read-only — the static checks are authoritative; this skill adds LLM-level judgment on top
-- When proposing edits, keep changes minimal — fix the finding without restructuring surrounding content
-- Checks 8 and 9 (vagueness, removal test) are the highest-value content-quality checks; prioritize surfacing them clearly
+- Run Tier-1 deterministic checks first; gate LLM evaluation on
+  structural validity so malformed skills surface as findings, not
+  as expensive LLM calls
+- Feed Tier-1 WARN signals (destructive-cmd hits, hedge hits) as
+  context into the Tier-2 prompt — they inform the evaluator for
+  D7 Safety Gating and D4 Clarity, not the dimension set (all eight
+  dimensions always run)
+- Present all eight Tier-2 dimensions as a single locked-rubric
+  call per skill — per-dimension calls degrade agreement by ~11.5
+  points (RULERS, Hong et al. 2026)
+- Include the full SKILL.md body verbatim in every LLM evaluation
+- Surface borderline evidence as WARN (default-closed) so ambiguous
+  cases enter the report rather than silently passing
+- Excluded paths: `_shared/` holds references, not invocable skills;
+  never audit a `_shared/` tree
+
+## Anti-Pattern Guards
+
+1. **Per-dimension LLM call** — collapse into one locked-rubric
+   call per skill (per-dimension splits degrade agreement by 11.5
+   points, RULERS).
+2. **LLM-evaluating format compliance** — handle filename,
+   frontmatter, and section presence with deterministic parse
+   (Tier 1); send only structurally valid skills to the LLM.
+3. **Ambiguous compliance reported as PASS** — surface as WARN
+   (default-closed) so the user sees the borderline case.
+4. **Vague finding text** — cite the specific SKILL.md and the
+   exact phrasing or field that triggered the finding.
+5. **Generic repair text** ("fix this", "improve the description")
+   — every Recommendation names the specific change, drawn from
+   `repair-playbook.md`.
+6. **Trigger-gating Tier-2 dimensions** — don't skip dimensions
+   based on whether the skill "opts into" a shape; run all eight
+   always. Dimensions that don't apply return PASS silently.
+
+## Handoff
+
+**Receives:** Path to a `SKILL.md` file or a directory containing
+`skills/<name>/SKILL.md` files, or no argument (scans the current
+plugin's `skills/`).
+
+**Produces:** Structured findings report in file/issue/severity/
+recommendation format; optionally, targeted edits applied on user
+confirmation via the opt-in repair loop.
+
+**Chainable to:** `/build:build-skill` (to rebuild a flagged skill
+from scratch); `/work:start-work` (for bulk repair across multiple
+skills).
