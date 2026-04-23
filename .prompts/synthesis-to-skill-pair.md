@@ -19,7 +19,11 @@ The synthesis' Section 5 (*Shared Deterministic Checks*) is the direct source fo
 
 ## Inputs
 
-1. **Path to a synthesis markdown file** — produced by `ensemble-rules`; expected sections: Consensus Rules, Strong Minority Rules, Divergences, Notable Omissions, Shared Deterministic Checks (+ singleton checks), Final Rules File.
+1. **Path to a synthesis run directory** — produced by `ensemble-rules`; expects at minimum:
+   - `synthesis.md` — six sections (Consensus Rules, Strong Minority Rules, Divergences, Notable Omissions, Shared Deterministic Checks, Final Rules File)
+   - `coverage-llm.md` — LLM-clustered coverage matrix: rule × model with ✓ marks; **primary attribution source** for the tier filter
+   - `coverage.md` — rapidfuzz-deterministic coverage matrix; **cross-check source** at borderlines where LLM clustering and rapidfuzz disagree
+   - `meta.json` — includes the panel model list used for the run
 2. **Topic name** — the singular noun the skill pair operates on (e.g., `rule`, `skill`, `hook`, `agent`, `prompt`, `eval`). Used to generate `build-<topic>` and `check-<topic>` skill names.
 3. **Target plugin directory** — default `plugins/build/`. Skills land under `plugins/<plugin>/skills/`; the shared principles doc lands under `plugins/<plugin>/_shared/references/`.
 
@@ -29,6 +33,11 @@ The synthesis' Section 5 (*Shared Deterministic Checks*) is the direct source fo
 - **No rule-type taxonomy.** Categories like directive/enforcement/procedural/style dissolve on contact. Focus on judgment-vs-deterministic-vs-structural as the real distinction.
 - **Three tiers, fixed.** Tier-1 = deterministic scripts. Tier-2 = one locked-rubric LLM call per artifact evaluating all dimensions simultaneously. Tier-3 = cross-entity conflict detection. No trigger gates on Tier-2 — all dimensions run always; dimensions that don't apply return PASS silently.
 - **Principle → audit dimension is 1:1.** Every principle is either a Tier-2 dimension or explicitly author-time-only. No orphans. Collapse overlapping principles into one dimension rather than multiplying dimensions.
+- **Inclusion bar (cross-family corroboration AND deployment guarantee).** A candidate rule, dimension, or check enters the Core principles doc *only if*:
+  1. **Cross-family support** — raised by at least 2 different model families (OpenAI / Anthropic / Google / xAI) per `coverage-llm.md`, AND
+  2. **Deployment guarantee** — either Haiku (or the panel's affordable-tier Anthropic model) raised it, *or* the check is mechanically deterministic (enforceable by a Tier-1 script or off-the-shelf tool without model judgment).
+
+  Rules that meet (1) but fail (2) are **dropped**, not preserved in an Advanced section. The goal is a tight core that affordable-tier models (Sonnet-class and below) can execute. Rules failing (1) are also dropped. Discrepancies between `coverage-llm.md` and `coverage.md` at the borderline are noted in the principles doc's provenance footnote.
 - **Scripts target bash-3.2-portable by default.** macOS compatibility. Use `/build:build-shell` in full human-mode for every script — not `--as-tool`. POSIX utilities only (no GNU-specific `\<\>` word boundaries, no `mapfile`, no associative arrays).
 - **Scripts live at `plugins/<plugin>/skills/check-<X>/scripts/*.sh`.** Claude resolves absolute paths at invocation time; do not rely on `$CLAUDE_PLUGIN_ROOT` (documented for hooks, not skills). Use a `${SKILL_DIR}` placeholder in SKILL.md and document the resolution convention.
 - **Output lint format is fixed:** `SEVERITY  <path> — <check>: <detail>` on one line, followed by `  Recommendation: <specific change>` on the next. Severities: `FAIL`, `WARN`, `INFO`, `HINT`. Exit 0 on clean / WARN / INFO / HINT-only; exit 1 on FAIL; exit 64 on arg error; exit 69 on missing dependency.
@@ -50,39 +59,87 @@ The synthesis' Section 5 (*Shared Deterministic Checks*) is the direct source fo
 
 Each phase ends with an approval gate unless marked otherwise. Do not proceed without approval.
 
-### Phase 0: Foundation — principles doc
+### Phase 0a: Panel classification
 
-Read synthesis Section 6 (*Final Rules File*) and Section 1 (*Consensus Rules*).
+Read `meta.json` and tag each model by `{family, tier}`. Families: OpenAI, Anthropic, Google, xAI. Tiers: frontier, affordable.
 
-Produce `<topic>s-best-practices.md` with these sections in order:
+Produce a table:
+
+| Model | Family | Tier |
+|---|---|---|
+| openai/gpt-5 | OpenAI | frontier |
+| openai/gpt-4o-mini | OpenAI | affordable |
+| anthropic/claude-opus-4-7 | Anthropic | frontier |
+| anthropic/claude-haiku-4-5 | Anthropic | affordable |
+| … | … | … |
+
+If an unknown model appears, halt and ask for classification rather than guessing. Flag families that have only frontier representation or only affordable representation — the inclusion bar can still apply, but note the gap in the principles doc provenance footnote ("Google is represented by Gemini Pro only; affordable-tier Google coverage was not verifiable").
+
+The affordable-tier Anthropic model ("Haiku in the default panel) is the **deployment-guarantee proxy** — if it raised a rule, Sonnet-class and above can apply the rule.
+
+### Phase 0b: Rule classification (Core / Drop)
+
+For every candidate rule, dimension, or check from synthesis Sections 1, 2, and 5:
+
+1. Read the attribution from `coverage-llm.md` — which models raised this rule?
+2. Count distinct **families** that raised it (≥2 required for Core).
+3. Check if the affordable-tier Anthropic model (Haiku) is among them.
+4. If Haiku is not among them, determine whether the check is **mechanically deterministic**: enforceable by regex, AST traversal, a file-format parse, or an off-the-shelf tool (`shellcheck`, `gitleaks`, `markdownlint`) without model judgment.
+5. Cross-check against `coverage.md`: if rapidfuzz attributes fewer families than LLM clustering, treat the rule as lower-confidence (still Core if both criteria hold, but note the discrepancy).
+
+Classify:
+
+| | Haiku raised | Haiku silent |
+|---|---|---|
+| **Cross-family (≥2) AND deterministic** | **Core** | **Core** |
+| **Cross-family (≥2) AND judgment-only** | **Core** | **Drop** |
+| **Single-family (1)** | **Drop** | **Drop** |
+
+Produce a classification table and flag any clustering discrepancies between the two coverage sources.
+
+**Approval gate** — the classification determines what lands in the principles doc. Do not proceed without sign-off. Expect roughly half of candidates to drop; that is the filter working.
+
+### Phase 0c: Foundation — principles doc
+
+Consuming **only Core-classified** items from Phase 0b, produce `<topic>s-best-practices.md` with these sections in order:
+
 1. **What a Good <X> Does** — one-paragraph scope statement
 2. **Anatomy** — the file/structure template the skills will both reference
-3. **Authoring Principles** — ~8-12 principles from Section 1, each one paragraph. Include the *why* alongside each.
+3. **Authoring Principles** — Core principles from Phase 0b, each one paragraph. Include the *why* alongside each.
 4. **Patterns That Work** — the same principles reframed as positive shapes ("X over Y"). Each corresponds to a failure mode Tier-2 audits.
-5. **Safety** — from Section 1's safety subsection. Name what's auditable deterministically vs. what relies on author judgment.
+5. **Safety** — Core safety rules. Name what's auditable deterministically vs. what relies on author judgment.
 6. **Review and Decay** — retirement triggers, cadence
 7. A closing diagnostic paragraph
+8. **Provenance footnote** — one short paragraph naming the ensemble run, the panel, the inclusion bar (cross-family + Haiku-or-deterministic), and any clustering discrepancies flagged in Phase 0b.
 
 Constraints:
 - 400–800 words total. Over 800, trim.
 - Positive framing throughout. Negative framing only where no clean positive counterpart exists.
 - No concrete numeric thresholds (those live in check-<X>'s Tier-1, not principles).
 - No rule-type taxonomy.
+- Do **not** include an "Advanced" section. Rules that failed the inclusion bar are dropped. If you believe a dropped rule is load-bearing, raise it in the approval conversation — do not silently include it.
 
 **Approval gate.** Present the draft. Iterate on feedback. Do not proceed to Phase 1 without explicit approval.
 
-### Phase 1: Legacy-opinion walkthrough (skip if greenfield)
+### Phase 1: Legacy extraction (skip if greenfield)
 
-If the plugin already has an existing build-<X> / check-<X> pair:
+If the plugin already has an existing `build-<X>` / `check-<X>` pair, **the ensemble is the source of truth for principles; legacy content is discarded without per-opinion review.** The inclusion bar in Phase 0b is the filter — legacy principles, patterns, dimensions, or repair recipes that aren't reaffirmed by the ensemble are dropped.
 
-List every format or convention the old docs carry. Walk one at a time. For each opinion, answer:
-- What does **check-<X>** get from enforcing it?
-- What does **build-<X>** get from teaching it?
-- Does the evidence justify the ceremony?
+The **only** thing to preserve from the legacy skill is **project-fact content** — things the ensemble cannot know because they're specific to this toolkit's local ecosystem. Extract these in a brief one-pass scan:
 
-Classify each as **keep / loosen / drop**. Expect to drop more than half. Document the disposition inline (table or numbered list).
+| Category | Examples |
+|---|---|
+| Tool mechanics | "Claude Code loads rules from `.claude/rules/*.md`"; "hook scripts receive `${CLAUDE_PLUGIN_ROOT}`" |
+| Path conventions | "Plugins live at `plugins/<name>/`"; "skills at `plugins/<plugin>/skills/<name>/SKILL.md`"; "shared references at `plugins/<plugin>/_shared/references/`" |
+| Output conventions | Lint format `SEVERITY  <path> — <check>: <detail>`; exit-code contract; severity naming |
+| Test conventions | `tmp_path` fixtures; stdlib-only; inline markdown strings |
+| Version/release conventions | `pyproject.toml` + `.claude-plugin/plugin.json` bump pattern |
 
-**Approval gate** — get a sign-off on the walkthrough outcomes before merging them into the new principles doc.
+Produce a short artifact at `plans/<date>-legacy-facts-<topic>.md` — bulleted list, one fact per line, citing the legacy file and line where each was found. Commit this as the first vertical slice of the PR. It serves as the audit trail: a reviewer can see exactly what was preserved from the legacy skill and why.
+
+**Everything else in the legacy skill — principles, patterns, audit dimensions, repair recipes, anti-pattern guards, narrative prose — is discarded.** It either survives the ensemble inclusion bar in Phase 0b or it doesn't matter. No walkthrough, no per-opinion accept/modify/drop ceremony.
+
+**Approval gate** — present the extracted facts list. A short list is the expected outcome; if the list gets long, you're probably preserving too much. Target ≤20 bullets.
 
 ### Phase 2: Principle → audit dimension mapping
 
@@ -98,20 +155,20 @@ Collapse overlapping principles (e.g., "positive framing" + "direct voice" → s
 
 ### Phase 3: Script breakdown from Section 5
 
-Read synthesis Section 5 (*Shared Deterministic Checks*). For each check:
+Read synthesis Section 5 (*Shared Deterministic Checks*) cross-referenced with `coverage-llm.md`. Apply the same inclusion bar as Phase 0b:
 
-1. **Shared checks (raised by multiple models).** Default: implement. Group related checks into one script where the signal sources overlap (e.g., a single script for location + extension + frontmatter shape, since all read the file header).
+1. **Shared checks (≥2 families raised it).** Implement as Tier-1 script (deterministic-enforcement automatically satisfies the deployment-guarantee criterion). Group related checks into one script where the signal sources overlap (e.g., a single script for location + extension + frontmatter shape, since all read the file header).
 
-2. **Singleton checks.** Judgment call. Implement if the check is generally useful beyond the single model that raised it; skip if it's narrow.
+2. **Singleton checks (one family only).** **Default: drop.** These fail the cross-family bar. Include only with an explicit justification ("this one-model check plugs a known gap other models missed"); the default is to skip.
 
-3. **Off-the-shelf tools.** If the synthesis names a tool (`shellcheck`, `gitleaks`, `markdownlint`, etc.) and it covers the check adequately, document the tool invocation in the skill rather than re-implementing. A bash wrapper that calls the tool and reformats output in our lint format is often the right move.
+3. **Off-the-shelf tools.** If the synthesis names a tool (`shellcheck`, `gitleaks`, `markdownlint`, etc.) and it covers the check adequately, wrap the tool (don't re-implement). A bash wrapper that invokes the tool and reformats output into the fixed lint format is the right move.
 
 Produce a script breakdown table:
 
-| Script | Source check(s) | Tier-1 severity | Tool candidate |
-|---|---|---|---|
+| Script | Source check(s) | Family count (LLM / rapidfuzz) | Tier-1 severity | Tool candidate |
+|---|---|---|---|---|
 
-Include optional **pre-filter** scripts for Tier-2 dimensions with cheap deterministic "obvious case" catchers (hedges, prohibitions, synthetic placeholders in examples). Pre-filters emit WARN only, do not replace Tier-2, accelerate it.
+Pre-filter scripts for Tier-2 dimensions (hedges / prohibitions / synthetic placeholders) are **optional** and only add them when the target Tier-2 dimension is a Core principle AND a cheap deterministic "obvious case" catcher exists. Pre-filters emit WARN only; they do not replace Tier-2, they accelerate it.
 
 **Approval gate** — the breakdown is the design; scripts are mechanical after this. Do not write scripts without approval.
 
@@ -240,27 +297,31 @@ Self-review the entire PR commit-by-commit. Then hand off to a human reviewer.
 
 ## Acceptance criteria
 
+- Every Core principle meets the inclusion bar: cross-family support (≥2 families per `coverage-llm.md`) AND (Haiku raised it OR the check is mechanically deterministic). Advanced/strong-minority rules are not preserved — they are dropped.
 - Every principle in the shared doc maps to exactly one audit dimension OR explicit author-time-only.
 - Every Tier-2 dimension cites its source principle by name.
 - Every Tier-1 script finding (including each subtype a script emits) has a repair-playbook recipe.
 - Every script executes cleanly (`./script.sh -h` prints usage; `./script.sh some.md` produces correctly-formatted output).
+- The principles doc carries a provenance footnote naming the ensemble run, the panel, and the inclusion bar. Clustering discrepancies between `coverage-llm.md` and `coverage.md` at the Core boundary are documented.
 - End-to-end validation on the fixture produces expected output.
-- The shared principles doc is 400-800 words, positively framed, no rule-type taxonomy.
+- The shared principles doc is 400-800 words, positively framed, no rule-type taxonomy, no "Advanced" section.
 - All cross-reference paths resolve (`python3 plugins/wiki/scripts/lint.py` passes).
 - Commits are vertical slices; each is reviewable independently; the sequence tells the story.
 
 ## Anti-patterns to avoid
 
 1. **Writing principles with negative framing.** Positive from word one; rewriting is expensive.
-2. **Absorbing legacy opinions without triage.** Each opinion must earn its keep. Drop more than half.
-3. **Including a rule-type taxonomy.** Dissolves on contact; don't include.
-4. **Using `$CLAUDE_PLUGIN_ROOT` in skill-invoked bash.** Documented for hooks only. Use `${SKILL_DIR}` placeholder.
-5. **Trigger-gating Tier-2 dimensions.** All dimensions always run; those that don't apply return PASS.
-6. **Writing scripts before the breakdown is approved.** The breakdown is the design; scripts are mechanical.
-7. **Skipping `/build:build-shell`'s safety check.** It catches real issues in 3+ scripts.
-8. **Dimension names drifting across files.** Settle naming in Phase 2; don't renegotiate later.
-9. **Scripts that exit 1 on WARN.** Exit 0 on anything short of FAIL.
-10. **Skipping end-to-end validation.** First real invocation after merge is the worst place to find integration bugs.
+2. **Preserving legacy principles that the ensemble didn't reaffirm.** Legacy content outside the project-facts extraction is discarded. Do not run a per-opinion keep/loosen/drop walkthrough as a way to smuggle legacy principles past the ensemble inclusion bar.
+3. **Preserving rules that failed the inclusion bar in an "Advanced" section.** Dropped means dropped. If a dropped rule is genuinely load-bearing, raise it in conversation so the inclusion bar can be debated — do not smuggle it back in via a side section.
+4. **Including a rule-type taxonomy.** Dissolves on contact; don't include.
+5. **Using `$CLAUDE_PLUGIN_ROOT` in skill-invoked bash.** Documented for hooks only. Use `${SKILL_DIR}` placeholder.
+6. **Trigger-gating Tier-2 dimensions.** All dimensions always run; those that don't apply return PASS.
+7. **Writing scripts before the breakdown is approved.** The breakdown is the design; scripts are mechanical.
+8. **Skipping `/build:build-shell`'s safety check.** It catches real issues in 3+ scripts.
+9. **Dimension names drifting across files.** Settle naming in Phase 2; don't renegotiate later.
+10. **Scripts that exit 1 on WARN.** Exit 0 on anything short of FAIL.
+11. **Skipping end-to-end validation.** First real invocation after merge is the worst place to find integration bugs.
+12. **Relying on `coverage.md` alone or `coverage-llm.md` alone.** LLM clustering catches semantic equivalence rapidfuzz misses; rapidfuzz is synthesizer-bias-free. Consume the LLM version as primary but cross-check at borderlines.
 
 ## Estimated effort
 
