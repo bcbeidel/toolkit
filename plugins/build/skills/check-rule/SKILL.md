@@ -42,10 +42,15 @@ standard `FAIL|WARN|INFO|HINT  <path> — <check>: <detail>` format.
 See [audit-dimensions.md](references/audit-dimensions.md) for the full
 rubric behind each check.
 
-Invoke all five scripts against the discovered rule set:
+Invoke all five scripts against the discovered rule set. The scripts
+live in `scripts/` relative to this SKILL.md — Claude resolves the
+absolute path from the skill's base directory at invocation time
+(`$CLAUDE_PLUGIN_ROOT` is documented for hook scripts, not skill-invoked
+bash; don't rely on it here):
 
 ```bash
-SCRIPTS="$CLAUDE_PLUGIN_ROOT/skills/check-rule/scripts"
+# SKILL_DIR = absolute path to this SKILL.md's directory (Claude fills in)
+SCRIPTS="${SKILL_DIR}/scripts"
 TARGETS="$ARGUMENTS"  # path(s) from user; default .claude/rules/
 
 bash "$SCRIPTS/scan_secrets.sh"     $TARGETS     # FAIL on any committed-secret pattern

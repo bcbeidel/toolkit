@@ -5,12 +5,17 @@ description: Per-failure-mode repair strategies for check-rule findings against 
 
 # Rule Repair Playbook
 
-Every check-rule finding maps to a canonical repair. Before applying
-any repair, state the original intent explicitly: **"This rule
+Every FAIL, WARN, and INFO finding maps to a canonical repair. Before
+applying any repair, state the original intent explicitly: **"This rule
 guides Claude to [original directive]."** Verify the proposed repair
 preserves that guidance. If the repair would change what Claude is
 told to do (not just how the directive is phrased), flag it as
 requiring human review before applying.
+
+**HINT output is not a finding.** Lines emitted by `emit_shape_hints.sh`
+are feed-forward context for the Tier-2 LLM evaluator (they help the
+evaluator weigh Why Adequacy and Example Realism). No repair is needed
+for HINTs — they are informational only.
 
 ## Table of Contents
 
@@ -51,12 +56,54 @@ requiring human review before applying.
 
 ### Malformed `paths:` Glob
 
-**Signal:** `paths:` is present but a glob has unmatched brackets, invalid wildcards, or empty pattern
+Covers the four subtypes emitted by `check_paths_glob.sh`. Any of them
+causes Claude Code to either skip loading the rule or load it for the
+wrong file set.
 
-**CHANGE:** Repair the glob syntax
-**FROM:** `paths: "src/api/**/*.{ts"` (unclosed brace)
+#### Unclosed Brace
+
+**Signal:** a `{...}` group in a glob is unmatched (more `{` than `}` or vice versa)
+
+**CHANGE:** Close the brace
+**FROM:** `paths: "src/api/**/*.{ts"`
 **TO:** `paths: "src/api/**/*.{ts,tsx}"`
-**REASON:** Malformed globs silently fail to match — the rule is in the file but Claude never loads it for any real file path.
+**REASON:** Malformed braces cause the glob to silently fail to match. The rule never loads for any real file path.
+
+#### Unclosed Bracket
+
+**Signal:** a `[...]` character class in a glob is unmatched
+
+**CHANGE:** Close the bracket (intended character class)
+**FROM:** `paths: "src/**/*.[ch"`
+**TO:** `paths: "src/**/*.[ch]"`
+**REASON:** Unmatched brackets are a parse error in minimatch-style globs. The rule fails to load.
+
+#### Empty Pattern
+
+**Signal:** a `paths:` entry is empty (`""`), whitespace-only, or missing after a `-` in block-list form
+
+**CHANGE:** Remove the empty entry or replace with a real glob
+**FROM:**
+```yaml
+paths:
+  - "src/api/**/*.ts"
+  - ""
+```
+**TO:**
+```yaml
+paths:
+  - "src/api/**/*.ts"
+```
+**REASON:** An empty glob matches everything (or nothing, depending on parser), defeating path scoping. Always replace or remove.
+
+#### Control Character in Pattern
+
+**Signal:** a glob contains non-printable control characters (ASCII 0x00–0x1F, excluding tab and newline)
+
+**CHANGE:** Remove the control character
+**FROM:** a glob containing a literal `\x07` (bell) or other cntrl character, typically introduced by a copy-paste error
+**TO:** the same glob with the cntrl character deleted
+**REASON:** Control characters are never valid in file paths and cause silent matching failures. Likely indicates corrupted input; re-type the pattern cleanly.
 
 ### File Too Large (WARN at 200)
 

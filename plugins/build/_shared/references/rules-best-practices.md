@@ -86,6 +86,8 @@ Rule files are a trusted-instruction channel — loaded automatically, committed
 - **Guardrails, not shortcuts.** A rule adds a constraint. Never encode instructions that weaken security, validation, logging, or error handling.
 - **Don't paste untrusted content.** Issue bodies, third-party docs, user-submitted text — paraphrase or link. Pasted content becomes a trusted instruction and opens a prompt-injection path.
 
+Of these, only **No secrets** is audited deterministically (via `check-rule`'s Tier-1 secret-pattern scan). The other three rely on author judgment and code review — deterministic detection is infeasible ("when is a command destructive enough to require confirmation?" is a judgment call), and LLM-based auditing of them would add evaluator surface for low signal. Treat them as review prompts, not audit gates.
+
 ## Review and Decay
 
 A rule library should compound, not accumulate. Every rule present should still earn its place.
