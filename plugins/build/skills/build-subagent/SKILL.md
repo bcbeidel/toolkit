@@ -1,196 +1,166 @@
 ---
 name: build-subagent
 description: >
-  Scaffolds a new Claude Code custom subagent definition in the
-  .claude/agents/ directory. Guides intake, applies least-privilege to
-  tool selection, checks for overlap with existing skills and agents,
-  and writes the definition file. Use when the user wants to "create
-  a subagent", "add a subagent", "build an agent", "scaffold an agent",
-  or "make a custom agent".
-argument-hint: "[subagent name or description]"
+  Scaffolds a Claude Code custom subagent definition — a `.md` file
+  under `.claude/agents/` with a routing-oriented description, an
+  explicit `tools` allowlist sized to the workflow, a bounded system
+  prompt in the markdown body, and explicit failure behavior. Use when
+  the user wants to "create a subagent", "add a subagent", "build an
+  agent", "scaffold an agent", or "make a custom agent". Not for
+  skills (route to `/build:build-skill`), hooks (route to
+  `/build:build-hook`), or rules (route to `/build:build-rule`).
+argument-hint: "[name or intent]"
 user-invocable: true
 references:
+  - ../../_shared/references/subagents-best-practices.md
   - ../../_shared/references/primitive-routing.md
 ---
 
 # Build Subagent
 
-Scaffold a new Claude Code custom subagent definition with correct
-structure, least-privilege tool selection, and a complete handoff contract.
-The output is a `.claude/agents/<name>.md` file — not code, not a plan.
+Scaffold a Claude Code custom subagent definition: a single `.md` file
+in `.claude/agents/` (project) or `~/.claude/agents/` (user) that the
+routing agent can delegate to with confidence. The authoring rubric —
+what a good subagent does, the file anatomy, the patterns that work —
+lives in
+[subagents-best-practices.md](../../_shared/references/subagents-best-practices.md).
+This skill is the workflow; the principles doc is the rubric.
 
-**Announce at start:** "I'm using the build-subagent skill to scaffold this agent."
+A subagent is a **full context fork** — high-cost compared to a skill
+(same-context execution) or an inline tool call. The first question
+every intake answers is whether a subagent is even the right primitive.
 
-## Workflow
+**Workflow sequence:** 1. Route → 2. Scope Gate → 3. Elicit →
+4. Draft → 5. Safety Check → 6. Review Gate → 7. Save → 8. Test
 
-### 1. Justify the Subagent
+## 1. Route
 
-Before any intake, confirm a subagent is the right primitive. Full decision matrix: [primitive-routing.md](../../_shared/references/primitive-routing.md).
+Confirm a subagent is the right primitive before asking scaffold
+questions.
 
-A subagent is a full context fork — high cost, separate context window. Ask: "Before we build this, is a subagent the right choice here?"
+**Wrong primitive:**
 
-A subagent is justified only when at least one holds:
-- **Parallelism or scope** — task is genuinely isolated; context fork cost is justified by workstream size or parallel execution
-- **Permission isolation** — task requires tool access or permissions the parent agent should not hold
-- **Context pressure** — intermediate work (search results, large file reads) is large enough to degrade the parent's reasoning quality
+- **Reusable recipe the parent agent runs inline** → `/build:build-skill`.
+  Skills execute in the parent context; no fork cost.
+- **Event-triggered quality gate** (PreToolUse, SessionStart, Stop, etc.)
+  → `/build:build-hook`. Hooks have a `settings.json` registration and
+  a lifecycle a subagent does not express.
+- **Semantic judgment captured as an LLM-evaluated rule** →
+  `/build:build-rule`.
+- **Standalone CLI tool** → `/build:build-bash-script` or
+  `/build:build-python-script`.
 
-If none apply, recommend a skill instead:
+The full primitive-selection decision lives in
+[primitive-routing.md](../../_shared/references/primitive-routing.md).
 
-> "A skill may be more appropriate here — lower overhead, same-context execution, no fork required. Use `/build:build-skill` instead?"
+**Right primitive** — proceed to Scope Gate only when at least one
+subagent-specific justification holds:
 
-Do not proceed to intake until the user confirms a subagent is the right primitive.
+- **Parallelism or scope** — the task is genuinely isolated and the
+  context-fork cost is justified by workstream size, or multiple
+  instances will run concurrently.
+- **Permission isolation** — the task needs tool access or a
+  `permissionMode` the parent should not hold.
+- **Context pressure** — intermediate work (large file reads, search
+  output) would degrade the parent's reasoning quality.
 
-### 2. Elicit Requirements
+If none hold, recommend a skill instead and stop:
 
-If `$ARGUMENTS` is non-empty, seed the intake from it: treat the first token
-as the proposed name and the remainder as the capability description, then
-confirm with the user before moving on.
+> "A skill fits this better — same-context execution, no fork cost.
+> Use `/build:build-skill` instead?"
 
-Gather four inputs, one at a time:
+## 2. Scope Gate
 
-1. **Name** — slug form: lowercase, hyphen-separated, no spaces
-   (e.g., `data-analyst`, `doc-reviewer`)
-2. **Description** — one sentence used for routing. Prompt: "What problem
-   does this agent solve, and when should Claude invoke it instead of a skill?"
-3. **Primary capability** — what workflow does the agent execute, start to
-   finish? What does it produce?
-4. **Tool requirements** — what does the agent need to do its job?
+Refuse to scaffold — and recommend an alternative — when the request
+signals subagent is the wrong choice. Probe for:
 
-### 3. Apply Least-Privilege
+1. **Recreating an existing skill's behavior** with no parallelism,
+   isolation, or permission-scope benefit. Subagents that duplicate
+   skills are cost multipliers without upside.
+2. **Workflow wants shell execution the parent already allows** — no
+   isolation benefit; use a skill.
+3. **Running as main thread via `claude --agent <name>`** — a
+   different authoring surface than subagent delegation. The
+   `tools` / `Agent(<type>)` semantics differ; flag and confirm the
+   user wants the subagent (delegated) path, not the main-thread path.
 
-#### Tool selection — always
+If a signal fires, state it, name the alternative, and stop.
 
-For each tool the user requests, verify: does the workflow *require* this
-tool, or is it "nice to have"?
+## 3. Elicit
 
-Propose the minimal justified set. For each exclusion, explain why:
+If `$ARGUMENTS` is non-empty, seed the intake: first token is the
+proposed name, remainder is the capability description. Confirm both
+before moving on.
 
-> "`Write` isn't needed — this agent reads and reports, it doesn't modify files."
+Gather inputs one at a time:
 
-For tools not requested but clearly needed, suggest them and explain why:
+**1. Name** — kebab-case, lowercase, hyphen-separated, descriptive of
+the primary role (`typescript-linter`, `migration-reviewer`). Not
+generic (`agent`, `helper`). The filename stem must equal the `name`.
 
-> "You'll need `Read` to inspect files, but I don't see it in your list."
+**2. Description** — the routing contract. Write it for the routing
+agent, not a human reader. Structure:
 
-**Common over-permissioning traps:**
-- `Bash` when only file reads are needed
-- `Write`/`Edit` when the agent only produces reports
-- `WebFetch`/`WebSearch` for internal-only workflows
-- `Agent` listed in tools for a **subagent-scoped** definition — subagents
-  cannot spawn other subagents; the Agent tool is filtered out at the
-  platform level. Listing it has no effect. Exception: the `Agent` and
-  `Agent(worker, researcher)` syntax *is* meaningful when the definition
-  is intended to run as the *main thread* via `claude --agent <name>` (spec
-  documents this path explicitly). Flag only for subagent-scoped use.
+- Start with a verb phrase naming the capability ("Lints staged
+  TypeScript files…", "Reviews database migrations for…").
+- State **trigger conditions** explicitly ("use after editing `.ts`
+  files", "when the user asks to check migration safety").
+- Name at least one **exclusion** ("not for JavaScript files", "not
+  for production schema changes").
+- Mention what the agent **returns** (format or location).
+- If the agent should self-invoke without explicit mention, include
+  "use proactively" or equivalent routing language.
 
-**`tools` allowlist vs `disallowedTools` denylist:**
-Use `tools` when the agent needs only a small, specific set. Use
-`disallowedTools` when the agent should inherit most tools but block
-specific ones. If both are set, `disallowedTools` is applied first.
+Keep the total under **1,024 characters** — descriptions exceeding this
+limit are silently truncated by Claude Code without warning.
 
-#### Advanced configuration — conditional
+**3. Primary capability + workflow** — what does the agent do, start
+to finish? What artifact does it produce? Every workflow has an
+explicit completion condition — "done" must be describable.
 
-Do not present these as a menu. Surface each only when the described
-workflow signals it:
+**4. Tool requirements** — what does the agent need to do its job? For
+each proposed tool, verify the workflow requires it. Apply
+least-privilege in step 3 of Draft; surface over-/under-requests now
+only to clarify scope.
 
-**`permissionMode`** — raise only when the agent's risk profile differs from
-the parent session (read-only exploration, auto-accepting edits, etc.). Spec
-values:
-- `default`: standard permission checking with prompts
-- `acceptEdits`: auto-accepts file edits and common filesystem commands for
-  paths in the working directory or `additionalDirectories`
-- `auto`: background classifier reviews commands and protected-directory writes
-- `dontAsk`: auto-denies permission prompts (explicitly allowed tools still work)
-- `bypassPermissions`: skips permission prompts (use with caution)
-- `plan`: plan mode (read-only exploration)
+**5. Advanced fields** — surface each only when the workflow signals
+it; do not present as a menu.
 
-Parent-session precedence rules (spec):
-- If the parent uses `bypassPermissions` **or `acceptEdits`**, that takes
-  precedence and the subagent's `permissionMode` is ignored.
-- If the parent uses `auto` mode, the subagent inherits auto mode and its own
-  `permissionMode` is ignored; the parent's classifier evaluates each tool call.
-- Plugin subagents have `permissionMode`, `hooks`, and `mcpServers` silently
-  ignored regardless of value (spec: security-scoped plugin restriction).
+- **`permissionMode`** — only when the agent's risk profile differs
+  from the parent. Six spec values: `default`, `acceptEdits`, `auto`,
+  `dontAsk`, `bypassPermissions`, `plan`.
+  - Parent precedence: if parent uses `bypassPermissions`,
+    `acceptEdits`, or `auto`, the subagent's `permissionMode` is
+    overridden at runtime.
+  - **Plugin-scope restriction:** for subagents loaded from a plugin
+    directory (`plugins/<plugin>/agents/`), `permissionMode`, `hooks`,
+    and `mcpServers` are silently ignored.
+- **`maxTurns`** — multi-step or recursive workflows; safety net
+  against runaway loops. Add alongside (not instead of) a workflow
+  completion condition.
+- **`background: true`** — only when parallelism was the Step 1
+  justification.
+- **`isolation: worktree`** — **required** when `background: true`
+  AND effective tools include `Write` or `Edit`. Parallel writes on
+  shared files conflict without worktree isolation.
+- **`skills`** — parent session skills are **not** inherited. List
+  explicitly if the workflow needs project-specific procedures.
+- **`memory: user | project | local`** — enables a persistent memory
+  directory. **Side effect:** auto-grants Read, Write, Edit regardless
+  of the `tools` allowlist. Flag this to the user when `tools` is
+  narrow.
+- **`mcpServers`** — scope MCP servers to this subagent only (keeps
+  server tool descriptions out of the parent's token budget). Ignored
+  for plugin-scoped subagents.
 
-**`maxTurns`** — raise only if the workflow is multi-step or recursive:
-> "This workflow has several steps — add `maxTurns: N` as a safety net.
-> Agents without a turn limit can loop indefinitely on unexpected input."
+## 4. Draft
 
-**`background`** — raise only if parallelism was cited as the justification
-in Step 1:
-> "Since parallelism is the reason for this subagent, `background: true`
-> lets it run concurrently while the parent continues."
-
-**`isolation: worktree`** — **required** when `background: true` is set AND
-the effective tool set includes `Write` or `Edit`. Also recommended when
-the agent makes changes to versioned files that require a clean working
-copy. This mirrors check-subagent #11: background agents with write access
-and no worktree isolation are a flagged warn because parallel writes on
-shared files conflict. Surface this to the user:
-> "Since this agent modifies files in parallel, `isolation: worktree` gives
-> it a clean working copy to prevent write conflicts. Without it,
-> check-subagent will flag this combination."
-
-**`skills`** — raise only if the workflow implies needing project-specific
-context or toolkit procedures:
-> "Parent session skills aren't inherited. If this agent needs [skill]
-> procedures, list it explicitly in the `skills` field."
-
-**`mcpServers`** — raise when the subagent needs MCP access the parent
-doesn't have, or when you want to keep an MCP server's tool descriptions
-out of the parent conversation's token budget:
-> "The `mcpServers` field scopes MCP servers to this subagent. Inline
-> definitions connect at start and disconnect at finish; string references
-> reuse the parent session's connection. Defining a server here instead of
-> in `.mcp.json` keeps its tool descriptions out of the parent context."
-
-**`memory`** — raise only if the user wants the subagent to accumulate
-knowledge across sessions (codebase patterns, recurring issues, debugging
-insights):
-> "Setting `memory: project` (or `user`/`local`) gives this subagent a
-> persistent directory. Heads-up: enabling memory auto-grants Read/Write/Edit
-> regardless of the `tools` field, so the subagent can manage its memory
-> files. If you specified a narrow `tools` allowlist, memory will expand it."
-
-Scope choices: `user` (`~/.claude/agent-memory/<name>/`), `project`
-(`.claude/agent-memory/<name>/` — shareable via version control, recommended
-default), `local` (`.claude/agent-memory-local/<name>/` — not checked in).
-
-**Portability** — raise only if the user mentions Copilot, Cursor, or
-cross-platform use:
-
-| Platform | Compatibility | What transfers |
-|---|---|---|
-| Cursor | Direct — reads `.claude/agents/` natively | All fields; unknown fields ignored |
-| GitHub Copilot | Structural — move to `.github/agents/<name>.md` | `name`, `description`, Markdown body; Claude Code-specific fields stripped |
-| Codex CLI | Format conversion required | Rebuild as TOML in `.codex/agents/` |
-| Windsurf | Different primitive | Not applicable |
-
-If Copilot compatibility is needed, avoid `permissionMode`, `maxTurns`,
-`background`, `isolation`, `memory`, and `hooks`.
-
-### 4. Check for Overlap
-
-Scan for conflicts before drafting:
-
-1. Read `.claude/agents/` — list existing agent definitions
-2. Read `skills/` — list existing skills
-
-If the proposed capability duplicates an existing skill or agent, flag it:
-
-> "The `research` skill already covers this workflow. Would a subagent
-> add parallelism or isolation that the skill can't provide?"
-
-Present overlap findings and confirm with the user before proceeding.
-
-### 5. Draft the Definition
-
-Produce a `.claude/agents/<name>.md` draft using only the fields confirmed
-in Steps 2 and 3. Start from the minimum and add only what applies:
+Produce the subagent definition.
 
 ```markdown
 ---
-name: <slug>
-description: <routing description — write as a routing rule, not a capability summary>
+name: <kebab-case-slug>
+description: <routing-rule: verb-phrase capability + trigger conditions + exclusion + returns>
 tools:
   - <Tool1>
   - <Tool2>
@@ -198,156 +168,165 @@ tools:
 
 # <Display Name>
 
-<2–3 sentence capability description: what this agent does, what it
-produces, when to use it.>
+<One-line role/goal statement: "You are a ...">
 
-## When to invoke
+## Scope
 
-<Specific trigger conditions — name the problem, not just the action.
-What makes this the right agent over a skill or inline execution?
-Required: 1–2 example requests that SHOULD route here.
-Required: at least one example that should NOT (routes to a skill
-instead, or is handled inline). The negative case is what disambiguates
-this agent from adjacent routing targets and is checked by
-check-subagent #3.>
+In scope: <what the agent handles>.
+Out of scope: <what the agent refuses or escalates>.
 
-## Workflow
+## Process
 
-<Numbered steps describing the agent's execution pattern.
-The final step must state an explicit completion condition:
-what "done" looks like and what the agent returns to the parent.
-See check-subagent #5 — agents without a completion condition AND
-without `maxTurns` are flagged as runaway risks.>
+1. <First step — reads inputs, validates preconditions>
+2. <…>
+N. <Completion condition: what "done" looks like and what the
+   agent returns to the parent>
 
-## Handoff
+## Output
 
-**Receives:** <concrete input descriptor — e.g., "list of failing test
-names and their error messages", not "test results". Generic category
-descriptors are flagged by check-subagent #4.>
-**Produces:** <concrete output descriptor — format, file path, or
-structure the downstream consumer can parse, e.g., "Markdown report at
-`.research/<slug>.research.md` with Claims table, Sources table, and
-Findings sections">
-**Returns to:** <parent agent or orchestrator name>
+<Mandated format — JSON schema / markdown structure / named artifact
+path. Downstream callers parse this; keep it machine-parsable.>
+
+## Failure behavior
+
+<How the agent reports blockers: bad input, missing access, ambiguous
+request. Deterministic exits only — no workarounds, no flailing.>
 ```
 
-Add fields only when they were raised and confirmed in Step 3:
+**Least-privilege filter** — before locking the `tools` list:
 
-| Field | Add when |
-|---|---|
-| `disallowedTools` | denylist approach was chosen over allowlist |
-| `model` | specific model was justified for this workflow |
-| `permissionMode` | agent's risk profile differs from the parent session (see Step 3 for the 6 spec values) |
-| `maxTurns` | multi-step or recursive workflow |
-| `background` | parallelism was the Step 1 justification |
-| `isolation: worktree` | **required** when `background: true` AND effective tools include `Write` or `Edit`; also recommended when modifying versioned files that require a clean working copy |
-| `skills` | workflow needs project-specific procedures |
+- Every tool must be required by the described workflow. "Just in
+  case" is not a justification.
+- Read/report agents do not need `Write`, `Edit`, or `Bash`.
+- `Bash` is the widest attack surface — grant only when shell
+  execution is the core job, and enumerate allowed commands in the
+  prompt body.
+- `WebFetch` / `WebSearch` — internal-only workflows should not have
+  these.
+- **`Agent` in subagent scope** — the Agent tool is filtered out at
+  the platform level for delegated subagents; listing it has no
+  effect and misleads readers. Exception: `Agent(<worker>, ...)` is
+  meaningful for definitions intended to run as main thread via
+  `claude --agent <name>`. Flag only for subagent-scope use.
 
-Do not include fields that were not discussed. Do not include commented-out
-placeholders. The output file contains only what applies.
+Add optional frontmatter fields only when intake surfaced them — no
+placeholder or commented-out keys.
 
-**Description quality checklist** — before presenting for approval, verify
-the description covers:
+## 5. Safety Check
 
-- What the agent does (primary function)
-- When to invoke it (specific trigger conditions, written as routing rules)
-- When NOT to invoke it (at least one exclusion)
-- What it returns (output format or location)
-- "use proactively" — include this phrase if the agent should be invoked automatically without being asked
+Before presenting for review, run the rubric checks yourself:
 
-A one-liner with no exclusions and no output format is insufficient. A description that reads as a capability summary rather than a routing rule will produce unreliable auto-delegation. Keep the total description under 1,024 characters — descriptions exceeding this limit are silently truncated without warning.
+**Location & format.** File will save to `.claude/agents/<name>.md`
+(or `~/.claude/agents/<name>.md`). Frontmatter is a `---`-delimited
+YAML block. `name` and `description` are present and non-empty.
 
-**Skills are not inherited.** The parent session's active skills do not carry over to subagents. If the workflow requires project-specific procedures, list them explicitly in the `skills` field. If omitted, the subagent starts with no skill context beyond its own system prompt.
+**Naming.** `name` is kebab-case. Filename stem equals `name`. Not
+generic.
 
-### 6. Narrate the Draft
+**Description.** Routing-rule form (verb-phrase + trigger + exclusion
++ returns). Under 1,024 characters. No duplicated trigger vocabulary
+with existing siblings in `.claude/agents/` (scan the directory).
 
-Before asking for approval, walk the user through the key design choices in
-3–6 bullets. Cover:
+**Tools.** Effective set is declared explicitly, no wildcards.
+Proportionate to the described workflow. `Agent` not listed (unless
+main-thread use). When `background: true` + Write/Edit is set,
+`isolation: worktree` is present. When `memory:` is set alongside a
+narrow `tools` list, the user has been warned about the implicit
+Read/Write/Edit grant.
 
-- **Frontmatter choices** — explain any non-default field settings and why.
-  Name the field *and* the reasoning: "I set `permissionMode: acceptEdits`
-  because this agent auto-applies linter fixes — interactive prompts would
-  defeat the point."
-- **Structure choices** — why the workflow is ordered the way it is, where
-  gate checks are placed and what they guard, and how prescriptive vs.
-  flexible each step is.
-- **Patterns applied** — call out `isolation: worktree`, `background: true`,
-  `memory: project`, `mcpServers` scoping, or other patterns you used.
-- **What you didn't use and why** — briefly note patterns you considered
-  but skipped (e.g., "I didn't set `maxTurns` because the workflow has one
-  step; if we add retry logic, we should add it then"). This is often the
-  most educational part of the narration.
+**Body.** Prompt opens with a role/goal statement. Scope and
+out-of-scope are explicit. A completion condition exists in the
+workflow. Output format is mandated, not free-form. Failure behavior
+is explicit. Voice is imperative; no hedging ("try your best", "if
+possible"). Total body bounded — target ≤1,500 tokens, hard cap
+≈3,000 chars / 2 KB.
 
-The goal is that a user unfamiliar with subagent authoring can read the
-narration and disagree with any structural choice. If you can't explain a
-choice clearly, revisit it before presenting.
+**Safety.** No embedded secrets. No raw interpolation of untrusted
+user input.
 
-### 7. WOS Quality Check
+If any check fails, revise before presenting. The Review Gate is for
+user approval, not correctness recovery.
 
-Before writing to disk, run lint and reindex on the worktree root:
+## 6. Review Gate
 
-```bash
-python3 plugins/wiki/scripts/lint.py --root <project-root> --no-urls
-python3 plugins/wiki/scripts/reindex.py --root <project-root>
-```
+Present the draft with a short narration — 3–6 bullets naming the
+design choices: which tools, why; which advanced fields, why; which
+considered patterns were skipped and why. A user unfamiliar with
+subagent authoring should be able to disagree with any structural
+choice from the narration alone.
 
-Fix any findings surfaced by lint before writing. `reindex.py` updates
-`_index.md` navigation so the new agent is discoverable.
+Wait for explicit user approval before writing. If the user requests
+changes, revise and re-present. Proceed to Save only on explicit
+approval.
 
-### 8. Present for Approval
+## 7. Save
 
-Show the complete draft and the narration together. Wait for explicit user
-confirmation before writing any file. If the user requests changes, revise
-and re-present.
-
-Do not write the file until approved.
-
-### 9. Write the File and Audit
-
-Write to `.claude/agents/<name>.md`. Confirm the path and that the file
+Write to `.claude/agents/<name>.md` (or the plugin path when
+scaffolding inside a plugin). Confirm the save path and that the file
 was written.
 
-After writing, invoke `check-subagent` on the new file — surface any findings
-and offer the repair loop before moving on. build-subagent must produce
-definitions that pass the checks it enforces downstream.
+## 8. Test
 
-## Key Instructions
+Offer the audit:
 
-- **Won't write the definition file until the user explicitly approves the draft** — Step 8 is a hard gate; no file is written before it passes
-- **Won't proceed to intake if a skill would suffice** — Step 1 justification check is mandatory; redirect to `/build:build-skill` if none of the three justification conditions hold
+> "Run `/build:check-subagent <path>` to audit the scaffolded
+> definition against the Tier-1 checks and judgment dimensions?"
+
+The audit is the canonical follow-on — it catches anything the Safety
+Check missed and gives a baseline-clean starting point.
 
 ## Anti-Pattern Guards
 
-- **Over-permissioning** — requesting tools "to be safe" without per-tool
-  justification. Every tool must be required by the workflow description.
-- **Under-permissioning** — missing tools the workflow actually requires
-  (e.g., no `Read` for a file-analysis agent, no `Bash` for a code executor).
-- **`Agent` tool listed in subagent tools** — subagents cannot spawn other
-  subagents; the Agent tool is filtered out at the platform level. Listing it
-  has no effect and misleads readers.
-- **Vague description** — a description that reads as a capability summary
-  rather than a routing rule will produce unreliable auto-delegation. Route
-  ambiguity causes missed invocations and incorrect handoffs.
-- **Relying on auto-delegation** — auto-delegation by description matching is
-  documented but frequently unreliable in practice. Design workflows around
-  explicit invocation (@-mention). Do not tell users their agent "will
-  automatically run" — it may not.
-- **Missing `maxTurns` on complex workflows** — agents with multi-step or
-  recursive patterns and no turn limit can loop indefinitely on unexpected
-  input. Add `maxTurns` as a safety net for any non-trivial workflow.
-- **Skill duplication** — a subagent that replicates an existing skill with
-  no parallelism, isolation, or permission benefit. Use a skill instead.
-- **Missing completion condition** — a workflow with no explicit final step
-  describing what "done" looks like. Agents without stopping conditions fail
-  in production.
-- **Missing handoff contract** — no `## Handoff` section means the agent
-  cannot participate in skill-chain design or `check-skill-chain` verification.
+1. **Skipping the Route step** — scaffolding a subagent for work that
+   wants a skill pushes the wrong primitive into the codebase.
+2. **Over-permissioning "to be safe"** — every tool must be justified
+   by a workflow step. Broad `tools` sets are flagged by
+   `/build:check-subagent` Tier-2.
+3. **`Agent` in a subagent's tools list** — always a no-op for
+   delegated subagents; drop it or flag the main-thread alternative.
+4. **Capability-summary descriptions** — "handles data tasks" fails
+   as a routing contract. Descriptions are router prompts, not
+   documentation.
+5. **Missing completion condition** — a workflow with no explicit
+   "done" step is a runaway risk. Add a terminating step **and**
+   consider `maxTurns` for multi-step workflows.
+6. **`background: true` with Write/Edit and no `isolation: worktree`**
+   — parallel writes on shared files conflict. Scaffold the
+   worktree isolation when the combination appears.
+7. **Silent `memory:` tool expansion** — when `memory:` is set
+   alongside a narrow `tools` list, surface the implicit
+   Read/Write/Edit grant to the user before Save.
+8. **Writing before Review Gate** — the approval gate is hard; no
+   file lands before it passes.
+
+## Key Instructions
+
+- Refuse on Route failure. If a skill / hook / rule / script fits
+  better, recommend it and stop.
+- Elicit the name, description, workflow, and tools before drafting —
+  do not invent any of them from `$ARGUMENTS` alone.
+- The description is the routing contract. Verb-phrase + trigger +
+  exclusion + returns. Flag one-liners.
+- Write files to disk only after the Review Gate passes.
+- Surface spec-documented side effects (plugin field no-ops, memory
+  auto-grant, parent-precedence override, description truncation) at
+  Elicit time — these are silent failures at runtime otherwise.
+- Won't scaffold subagents that duplicate existing skills without
+  parallelism / isolation / permission justification — recommend the
+  skill.
+- Won't list `Agent` in a subagent's `tools` — it's filtered at the
+  platform level for delegated agents.
+- Recovery if a definition is written in error: `rm
+  .claude/agents/<name>.md` removes it cleanly. The definition is
+  self-contained (no registration, no shared-module dependency).
 
 ## Handoff
 
-**Receives:** Subagent name, description, primary capability, and initial
-tool requirements from user
-**Produces:** `.claude/agents/<name>.md` definition file with validated
-frontmatter, capability description, when-to-invoke guidance, workflow with
-completion condition, and handoff contract
-**Chainable to:** check-subagent
+**Receives:** user intent for a Claude Code subagent (name,
+routing-oriented description, primary capability + workflow, tool
+requirements, any advanced fields the workflow signals).
+**Produces:** an executable subagent definition at
+`.claude/agents/<name>.md` with complete frontmatter, bounded prompt
+body, mandated output format, and explicit failure behavior.
+**Chainable to:** `/build:check-subagent` (audit the scaffolded
+definition against the Tier-1 checks and judgment dimensions).
