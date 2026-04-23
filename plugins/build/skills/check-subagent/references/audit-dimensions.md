@@ -38,7 +38,7 @@ fixed lint format (`SEVERITY  <path> — <check>: <detail>` +
 | `check_tools.sh` | `agent-listed` | `Agent` listed in `tools` for a subagent-scope definition — filtered at the platform level, has no effect | WARN | Declare `tools` explicitly (toolkit project-fact) |
 | `check_tools.sh` | `parallel-write-risk` | `background: true` + effective tools include `Write` or `Edit` + `isolation: worktree` absent | WARN | Scope dangerous tools (toolkit project-fact) |
 | `check_size.sh` | `size-soft` | Body character count ≥6,000 (~1,500 tokens) | WARN | Prompt length bounded |
-| `check_size.sh` | `size-hard` | Body character count ≥12,000 (or file size ≥2 KB of body) | FAIL | Prompt length bounded |
+| `check_size.sh` | `size-hard` | Body character count ≥12,000 (~3,000 tokens) | FAIL | Prompt length bounded |
 | `check_structure.sh` | `no-headings` | Body has no `##` heading | WARN | Consistent section structure |
 | `check_structure.sh` | `scope-absent` | No heading matching `Scope`, `In scope`, or `Out of scope` | INFO | Scope/out-of-scope stated |
 

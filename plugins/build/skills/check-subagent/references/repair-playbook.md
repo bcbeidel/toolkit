@@ -398,14 +398,16 @@ consume the subagent's own context budget. The principles doc's
 *Prompt length is bounded* rule targets ≤~1,500 tokens as a soft
 signal.
 
-### Signal: `size-hard — body ≥12,000 characters (~3,000 tokens / 2 KB)`
+### Signal: `size-hard — body ≥12,000 characters (~3,000 tokens)`
 
 **CHANGE** Split the workflow. A subagent that needs this much prompt
 is probably two agents, or the prompt is carrying documentation that
 belongs in a shared reference the agent links to.
 
 **REASON** At this size, the prompt competes directly with task
-context. The cross-family consensus hard cap is ≈2 KB / ≈3,000 chars.
+context. The ensemble's hard cap (~3,000 tokens / ~12,000 chars) is
+double the soft target, and definitively over budget for any single
+subagent workflow.
 
 ---
 

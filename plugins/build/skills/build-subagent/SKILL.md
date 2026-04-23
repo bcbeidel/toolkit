@@ -238,8 +238,8 @@ Read/Write/Edit grant.
 out-of-scope are explicit. A completion condition exists in the
 workflow. Output format is mandated, not free-form. Failure behavior
 is explicit. Voice is imperative; no hedging ("try your best", "if
-possible"). Total body bounded — target ≤1,500 tokens, hard cap
-≈3,000 chars / 2 KB.
+possible"). Total body bounded — target ≤~1,500 tokens (~6,000
+chars), hard cap ≈3,000 tokens (~12,000 chars).
 
 **Safety.** No embedded secrets. No raw interpolation of untrusted
 user input.

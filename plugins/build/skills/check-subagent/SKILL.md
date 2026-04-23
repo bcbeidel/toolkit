@@ -78,7 +78,7 @@ bash "$SCRIPTS/check_location.sh"    $TARGETS   # FAIL: wrong directory / wrong 
 bash "$SCRIPTS/check_frontmatter.sh" $TARGETS   # FAIL: missing delimiter / name / description; description >1024 chars
 bash "$SCRIPTS/check_naming.sh"      $TARGETS   # FAIL: name ≠ filename stem; WARN: non-kebab-case; HINT: generic filename
 bash "$SCRIPTS/check_tools.sh"       $TARGETS   # FAIL: wildcard tool entry; WARN: omitted tools / Agent listed / parallel-write risk
-bash "$SCRIPTS/check_size.sh"        $TARGETS   # WARN: body ≥1500 tokens (~6000 chars); FAIL: ≥3000 chars / 2 KB
+bash "$SCRIPTS/check_size.sh"        $TARGETS   # WARN: body ≥6,000 chars (~1,500 tokens); FAIL: ≥12,000 chars (~3,000 tokens)
 bash "$SCRIPTS/check_structure.sh"   $TARGETS   # WARN: no body headings; INFO: scope section absent
 ```
 
@@ -96,7 +96,7 @@ skills do not.
 | `check_frontmatter.sh` | `---`-delimited YAML block present at file head; `name` and `description` keys present and non-empty; `description` ≤1,024 chars (spec truncation cap); plugin-subagent no-op detection (`permissionMode`/`hooks`/`mcpServers` set in a plugin path); `memory:` + narrow `tools` implicit Read/Write/Edit expansion |
 | `check_naming.sh` | `name` is kebab-case (`^[a-z][a-z0-9]*(-[a-z0-9]+)*$`); filename stem equals `name`; filename is not generic (`agent.md`, `helper.md`) |
 | `check_tools.sh` | `tools` declared explicitly; no wildcards (`*`, `all`, `all_tools`); `Agent` not listed in a subagent-scope definition; `background: true` + Write/Edit without `isolation: worktree` |
-| `check_size.sh` | Body character count — WARN ≥6,000 chars (~1,500 tokens), FAIL ≥12,000 chars / 2 KB |
+| `check_size.sh` | Body character count — WARN ≥6,000 chars (~1,500 tokens), FAIL ≥12,000 chars (~3,000 tokens) |
 | `check_structure.sh` | Body has at least one `##` heading; presence of a Scope / Out-of-scope heading |
 
 **Exit-code contract every script honors:** `0` on clean / WARN /
