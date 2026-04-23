@@ -57,6 +57,7 @@ bash "$SCRIPTS/scan_secrets.sh"     $TARGETS     # FAIL on any committed-secret 
 bash "$SCRIPTS/check_structure.sh"  $TARGETS     # FAIL location/extension; INFO unknown keys
 bash "$SCRIPTS/check_paths_glob.sh" $TARGETS     # FAIL unbalanced braces/brackets, empty, cntrl
 bash "$SCRIPTS/check_size.sh"       $TARGETS     # WARN >200 lines, FAIL >500 lines
+bash "$SCRIPTS/check_prose.sh"      $TARGETS     # WARN hedges/prohibitions/synthetic placeholders
 bash "$SCRIPTS/emit_shape_hints.sh" $TARGETS     # HINT lines for Tier-2 prompt context
 ```
 
@@ -68,6 +69,7 @@ bash "$SCRIPTS/emit_shape_hints.sh" $TARGETS     # HINT lines for Tier-2 prompt 
 | `check_structure.sh` | Location (under `.claude/rules/`), Extension (`.md`, no double-extension), Frontmatter shape (only `paths:` documented) | FAIL / FAIL / INFO |
 | `check_paths_glob.sh` | Balanced `{…}` and `[…]`, non-empty, no control chars | FAIL |
 | `check_size.sh` | Non-blank-line count against 200/500 thresholds | WARN / FAIL |
+| `check_prose.sh` | Prose pre-check: hedges (Specificity), prohibition-only openers (Framing), synthetic placeholders in code blocks (Example Realism) | WARN |
 | `emit_shape_hints.sh` | Keyword signals (`compliant`, `non-compliant`, `violation`, `exception`, `failure`, code blocks) | HINT (informational) |
 
 **Orchestration rules:**
@@ -75,7 +77,7 @@ bash "$SCRIPTS/emit_shape_hints.sh" $TARGETS     # HINT lines for Tier-2 prompt 
 - Emit all Tier-1 output immediately, before any LLM work.
 - Rules with a FAIL finding from `scan_secrets.sh`, `check_structure.sh` (location/extension), or `check_paths_glob.sh` are **excluded from Tier 2** — malformed rules don't reach the LLM step.
 - `check_size.sh` FAIL (>500 lines) also excludes from Tier 2.
-- `check_size.sh` WARN and `check_structure.sh` INFO findings do **not** exclude — they accompany Tier-2 output.
+- `check_size.sh` WARN, `check_structure.sh` INFO, and `check_prose.sh` WARN findings do **not** exclude — they accompany Tier-2 output (and `check_prose.sh` WARNs specifically feed Tier-2 dimensions as pre-filter signals for Specificity / Framing / Example Realism).
 - `emit_shape_hints.sh` HINT lines are not findings; collect them per file and include in the Tier-2 prompt as context so the evaluator weighs Why Adequacy and Example Realism appropriately.
 - Exit code of each script is 0 on clean / WARN-only / HINT-only, 1 on FAIL. The orchestrator treats exit 1 as the "exclude from Tier 2" signal.
 

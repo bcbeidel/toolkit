@@ -66,6 +66,9 @@ immediately. Rules with FAIL findings are excluded from Tier 2.
 | File size (fail) | principle — *Prefer short* | File exceeds 500 non-blank lines | fail |
 | Frontmatter shape | canonical | Frontmatter contains top-level keys other than `paths:` | info |
 | Secrets Safety | principle — *Safety / No secrets* | Rule body matches a committed-secret pattern (see below) | fail |
+| Prose pre-check (Hedges) | principle — *Direct, definite voice* / *Specific enough to be falsifiable* | Body (outside code blocks) contains hedging language: `prefer`, `generally`, `usually`, `consider`, `where appropriate`, `as appropriate`, `where it makes sense` | warn |
+| Prose pre-check (Prohibition opener) | principle — *Frame in the positive* | Rule statement begins with `Don't` / `Never` / `Avoid` (heuristic — legitimate exceptions exist) | warn |
+| Prose pre-check (Synthetic placeholder) | principle — *Domain-specific examples over synthetic placeholders* | Code block contains `foo`+`bar` pair, `myFunction`/`myClass`/etc., `Widget`/`SomeClass`, `placeholder`, or `example_*` identifiers | warn |
 | Shape hints (informational) | — | Scan for keywords (`compliant`, `non-compliant`, `violation`, `exception`, `failure`, fenced code blocks); no finding. The hit set is appended to the Tier-2 prompt as context so the evaluator weighs Why Adequacy and Example Realism more closely when present | none |
 
 ### Notes
