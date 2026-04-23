@@ -15,7 +15,7 @@ description: >
 argument-hint: "[path]"
 user-invocable: true
 references:
-  - ../../_shared/references/bash-scripts-best-practices.md
+  - ../../_shared/references/bash-script-best-practices.md
   - references/audit-dimensions.md
   - references/repair-playbook.md
 ---
@@ -26,7 +26,7 @@ Audit a Bash 4.0+ script for structural soundness, safety, idiom
 discipline, and adherence to the project's Bash conventions. The
 rubric — what makes a script load-bearing, the anatomy template, the
 patterns that work — lives in
-[bash-scripts-best-practices.md](../../_shared/references/bash-scripts-best-practices.md).
+[bash-script-best-practices.md](../../_shared/references/bash-script-best-practices.md).
 This skill is the audit workflow; the principles doc is what it
 audits against.
 

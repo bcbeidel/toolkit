@@ -99,4 +99,12 @@ When the routing test lands on "a script" (glue code, a CLI tool, a hook body), 
 
 **Escalation — start as a script, graduate to a package.** Either language: when the script grows a second entry point, acquires shared state across invocations, runs as a long-lived service, or its test coverage exceeds its code, convert to a proper package. Both Scope Gates flag these signals explicitly.
 
-Route: `/build:build-bash-script` for Bash 4.0+; `/build:build-python-script` for Python. POSIX `sh` is out of scope for both — when genuine portability to `dash`/BusyBox/Alpine is required, choose a different language.
+Route: `/build:build-bash-script` + `/build:check-bash-script` for Bash 4.0+; `/build:build-python-script` + `/build:check-python-script` for Python. POSIX `sh` is out of scope for both — when genuine portability to `dash`/BusyBox/Alpine is required, choose a different language.
+
+## Meta-Primitives — patterns that create other primitives
+
+Some primitives are *about* primitives. A skill-pair is the canonical case: a matched `build-<primitive>` scaffolder and `check-<primitive>` auditor that share a single distilled principles doc under `_shared/references/`, plus a scoreable `audit-dimensions.md` and a `repair-playbook.md`. The pair exists so creation and review never drift — both halves read from the same rubric, so the patterns the scaffolder produces are the patterns the auditor enforces. Either half alone is incomplete; `/build:build-skill-pair` refuses to scaffold only one side.
+
+Reach for a skill-pair when a new primitive class carries enough convention to distill into a rubric worth citing — Bash scripts, Python scripts, and future additions (e.g., Terraform modules, Dockerfiles, SQL migrations) fit this mold. Do *not* reach for a pair when the primitive has no convention beyond what already appears in CLAUDE.md or a rule — the distilled rubric would be thin and the pair would dilute the meta-skill's usefulness.
+
+Route: `/build:build-skill-pair <primitive>` to author the pair (six artifacts: principles doc + two SKILLs + audit-dimensions + repair-playbook + routing-doc registration). `/build:check-skill-pair <primitive>` to audit pair-level integrity — missing principles doc, drifted audit/playbook coverage, unregistered pair, divergent principles paths. Full authoring guidance lives in [skill-pair-best-practices.md](skill-pair-best-practices.md).

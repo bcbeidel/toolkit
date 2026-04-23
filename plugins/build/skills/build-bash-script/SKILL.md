@@ -13,7 +13,7 @@ description: >
 argument-hint: "[purpose]"
 user-invocable: true
 references:
-  - ../../_shared/references/bash-scripts-best-practices.md
+  - ../../_shared/references/bash-script-best-practices.md
   - ../../_shared/references/primitive-routing.md
 ---
 
@@ -23,7 +23,7 @@ Scaffold a standalone Bash 4.0+ script: a single-file program built
 from existing CLI tools that runs from a terminal or Makefile, returns
 a useful exit code, and stays composable in pipelines. The authoring
 rubric — anatomy template, patterns that work — lives in
-[bash-scripts-best-practices.md](../../_shared/references/bash-scripts-best-practices.md).
+[bash-script-best-practices.md](../../_shared/references/bash-script-best-practices.md).
 This skill is the workflow; the principles doc is the rubric.
 
 This skill is **bash-only by scope**. POSIX `sh` portability targets
@@ -251,7 +251,7 @@ Present both artifacts to the user before any safety checks.
 ## 5. Safety Check
 
 Review the draft against the rubric in
-[bash-scripts-best-practices.md](../../_shared/references/bash-scripts-best-practices.md)
+[bash-script-best-practices.md](../../_shared/references/bash-script-best-practices.md)
 before presenting. Group the checks:
 
 **Structure.** Shebang is `#!/usr/bin/env bash` (or `#!/bin/bash`

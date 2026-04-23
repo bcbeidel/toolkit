@@ -9,7 +9,7 @@ The check-python-script audit runs in three tiers. This document is
 the inventory: every deterministic check Tier-1 emits, every
 judgment dimension Tier-2 evaluates. Every dimension cites the source
 principle it audits from
-[python-scripts-best-practices.md](../../../_shared/references/python-scripts-best-practices.md).
+[python-script-best-practices.md](../../../_shared/references/python-script-best-practices.md).
 
 ## Tier-1 — Deterministic Checks
 
@@ -42,7 +42,7 @@ arg error; `69` missing dependency.
 | `check_ruff.sh` | `ruff-F401` | No unused imports | WARN | Prefer the standard library |
 | `check_ruff.sh` | `ruff-ANN` | Type hints on function signatures | WARN | Dress the style |
 | `check_ruff.sh` | `ruff-format` | `ruff format --check` passes | WARN | Dress the style |
-| `check_ruff.sh` | `ruff-UP031-UP032` | f-strings over `%` / `.format()` | WARN | Dress the style |
+| `check_ruff.sh` | `ruff-UP031 / ruff-UP032` | f-strings over `%` / `.format()` | WARN | Dress the style |
 | `check_ruff.sh` | `ruff-F403` | No wildcard imports | FAIL | Dress the style |
 | `check_ruff.sh` | `ruff-S108` | No hardcoded `/tmp/` or `/var/tmp/` path literals | FAIL | Hold the safety posture |
 | `check_size.sh` | `size` | Script length ≤ 500 non-blank lines | WARN | Keep functions small and single-purpose (script-level) |
@@ -233,6 +233,19 @@ own.
 **Common fail signal:** `# increment counter` above `counter += 1`;
 bare `# TODO: fix this` with no owner; a paragraph comment explaining
 logic that a helper function would name.
+
+## Tier-3 — Cross-Entity Collision
+
+### collision
+
+**What it checks:** When the audit scope holds multiple Python scripts
+in the same directory, look for near-identical `get_parser()` /
+error-handler / docstring patterns the maintainer could lift into a
+shared module.
+**Severity:** WARN.
+**Source principle:** *Keep functions small and single-purpose* +
+*Review and Decay* — duplicated scaffolding is the early signal that
+the script collection wants a real package.
 
 ## Cross-Dimension Notes
 
