@@ -52,7 +52,10 @@ EOF
 install_hint() {
   case "${1}" in
     awk | find | basename) printf 'should be preinstalled on any POSIX system' ;;
-    checkmake) printf '`brew install checkmake` (macOS) or `go install github.com/mrtazz/checkmake@latest`' ;;
+    checkmake)
+      printf '`brew install checkmake` (macOS) '
+      printf 'or `go install github.com/mrtazz/checkmake@latest`'
+      ;;
     *) printf 'see your package manager' ;;
   esac
 }
@@ -104,7 +107,7 @@ check_file() {
       printf '  Recommendation: See `checkmake --list-rules` for the '
       printf 'rule reference; fixes vary by rule (MIXDEPS, '
       printf 'TIMESTAMP_EXPANDED, MIN_PHONY, MAX_BODY_LENGTH).\n'
-    done <<< "${output}"
+    done <<<"${output}"
   fi
 }
 
