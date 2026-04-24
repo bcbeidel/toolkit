@@ -46,6 +46,14 @@ Route: `/build:build-subagent` scaffolds a `.claude/agents/<name>.md` definition
 
 **`permissions.deny`** exists for unconditional blocks with no exceptions, ever. If the block is sometimes legitimate, use a hook with conditional logic instead.
 
+**Makefiles** exist for top-level repository workflow orchestration — a single source of truth for `build` / `test` / `lint` / `fmt` / `run` / `deploy` / `clean` / `ci` that developers and CI both invoke. A workflow Makefile is not a scripting language and not a compilation-driving build system; it stitches together project-local tools behind lowercase verb-shaped targets and a self-documenting `help`. If the project lacks recurring CLI verbs, a Makefile adds ceremony without payoff; if compilation-driving is the point, GNU Make's pattern-rule machinery lives outside this skill's scope. Route: `/build:build-makefile` to scaffold a top-level Makefile from a declared target surface; `/build:check-makefile` to audit an existing Makefile against the rubric in [makefile-best-practices.md](makefile-best-practices.md).
+
+**Pre-commit configs** exist as a reproducible commit-time quality gate — a `.pre-commit-config.yaml` at the repo root plus any local scripts it invokes via the `pre-commit` framework. They sit between Claude Code's primitives and the CI pipeline: they fire on every developer's `git commit` regardless of Claude, they run only on the staged set, and they fail loudly with actionable messages. Reach for one when the check is *fast*, *local*, *deterministic*, and *actionable*; push slower / repo-wide / flaky work into `pre-push` or CI instead, because slow pre-commit hooks get bypassed and bypass culture leaves you with zero enforcement. Route: `/build:build-pre-commit-config` to author a new config; `/build:check-pre-commit-config` to audit an existing one (plus its local scripts) against [pre-commit-config-best-practices.md](pre-commit-config-best-practices.md).
+
+**READMEs** exist for strangers. A top-level `README.md` is the file GitHub, npm, PyPI, and `ls` all show first; its reader arrived from a search result or a dependency listing and has ~30 seconds to decide whether to keep reading. A README earns its place by answering *what is this*, *why does it exist*, and *how do I run it on a clean machine* — in that order — without duplicating what `CONTRIBUTING.md`, `ARCHITECTURE.md`, or `CHANGELOG.md` already say. Sub-package READMEs inside a monorepo, docs-site landing pages, and org-profile surfaces have different audiences and are out of scope for this pair. Route: `/build:build-readme` to scaffold a top-level README from intake; `/build:check-readme` to audit one against structure, safety, completeness, and the seven judgment dimensions in [readme-best-practices.md](readme-best-practices.md).
+
+**GitHub Actions workflows** exist for repository-triggered CI/CD — YAML files under `.github/workflows/` that run on GitHub-hosted or self-hosted runners and carry the trust boundary of the repository they live in. Pinning posture, top-level permissions, and the handling of `pull_request_target` are security-load-bearing in a way a shell script or a CLAUDE.md entry is not — the synthesis this pair enforces is shaped by the 2025 tj-actions and reviewdog supply-chain incidents and GitHub's 2026 security roadmap. Not a composite action (`action.yml` under `.github/actions/<name>/` — separate primitive with a different rubric), not an organization ruleset, not a Dependabot config, not a GitHub App. Route: `/build:build-github-workflow` to scaffold a new workflow file; `/build:check-github-workflow` to audit an existing workflow file or the whole `.github/workflows/` directory against `actionlint`, `zizmor`, `yamllint`, `shellcheck` on extracted `run:` content, plus seven judgment dimensions in [github-workflow-best-practices.md](github-workflow-best-practices.md).
+
 ## Routing Test
 
 Two questions route most decisions:
@@ -57,6 +65,9 @@ If neither resolves it:
 - Static file content evaluated for semantic compliance → **Rule**
 - Task needs context isolation or different tool permissions → **Subagent**
 - Unconditional, no exceptions, no override path → **`permissions.deny`**
+- Commit-time gate for staged changes, reproducible across developer machines → **Pre-commit config**
+- The artifact is a project's top-level `README.md` → **README**
+- YAML file under `.github/workflows/` that fires on repository events → **GitHub Actions workflow**
 
 ## When You've Chosen the Wrong Primitive
 

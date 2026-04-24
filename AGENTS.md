@@ -47,7 +47,7 @@ LLMs lose attention mid-document — first and last sections are what agents ret
 
 | Plugin | Path | Skills |
 |--------|------|--------|
-| `build` | `plugins/build/` | `build-skill`, `build-skill-pair`, `build-rule`, `build-hook`, `build-subagent`, `build-bash-script`, `build-python-script`, `refine-prompt`, `check-skill`, `check-skill-pair`, `check-rule`, `check-hook`, `check-subagent`, `check-bash-script`, `check-python-script`, `check-skill-chain` |
+| `build` | `plugins/build/` | `build-skill`, `build-skill-pair`, `build-rule`, `build-hook`, `build-subagent`, `build-bash-script`, `build-python-script`, `build-makefile`, `build-pre-commit-config`, `build-github-workflow`, `build-readme`, `refine-prompt`, `check-skill`, `check-skill-pair`, `check-rule`, `check-hook`, `check-subagent`, `check-bash-script`, `check-python-script`, `check-makefile`, `check-pre-commit-config`, `check-github-workflow`, `check-readme`, `check-skill-chain` |
 | `wiki` | `plugins/wiki/` | `setup`, `research`, `ingest`, `lint` |
 | `work` | `plugins/work/` | `scope-work`, `plan-work`, `start-work`, `verify-work`, `finish-work` |
 | `consider` | `plugins/consider/` | 16 mental models + meta |
