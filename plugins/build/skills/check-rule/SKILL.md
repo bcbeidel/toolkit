@@ -36,48 +36,49 @@ Report: "Found N rules. Auditing..."
 
 ### 2. Tier 1 — Deterministic Format Checks
 
-Tier 1 is implemented as five shell scripts under `scripts/`. Each script
-is deterministic, POSIX-portable (bash 3.2+), and emits findings in the
+Tier 1 is implemented as six scripts under `scripts/` — four Python 3
+scripts for structural and pattern work, plus two bash scripts for
+pure text glue. Each is deterministic and emits findings in the
 standard `FAIL|WARN|INFO|HINT  <path> — <check>: <detail>` format.
 See [audit-dimensions.md](references/audit-dimensions.md) for the full
 rubric behind each check.
 
-Invoke all five scripts against the discovered rule set. The scripts
+Invoke all six scripts against the discovered rule set. The scripts
 live in `scripts/` relative to this SKILL.md — Claude resolves the
 absolute path from the skill's base directory at invocation time
 (`$CLAUDE_PLUGIN_ROOT` is documented for hook scripts, not skill-invoked
-bash; don't rely on it here):
+scripts; don't rely on it here):
 
 ```bash
 # SKILL_DIR = absolute path to this SKILL.md's directory (Claude fills in)
 SCRIPTS="${SKILL_DIR}/scripts"
 TARGETS="$ARGUMENTS"  # path(s) from user; default .claude/rules/
 
-bash "$SCRIPTS/scan_secrets.sh"     $TARGETS     # FAIL on any committed-secret pattern
-bash "$SCRIPTS/check_structure.sh"  $TARGETS     # FAIL location/extension; INFO unknown keys
-bash "$SCRIPTS/check_paths_glob.sh" $TARGETS     # FAIL unbalanced braces/brackets, empty, cntrl
-bash "$SCRIPTS/check_size.sh"       $TARGETS     # WARN >200 lines, FAIL >500 lines
-bash "$SCRIPTS/check_prose.sh"      $TARGETS     # WARN hedges/prohibitions/synthetic placeholders
-bash "$SCRIPTS/emit_shape_hints.sh" $TARGETS     # HINT lines for Tier-2 prompt context
+python3 "$SCRIPTS/scan_secrets.py"     $TARGETS   # FAIL on any committed-secret pattern
+python3 "$SCRIPTS/check_structure.py"  $TARGETS   # FAIL location/extension; INFO unknown keys
+python3 "$SCRIPTS/check_paths_glob.py" $TARGETS   # FAIL unbalanced braces/brackets, empty, cntrl
+bash    "$SCRIPTS/check_size.sh"       $TARGETS   # WARN >200 lines, FAIL >500 lines
+python3 "$SCRIPTS/check_prose.py"      $TARGETS   # WARN hedges/prohibitions/synthetic placeholders
+bash    "$SCRIPTS/emit_shape_hints.sh" $TARGETS   # HINT lines for Tier-2 prompt context
 ```
 
 **Script-to-check map:**
 
 | Script | Checks | Severity levels |
 |---|---|---|
-| `scan_secrets.sh` | AWS / GitHub / OpenAI / Anthropic / Stripe key patterns + credential-shaped variable assignments | FAIL |
-| `check_structure.sh` | Location (under `.claude/rules/`), Extension (`.md`, no double-extension), Frontmatter shape (only `paths:` documented) | FAIL / FAIL / INFO |
-| `check_paths_glob.sh` | Balanced `{…}` and `[…]`, non-empty, no control chars | FAIL |
+| `scan_secrets.py` | AWS / GitHub / OpenAI / Anthropic / Stripe key patterns + credential-shaped variable assignments | FAIL |
+| `check_structure.py` | Location (under `.claude/rules/`), Extension (`.md`, no double-extension), Frontmatter shape (only `paths:` documented) | FAIL / FAIL / INFO |
+| `check_paths_glob.py` | Balanced `{…}` and `[…]`, non-empty, no control chars | FAIL |
 | `check_size.sh` | Non-blank-line count against 200/500 thresholds | WARN / FAIL |
-| `check_prose.sh` | Prose pre-check: hedges (Specificity), prohibition-only openers (Framing), synthetic placeholders in code blocks (Example Realism) | WARN |
+| `check_prose.py` | Prose pre-check: hedges (Specificity), prohibition-only openers (Framing), synthetic placeholders in code blocks (Example Realism) | WARN |
 | `emit_shape_hints.sh` | Keyword signals (`compliant`, `non-compliant`, `violation`, `exception`, `failure`, code blocks) | HINT (informational) |
 
 **Orchestration rules:**
 
 - Emit all Tier-1 output immediately, before any LLM work.
-- Rules with a FAIL finding from `scan_secrets.sh`, `check_structure.sh` (location/extension), or `check_paths_glob.sh` are **excluded from Tier 2** — malformed rules don't reach the LLM step.
+- Rules with a FAIL finding from `scan_secrets.py`, `check_structure.py` (location/extension), or `check_paths_glob.py` are **excluded from Tier 2** — malformed rules don't reach the LLM step.
 - `check_size.sh` FAIL (>500 lines) also excludes from Tier 2.
-- `check_size.sh` WARN, `check_structure.sh` INFO, and `check_prose.sh` WARN findings do **not** exclude — they accompany Tier-2 output (and `check_prose.sh` WARNs specifically feed Tier-2 dimensions as pre-filter signals for Specificity / Framing / Example Realism).
+- `check_size.sh` WARN, `check_structure.py` INFO, and `check_prose.py` WARN findings do **not** exclude — they accompany Tier-2 output (and `check_prose.py` WARNs specifically feed Tier-2 dimensions as pre-filter signals for Specificity / Framing / Example Realism).
 - `emit_shape_hints.sh` HINT lines are not findings; collect them per file and include in the Tier-2 prompt as context so the evaluator weighs Why Adequacy and Example Realism appropriately.
 - Exit code of each script is 0 on clean / WARN-only / HINT-only, 1 on FAIL. The orchestrator treats exit 1 as the "exclude from Tier 2" signal.
 
