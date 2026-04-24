@@ -30,6 +30,11 @@ EXIT_CLEAN = 0
 EXIT_FAIL = 1
 EXIT_USAGE = 64
 
+# How far into a file to scan for a PEP 723 `# /// script` block.
+PEP723_SCAN_LINES = 50
+# How many top-of-file comment/docstring lines to consider a "header".
+HEADER_SCAN_LINES = 30
+
 # Stdlib module names available from Python 3.10 onward via sys.stdlib_module_names.
 # Fall back to a baked-in set for 3.9 compatibility.
 try:
@@ -444,8 +449,8 @@ def top_level_imports(tree: ast.Module) -> set[str]:
 
 
 def has_pep723_block(source: str) -> bool:
-    """Look for the `# /// script` PEP 723 block anywhere in the first 50 lines."""
-    for line in source.splitlines()[:50]:
+    """Look for the `# /// script` PEP 723 block in the header window."""
+    for line in source.splitlines()[:PEP723_SCAN_LINES]:
         if line.strip() == "# /// script":
             return True
     return False
@@ -464,7 +469,7 @@ def has_top_of_file_deps_comment(source: str) -> bool:
             or stripped.startswith("'''")
         ):
             header_lines.append(stripped.lower())
-            if len(header_lines) >= 30:
+            if len(header_lines) >= HEADER_SCAN_LINES:
                 break
         else:
             break
