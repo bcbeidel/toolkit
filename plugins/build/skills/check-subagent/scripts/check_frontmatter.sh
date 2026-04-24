@@ -185,7 +185,7 @@ check_file() {
   if [ -z "${fm}" ]; then
     emit_fail "${file}" "fm-delimiter" \
       "no ---delimited YAML frontmatter block at file head" \
-      "Add a frontmatter block as the first lines of the file (see subagents-best-practices.md Anatomy)."
+      "Add a frontmatter block as the first lines of the file (see subagent-best-practices.md Anatomy)."
     return
   fi
 

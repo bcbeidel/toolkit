@@ -9,7 +9,7 @@ The check-subagent audit runs in three tiers. This document is the
 inventory: every deterministic check Tier-1 emits, every judgment
 dimension Tier-2 evaluates, and the cross-entity Tier-3 check. Every
 dimension cites the source principle it audits from
-[subagents-best-practices.md](../../../_shared/references/subagents-best-practices.md).
+[subagent-best-practices.md](../../../_shared/references/subagent-best-practices.md).
 
 ## Tier-1 — Deterministic Checks
 
@@ -237,9 +237,27 @@ between them.
 |---|---|---|---|
 | `description-collision` | Pairwise `description` token-set Jaccard ≥0.6 | WARN | Distinct trigger vocabulary across siblings |
 
-Single-file scope skips this tier. Multi-file scope emits one finding
-per colliding pair (not per file), with the pair names and similarity
-score.
+### description-collision
+
+**Source principle:** *Distinct trigger vocabulary across siblings.*
+
+**Judges:** Across every pair of `.md` files in the audited scope,
+do their `description` fields share enough trigger vocabulary that
+the main agent would have no deterministic basis to pick between
+them?
+
+**Signals of failure:**
+- Pairwise token-set Jaccard similarity ≥0.6 over the
+  description field (stopwords excluded, case-folded, tokens of
+  length ≥3).
+- Two siblings with near-identical verb-phrase openers and no
+  distinguishing exclusions.
+
+**PASS silently when:** every sibling description claims a distinct
+trigger surface. Single-file scope skips this check entirely.
+
+Multi-file scope emits one finding per colliding pair (not per file),
+with the pair names and similarity score.
 
 ## Severity semantics
 

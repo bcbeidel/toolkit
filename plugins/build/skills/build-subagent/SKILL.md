@@ -12,7 +12,7 @@ description: >
 argument-hint: "[name or intent]"
 user-invocable: true
 references:
-  - ../../_shared/references/subagents-best-practices.md
+  - ../../_shared/references/subagent-best-practices.md
   - ../../_shared/references/primitive-routing.md
 ---
 
@@ -23,7 +23,7 @@ in `.claude/agents/` (project) or `~/.claude/agents/` (user) that the
 routing agent can delegate to with confidence. The authoring rubric —
 what a good subagent does, the file anatomy, the patterns that work —
 lives in
-[subagents-best-practices.md](../../_shared/references/subagents-best-practices.md).
+[subagent-best-practices.md](../../_shared/references/subagent-best-practices.md).
 This skill is the workflow; the principles doc is the rubric.
 
 A subagent is a **full context fork** — high-cost compared to a skill

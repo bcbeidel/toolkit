@@ -40,6 +40,8 @@ These primitives benefit from judgment. Claude reads context, assesses relevance
 
 **Subagents** exist for work that would pollute the main context — broad searches, large file reads, parallel workstreams with independent outputs. The isolation is the feature. For sequential work where step N+1 needs full step N output, the isolation becomes a liability: you're paying the context fork cost without getting the benefit.
 
+Route: `/build:build-subagent` scaffolds a `.claude/agents/<name>.md` definition with a routing-oriented description, an explicit `tools` allowlist, and a bounded system-prompt body; `/build:check-subagent` audits an existing definition (or directory of definitions) against the Tier-1 deterministic checks and seven judgment dimensions in [subagent-best-practices.md](subagent-best-practices.md).
+
 **CLAUDE.md** exists for background knowledge — the architectural context Claude needs to make good decisions across all tasks. It degrades under load: every line you add reduces the compliance probability of every other line equally. Rules that are shell-expressible don't belong here; moving them to hooks removes them from the advisory budget and improves compliance for everything that remains.
 
 **`permissions.deny`** exists for unconditional blocks with no exceptions, ever. If the block is sometimes legitimate, use a hook with conditional logic instead.
