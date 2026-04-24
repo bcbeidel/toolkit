@@ -15,8 +15,9 @@ set -Eeuo pipefail
 IFS=$'\n\t'
 
 PROGNAME="$(basename "${0}")"
+readonly PROGNAME
 
-REQUIRED_CMDS=(awk basename find)
+readonly REQUIRED_CMDS=(awk basename find)
 
 usage() {
   cat <<'EOF'
@@ -35,7 +36,7 @@ preflight() {
       missing+=("${cmd}")
     fi
   done
-  if [ "${#missing[@]}" -gt 0 ]; then
+  if [[ "${#missing[@]}" -gt 0 ]]; then
     for cmd in "${missing[@]}"; do
       printf '%s: missing required command %q\n' "${PROGNAME}" "${cmd}" >&2
     done
@@ -43,10 +44,10 @@ preflight() {
   fi
 }
 
-FAIL_COUNT=0
+fail_count=0
 
 emit_fail() {
-  FAIL_COUNT=$((FAIL_COUNT + 1))
+  fail_count=$((fail_count + 1))
   printf 'FAIL  %s — %s: %s\n' "$1" "$2" "$3"
   printf '  Recommendation: %s\n' "$4"
 }
@@ -67,9 +68,9 @@ extract_name() {
       if (++count == 1) { inside = 1; next }
       if (count == 2)   { exit }
     }
-    inside && /^name:[ \t]*/ {
+    inside && /^name:[[:space:]]*/ {
       val = $0
-      sub(/^name:[ \t]*/, "", val)
+      sub(/^name:[[:space:]]*/, "", val)
       if (val ~ /^".*"$/) { val = substr(val, 2, length(val) - 2) }
       else if (val ~ /^'\''.*'\''$/) { val = substr(val, 2, length(val) - 2) }
       print val
@@ -96,27 +97,29 @@ check_file() {
   stem="$(basename "${file}" .md)"
 
   if is_generic_stem "${stem}"; then
+    local rec="Rename to describe the agent's primary role"
+    rec+=" (e.g., typescript-linter.md, migration-reviewer.md)."
     emit_hint "${file}" "generic-filename" \
-      "filename stem '${stem}' is a generic placeholder" \
-      "Rename to describe the agent's primary role (e.g., typescript-linter.md, migration-reviewer.md)."
+      "filename stem '${stem}' is a generic placeholder" "${rec}"
   fi
 
   local name
   name="$(extract_name "${file}")"
 
   # name-kebab — only check when name is present (check_frontmatter handles missing)
-  if [ -n "${name}" ]; then
+  if [[ -n "${name}" ]]; then
     if ! printf '%s' "${name}" | awk '
       /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/ { exit 0 }
       { exit 1 }
     '; then
+      local rec="Convert to kebab-case (lowercase + hyphens):"
+      rec+=" e.g., typescript-linter, not TypeScriptLinter."
       emit_warn "${file}" "name-kebab" \
-        "name '${name}' is not kebab-case" \
-        "Convert to kebab-case (lowercase + hyphens): e.g., typescript-linter, not TypeScriptLinter."
+        "name '${name}' is not kebab-case" "${rec}"
     fi
 
     # name-stem-match
-    if [ "${name}" != "${stem}" ]; then
+    if [[ "${name}" != "${stem}" ]]; then
       emit_fail "${file}" "name-stem-match" \
         "filename stem '${stem}' does not equal name '${name}'" \
         "Rename the file to ${name}.md, or change name: to match the filename stem."
@@ -128,9 +131,9 @@ check_path() {
   local target="$1"
   local file
 
-  if [ -f "${target}" ]; then
+  if [[ -f "${target}" ]]; then
     check_file "${target}"
-  elif [ -d "${target}" ]; then
+  elif [[ -d "${target}" ]]; then
     while IFS= read -r file; do
       check_file "${file}"
     done < <(find "${target}" -maxdepth 1 -type f -name '*.md' 2>/dev/null)
@@ -141,7 +144,7 @@ check_path() {
 }
 
 main() {
-  if [ "$#" -eq 0 ]; then
+  if [[ "$#" -eq 0 ]]; then
     usage >&2
     exit 64
   fi
@@ -160,9 +163,9 @@ main() {
     check_path "${target}" || exit "$?"
   done
 
-  [ "${FAIL_COUNT}" -eq 0 ] && exit 0 || exit 1
+  [[ "${fail_count}" -eq 0 ]] && exit 0 || exit 1
 }
 
-if [ "${0}" = "${BASH_SOURCE[0]:-$0}" ]; then
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   main "$@"
 fi

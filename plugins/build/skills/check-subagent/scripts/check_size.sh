@@ -15,11 +15,12 @@ set -Eeuo pipefail
 IFS=$'\n\t'
 
 PROGNAME="$(basename "${0}")"
+readonly PROGNAME
 
-SOFT_THRESHOLD=6000
-HARD_THRESHOLD=12000
+readonly SOFT_THRESHOLD=6000
+readonly HARD_THRESHOLD=12000
 
-REQUIRED_CMDS=(awk basename find wc)
+readonly REQUIRED_CMDS=(awk basename find wc)
 
 usage() {
   cat <<'EOF'
@@ -38,7 +39,7 @@ preflight() {
       missing+=("${cmd}")
     fi
   done
-  if [ "${#missing[@]}" -gt 0 ]; then
+  if [[ "${#missing[@]}" -gt 0 ]]; then
     for cmd in "${missing[@]}"; do
       printf '%s: missing required command %q\n' "${PROGNAME}" "${cmd}" >&2
     done
@@ -46,10 +47,10 @@ preflight() {
   fi
 }
 
-FAIL_COUNT=0
+fail_count=0
 
 emit_fail() {
-  FAIL_COUNT=$((FAIL_COUNT + 1))
+  fail_count=$((fail_count + 1))
   printf 'FAIL  %s — %s: %s\n' "$1" "$2" "$3"
   printf '  Recommendation: %s\n' "$4"
 }
@@ -97,11 +98,11 @@ check_file() {
   rec_soft+=" expansions, collapse redundant examples, move reference"
   rec_soft+=" material into references/."
 
-  if [ "${body_chars}" -ge "${HARD_THRESHOLD}" ]; then
+  if [[ "${body_chars}" -ge "${HARD_THRESHOLD}" ]]; then
     emit_fail "${file}" "size-hard" \
       "body is ${body_chars} chars (>=${HARD_THRESHOLD}, ~3,000 tokens)" \
       "${rec_hard}"
-  elif [ "${body_chars}" -ge "${SOFT_THRESHOLD}" ]; then
+  elif [[ "${body_chars}" -ge "${SOFT_THRESHOLD}" ]]; then
     emit_warn "${file}" "size-soft" \
       "body is ${body_chars} chars (>=${SOFT_THRESHOLD}, ~1,500 tokens)" \
       "${rec_soft}"
@@ -112,9 +113,9 @@ check_path() {
   local target="$1"
   local file
 
-  if [ -f "${target}" ]; then
+  if [[ -f "${target}" ]]; then
     check_file "${target}"
-  elif [ -d "${target}" ]; then
+  elif [[ -d "${target}" ]]; then
     while IFS= read -r file; do
       check_file "${file}"
     done < <(find "${target}" -maxdepth 1 -type f -name '*.md' 2>/dev/null)
@@ -125,7 +126,7 @@ check_path() {
 }
 
 main() {
-  if [ "$#" -eq 0 ]; then
+  if [[ "$#" -eq 0 ]]; then
     usage >&2
     exit 64
   fi
@@ -144,9 +145,9 @@ main() {
     check_path "${target}" || exit "$?"
   done
 
-  [ "${FAIL_COUNT}" -eq 0 ] && exit 0 || exit 1
+  [[ "${fail_count}" -eq 0 ]] && exit 0 || exit 1
 }
 
-if [ "${0}" = "${BASH_SOURCE[0]:-$0}" ]; then
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   main "$@"
 fi

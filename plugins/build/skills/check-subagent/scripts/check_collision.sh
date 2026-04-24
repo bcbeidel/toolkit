@@ -24,10 +24,11 @@ set -Eeuo pipefail
 IFS=$'\n\t'
 
 PROGNAME="$(basename "${0}")"
+readonly PROGNAME
 
-THRESHOLD=60 # Jaccard * 100; >=60 => flag
+readonly THRESHOLD=60 # Jaccard * 100; >=60 => flag
 
-REQUIRED_CMDS=(awk basename find tr)
+readonly REQUIRED_CMDS=(awk basename find tr)
 
 usage() {
   cat <<'EOF'
@@ -46,7 +47,7 @@ preflight() {
       missing+=("${cmd}")
     fi
   done
-  if [ "${#missing[@]}" -gt 0 ]; then
+  if [[ "${#missing[@]}" -gt 0 ]]; then
     for cmd in "${missing[@]}"; do
       printf '%s: missing required command %q\n' "${PROGNAME}" "${cmd}" >&2
     done
@@ -65,15 +66,15 @@ extract_description() {
     }
     !in_fm { next }
     (folded || literal) && /^[^ \t]/ { folded = 0; literal = 0 }
-    (folded || literal) && /^[ \t]+/ {
+    (folded || literal) && /^[[:space:]]+/ {
       line = $0
-      sub(/^[ \t]+/, "", line)
+      sub(/^[[:space:]]+/, "", line)
       if (val == "") { val = line } else { val = val (folded ? " " : "\n") line }
       next
     }
-    /^description:[ \t]*/ {
+    /^description:[[:space:]]*/ {
       rest = $0
-      sub(/^description:[ \t]*/, "", rest)
+      sub(/^description:[[:space:]]*/, "", rest)
       if (rest == ">" || rest == ">-") { folded = 1; next }
       if (rest == "|" || rest == "|-") { literal = 1; next }
       if (rest ~ /^".*"$/) { rest = substr(rest, 2, length(rest) - 2) }
@@ -137,18 +138,18 @@ emit_warn() {
 gather_files() {
   local target file
   for target in "$@"; do
-    if [ -f "${target}" ]; then
+    if [[ -f "${target}" ]]; then
       case "${target}" in
         *.md) printf '%s\n' "${target}" ;;
       esac
-    elif [ -d "${target}" ]; then
+    elif [[ -d "${target}" ]]; then
       find "${target}" -maxdepth 1 -type f -name '*.md' 2>/dev/null
     fi
   done
 }
 
 main() {
-  if [ "$#" -eq 0 ]; then
+  if [[ "$#" -eq 0 ]]; then
     usage >&2
     exit 64
   fi
@@ -165,17 +166,17 @@ main() {
   # Collect files
   local files=()
   while IFS= read -r f; do
-    [ -n "${f}" ] && files+=("${f}")
+    [[ -n "${f}" ]] && files+=("${f}")
   done < <(gather_files "$@")
 
-  if [ "${#files[@]}" -lt 2 ]; then
+  if [[ "${#files[@]}" -lt 2 ]]; then
     # Nothing to compare; Tier-3 is a no-op.
     exit 0
   fi
 
   # Tokenize each file's description into a temp file (paired arrays).
-  # Register the trap before mktemp so a signal between the two calls
-  # cannot leak the temp directory.
+  # Register the trap before the temp-dir creation so a signal between
+  # the two calls cannot leak state.
   local tmpdir=""
   trap '[[ -n "${tmpdir}" ]] && rm -rf "${tmpdir}"' EXIT INT TERM
   tmpdir="$(mktemp -d)"
@@ -184,7 +185,7 @@ main() {
   for i in "${!files[@]}"; do
     desc="$(extract_description "${files[$i]}")"
     tok_file="${tmpdir}/tok.${i}"
-    if [ -n "${desc}" ]; then
+    if [[ -n "${desc}" ]]; then
       tokenize "${desc}" >"${tok_file}"
     else
       : >"${tok_file}"
@@ -195,13 +196,13 @@ main() {
   local j pct
   for i in "${!files[@]}"; do
     for j in "${!files[@]}"; do
-      if [ "${j}" -le "${i}" ]; then continue; fi
+      if [[ "${j}" -le "${i}" ]]; then continue; fi
       # Skip pairs where either description is missing
-      if [ ! -s "${tmpdir}/tok.${i}" ] || [ ! -s "${tmpdir}/tok.${j}" ]; then
+      if [[ ! -s "${tmpdir}/tok.${i}" ]] || [[ ! -s "${tmpdir}/tok.${j}" ]]; then
         continue
       fi
       pct="$(jaccard_pct "${tmpdir}/tok.${i}" "${tmpdir}/tok.${j}")"
-      if [ "${pct}" -ge "${THRESHOLD}" ]; then
+      if [[ "${pct}" -ge "${THRESHOLD}" ]]; then
         emit_warn "${files[$i]}" "collides with $(basename "${files[$j]}")" "${pct}"
       fi
     done
@@ -210,6 +211,6 @@ main() {
   exit 0
 }
 
-if [ "${0}" = "${BASH_SOURCE[0]:-$0}" ]; then
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   main "$@"
 fi

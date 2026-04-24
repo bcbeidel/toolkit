@@ -20,8 +20,9 @@ set -Eeuo pipefail
 IFS=$'\n\t'
 
 PROGNAME="$(basename "${0}")"
+readonly PROGNAME
 
-REQUIRED_CMDS=(grep find basename)
+readonly REQUIRED_CMDS=(grep find basename)
 
 usage() {
   cat <<'EOF'
@@ -40,7 +41,7 @@ preflight() {
       missing+=("${cmd}")
     fi
   done
-  if [ "${#missing[@]}" -gt 0 ]; then
+  if [[ "${#missing[@]}" -gt 0 ]]; then
     for cmd in "${missing[@]}"; do
       printf '%s: missing required command %q\n' "${PROGNAME}" "${cmd}" >&2
     done
@@ -55,7 +56,7 @@ emit_finding() {
   printf 'and document an env-var requirement in the body instead.\n'
 }
 
-PATTERN_NAMES=(
+readonly PATTERN_NAMES=(
   "AWS access key"
   "GitHub personal access token"
   "GitHub fine-grained PAT"
@@ -64,7 +65,7 @@ PATTERN_NAMES=(
   "Stripe live key"
   "PEM private key header"
 )
-PATTERN_REGEXES=(
+readonly PATTERN_REGEXES=(
   'AKIA[0-9A-Z]{16}'
   'ghp_[A-Za-z0-9]{36}'
   'github_pat_[A-Za-z0-9_]{82}'
@@ -74,7 +75,10 @@ PATTERN_REGEXES=(
   '-----BEGIN (RSA |OPENSSH |EC |DSA )?PRIVATE KEY-----'
 )
 
-GENERIC_VAR_REGEX="(password|secret|token|api_key|access_key|private_key)[[:space:]]*[:=][[:space:]]*[\"'][^\"']+[\"']"
+GENERIC_VAR_REGEX="(password|secret|token|api_key|access_key"
+GENERIC_VAR_REGEX+="|private_key)[[:space:]]*[:=][[:space:]]*"
+GENERIC_VAR_REGEX+="[\"'][^\"']+[\"']"
+readonly GENERIC_VAR_REGEX
 
 scan_file() {
   local file="$1"
@@ -82,7 +86,7 @@ scan_file() {
   local i name pattern hit line
 
   i=0
-  while [ "${i}" -lt "${#PATTERN_REGEXES[@]}" ]; do
+  while [[ "${i}" -lt "${#PATTERN_REGEXES[@]}" ]]; do
     name="${PATTERN_NAMES[${i}]}"
     pattern="${PATTERN_REGEXES[${i}]}"
     while IFS= read -r hit; do
@@ -119,11 +123,11 @@ scan_path() {
   local any=0
   local file
 
-  if [ -f "${target}" ]; then
+  if [[ -f "${target}" ]]; then
     case "${target}" in
       *.md) scan_file "${target}" || any=1 ;;
     esac
-  elif [ -d "${target}" ]; then
+  elif [[ -d "${target}" ]]; then
     while IFS= read -r file; do
       scan_file "${file}" || any=1
     done < <(find "${target}" -maxdepth 1 -type f -name '*.md' 2>/dev/null)
@@ -135,7 +139,7 @@ scan_path() {
 }
 
 main() {
-  if [ "$#" -eq 0 ]; then
+  if [[ "$#" -eq 0 ]]; then
     usage >&2
     exit 64
   fi
@@ -158,6 +162,6 @@ main() {
   exit "${any}"
 }
 
-if [ "${0}" = "${BASH_SOURCE[0]:-$0}" ]; then
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   main "$@"
 fi

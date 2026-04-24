@@ -22,8 +22,9 @@ set -Eeuo pipefail
 IFS=$'\n\t'
 
 PROGNAME="$(basename "${0}")"
+readonly PROGNAME
 
-REQUIRED_CMDS=(basename find)
+readonly REQUIRED_CMDS=(basename find)
 
 usage() {
   cat <<'EOF'
@@ -54,7 +55,7 @@ preflight() {
       missing+=("${cmd}")
     fi
   done
-  if [ "${#missing[@]}" -gt 0 ]; then
+  if [[ "${#missing[@]}" -gt 0 ]]; then
     for cmd in "${missing[@]}"; do
       printf '%s: missing required command %q\n' "${PROGNAME}" "${cmd}" >&2
     done
@@ -62,10 +63,10 @@ preflight() {
   fi
 }
 
-FAIL_COUNT=0
+fail_count=0
 
 emit_fail() {
-  FAIL_COUNT=$((FAIL_COUNT + 1))
+  fail_count=$((fail_count + 1))
   printf 'FAIL  %s — %s: %s\n' "$1" "$2" "$3"
   printf '  Recommendation: %s\n' "$4"
 }
@@ -89,9 +90,11 @@ check_file() {
       # OK — includes .claude/agents/, plugins/<plugin>/agents/, ~/.claude/agents/
       ;;
     *)
+      local rec="Move to .claude/agents/ (project),"
+      rec+=" ~/.claude/agents/ (user), or plugins/<plugin>/agents/"
+      rec+=" (plugin scope)."
       emit_fail "${file}" "location-dir" \
-        "file is not under an agents/ directory" \
-        "Move to .claude/agents/ (project), ~/.claude/agents/ (user), or plugins/<plugin>/agents/ (plugin scope)."
+        "file is not under an agents/ directory" "${rec}"
       ;;
   esac
 }
@@ -100,9 +103,9 @@ check_path() {
   local target="$1"
   local file
 
-  if [ -f "${target}" ]; then
+  if [[ -f "${target}" ]]; then
     check_file "${target}"
-  elif [ -d "${target}" ]; then
+  elif [[ -d "${target}" ]]; then
     while IFS= read -r file; do
       check_file "${file}"
     done < <(find "${target}" -maxdepth 1 -type f -name '*.md' 2>/dev/null)
@@ -113,7 +116,7 @@ check_path() {
 }
 
 main() {
-  if [ "$#" -eq 0 ]; then
+  if [[ "$#" -eq 0 ]]; then
     usage >&2
     exit 64
   fi
@@ -132,9 +135,9 @@ main() {
     check_path "${target}" || exit "$?"
   done
 
-  [ "${FAIL_COUNT}" -eq 0 ] && exit 0 || exit 1
+  [[ "${fail_count}" -eq 0 ]] && exit 0 || exit 1
 }
 
-if [ "${0}" = "${BASH_SOURCE[0]:-$0}" ]; then
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   main "$@"
 fi

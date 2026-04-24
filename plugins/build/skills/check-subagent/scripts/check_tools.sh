@@ -16,8 +16,9 @@ set -Eeuo pipefail
 IFS=$'\n\t'
 
 PROGNAME="$(basename "${0}")"
+readonly PROGNAME
 
-REQUIRED_CMDS=(awk basename find)
+readonly REQUIRED_CMDS=(awk basename find)
 
 usage() {
   cat <<'EOF'
@@ -36,7 +37,7 @@ preflight() {
       missing+=("${cmd}")
     fi
   done
-  if [ "${#missing[@]}" -gt 0 ]; then
+  if [[ "${#missing[@]}" -gt 0 ]]; then
     for cmd in "${missing[@]}"; do
       printf '%s: missing required command %q\n' "${PROGNAME}" "${cmd}" >&2
     done
@@ -44,10 +45,10 @@ preflight() {
   fi
 }
 
-FAIL_COUNT=0
+fail_count=0
 
 emit_fail() {
-  FAIL_COUNT=$((FAIL_COUNT + 1))
+  fail_count=$((fail_count + 1))
   printf 'FAIL  %s — %s: %s\n' "$1" "$2" "$3"
   printf '  Recommendation: %s\n' "$4"
 }
@@ -73,11 +74,11 @@ tools_list() {
     /^tools:/ {
       if ($0 ~ /\[/) {
         line = $0
-        sub(/^tools:[ \t]*\[/, "", line)
+        sub(/^tools:[[:space:]]*\[/, "", line)
         sub(/\].*$/, "", line)
         n = split(line, items, /,/)
         for (i = 1; i <= n; i++) {
-          gsub(/^[ \t]+|[ \t]+$/, "", items[i])
+          gsub(/^[[:space:]]+|[[:space:]]+$/, "", items[i])
           gsub(/^"|"$|^'\''|'\''$/, "", items[i])
           if (items[i] != "") print items[i]
         }
@@ -109,11 +110,11 @@ has_key() {
 # background / isolation.
 get_scalar_value() {
   printf '%s\n' "$1" | awk -v k="$2" '
-    $0 ~ "^" k ":[ \t]*" {
+    $0 ~ "^" k ":[[:space:]]*" {
       val = $0
-      sub("^" k ":[ \t]*", "", val)
+      sub("^" k ":[[:space:]]*", "", val)
       gsub(/^"|"$|^'\''|'\''$/, "", val)
-      gsub(/[ \t]+$/, "", val)
+      gsub(/[[:space:]]+$/, "", val)
       print val
       exit
     }
@@ -129,7 +130,7 @@ check_file() {
 
   local fm
   fm="$(extract_frontmatter "${file}")"
-  [ -z "${fm}" ] && return
+  [[ -z "${fm}" ]] && return
 
   # tools-omitted
   if ! has_key "${fm}" "tools"; then
@@ -145,7 +146,7 @@ check_file() {
   # tools-wildcard
   local item
   while IFS= read -r item; do
-    [ -z "${item}" ] && continue
+    [[ -z "${item}" ]] && continue
     case "${item}" in
       '*' | all | all_tools | ALL)
         emit_fail "${file}" "tools-wildcard" \
@@ -161,10 +162,13 @@ check_file() {
   # in the recommendation text but cannot be detected from the file
   # alone.
   while IFS= read -r item; do
-    if [ "${item}" = "Agent" ]; then
-      emit_warn "${file}" "agent-listed" \
-        "Agent listed in tools — filtered at platform level for subagents, has no effect" \
-        "Remove Agent from tools. (If this definition runs as main thread via 'claude --agent', move it out of agents/.)"
+    if [[ "${item}" = "Agent" ]]; then
+      local msg="Agent listed in tools — filtered at platform"
+      msg+=" level for subagents, has no effect"
+      local rec="Remove Agent from tools. (If this definition"
+      rec+=" runs as main thread via 'claude --agent', move it"
+      rec+=" out of agents/.)"
+      emit_warn "${file}" "agent-listed" "${msg}" "${rec}"
     fi
   done <<<"${tools}"
 
@@ -172,14 +176,14 @@ check_file() {
   local background isolation
   background="$(get_scalar_value "${fm}" "background")"
   isolation="$(get_scalar_value "${fm}" "isolation")"
-  if [ "${background}" = "true" ]; then
+  if [[ "${background}" = "true" ]]; then
     local has_write=0
     while IFS= read -r item; do
       case "${item}" in
         Write | Edit) has_write=1 ;;
       esac
     done <<<"${tools}"
-    if [ "${has_write}" -eq 1 ] && [ "${isolation}" != "worktree" ]; then
+    if [[ "${has_write}" -eq 1 ]] && [[ "${isolation}" != "worktree" ]]; then
       emit_warn "${file}" "parallel-write-risk" \
         "background: true with Write/Edit granted but isolation: worktree absent" \
         "Add 'isolation: worktree' — parallel writes on shared files conflict without it."
@@ -191,9 +195,9 @@ check_path() {
   local target="$1"
   local file
 
-  if [ -f "${target}" ]; then
+  if [[ -f "${target}" ]]; then
     check_file "${target}"
-  elif [ -d "${target}" ]; then
+  elif [[ -d "${target}" ]]; then
     while IFS= read -r file; do
       check_file "${file}"
     done < <(find "${target}" -maxdepth 1 -type f -name '*.md' 2>/dev/null)
@@ -204,7 +208,7 @@ check_path() {
 }
 
 main() {
-  if [ "$#" -eq 0 ]; then
+  if [[ "$#" -eq 0 ]]; then
     usage >&2
     exit 64
   fi
@@ -223,9 +227,9 @@ main() {
     check_path "${target}" || exit "$?"
   done
 
-  [ "${FAIL_COUNT}" -eq 0 ] && exit 0 || exit 1
+  [[ "${fail_count}" -eq 0 ]] && exit 0 || exit 1
 }
 
-if [ "${0}" = "${BASH_SOURCE[0]:-$0}" ]; then
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   main "$@"
 fi

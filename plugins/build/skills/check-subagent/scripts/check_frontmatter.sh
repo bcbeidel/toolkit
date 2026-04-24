@@ -24,8 +24,9 @@ set -Eeuo pipefail
 IFS=$'\n\t'
 
 PROGNAME="$(basename "${0}")"
+readonly PROGNAME
 
-REQUIRED_CMDS=(awk basename find)
+readonly REQUIRED_CMDS=(awk basename find)
 
 usage() {
   cat <<'EOF'
@@ -44,7 +45,7 @@ preflight() {
       missing+=("${cmd}")
     fi
   done
-  if [ "${#missing[@]}" -gt 0 ]; then
+  if [[ "${#missing[@]}" -gt 0 ]]; then
     for cmd in "${missing[@]}"; do
       printf '%s: missing required command %q\n' "${PROGNAME}" "${cmd}" >&2
     done
@@ -52,10 +53,10 @@ preflight() {
   fi
 }
 
-FAIL_COUNT=0
+fail_count=0
 
 emit_fail() {
-  FAIL_COUNT=$((FAIL_COUNT + 1))
+  fail_count=$((fail_count + 1))
   printf 'FAIL  %s — %s: %s\n' "$1" "$2" "$3"
   printf '  Recommendation: %s\n' "$4"
 }
@@ -93,16 +94,16 @@ get_scalar() {
     # Stop folded/literal collection on a non-indented line
     (folded || literal) && /^[^ \t]/ { folded = 0; literal = 0 }
     # Continuation line for folded/literal
-    (folded || literal) && /^[ \t]+/ {
+    (folded || literal) && /^[[:space:]]+/ {
       line = $0
-      sub(/^[ \t]+/, "", line)
+      sub(/^[[:space:]]+/, "", line)
       if (val == "") { val = line } else { val = val (folded ? " " : "\n") line }
       next
     }
     # Match `key:` at column 0
-    $0 ~ "^" k ":[ \t]*" {
+    $0 ~ "^" k ":[[:space:]]*" {
       rest = $0
-      sub("^" k ":[ \t]*", "", rest)
+      sub("^" k ":[[:space:]]*", "", rest)
       if (rest == ">" || rest == ">-") { folded = 1; next }
       if (rest == "|" || rest == "|-") { literal = 1; next }
       # Strip surrounding quotes if present
@@ -136,11 +137,11 @@ tools_contains() {
       # Flow form on same line: tools: [A, B]
       if ($0 ~ /\[/) {
         line = $0
-        sub(/^tools:[ \t]*\[/, "", line)
+        sub(/^tools:[[:space:]]*\[/, "", line)
         sub(/\].*$/, "", line)
         n = split(line, items, /,/)
         for (i = 1; i <= n; i++) {
-          gsub(/^[ \t]+|[ \t]+$/, "", items[i])
+          gsub(/^[[:space:]]+|[[:space:]]+$/, "", items[i])
           gsub(/^"|"$|^'\''|'\''$/, "", items[i])
           if (items[i] == needle) { hit = 1 }
         }
@@ -182,10 +183,11 @@ check_file() {
   local fm
   fm="$(extract_frontmatter "${file}")"
 
-  if [ -z "${fm}" ]; then
+  if [[ -z "${fm}" ]]; then
+    local rec="Add a frontmatter block as the first lines of the"
+    rec+=" file (see subagent-best-practices.md Anatomy)."
     emit_fail "${file}" "fm-delimiter" \
-      "no ---delimited YAML frontmatter block at file head" \
-      "Add a frontmatter block as the first lines of the file (see subagent-best-practices.md Anatomy)."
+      "no ---delimited YAML frontmatter block at file head" "${rec}"
     return
   fi
 
@@ -194,21 +196,21 @@ check_file() {
   description="$(get_scalar "${fm}" "description")"
 
   # fm-name
-  if [ -z "${name}" ]; then
+  if [[ -z "${name}" ]]; then
     emit_fail "${file}" "fm-name" \
       "name key missing or empty" \
       "Add 'name: <kebab-case-slug>' to the frontmatter, matching the filename stem."
   fi
 
   # fm-description
-  if [ -z "${description}" ]; then
+  if [[ -z "${description}" ]]; then
     emit_fail "${file}" "fm-description" \
       "description key missing or empty" \
       "Add a routing-rule description: verb-phrase + trigger conditions + exclusion + returns."
   else
     # fm-description-length
     local dlen="${#description}"
-    if [ "${dlen}" -gt 1024 ]; then
+    if [[ "${dlen}" -gt 1024 ]]; then
       emit_fail "${file}" "fm-description-length" \
         "description is ${dlen} characters (>1,024 — Claude Code silently truncates)" \
         "Shorten to <=1,024 chars; move overflow detail into body sections (Scope, Workflow)."
@@ -236,10 +238,12 @@ check_file() {
         missing+=("${t}")
       fi
     done
-    if [ "${#missing[@]}" -gt 0 ]; then
-      emit_warn "${file}" "memory-expansion" \
-        "memory: enabled — runtime auto-grants Read/Write/Edit; tools list is missing: ${missing[*]}" \
-        "Either remove memory: (if not needed), or add Read/Write/Edit to tools to match runtime behavior."
+    if [[ "${#missing[@]}" -gt 0 ]]; then
+      local msg="memory: enabled — runtime auto-grants"
+      msg+=" Read/Write/Edit; tools list is missing: ${missing[*]}"
+      local rec="Either remove memory: (if not needed), or add"
+      rec+=" Read/Write/Edit to tools to match runtime behavior."
+      emit_warn "${file}" "memory-expansion" "${msg}" "${rec}"
     fi
   fi
 }
@@ -248,9 +252,9 @@ check_path() {
   local target="$1"
   local file
 
-  if [ -f "${target}" ]; then
+  if [[ -f "${target}" ]]; then
     check_file "${target}"
-  elif [ -d "${target}" ]; then
+  elif [[ -d "${target}" ]]; then
     while IFS= read -r file; do
       check_file "${file}"
     done < <(find "${target}" -maxdepth 1 -type f -name '*.md' 2>/dev/null)
@@ -261,7 +265,7 @@ check_path() {
 }
 
 main() {
-  if [ "$#" -eq 0 ]; then
+  if [[ "$#" -eq 0 ]]; then
     usage >&2
     exit 64
   fi
@@ -280,9 +284,9 @@ main() {
     check_path "${target}" || exit "$?"
   done
 
-  [ "${FAIL_COUNT}" -eq 0 ] && exit 0 || exit 1
+  [[ "${fail_count}" -eq 0 ]] && exit 0 || exit 1
 }
 
-if [ "${0}" = "${BASH_SOURCE[0]:-$0}" ]; then
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   main "$@"
 fi
