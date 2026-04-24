@@ -21,32 +21,32 @@ fixed lint format (`SEVERITY  <path> — <check>: <detail>` +
 
 | Script | Check ID | What | Severity | Source principle |
 |---|---|---|---|---|
-| `check_secrets.sh` | `secret` | API keys, tokens, private URLs via regex pattern list | FAIL | Hold the safety posture (toolkit convention) |
-| `check_structure.sh` | `shebang` | First line is `#!/usr/bin/env bash` or `#!/bin/bash`; reject `#!/bin/sh` and other non-bash shebangs | FAIL | Declare the dialect explicitly |
-| `check_structure.sh` | `strict-mode` | `set -euo pipefail` (or equivalent three separate `set` lines) appears in the first ~20 non-comment lines | FAIL | Enable strict mode at the top |
-| `check_structure.sh` | `header-comment` | A comment block in the first 10 lines names purpose / usage / dependencies | WARN | Document intent at the top |
-| `check_structure.sh` | `main-fn` | A `main` function is defined | WARN | Make scripts sourceable |
-| `check_structure.sh` | `main-guard` | `[[ "${BASH_SOURCE[0]}" == "$0" ]] && main "$@"` (or equivalent) at module bottom | WARN | Make scripts sourceable |
-| `check_structure.sh` | `readonly-config` | Top-level non-trivial constants declared with `readonly` | WARN | Scope variables locally |
-| `check_structure.sh` | `mktemp-trap-pairing` | Every `mktemp` invocation is preceded by a `trap ... EXIT` registration | WARN | Set up cleanup before you create temp state |
-| `check_idioms.sh` | `bracket-test` | `[[ ... ]]` used in place of `[ ... ]` for tests | WARN | Use modern Bash idioms |
-| `check_idioms.sh` | `printf-over-echo` | `printf` used for non-trivial output (multi-arg, escapes, format specifiers) | WARN | Use modern Bash idioms |
-| `check_idioms.sh` | `var-braces` | `${var}` braces present when the expansion is adjacent to text that could be part of an identifier | WARN | Use modern Bash idioms |
-| `check_safety.sh` | `eval` | `eval` flagged unless the same line or preceding line carries `# shellcheck disable=SC2294` or `# eval-justified:` | FAIL | Hold the safety posture |
-| `check_safety.sh` | `gnu-flags` | `sed -i` (without backup), `grep -P`, `readlink -f`, `date -d`, `stat -c`, `xargs -r` flagged unless a `# requires: gnu-coreutils` prologue comment is present | WARN | Verify required commands exist up front |
-| `check_safety.sh` | `tmp-literal` | String literals starting with `/tmp/` or `/var/tmp/` flagged | FAIL | Set up cleanup before you create temp state |
-| `check_shellcheck.sh` | `SC2086` | Unquoted variable expansion permitting word-splitting / globbing | FAIL | Quote everything that expands |
-| `check_shellcheck.sh` | `SC2046` | Unquoted command substitution | FAIL | Quote everything that expands |
-| `check_shellcheck.sh` | `SC2068` | Unquoted `$@` (use `"$@"`) | FAIL | Quote everything that expands |
-| `check_shellcheck.sh` | `SC2154` | Variable referenced but not assigned | WARN | Quote everything that expands |
-| `check_shellcheck.sh` | `SC2155` | Function variable assigned without `local` | WARN | Scope variables locally |
-| `check_shellcheck.sh` | `SC2006` | Backtick command substitution; use `$(...)` | WARN | Use modern Bash idioms |
-| `check_shellcheck.sh` | `SC2010` / `SC2012` / `SC2045` | Parsing `ls` output | FAIL | Use modern Bash idioms (filename safety) |
-| `check_shellcheck.sh` | `SC2013` / `SC2162` | `for line in $(cat ...)`; use `while IFS= read -r` | WARN | Use modern Bash idioms |
-| `check_shellcheck.sh` | `SC2038` | `find ... | xargs ...` without `-print0` / `-0` | WARN | Use modern Bash idioms (filename safety) |
-| `check_shellcheck.sh` | `SC2164` | `cd` not followed by `|| exit` / `|| return` (without `set -e` covering it) | WARN | Hold the safety posture |
-| `check_shellcheck.sh` | `SC2002` | Useless use of `cat` | WARN | Performance (Patterns That Work) |
-| `check_shellcheck.sh` | `SC2294` | `eval` of array contents | FAIL | Hold the safety posture |
+| `check_secrets.py` | `secret` | API keys, tokens, private URLs via regex pattern list | FAIL | Hold the safety posture (toolkit convention) |
+| `check_structure.py` | `shebang` | First line is `#!/usr/bin/env bash` or `#!/bin/bash`; reject `#!/bin/sh` and other non-bash shebangs | FAIL | Declare the dialect explicitly |
+| `check_structure.py` | `strict-mode` | `set -euo pipefail` (or equivalent three separate `set` lines) appears in the first ~20 non-comment lines | FAIL | Enable strict mode at the top |
+| `check_structure.py` | `header-comment` | A comment block in the first 10 lines names purpose / usage / dependencies | WARN | Document intent at the top |
+| `check_structure.py` | `main-fn` | A `main` function is defined | WARN | Make scripts sourceable |
+| `check_structure.py` | `main-guard` | `[[ "${BASH_SOURCE[0]}" == "$0" ]] && main "$@"` (or equivalent) at module bottom | WARN | Make scripts sourceable |
+| `check_structure.py` | `readonly-config` | Top-level non-trivial constants declared with `readonly` | WARN | Scope variables locally |
+| `check_structure.py` | `mktemp-trap-pairing` | Every `mktemp` invocation is preceded by a `trap ... EXIT` registration | WARN | Set up cleanup before you create temp state |
+| `check_idioms.py` | `bracket-test` | `[[ ... ]]` used in place of `[ ... ]` for tests | WARN | Use modern Bash idioms |
+| `check_idioms.py` | `printf-over-echo` | `printf` used for non-trivial output (multi-arg, escapes, format specifiers) | WARN | Use modern Bash idioms |
+| `check_idioms.py` | `var-braces` | `${var}` braces present when the expansion is adjacent to text that could be part of an identifier | WARN | Use modern Bash idioms |
+| `check_safety.py` | `eval` | `eval` flagged unless the same line or preceding line carries `# shellcheck disable=SC2294` or `# eval-justified:` | FAIL | Hold the safety posture |
+| `check_safety.py` | `gnu-flags` | `sed -i` (without backup), `grep -P`, `readlink -f`, `date -d`, `stat -c`, `xargs -r` flagged unless a `# requires: gnu-coreutils` prologue comment is present | WARN | Verify required commands exist up front |
+| `check_safety.py` | `tmp-literal` | String literals starting with `/tmp/` or `/var/tmp/` flagged | FAIL | Set up cleanup before you create temp state |
+| `check_shellcheck.py` | `SC2086` | Unquoted variable expansion permitting word-splitting / globbing | FAIL | Quote everything that expands |
+| `check_shellcheck.py` | `SC2046` | Unquoted command substitution | FAIL | Quote everything that expands |
+| `check_shellcheck.py` | `SC2068` | Unquoted `$@` (use `"$@"`) | FAIL | Quote everything that expands |
+| `check_shellcheck.py` | `SC2154` | Variable referenced but not assigned | WARN | Quote everything that expands |
+| `check_shellcheck.py` | `SC2155` | Function variable assigned without `local` | WARN | Scope variables locally |
+| `check_shellcheck.py` | `SC2006` | Backtick command substitution; use `$(...)` | WARN | Use modern Bash idioms |
+| `check_shellcheck.py` | `SC2010` / `SC2012` / `SC2045` | Parsing `ls` output | FAIL | Use modern Bash idioms (filename safety) |
+| `check_shellcheck.py` | `SC2013` / `SC2162` | `for line in $(cat ...)`; use `while IFS= read -r` | WARN | Use modern Bash idioms |
+| `check_shellcheck.py` | `SC2038` | `find ... | xargs ...` without `-print0` / `-0` | WARN | Use modern Bash idioms (filename safety) |
+| `check_shellcheck.py` | `SC2164` | `cd` not followed by `|| exit` / `|| return` (without `set -e` covering it) | WARN | Hold the safety posture |
+| `check_shellcheck.py` | `SC2002` | Useless use of `cat` | WARN | Performance (Patterns That Work) |
+| `check_shellcheck.py` | `SC2294` | `eval` of array contents | FAIL | Hold the safety posture |
 | `check_shfmt.sh` | `format` | `shfmt -d -i 2 -ci -bn` produces a non-empty diff | WARN | Use modern Bash idioms (style consistency) |
 | `check_size.sh` | `size` | Script length exceeds 300 non-blank lines | WARN | Review and Decay (graduate to a real language) |
 | `check_size.sh` | `line-length` | Any line exceeds 100 characters | WARN | Review and Decay (readability) |
@@ -57,7 +57,7 @@ fixed lint format (`SEVERITY  <path> — <check>: <detail>` +
 from Tier-2. Other FAILs (`strict-mode` missing) leave a parseable
 bash script that judgment can still evaluate productively.
 
-**Missing-tool degradation.** `check_shellcheck.sh` and
+**Missing-tool degradation.** `check_shellcheck.py` and
 `check_shfmt.sh` emit an INFO finding (`tool-missing`) and exit 0 when
 the wrapped tool is absent. The remaining scripts continue running.
 The Missing Tools INFO is the user's signal that Tier-1 coverage is

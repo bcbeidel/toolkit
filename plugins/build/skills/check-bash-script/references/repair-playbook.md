@@ -18,11 +18,11 @@ repair queue.
 
 - [Format](#format)
 - Tier-1 recipes
-  - [`check_secrets.sh`](#tier-1--check_secretssh)
-  - [`check_structure.sh`](#tier-1--check_structuresh)
-  - [`check_idioms.sh`](#tier-1--check_idiomssh)
-  - [`check_safety.sh`](#tier-1--check_safetysh)
-  - [`check_shellcheck.sh`](#tier-1--check_shellchecksh)
+  - [`check_secrets.py`](#tier-1--check_secretspy)
+  - [`check_structure.py`](#tier-1--check_structurepy)
+  - [`check_idioms.py`](#tier-1--check_idiomspy)
+  - [`check_safety.py`](#tier-1--check_safetypy)
+  - [`check_shellcheck.py`](#tier-1--check_shellcheckpy)
   - [`check_shfmt.sh`](#tier-1--check_shfmtsh)
   - [`check_size.sh`](#tier-1--check_sizesh)
 - [Tier-2 — Judgment Dimension Recipes](#tier-2--judgment-dimension-recipes)
@@ -42,7 +42,7 @@ Each recipe carries five fields:
 
 ---
 
-## Tier-1 — `check_secrets.sh`
+## Tier-1 — `check_secrets.py`
 
 ### Signal: `secret — API key / token / private URL detected`
 
@@ -66,7 +66,7 @@ bar; a secret manager is better where available.
 
 ---
 
-## Tier-1 — `check_structure.sh`
+## Tier-1 — `check_structure.py`
 
 ### Signal: `shebang — first line is not a bash shebang`
 
@@ -234,7 +234,7 @@ exit (including signals). Disk fills up; subsequent runs collide.
 
 ---
 
-## Tier-1 — `check_idioms.sh`
+## Tier-1 — `check_idioms.py`
 
 ### Signal: `bracket-test — \`[ ... ]\` used in a bash script`
 
@@ -271,7 +271,7 @@ that could be part of an identifier.
 
 ---
 
-## Tier-1 — `check_safety.sh`
+## Tier-1 — `check_safety.py`
 
 ### Signal: `eval — \`eval\` invocation without justification comment` *(FAIL)*
 
@@ -329,9 +329,9 @@ expected location redirects writes elsewhere).
 
 ---
 
-## Tier-1 — `check_shellcheck.sh`
+## Tier-1 — `check_shellcheck.py`
 
-`check_shellcheck.sh` wraps `shellcheck`; the recipes below cover the
+`check_shellcheck.py` wraps `shellcheck`; the recipes below cover the
 emitted rule codes.
 
 ### Signal: `SC2086 — unquoted variable expansion` *(FAIL)*

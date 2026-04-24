@@ -76,11 +76,11 @@ script's FAIL exit — all seven contribute findings to the merge.
 SCRIPTS="${SKILL_DIR}/scripts"   # resolved by Claude at invocation
 TARGETS="$ARGUMENTS"
 
-bash "$SCRIPTS/check_secrets.sh"     $TARGETS   # FAIL: secret patterns — excludes from Tier-2
-bash "$SCRIPTS/check_structure.sh"   $TARGETS   # FAIL: shebang/strict-mode; WARN: header/main/main-guard/readonly/mktemp-trap
-bash "$SCRIPTS/check_idioms.sh"      $TARGETS   # WARN: [[ ]] over [ ], printf over echo, ${var} braces
-bash "$SCRIPTS/check_safety.sh"      $TARGETS   # FAIL: eval/tmp-literal; WARN: GNU flags
-bash "$SCRIPTS/check_shellcheck.sh"  $TARGETS   # FAIL: SC2086/2046/2068/2294/parse-ls; WARN: others; INFO if absent
+"$SCRIPTS/check_secrets.py"          $TARGETS   # FAIL: secret patterns — excludes from Tier-2
+"$SCRIPTS/check_structure.py"        $TARGETS   # FAIL: shebang/strict-mode; WARN: header/main/main-guard/readonly/mktemp-trap
+"$SCRIPTS/check_idioms.py"           $TARGETS   # WARN: [[ ]] over [ ], printf over echo, ${var} braces
+"$SCRIPTS/check_safety.py"           $TARGETS   # FAIL: eval/tmp-literal; WARN: GNU flags
+"$SCRIPTS/check_shellcheck.py"       $TARGETS   # FAIL: SC2086/2046/2068/2294/parse-ls; WARN: others; INFO if absent
 bash "$SCRIPTS/check_shfmt.sh"       $TARGETS   # WARN: format drift; INFO if absent
 bash "$SCRIPTS/check_size.sh"        $TARGETS   # WARN: line count > 300 or line length > 100
 ```
@@ -94,11 +94,11 @@ skills do not.
 
 | Script | Checks |
 |---|---|
-| `check_secrets.sh` | API keys, tokens, private URLs (toolkit convention) |
-| `check_structure.sh` | shebang form (bash, not `/bin/sh`); `set -euo pipefail` in prologue; header comment in first 10 lines; `main` function exists; sourceable guard `[[ "${BASH_SOURCE[0]}" == "$0" ]]`; `readonly` for top-level constants; `mktemp` paired with `trap ... EXIT` |
-| `check_idioms.sh` | `[[ ]]` over `[ ]` in bash files; `printf` over `echo` for non-trivial output; `${var}` braces when adjacent to text |
-| `check_safety.sh` | `eval` (require `# shellcheck disable=SC2294` or `# eval-justified:` comment); GNU-only flags (`sed -i`, `grep -P`, `readlink -f`, `date -d`, `stat -c`); hardcoded `/tmp/` / `/var/tmp/` path literals |
-| `check_shellcheck.sh` | wraps `shellcheck` for SC2086/2046/2068 (unquoted), SC2154 (referenced-but-not-assigned), SC2155 (no `local`), SC2006 (backticks), SC2010/2012/2045 (parse `ls`), SC2013/2162 (`for in $(cat)`), SC2038 (`find | xargs` no `-print0`), SC2164 (`cd` no exit), SC2002 (useless cat, WARN), SC2294 (eval array); emits INFO + exits 0 if shellcheck absent |
+| `check_secrets.py` | API keys, tokens, private URLs (toolkit convention) |
+| `check_structure.py` | shebang form (bash, not `/bin/sh`); `set -euo pipefail` in prologue; header comment in first 10 lines; `main` function exists; sourceable guard `[[ "${BASH_SOURCE[0]}" == "$0" ]]`; `readonly` for top-level constants; `mktemp` paired with `trap ... EXIT` |
+| `check_idioms.py` | `[[ ]]` over `[ ]` in bash files; `printf` over `echo` for non-trivial output; `${var}` braces when adjacent to text |
+| `check_safety.py` | `eval` (require `# shellcheck disable=SC2294` or `# eval-justified:` comment); GNU-only flags (`sed -i`, `grep -P`, `readlink -f`, `date -d`, `stat -c`); hardcoded `/tmp/` / `/var/tmp/` path literals |
+| `check_shellcheck.py` | wraps `shellcheck` for SC2086/2046/2068 (unquoted), SC2154 (referenced-but-not-assigned), SC2155 (no `local`), SC2006 (backticks), SC2010/2012/2045 (parse `ls`), SC2013/2162 (`for in $(cat)`), SC2038 (`find | xargs` no `-print0`), SC2164 (`cd` no exit), SC2002 (useless cat, WARN), SC2294 (eval array); emits INFO + exits 0 if shellcheck absent |
 | `check_shfmt.sh` | wraps `shfmt -d -i 2 -ci -bn`; emits INFO + exits 0 if shfmt absent |
 | `check_size.sh` | script length ≤ 300 non-blank lines; per-line length ≤ 100 chars |
 
@@ -110,16 +110,16 @@ are optional with graceful degradation).
 **FAIL findings that exclude the file from Tier-2** (evaluation is
 not useful until these are resolved):
 
-- Any finding from `check_secrets.sh` (secrets present)
-- `check_structure.sh` shebang FAIL (`#!/bin/sh` or other non-bash —
+- Any finding from `check_secrets.py` (secrets present)
+- `check_structure.py` shebang FAIL (`#!/bin/sh` or other non-bash —
   the file is not in scope)
-- `check_safety.sh` `eval` FAIL (without justification comment)
-- `check_safety.sh` `/tmp/` literal FAIL
-- `check_shellcheck.sh` FAILs on SC2086, SC2046, SC2068, SC2294, or
+- `check_safety.py` `eval` FAIL (without justification comment)
+- `check_safety.py` `/tmp/` literal FAIL
+- `check_shellcheck.py` FAILs on SC2086, SC2046, SC2068, SC2294, or
   the parse-`ls` family — these are correctness bugs that bias every
   judgment dimension toward false negatives
 
-**FAIL findings that do NOT exclude from Tier-2:** `check_structure.sh`
+**FAIL findings that do NOT exclude from Tier-2:** `check_structure.py`
 strict-mode-missing FAIL leaves a parseable bash script that judgment
 can still evaluate productively.
 
@@ -245,7 +245,7 @@ the user's ability to review individual edits.
 - Won't audit paths outside `$ARGUMENTS` — the scope the user named
   is the only scope.
 - Won't audit POSIX `sh` scripts — out of scope; the principles doc
-  this skill enforces is bash-only. The `check_structure.sh` shebang
+  this skill enforces is bash-only. The `check_structure.py` shebang
   FAIL is the structural refusal.
 - Recovery if a repair edit produces a worse state: the edit is a
   single file change; revert with `git checkout -- <path>` or the
