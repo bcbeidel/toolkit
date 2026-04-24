@@ -56,7 +56,7 @@ for HINTs — they are informational only.
 
 ### Signal: `paths-glob` — malformed `paths:` glob
 
-Covers the four subtypes emitted by `check_paths_glob.sh`. Any of them
+Covers the four subtypes emitted by `check_paths_glob.py`. Any of them
 causes Claude Code to either skip loading the rule or load it for the
 wrong file set.
 
