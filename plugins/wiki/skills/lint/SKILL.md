@@ -14,7 +14,7 @@ references: []
 # Audit Skill
 
 Observe and report on project content quality. Read-only -- reports but
-does not modify any files (unless `--fix` is used for index regeneration).
+does not modify any files.
 
 ## Workflow
 
@@ -41,9 +41,6 @@ python <plugin-scripts-dir>/lint.py path/to/file.md --root . --no-urls
 # JSON output for programmatic use
 python <plugin-scripts-dir>/lint.py --root . --json
 
-# Auto-fix out-of-sync or missing _index.md files
-python <plugin-scripts-dir>/lint.py --root . --fix
-
 # Exit 1 on any issue (including warnings)
 python <plugin-scripts-dir>/lint.py --root . --strict
 
@@ -66,7 +63,7 @@ Verifies:
 ### 2. Content Length (warn)
 
 Warns when context files exceed 800 words (configurable via `--context-max-words`).
-Artifacts and `_index.md` files are excluded.
+Artifacts are excluded.
 
 ### 3. Source URL Reachability (fail + warn)
 
@@ -78,21 +75,16 @@ Skipped with `--no-urls`. URLs returning 403/429 are downgraded to
 
 Checks that local file paths in `related` exist on disk.
 
-### 5. Index Sync (fail + warn)
-
-- **fail:** `_index.md` missing or out of sync
-- **warn:** `_index.md` has no area description (preamble)
-
 ## Interpreting Results
 
 Summary line first, then table:
 
 ```
-2 fail, 1 warn across 15 files
+2 fail across 15 files
 
 file                              | sev  | issue
 docs/context/api/auth.md           | fail | Frontmatter 'name' is empty
-docs/context/api/_index.md        | warn | Index has no area description (preamble)
+docs/context/api/another.md        | fail | Source URL unreachable
 ```
 
 With `--json`, output is a JSON array of objects:
@@ -157,7 +149,7 @@ Append-only — never modify existing entries.
 
 ## Key Instructions
 
-- Audit is read-only (except `--fix` which only regenerates `_index.md` files)
+- Audit is read-only
 - Use `/wiki:setup` to initialize missing project structure
 - Empty project (no `docs/` directory) exits 0 with no issues
 
@@ -183,6 +175,6 @@ If lint ran across the full project, offer: "Found N skill(s) — run
 
 ## Handoff
 
-**Receives:** Project root path (defaults to CWD); optional flags (--no-urls, --strict, --fix)
+**Receives:** Project root path (defaults to CWD); optional flags (--no-urls, --strict)
 **Produces:** Validation report listing warnings and failures by file; read-only — no modifications made
 **Chainable to:** —

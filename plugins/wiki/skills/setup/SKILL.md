@@ -138,35 +138,30 @@ Create the wiki directory and required seed files if they do not exist:
 
 Idempotent — skip any file that already exists. Never overwrite existing content.
 
-### 3. Reindex
-
-Run: `python3 <plugin-scripts-dir>/reindex.py --root .`
-
-Creates `_index.md` files in each directory registered in the AGENTS.md
-areas table. On first run (no areas registered yet), scans the `docs/`
-subtree as a fallback. Also refreshes the AGENTS.md areas table,
-preserving any human-written area descriptions.
-
-### 4. Update AGENTS.md
+### 3. Update AGENTS.md
 
 If `AGENTS.md` does not exist, create it with a `# AGENTS.md` heading.
 
 Write the managed section between `<!-- wiki:begin -->` / `<!-- wiki:end -->`
 markers. This section includes:
 - Layout hint comment (`<!-- wiki:layout: <pattern> -->`)
-- Context navigation (dynamically generated from discovered document locations)
-- Areas table
+- Context navigation (RESOLVER.md pointer + Glob/frontmatter discovery convention)
 - File metadata format
 - Document standards
 - Preferences
+
+Directory-level routing is owned by `RESOLVER.md`, not this section.
+If the project has no `RESOLVER.md` and the repo crosses the resolver
+threshold (≥3 tracked dirs with conventions, or ≥5 cross-skill
+reference docs), recommend `/build:build-resolver`.
 
 The markers enable automated updates — never place managed content
 outside them.
 
 If markers already exist, the section is replaced with the latest version
-(picking up any new areas, layout changes, or standards).
+(picking up any layout changes or standards updates).
 
-### 5. Preferences
+### 4. Preferences
 
 Capture or review communication preferences.
 
@@ -184,7 +179,7 @@ Show the current settings to the user. Ask: "Want to change any of these?"
 - If yes → re-run the capture workflow
 - If no → move on
 
-### 6. Working Agreements
+### 5. Working Agreements
 
 Capture or review per-project Working Agreements. Call
 `has_working_agreements(content)` to pick the branch; both branches
@@ -217,7 +212,7 @@ Run the **Present branch** in `references/working-agreements-capture.md`:
 The section is user-owned. The skill only writes what the user
 approved in the current run.
 
-### 7. CLAUDE.md pointer
+### 6. CLAUDE.md pointer
 
 If `CLAUDE.md` does not exist, create it with:
 
@@ -228,7 +223,7 @@ If `CLAUDE.md` does not exist, create it with:
 If `CLAUDE.md` exists but does not contain `@AGENTS.md`, add the reference
 at the top of the file.
 
-### 8. Report
+### 7. Report
 
 Report what was done:
 
@@ -240,6 +235,8 @@ Report what was done:
 - **Working Agreements:** note the outcome — adopted, edited, skipped (absent branch); kept, edited, replaced (present branch)
 - **CLAUDE.md:** note if pointer was added or already present
 - **Onboarding:** note if `.gitignore`, `README.md` were created or skipped
+- **Routing:** if no `RESOLVER.md` exists and the repo crosses the
+  resolver threshold, recommend `/build:build-resolver`
 - **Next step:** note the suggested skill sequence, if any
 - **Already present:** note anything that was already in place
 
@@ -260,5 +257,5 @@ If everything was already set up, confirm: "Project context is up to date. No ch
 ## Handoff
 
 **Receives:** Project root path (new or existing); optional communication preferences
-**Produces:** Initialized project structure — AGENTS.md, docs/ directories, `_index.md` files
+**Produces:** Initialized project structure — AGENTS.md (with RESOLVER pointer), docs/ directories, optional `wiki/` subtree
 **Chainable to:** lint

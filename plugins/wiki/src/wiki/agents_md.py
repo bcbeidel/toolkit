@@ -290,14 +290,13 @@ def render_wiki_section(
     lines.append("## Context Navigation")
     lines.append("")
     lines.append(
-        "Each directory has an `_index.md` listing all files with descriptions."
+        "Directory-level routing lives in [RESOLVER.md](RESOLVER.md). "
+        "Consult it before filing or loading context."
     )
-
-    # Dynamic navigation: list areas with _index.md links
-    if areas:
-        for area in areas:
-            path = area["path"]
-            lines.append(f"- `{path}/_index.md` -- {area['name']}")
+    lines.append(
+        "Find files in registered directories via Glob on the directory's "
+        "naming pattern; read frontmatter `description` to identify the right file."
+    )
     lines.append("")
 
     lines.append(
@@ -309,15 +308,6 @@ def render_wiki_section(
     lines.append(
         "Documents put key insights first and last; supplemental detail in the middle."
     )
-
-    # ── Areas table ──────────────────────────────────────────────
-    if areas:
-        lines.append("")
-        lines.append("### Areas")
-        lines.append("| Area | Path |")
-        lines.append("|------|------|")
-        for area in areas:
-            lines.append(f"| {area['name']} | {area['path']} |")
 
     # ── File Metadata Format ─────────────────────────────────────
     lines.append("")
@@ -373,7 +363,7 @@ def extract_preferences(content: str) -> List[str]:
 
     Parses the ``### Preferences`` subsection between managed markers and
     returns the list of preference strings (without ``- `` bullet prefix).
-    Used by reindex and update_preferences to preserve existing preferences.
+    Used by update_preferences to preserve existing preferences.
 
     Args:
         content: Full AGENTS.md file content.

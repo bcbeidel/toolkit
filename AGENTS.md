@@ -3,23 +3,12 @@
 <!-- wiki:begin -->
 ## Context Navigation
 
-Each directory has an `_index.md` listing all files with descriptions.
-- `.context/_index.md` -- Project context documents covering domain knowledge, patterns, and conventions.
-- `.plans/_index.md` -- Implementation plans for toolkit features.
-- `.prompts/_index.md` -- Saved and refined prompts for skill development and maintenance tasks.
-- `.research/_index.md` -- Research investigations using the SIFT framework.
+Directory-level routing lives in [RESOLVER.md](RESOLVER.md). Consult it before filing or loading context.
+Find files in registered directories via Glob on the directory's naming pattern; read frontmatter `description` to identify the right file.
 
 Each `.md` file starts with YAML metadata (between `---` lines).
 Read the `description` field before reading the full file.
 Documents put key insights first and last; supplemental detail in the middle.
-
-### Areas
-| Area | Path |
-|------|------|
-| Project context documents covering domain knowledge, patterns, and conventions. | .context |
-| Implementation plans for toolkit features. | .plans |
-| Saved and refined prompts for skill development and maintenance tasks. | .prompts |
-| Research investigations using the SIFT framework. | .research |
 
 ### File Metadata Format
 ```yaml

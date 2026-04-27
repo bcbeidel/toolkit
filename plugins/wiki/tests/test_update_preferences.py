@@ -52,21 +52,17 @@ class TestUpdatePreferencesWritesAgentsMd:
         assert BEGIN_MARKER in content
         assert END_MARKER in content
 
-    def test_preserves_existing_area_descriptions(self, tmp_path: Path) -> None:
-        # AGENTS.md already has a human-written Areas table
-        existing_area_desc = "How agents plan tasks and decompose work"
+    def test_does_not_inject_areas_table(self, tmp_path: Path) -> None:
+        """update_preferences should not introduce an Areas table —
+        directory-level routing lives in RESOLVER.md."""
         agents_path = tmp_path / "AGENTS.md"
         agents_path.write_text(
             f"# AGENTS.md\n\n"
             f"{BEGIN_MARKER}\n"
-            f"### Areas\n"
-            f"| Area | Path |\n"
-            f"|------|------|\n"
-            f"| {existing_area_desc} | docs/context/planning |\n"
             f"{END_MARKER}\n"
         )
 
-        # A directory exists on disk that is NOT in the existing AGENTS.md
+        # A directory exists on disk
         extra_dir = tmp_path / "docs" / "context" / "api"
         extra_dir.mkdir(parents=True)
         (extra_dir / "endpoints.md").write_text(
@@ -85,10 +81,8 @@ class TestUpdatePreferencesWritesAgentsMd:
         assert result.returncode == 0
 
         content = agents_path.read_text()
-        # Human-written description preserved
-        assert existing_area_desc in content
         assert "**Directness:**" in content
-        # Directory on disk that wasn't in AGENTS.md should NOT be added
+        assert "### Areas" not in content
         assert "docs/context/api" not in content
 
     def test_creates_agents_md_if_missing(self, tmp_path: Path) -> None:

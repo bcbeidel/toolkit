@@ -169,16 +169,14 @@ Existing prose in wiki pages is never removed or overwritten. Every `git diff` a
 
 ## Post-Ingest
 
-After all page updates and creations, run both commands unconditionally:
+After all page updates and creations, run lint:
 
 ```bash
 python3 <plugin-scripts-dir>/lint.py --root <project-root> --no-urls
-python3 <plugin-scripts-dir>/reindex.py --root <project-root>
 ```
 
 Report results to the user:
 - If lint produces new issues, list them with severity
-- Confirm that area `_index.md` files were refreshed
 
 Do not block on lint issues — report and continue.
 
@@ -205,11 +203,11 @@ The high-rigor path is never required. It is appropriate when the user wants to 
 
 **URL ingest:**
 > "Ingest this article: https://example.com/llm-caching"
-→ Fetch content → read wiki context → identify 5–15 pages → update/create pages → lint + reindex
+→ Fetch content → read wiki context → identify 5–15 pages → update/create pages → lint
 
 **File ingest:**
 > "Add to wiki: docs/research/2026-04-10-caching-patterns.research.md"
-→ Read file → offer SIFT opt-in → read wiki context → identify pages → update/create → lint + reindex
+→ Read file → offer SIFT opt-in → read wiki context → identify pages → update/create → lint
 
 **Pasted text:**
 > "Ingest this: [user pastes a block of notes]"

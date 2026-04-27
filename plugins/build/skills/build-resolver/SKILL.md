@@ -17,7 +17,7 @@ Scaffold the three linked artifacts that make a resolver work: `RESOLVER.md` at 
 ### 0. Verify Primitive
 
 A resolver is right when:
-- The repo has ≥3 tracked directories with filing conventions (each typically marked by an `_index.md` or consistent naming pattern)
+- The repo has ≥3 tracked directories with filing conventions (each typically marked by a consistent naming pattern or shared frontmatter `type:`)
 - OR the repo has ≥5 cross-skill reference docs worth bundling into task-based context entries
 - AND dynamic context routing isn't already solved by skill-level `references:` alone
 
@@ -45,8 +45,7 @@ Announce the mode, the resolver root, and what will change before proceeding. Al
 
 Walk the resolver root's subtree (depth 1–2) and collect:
 
-- **Directories with `_index.md`** — primary filing targets. Read each `_index.md`'s frontmatter `name` and `description`.
-- **Directories without `_index.md` but with frontmatter-tagged files** (e.g., `type: research` across files in `.research/`) — secondary filing candidates.
+- **Directories with frontmatter-tagged files** (e.g., `type: research` across files in `.research/`) or a consistent naming pattern — primary filing targets. Sample 1–3 files per directory to read their frontmatter `description`.
 - **Directories that are ambient** (`.git/`, `node_modules/`, `.cache/`, `dist/`, `build/`) — out-of-scope candidates.
 - **Shared-reference directories** (any `_shared/references/`) — candidates for context-table bundles.
 - **Naming patterns** per filing directory — detect by pattern-matching existing filenames (`YYYY-MM-DD-<slug>.<type>.md` is the common shape).
@@ -55,7 +54,7 @@ Report the scan summary: N directories detected, K tagged as filing candidates, 
 
 ### 3. Elicit Filing Table
 
-Present autodetected filing rows as proposed content. For each, show: content type (from `_index.md` description), location (directory), naming pattern. Ask the user to confirm, correct, or extend.
+Present autodetected filing rows as proposed content. For each, show: content type (inferred from a sample of frontmatter `description` fields, or asked of the user), location (directory), naming pattern. Ask the user to confirm, correct, or extend.
 
 For directories the scan could not classify, ask directly: "`.inbox/` has 4 files with no consistent naming pattern — filing target, or out-of-scope?"
 
@@ -67,7 +66,7 @@ This is human-provided. Ask:
 
 > "Name up to 5 recurring tasks whose reference-doc set should be bundled. Examples: 'authoring a hook', 'planning research', 'debugging the data pipeline'. For each, list the docs to load first."
 
-Validate that each listed entry resolves to a file or directory. Directory entries are valid — the convention is "look in this directory's `_index.md` first, descend on need." If a path doesn't resolve, flag and ask for a correction before writing.
+Validate that each listed entry resolves to a file or directory. Directory entries are valid — the convention is to Glob the directory's naming pattern and read frontmatter to identify the right file. If a path doesn't resolve, flag and ask for a correction before writing.
 
 ### 5. Seed Trigger Evals
 
@@ -106,7 +105,7 @@ In **fresh-scaffold mode**, offer: "Run `/build:check-resolver` against the new 
 <example>
 User: `/build:build-resolver`
 
-Step 2 scan: finds `.research/`, `.plans/`, `.designs/`, `.context/`, `.prompts/`, `plugins/build/_shared/references/`. Detects `_index.md` in four of these. Flags `.raw/` as ambient (no `_index.md`, no frontmatter pattern).
+Step 2 scan: finds `.research/`, `.plans/`, `.designs/`, `.context/`, `.prompts/`, `plugins/build/_shared/references/`. Detects frontmatter `type:` patterns or consistent naming in four of these. Flags `.raw/` as ambient (no frontmatter pattern, no consistent naming).
 
 Step 3: proposes 6 filing rows; user confirms 5, drops `.prompts/` as out-of-scope.
 

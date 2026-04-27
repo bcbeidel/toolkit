@@ -35,4 +35,4 @@ into dispatch prompts for delegation.
 | File | Purpose |
 |------|---------|
 | research/resumption.md | Phase detection from disk state after context reset |
-| research/cli-commands.md | Shared utility commands (audit, reindex, url_checker) |
+| research/cli-commands.md | Shared utility commands (lint, url_checker) |

@@ -9,7 +9,7 @@ description: >
   request to conduct a structured investigation.
 argument-hint: "[topic or question to investigate]"
 user-invocable: true
-compatibility: "Requires Python 3 (stdlib only), wiki plugin (lint, reindex), WebSearch, WebFetch"
+compatibility: "Requires Python 3 (stdlib only), wiki plugin (lint), WebSearch, WebFetch"
 references:
   - references/frame.md
   - references/resumption.md

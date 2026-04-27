@@ -44,14 +44,14 @@ Every FAIL and WARN finding maps to a canonical repair. Before applying, state t
 
 **CHANGE:** Remove the row (if the directory was intentionally deleted) or restore the directory (if it should exist)
 **FROM:** Filing row `| design | .designs/ | … |` with no `.designs/` on disk
-**TO:** Either delete the row or `mkdir .designs/` and add an `_index.md`
+**TO:** Either delete the row or `mkdir .designs/` and seed it with a file matching the row's naming pattern
 **REASON:** A filing row that doesn't resolve routes new content into nothing.
 
 ### Signal: `context-paths-resolve` — context bundle points at missing path
 
 **CHANGE:** Update the path to its current location (file or directory), or remove the entry from the bundle
 **FROM:** Bundle lists `_shared/references/hook-best-practices.md` at path no longer present
-**TO:** Correct to `plugins/build/_shared/references/hook-best-practices.md` (or remove). A directory entry like `.research/` is also valid — the agent consults its `_index.md` and descends on need.
+**TO:** Correct to `plugins/build/_shared/references/hook-best-practices.md` (or remove). A directory entry like `.research/` is also valid — the agent uses Glob on the directory's naming pattern and reads frontmatter to find the right file.
 **REASON:** Broken context loads train Claude to skip the resolver.
 
 ### Signal: `filing-rows-unique` — duplicate filing rows
@@ -115,7 +115,7 @@ Every FAIL and WARN finding maps to a canonical repair. Before applying, state t
 **Signal:** Bundle is empty or has >6 entries.
 
 **CHANGE:** Narrow to 1–4 load-bearing entries (files or directories)
-**REASON:** Empty bundles defeat the purpose; large bundles equal "just look everywhere" and waste context budget. A directory counts as one entry — the agent consults its `_index.md` and descends on need.
+**REASON:** Empty bundles defeat the purpose; large bundles equal "just look everywhere" and waste context budget. A directory counts as one entry — the agent uses Glob on the naming pattern and reads frontmatter to find the right file.
 
 ### Dimension 3: Eval Representativeness
 
