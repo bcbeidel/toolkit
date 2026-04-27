@@ -27,13 +27,43 @@ If no source is provided, ask: "What source should I ingest? (URL, file path, or
 
 ## Pre-Ingest
 
-Before editing any files, read the project's wiki context:
+Before editing any files, resolve **where pages live** and **what vocabulary
+applies** by deferring to the project's `RESOLVER.md`. Ingest does not assume
+a fixed `wiki/` directory or hard-coded schema path.
 
-1. **Read `wiki/_index.md`** — understand the existing page inventory (titles, descriptions, file paths)
-2. **List the `wiki/` directory tree** — run `ls -R wiki/` or equivalent to see existing subdirectories and their contents. This informs where new pages should be placed to fit contextually alongside related existing content.
-3. **Read `wiki/SCHEMA.md`** — learn the valid `type` values, `confidence` tiers, and relationship types for this project
+1. **Read `RESOLVER.md`** at the project root if it exists.
 
-If `wiki/_index.md` or `wiki/SCHEMA.md` is missing, stop and report the missing file. Suggest running `/wiki:setup` to initialize wiki infrastructure.
+   - **Filing target** — find the row in the filing table that covers
+     ingest output (typical content types: "wiki page", "knowledge page",
+     "source summary", or whatever the project uses). The location column
+     is the directory where new pages go; the naming column is the file
+     pattern. If multiple rows apply (e.g., separate rows for source
+     summaries vs. concept pages), use them all.
+   - **Vocabulary / schema** — find the context-table entry for "ingesting
+     a source" (or the closest equivalent). It bundles the doc(s) that
+     define valid `type:` values, `confidence:` tiers, and relationship
+     types. Read the bundled doc(s) before assigning frontmatter.
+   - **Inventory** — scan the resolved filing directory, glob the naming
+     pattern, and read each file's frontmatter `description` to understand
+     existing pages. This replaces a hand-maintained index file.
+
+2. **If `RESOLVER.md` is missing or has no relevant rows**, ingest runs in
+   degraded mode:
+
+   - Ask the user where new pages should go and what naming pattern to use
+   - Skip schema enforcement (frontmatter `type:` / `confidence:` are
+     written but not validated against a vocabulary)
+   - Recommend running `/build:build-resolver` to add filing + context
+     entries so future ingests are deterministic. Do not block on it.
+
+3. **If a `wiki/SCHEMA.md` exists at the legacy path** but RESOLVER.md
+   does not point at it, treat its presence as an implicit schema and
+   read it. Recommend the user add an "ingesting a source" context-table
+   entry so the dependency is explicit.
+
+The output of Pre-Ingest is: **filing target(s)**, **schema content (or
+none)**, and **existing-page inventory**. The rest of the protocol uses
+these resolved values, not hard-coded paths.
 
 ## Ingest Protocol
 
@@ -71,18 +101,34 @@ Identify **5–15 wiki pages** that this source meaningfully informs — both:
 
 If the source is narrow and fewer than 5 pages genuinely apply, proceed with what applies. Do not pad.
 
-**Emergent path selection for new pages:** Based on the existing `wiki/` directory structure read in Pre-Ingest, propose a subdirectory path that fits contextually — place the new page alongside existing pages on related topics. Example: if `wiki/llm-patterns/` already exists with caching pages, a new page on cache invalidation belongs at `wiki/llm-patterns/cache-invalidation.md`, not `wiki/cache-invalidation.md`. If no relevant subdirectory exists, propose a new one whose name reflects the topic cluster. The user can override any proposed path at Step 1b.
+**Emergent path selection for new pages:** Based on the filing target(s)
+resolved in Pre-Ingest and the inventory scan, propose a subdirectory
+path that fits contextually — place the new page alongside existing
+pages on related topics. Example: if `<filing-target>/llm-patterns/`
+already has caching pages, a new page on cache invalidation belongs
+under `<filing-target>/llm-patterns/cache-invalidation.md`, not at the
+top level. If no relevant subdirectory exists, propose a new one whose
+name reflects the topic cluster. The user can override any proposed
+path at Step 1b.
 
-**Source summary page:** Always include one source summary page for the ingested source (see [Step 3a](#step-3a-create-source-summary-page)). Place it in a subdirectory that fits contextually alongside related pages — the same emergent path logic applies. Idempotency: if a source summary page already exists for this URL (matched by URL in the `sources:` frontmatter field), update it rather than creating a duplicate — append new claims, never remove existing ones.
+**Source summary page:** Always include one source summary page for the
+ingested source (see [Step 3a](#step-3a-create-source-summary-page)).
+Place it in the filing target — using a separate "source summary" row if
+the resolver defines one, otherwise alongside concept pages.
+Idempotency: if a source summary page already exists for this URL
+(matched by URL in the `sources:` frontmatter field), update it rather
+than creating a duplicate — append new claims, never remove existing
+ones.
 
 ### Step 1b: Confirm Before Writing
 
-Present the proposed changes to the user before modifying any file:
+Present the proposed changes to the user before modifying any file. Use
+the filing target resolved in Pre-Ingest as the path prefix:
 
 ```
 Ready to ingest into N pages:
-- UPDATE wiki/existing-page.md — adding [summary of additions]
-- CREATE wiki/llm-patterns/new-topic.md — [description of new page]
+- UPDATE <filing-target>/existing-page.md — adding [summary of additions]
+- CREATE <filing-target>/llm-patterns/new-topic.md — [description of new page]
 ...
 
 Proceed? (yes / edit list / cancel)
@@ -101,17 +147,23 @@ For each affected page, apply all changes that are warranted:
 **Frontmatter updates:**
 - `sources:` — append the source URL or file path (deduplicate if already present)
 - `updated:` — set to today's date (YYYY-MM-DD)
-- `type:` — assign or confirm the page type per `wiki/SCHEMA.md`
-- `confidence:` — assign or update the confidence tier per `wiki/SCHEMA.md`, reflecting the source's authority and corroboration with existing pages
-- `related:` — add cross-references to other wiki pages that this source connects
+- `type:` — assign or confirm the page type per the project schema loaded
+  in Pre-Ingest (or the user's preference, in degraded mode)
+- `confidence:` — assign or update the confidence tier per the project
+  schema, reflecting the source's authority and corroboration with
+  existing pages
+- `related:` — add cross-references to other pages that this source connects
 
 ### Step 3: Create New Pages
 
-For topics the source covers with no existing wiki page, create a new page:
+For topics the source covers with no existing page, create a new page:
 
-- Path: `wiki/<slug>.md` (derive slug from topic name)
-- Include full frontmatter: `name`, `description`, `type`, `confidence`, `sources`, `created`, `updated`
-- Write an initial page body from the source content — follow the structure of existing wiki pages
+- Path: `<filing-target>/<slug>.md` using the filing target and naming
+  pattern resolved in Pre-Ingest
+- Include full frontmatter: `name`, `description`, `type`, `confidence`,
+  `sources`, `created`, `updated`
+- Write an initial page body from the source content — follow the
+  structure of existing pages in the same filing target
 - Add `related:` links to existing pages that connect
 
 ### Step 3a: Create Source Summary Page
@@ -165,7 +217,10 @@ Report all contradiction markers to the user at the end of ingest.
 
 ## Append-Only Constraint
 
-Existing prose in wiki pages is never removed or overwritten. Every `git diff` after an ingest should show only additions (new lines, frontmatter field updates, appended content). If you find yourself deleting or rewriting existing text, stop — append instead or flag a contradiction.
+Existing prose in pages is never removed or overwritten. Every `git diff`
+after an ingest should show only additions (new lines, frontmatter field
+updates, appended content). If you find yourself deleting or rewriting
+existing text, stop — append instead or flag a contradiction.
 
 ## Post-Ingest
 
@@ -179,14 +234,6 @@ Report results to the user:
 - If lint produces new issues, list them with severity
 
 Do not block on lint issues — report and continue.
-
-**Operation log:** Append an entry to `wiki/log.md` (create the file if it does
-not exist). Append-only — never modify existing entries.
-
-```
-## [YYYY-MM-DD] ingest | <Source Title>
-<N> pages updated, <M> created. Pages: wiki/path/a.md, wiki/path/b.md.
-```
 
 ## High-Rigor Path
 
@@ -203,35 +250,35 @@ The high-rigor path is never required. It is appropriate when the user wants to 
 
 **URL ingest:**
 > "Ingest this article: https://example.com/llm-caching"
-→ Fetch content → read wiki context → identify 5–15 pages → update/create pages → lint
+→ Fetch content → resolve filing/schema via RESOLVER.md → identify 5–15 pages → update/create pages → lint
 
 **File ingest:**
-> "Add to wiki: docs/research/2026-04-10-caching-patterns.research.md"
-→ Read file → offer SIFT opt-in → read wiki context → identify pages → update/create → lint
+> "Add to wiki: .research/2026-04-10-caching-patterns.research.md"
+→ Read file → offer SIFT opt-in → resolve filing/schema → identify pages → update/create → lint
 
 **Pasted text:**
 > "Ingest this: [user pastes a block of notes]"
-→ Use pasted text as source → read wiki context → proceed
+→ Use pasted text as source → resolve filing/schema → proceed
 
 ## Key Instructions
 
 - **Won't overwrite existing prose** — ingest is append-only; every `git diff` should show only additions
 - **Won't write until confirmed** — Step 1b gate is non-negotiable; present the full list and wait for approval
-- **Won't ingest without reading wiki context first** — `wiki/_index.md` and `wiki/SCHEMA.md` must be read before any changes
-- **Recovery:** if an ingest produces unwanted changes, use `git diff` to review and `git checkout -- wiki/` to revert; all writes are isolated to the `wiki/` directory
+- **Won't ingest without resolving filing target** — Pre-Ingest reads RESOLVER.md (or asks the user in degraded mode) before any page identification
+- **Recovery:** if an ingest produces unwanted changes, use `git diff` to review; writes are isolated to the filing target(s) resolved in Pre-Ingest, so `git checkout -- <filing-target>/` reverts cleanly
 
 ## Anti-Pattern Guards
 
 1. **Separate discussion round per source in bulk mode** — when ingesting multiple sources, running one discussion round per source creates unnecessary back-and-forth. Consolidate all sources into a single takeaways discussion before moving to the page list.
 2. **Overwriting existing prose** — every `git diff` after ingest should show only additions. Rewriting existing content destroys the provenance trail and may silently lose validated information. If existing content is wrong, flag a contradiction marker instead.
 3. **Writing interpretation into source summary pages** — source summary pages record what the source says, not what you conclude from it. Synthesis and evaluation belong in concept or synthesis pages, not in `type: source-summary` pages.
-2. **Skipping Pre-Ingest reads** — proceeding without reading `wiki/_index.md` and `wiki/SCHEMA.md` causes type/confidence misassignment and duplicate page creation. These are required reads, not optional context.
-3. **Silent contradiction** — when source content conflicts with an existing page, the anti-pattern is choosing one version silently. The correct action is the contradiction marker. Unresolved conflicts belong to the user, not the ingest operation.
-4. **Padding to hit the 5-page minimum** — if a narrow source genuinely affects fewer than 5 pages, proceed with what applies. Forcing connections to reach a target count produces low-quality updates that degrade the wiki.
-5. **Assigning confidence without cross-referencing** — confidence tier should reflect corroboration across pages, not just the source's claimed authority. A single primary source warrants `medium` at best until cross-referenced with existing wiki content.
+4. **Skipping Pre-Ingest resolution** — proceeding without resolving filing target and schema (via RESOLVER.md or user prompt) causes pages to land in the wrong directory and frontmatter to misalign with project vocabulary. Pre-Ingest is required, not optional context.
+5. **Silent contradiction** — when source content conflicts with an existing page, the anti-pattern is choosing one version silently. The correct action is the contradiction marker. Unresolved conflicts belong to the user, not the ingest operation.
+6. **Padding to hit the 5-page minimum** — if a narrow source genuinely affects fewer than 5 pages, proceed with what applies. Forcing connections to reach a target count produces low-quality updates that degrade the wiki.
+7. **Assigning confidence without cross-referencing** — confidence tier should reflect corroboration across pages, not just the source's claimed authority. A single primary source warrants `medium` at best until cross-referenced with existing pages.
 
 ## Handoff
 
 **Receives:** URL, file path, or pasted text representing an external source
-**Produces:** One or more wiki pages added or updated under `wiki/`
-**Chainable to:** lint
+**Produces:** One or more pages added or updated under the filing target(s) resolved from `RESOLVER.md` (or user-confirmed paths in degraded mode)
+**Chainable to:** `/wiki:lint`; `/build:build-resolver` (when RESOLVER.md is missing or lacks an "ingesting a source" context bundle)

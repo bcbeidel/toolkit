@@ -3,6 +3,17 @@
 Use this workflow to seed or review a project's `## Working Agreements`
 section during `/wiki:setup`.
 
+`## Working Agreements` is the **single user-owned behavior section** in
+AGENTS.md. It covers both how the agent collaborates on the work
+(workflow defaults like *Codify repetition*) and any communication-style
+bullets the user wants to add (*Be direct*, *Keep responses concise*).
+There is no separate Preferences flow — communication style is just
+another bullet, written freeform.
+
+The seed below is the **encouraged default for every project**. The
+codify-repetition agreement is the high-value default we want every
+project to start with; the user can edit or skip, but they should see it.
+
 ## Branching rule
 
 Call `has_working_agreements(content)` on the current AGENTS.md to pick
@@ -30,18 +41,20 @@ skip — the user always sees the current or proposed state and chooses.
 
 2. **Three-way prompt**
 
-   > "Working Agreements describe how we collaborate on the work itself
-   > — what behaviors the agent should default to. Here is a seed you
-   > can **adopt** as-is, **edit**, or **skip**. Which?"
+   > "These are the recommended defaults for every project — they shape
+   > how the agent collaborates with you. You can also add your own
+   > communication-style bullets (e.g., *Be direct*, *Keep responses
+   > concise*) by choosing **edit**. Adopt as-is, edit, or skip?"
 
 3. **Write**
 
    - **adopt** — append the seed verbatim to AGENTS.md *after* the
      managed `<!-- wiki:end -->` marker (or at end of file if no markers
      are present). Include a blank line before the heading.
-   - **edit** — let the user modify the text, then append the edited
-     version in the same location.
-   - **skip** — write nothing.
+   - **edit** — let the user modify or extend the text (add their own
+     bullets), then append the result in the same location.
+   - **skip** — write nothing. The user has opted out of the defaults
+     for this project.
 
 ## Present branch (section already exists)
 

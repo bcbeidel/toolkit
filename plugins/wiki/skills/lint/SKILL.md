@@ -22,9 +22,8 @@ does not modify any files.
 2. **Checks** — the script applies five check categories; results are collected (see [The Checks](#the-checks))
 3. **Interpret** — present the findings table to the user (see [Interpreting Results](#interpreting-results))
 4. **Cleanup** — for actionable findings (missing setup, blocked URLs), offer guided resolution (see [Cleanup Actions](#cleanup-actions))
-5. **Post-Lint** — append a summary entry to `wiki/log.md` (see [Post-Lint](#post-lint))
 
-Each phase depends on the previous. Do not offer cleanup actions before presenting results; do not append the log entry before cleanup is complete.
+Each phase depends on the previous. Do not offer cleanup actions before presenting results.
 
 ## How to Run
 
@@ -75,6 +74,14 @@ Skipped with `--no-urls`. URLs returning 403/429 are downgraded to
 
 Checks that local file paths in `related` exist on disk.
 
+### 5. Resolver Threshold (warn)
+
+Warns when no `RESOLVER.md` exists at the project root but ≥3 top-level
+directories follow a filing convention (≥2 files matching `*.context.md`,
+`*.plan.md`, `*.design.md`, or `*.research.md`). The recommendation is to
+run `/build:build-resolver`. Routing-artifact quality (when a resolver
+*does* exist) is not checked here — see [Resolver Evaluation](#resolver-evaluation).
+
 ## Interpreting Results
 
 Summary line first, then table:
@@ -115,6 +122,10 @@ After presenting audit results, offer to help resolve actionable warnings:
   to add the managed section. Confirm before modifying existing content.
 - **CLAUDE.md missing @AGENTS.md reference:** Offer to add the reference.
   Do not rewrite CLAUDE.md contents — only add the `@AGENTS.md` line.
+- **Missing RESOLVER.md (threshold crossed):** Offer to run
+  `/build:build-resolver` to scaffold a routing table. Show the
+  conventionful directories the lint check detected so the user can
+  judge whether the recommendation fits.
 - **403/429 URL warnings:** Present each blocked URL to the user and ask
   them to verify it manually. For each URL:
   1. Show the URL and the file it appears in
@@ -137,21 +148,11 @@ After presenting audit results, offer to help resolve actionable warnings:
 
   Process URLs one at a time. Do not batch-ask about all URLs at once.
 
-## Post-Lint
-
-After reporting results, append an entry to `wiki/log.md` (create if missing).
-Append-only — never modify existing entries.
-
-```
-## [YYYY-MM-DD] lint | <summary>
-<N> issues found: <brief description>. (or: No issues.)
-```
-
 ## Key Instructions
 
-- Audit is read-only
+- Audit is strictly read-only — no log files, no side effects
 - Use `/wiki:setup` to initialize missing project structure
-- Empty project (no `docs/` directory) exits 0 with no issues
+- Empty project (no convention-following directories) exits 0 with no issues
 
 ## Skill Evaluation
 
@@ -166,6 +167,19 @@ If the user ran lint on a specific skill path, pass that path to `check-skill`.
 If lint ran across the full project, offer: "Found N skill(s) — run
 `/build:check-skill` to evaluate quality?"
 
+## Resolver Evaluation
+
+Routing-artifact evaluation is handled entirely by `/build:check-resolver` —
+lint does not audit `RESOLVER.md`, the AGENTS.md pointer, or
+`.resolver/evals.yml`. When `RESOLVER.md` exists at the project root, offer:
+"Found a resolver — run `/build:check-resolver` to audit filing coverage,
+context actionability, and eval pass rate?"
+
+Do not duplicate the resolver audit dimensions here — `check-resolver` is the
+single source of truth for routing quality, the same way `check-skill` is for
+skills. The lint script's own resolver check is intentionally narrow: it only
+warns when no `RESOLVER.md` exists but the repo crosses the threshold.
+
 ## Anti-Pattern Guards
 
 1. **Attributing pre-existing issues to recent changes** — a project may have accumulated failures before your work began. Establish a baseline before blaming new issues on recent changes. Run lint on the main branch first, then compare.
@@ -177,4 +191,4 @@ If lint ran across the full project, offer: "Found N skill(s) — run
 
 **Receives:** Project root path (defaults to CWD); optional flags (--no-urls, --strict)
 **Produces:** Validation report listing warnings and failures by file; read-only — no modifications made
-**Chainable to:** —
+**Chainable to:** `/build:check-skill` (per-skill quality); `/build:check-resolver` (routing-artifact audit when RESOLVER.md exists); `/build:build-resolver` (when threshold is crossed without one)

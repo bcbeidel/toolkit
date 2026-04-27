@@ -78,6 +78,82 @@ class TestCheckProjectFiles:
         assert claude_issues == []
 
 
+# ── check_resolver_recommendation ──────────────────────────────
+
+
+def _seed_conventionful_dirs(root: Path, dirs: list[str]) -> None:
+    """Create the given top-level dirs, each with two convention files."""
+    suffix_for = {
+        ".context": ".context.md",
+        ".plans": ".plan.md",
+        ".designs": ".design.md",
+        ".research": ".research.md",
+        "context": ".context.md",
+        "plans": ".plan.md",
+        "designs": ".design.md",
+        "research": ".research.md",
+    }
+    for name in dirs:
+        d = root / name
+        d.mkdir(parents=True, exist_ok=True)
+        suffix = suffix_for.get(name, ".context.md")
+        (d / f"a{suffix}").write_text(_md("A"))
+        (d / f"b{suffix}").write_text(_md("B"))
+
+
+class TestCheckResolverRecommendation:
+    def test_no_recommendation_when_resolver_present(self, tmp_path: Path) -> None:
+        from wiki.project import check_resolver_recommendation
+
+        (tmp_path / "RESOLVER.md").write_text("# RESOLVER.md\n")
+        _seed_conventionful_dirs(tmp_path, [".context", ".plans", ".designs"])
+        assert check_resolver_recommendation(tmp_path) == []
+
+    def test_no_recommendation_below_threshold(self, tmp_path: Path) -> None:
+        from wiki.project import check_resolver_recommendation
+
+        _seed_conventionful_dirs(tmp_path, [".context", ".plans"])
+        assert check_resolver_recommendation(tmp_path) == []
+
+    def test_warns_at_threshold(self, tmp_path: Path) -> None:
+        from wiki.project import check_resolver_recommendation
+
+        _seed_conventionful_dirs(tmp_path, [".context", ".plans", ".designs"])
+        issues = check_resolver_recommendation(tmp_path)
+        assert len(issues) == 1
+        assert issues[0]["severity"] == "warn"
+        assert issues[0]["file"] == "RESOLVER.md"
+        assert "/build:build-resolver" in issues[0]["issue"]
+
+    def test_ignores_dir_with_only_one_convention_file(self, tmp_path: Path) -> None:
+        from wiki.project import check_resolver_recommendation
+
+        # Three dirs but one only has a single convention file → 2 qualify, no warn
+        _seed_conventionful_dirs(tmp_path, [".context", ".plans"])
+        thin = tmp_path / ".designs"
+        thin.mkdir()
+        (thin / "lone.design.md").write_text(_md("Lone"))
+        assert check_resolver_recommendation(tmp_path) == []
+
+    def test_ignores_ambient_dirs(self, tmp_path: Path) -> None:
+        from wiki.project import check_resolver_recommendation
+
+        for name in (".git", "node_modules", ".venv"):
+            d = tmp_path / name
+            d.mkdir()
+            (d / "a.context.md").write_text(_md("A"))
+            (d / "b.context.md").write_text(_md("B"))
+        assert check_resolver_recommendation(tmp_path) == []
+
+    def test_check_project_files_includes_recommendation(self, tmp_path: Path) -> None:
+        from wiki.project import check_project_files
+
+        _seed_conventionful_dirs(tmp_path, [".context", ".plans", ".designs"])
+        issues = check_project_files(tmp_path)
+        resolver_issues = [i for i in issues if i["file"] == "RESOLVER.md"]
+        assert len(resolver_issues) == 1
+
+
 # ── validate_file ──────────────────────────────────────────────
 
 

@@ -12,6 +12,18 @@ from typing import List
 
 from wiki.document import parse_document
 
+_AMBIENT_DIRS = frozenset({
+    ".git", ".github", ".claude", ".claude-plugin", ".resolver",
+    ".venv", ".cache", ".pytest_cache", ".ruff_cache", ".mypy_cache",
+    ".eggs", "__pycache__", "node_modules", "dist", "build", "target",
+})
+
+_CONVENTION_SUFFIXES = (
+    ".context.md", ".plan.md", ".design.md", ".research.md",
+)
+
+_RESOLVER_THRESHOLD = 3
+
 # ── Per-file helper ────────────────────────────────────────────────
 
 
@@ -150,6 +162,7 @@ class Project:
                     "severity": "warn",
                 })
 
+        issues.extend(check_resolver_recommendation(root))
         return issues
 
 # ── Module-level convenience functions ────────────────────────────
@@ -166,3 +179,57 @@ def validate_project(
 ) -> List[dict]:
     """Validate all managed documents in a project. See Project.validate."""
     return Project(root).validate(verify_urls=verify_urls)
+
+
+# ── Resolver recommendation ───────────────────────────────────────
+
+
+def _conventionful_dirs(root: Path) -> List[str]:
+    """Return names of top-level directories that follow a filing convention.
+
+    A directory counts when it contains ≥2 markdown files whose name ends in
+    one of the canonical filing suffixes (`.context.md`, `.plan.md`,
+    `.design.md`, `.research.md`). Walks the subtree but skips ambient
+    directory names at any depth.
+    """
+    found: List[str] = []
+    try:
+        children = sorted(root.iterdir())
+    except OSError:
+        return found
+
+    for child in children:
+        if not child.is_dir() or child.name in _AMBIENT_DIRS:
+            continue
+        count = 0
+        for md in child.rglob("*.md"):
+            if any(part in _AMBIENT_DIRS for part in md.parts):
+                continue
+            if md.name.endswith(_CONVENTION_SUFFIXES):
+                count += 1
+                if count >= 2:
+                    found.append(child.name)
+                    break
+    return found
+
+
+def check_resolver_recommendation(root: Path) -> List[dict]:
+    """Warn when the repo crosses the resolver threshold but lacks RESOLVER.md.
+
+    The threshold mirrors `/build:build-resolver`'s primitive check: ≥3
+    top-level directories whose contents follow a filing convention.
+    """
+    if (root / "RESOLVER.md").is_file():
+        return []
+    dirs = _conventionful_dirs(root)
+    if len(dirs) < _RESOLVER_THRESHOLD:
+        return []
+    return [{
+        "file": "RESOLVER.md",
+        "issue": (
+            f"No RESOLVER.md, but {len(dirs)} directories follow filing"
+            f" conventions ({', '.join(dirs)})."
+            " Run /build:build-resolver to scaffold a routing table."
+        ),
+        "severity": "warn",
+    }]

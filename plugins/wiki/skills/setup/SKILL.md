@@ -8,7 +8,6 @@ description: >
 argument-hint: "[project root — defaults to CWD]"
 user-invocable: true
 references:
-  - references/capture-workflow.md
   - references/working-agreements-capture.md
 ---
 
@@ -29,7 +28,7 @@ Check which parts of the project structure already exist:
 
 - `AGENTS.md` with managed-section markers (`<!-- wiki:begin -->` /
   `<!-- wiki:end -->`; legacy `<!-- wos:* -->` markers auto-migrate)
-- `### Preferences` subsection in the managed section
+- `## Working Agreements` section (outside the markers)
 - Layout hint (`<!-- wiki:layout: ... -->`) in the managed section
 - `CLAUDE.md` with `@AGENTS.md` reference
 - `.gitignore`
@@ -121,23 +120,6 @@ Based on the response, suggest a concrete skill sequence:
 
 If the user declines or skips, move on without suggesting.
 
-### 2.8. Initialize wiki infrastructure
-
-Create the wiki directory and required seed files if they do not exist:
-
-1. Create the `wiki/` directory if missing.
-2. Create `wiki/SCHEMA.md` from `references/wiki-schema-template.md` if missing.
-3. Create `wiki/_index.md` with an empty page inventory if missing:
-
-```markdown
-# Wiki Index
-
-| Page | Description | File |
-|------|-------------|------|
-```
-
-Idempotent — skip any file that already exists. Never overwrite existing content.
-
 ### 3. Update AGENTS.md
 
 If `AGENTS.md` does not exist, create it with a `# AGENTS.md` heading.
@@ -148,12 +130,11 @@ markers. This section includes:
 - Context navigation (RESOLVER.md pointer + Glob/frontmatter discovery convention)
 - File metadata format
 - Document standards
-- Preferences
 
-Directory-level routing is owned by `RESOLVER.md`, not this section.
-If the project has no `RESOLVER.md` and the repo crosses the resolver
-threshold (≥3 tracked dirs with conventions, or ≥5 cross-skill
-reference docs), recommend `/build:build-resolver`.
+Directory-level routing is owned by `RESOLVER.md`, not this section
+(see [Step 6 — Resolver handoff](#6-resolver-handoff)). Project-wide
+behaviors (workflow defaults like *Codify repetition*, communication-style
+bullets) live in `## Working Agreements` outside the markers (Step 4).
 
 The markers enable automated updates — never place managed content
 outside them.
@@ -161,36 +142,25 @@ outside them.
 If markers already exist, the section is replaced with the latest version
 (picking up any layout changes or standards updates).
 
-### 4. Preferences
+### 4. Working Agreements
 
-Capture or review communication preferences.
+Capture or review the per-project `## Working Agreements` section. This
+is the **single behavior section** — it covers both how the agent
+collaborates on work (e.g., "Codify repetition") and any
+communication-style bullets the user wants to add (e.g., "Be direct").
+There is no separate Preferences capture flow.
 
-**If no `### Preferences` subsection exists** in the managed section:
-
-Run the full capture workflow in `references/capture-workflow.md`:
-1. Ask the freeform communication style question
-2. Map response to dimensions
-3. Confirm with user
-4. Write to AGENTS.md via `python3 <plugin-scripts-dir>/update_preferences.py --root .`
-
-**If preferences already exist:**
-
-Show the current settings to the user. Ask: "Want to change any of these?"
-- If yes → re-run the capture workflow
-- If no → move on
-
-### 5. Working Agreements
-
-Capture or review per-project Working Agreements. Call
-`has_working_agreements(content)` to pick the branch; both branches
-always show state to the user and end with a three-way prompt.
+The seed is the **encouraged default** for every project. Show it; let
+the user adopt, edit, or skip. Call `has_working_agreements(content)`
+to pick the branch.
 
 **If `has_working_agreements(content)` returns `False`** (section
 absent):
 
 Run the **Absent branch** in `references/working-agreements-capture.md`:
 
-1. Show the seed list verbatim
+1. Show the seed list verbatim — `Codify repetition` and
+   `Watch for patterns` are recommended for every project
 2. Ask: adopt / edit / skip
 3. On adopt or edit, append the section *after* the managed
    `<!-- wiki:end -->` marker (or at end of file if no markers
@@ -212,7 +182,7 @@ Run the **Present branch** in `references/working-agreements-capture.md`:
 The section is user-owned. The skill only writes what the user
 approved in the current run.
 
-### 6. CLAUDE.md pointer
+### 5. CLAUDE.md pointer
 
 If `CLAUDE.md` does not exist, create it with:
 
@@ -223,6 +193,38 @@ If `CLAUDE.md` does not exist, create it with:
 If `CLAUDE.md` exists but does not contain `@AGENTS.md`, add the reference
 at the top of the file.
 
+### 6. Resolver handoff
+
+After scaffolding, decide whether the repo needs a `RESOLVER.md` and offer
+the chain explicitly. This is the setup's last action on a non-empty repo.
+
+1. **Skip silently** if `RESOLVER.md` already exists at the project root.
+2. **Skip silently** if the repo is empty (steps 2.5–2.7 ran) — there are
+   no filing dirs to route yet.
+3. Otherwise, count top-level directories that follow a filing convention:
+   ≥2 markdown files matching `*.context.md`, `*.plan.md`, `*.design.md`,
+   or `*.research.md`. Ambient dirs (`.git`, `node_modules`, `.venv`,
+   `dist`, `build`, etc.) are excluded.
+4. **If the count is ≥3** (or there are ≥5 cross-skill reference docs
+   worth bundling), prompt:
+
+   > "This repo has N directories with filing conventions
+   > ({list}) but no `RESOLVER.md`. A resolver gives Claude a routing
+   > table for filing new docs and loading context. Run
+   > `/build:build-resolver` now? (yes / not yet / skip)"
+
+   - **yes** — chain directly into `/build:build-resolver`. Do not
+     re-run the layout or working-agreements prompts.
+   - **not yet / skip** — record the recommendation in the Report
+     (Step 7) so the user can revisit it. Do not nag on subsequent
+     re-runs once skipped within this session.
+5. **If the count is below threshold**, do nothing — the project
+   doesn't cross the primitive bar. AGENTS.md alone suffices.
+
+The threshold mirrors `/build:build-resolver`'s own primitive check
+(`build-resolver/SKILL.md` Step 0). Keep the two in sync — if the
+threshold there changes, change it here.
+
 ### 7. Report
 
 Report what was done:
@@ -231,12 +233,12 @@ Report what was done:
 - **Created:** list any directories or files that were created
 - **Updated:** note if AGENTS.md managed section was refreshed (mention
   if legacy `wos:` markers were auto-migrated to `wiki:`)
-- **Preferences:** note if preferences were set or unchanged
 - **Working Agreements:** note the outcome — adopted, edited, skipped (absent branch); kept, edited, replaced (present branch)
 - **CLAUDE.md:** note if pointer was added or already present
 - **Onboarding:** note if `.gitignore`, `README.md` were created or skipped
-- **Routing:** if no `RESOLVER.md` exists and the repo crosses the
-  resolver threshold, recommend `/build:build-resolver`
+- **Routing:** report the Step 6 outcome — resolver already present,
+  threshold not crossed, chained into `/build:build-resolver`, or
+  recommendation deferred
 - **Next step:** note the suggested skill sequence, if any
 - **Already present:** note anything that was already in place
 
@@ -258,4 +260,4 @@ If everything was already set up, confirm: "Project context is up to date. No ch
 
 **Receives:** Project root path (new or existing); optional communication preferences
 **Produces:** Initialized project structure — AGENTS.md (with RESOLVER pointer), docs/ directories, optional `wiki/` subtree
-**Chainable to:** lint
+**Chainable to:** `/build:build-resolver` (when Step 7 detects threshold crossing without an existing resolver); `/wiki:lint` (audit content quality)

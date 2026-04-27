@@ -1,14 +1,11 @@
 """AGENTS.md manager — marker-based managed section rendering and updates.
 
-Renders the managed section for AGENTS.md (context navigation,
-areas table, file metadata format, preferences) and updates the file
-content using marker-based replacement.
+Renders the managed section for AGENTS.md (context navigation, file
+metadata format, document standards) and updates the file content
+using marker-based replacement.
 
 Also provides replace_marker_section(), a general utility for replacing
 or appending marker-delimited sections in any text file.
-
-Communication preference dimensions, instruction mappings, and
-render_preferences() live here because they describe AGENTS.md content.
 """
 
 from __future__ import annotations
@@ -16,112 +13,6 @@ from __future__ import annotations
 import re
 from pathlib import Path
 from typing import Dict, List, Optional
-
-# ── Preference dimensions ─────────────────────────────────────────
-
-DIMENSIONS: Dict[str, List[str]] = {
-    "directness": ["blunt", "balanced", "diplomatic"],
-    "verbosity": ["terse", "moderate", "thorough"],
-    "depth": ["just-answers", "context-when-useful", "teach-me"],
-    "expertise": ["beginner", "intermediate", "expert"],
-    "tone": ["casual", "neutral", "formal"],
-}
-
-DIMENSION_INSTRUCTIONS: Dict[tuple, str] = {
-    # Directness
-    ("directness", "blunt"): (
-        "Be direct. State problems and disagreements plainly "
-        "without hedging or softening."
-    ),
-    ("directness", "balanced"): (
-        "Be straightforward but considerate. State issues clearly "
-        "while acknowledging tradeoffs."
-    ),
-    ("directness", "diplomatic"): (
-        "Frame feedback constructively. Lead with positives, "
-        "suggest improvements gently."
-    ),
-    # Verbosity
-    ("verbosity", "terse"): (
-        "Keep responses concise. Skip preamble and unnecessary elaboration."
-    ),
-    ("verbosity", "moderate"): (
-        "Provide enough detail to be clear without being exhaustive."
-    ),
-    ("verbosity", "thorough"): (
-        "Be comprehensive. Include context, examples, and edge cases."
-    ),
-    # Depth
-    ("depth", "just-answers"): (
-        "Give the answer directly. Skip explanations unless asked."
-    ),
-    ("depth", "context-when-useful"): (
-        "Provide context when it aids understanding, but don't over-explain."
-    ),
-    ("depth", "teach-me"): (
-        "Explain the reasoning and principles behind recommendations. "
-        "Help me learn, not just execute."
-    ),
-    # Expertise
-    ("expertise", "beginner"): (
-        "Assume limited domain knowledge. Define terms and explain concepts."
-    ),
-    ("expertise", "intermediate"): (
-        "Assume working knowledge. Skip basics but explain advanced concepts."
-    ),
-    ("expertise", "expert"): (
-        "Assume expert-level knowledge. Skip fundamentals."
-    ),
-    # Tone
-    ("tone", "casual"): (
-        "Keep it casual and conversational. Informal language is fine."
-    ),
-    ("tone", "neutral"): (
-        "Neutral and professional. No sycophancy or forced enthusiasm."
-    ),
-    ("tone", "formal"): (
-        "Maintain a formal, professional tone throughout."
-    ),
-}
-
-_DISPLAY_NAMES = {
-    "directness": "Directness",
-    "verbosity": "Verbosity",
-    "depth": "Depth",
-    "expertise": "Expertise",
-    "tone": "Tone",
-}
-
-
-def render_preferences(prefs: Dict[str, str]) -> List[str]:
-    """Render preference dimensions as instruction strings.
-
-    Each string is formatted as ``**Dimension:** instruction`` without
-    a bullet prefix. Pass the returned list to
-    ``render_wiki_section(preferences=...)`` which adds bullets.
-
-    Args:
-        prefs: Mapping of dimension name to level.
-
-    Returns:
-        List of formatted instruction strings.
-
-    Raises:
-        ValueError: If an unknown dimension or level is provided.
-    """
-    result: List[str] = []
-    for dim, level in prefs.items():
-        if dim not in DIMENSIONS:
-            raise ValueError(f"Unknown dimension: {dim}")
-        if level not in DIMENSIONS[dim]:
-            raise ValueError(
-                f"Unknown level '{level}' for dimension '{dim}'. "
-                f"Valid levels: {DIMENSIONS[dim]}"
-            )
-        instruction = DIMENSION_INSTRUCTIONS[(dim, level)]
-        display = _DISPLAY_NAMES[dim]
-        result.append(f"**{display}:** {instruction}")
-    return result
 
 # ── Marker utilities ─────────────────────────────────────────────
 
@@ -267,14 +158,12 @@ def read_layout_hint(content: str) -> Optional[str]:
 
 def render_wiki_section(
     areas: List[Dict[str, str]],
-    preferences: Optional[List[str]] = None,
     layout: Optional[str] = None,
 ) -> str:
     """Render the managed section for AGENTS.md.
 
     Args:
         areas: List of dicts with 'name' and 'path' keys.
-        preferences: Optional list of preference strings.
         layout: Optional layout pattern to include as a hint comment.
 
     Returns:
@@ -344,54 +233,8 @@ def render_wiki_section(
         "- Link bidirectionally — if A references B in `related`, B should reference A."
     )
 
-    # ── Preferences ──────────────────────────────────────────────
-    if preferences is not None and len(preferences) > 0:
-        lines.append("")
-        lines.append("### Preferences")
-        for pref in preferences:
-            lines.append(f"- {pref}")
-
     lines.append(END_MARKER)
     return "\n".join(lines) + "\n"
-
-
-# ── Extract ─────────────────────────────────────────────────────
-
-
-def extract_preferences(content: str) -> List[str]:
-    """Extract preference strings from an AGENTS.md managed section.
-
-    Parses the ``### Preferences`` subsection between managed markers and
-    returns the list of preference strings (without ``- `` bullet prefix).
-    Used by update_preferences to preserve existing preferences.
-
-    Args:
-        content: Full AGENTS.md file content.
-
-    Returns:
-        List of preference strings, or empty list if none found.
-    """
-    begin_idx = content.find(BEGIN_MARKER)
-    end_idx = content.find(END_MARKER)
-    if begin_idx == -1 or end_idx == -1:
-        return []
-
-    section = content[begin_idx:end_idx]
-    lines = section.split("\n")
-
-    in_preferences = False
-    prefs: List[str] = []
-    for line in lines:
-        if line.strip() == "### Preferences":
-            in_preferences = True
-            continue
-        if in_preferences:
-            if line.startswith("### ") or line.startswith("<!--"):
-                break
-            if line.startswith("- "):
-                prefs.append(line[2:])
-
-    return prefs
 
 
 # ── Extract areas ────────────────────────────────────────────────
@@ -463,7 +306,6 @@ def has_working_agreements(content: str) -> bool:
 def update_agents_md(
     content: str,
     areas: Optional[List[Dict[str, str]]] = None,
-    preferences: Optional[List[str]] = None,
     layout: Optional[str] = None,
 ) -> str:
     """Replace or append the managed section in AGENTS.md content.
@@ -480,7 +322,6 @@ def update_agents_md(
         content: The existing AGENTS.md content.
         areas: List of dicts with 'name' and 'path' keys.  If None,
             the existing areas table is preserved via ``extract_areas``.
-        preferences: Optional list of preference strings.
         layout: Optional layout pattern. If None, preserves existing.
 
     Returns:
@@ -498,5 +339,5 @@ def update_agents_md(
     if layout is None:
         layout = read_layout_hint(content)
 
-    section = render_wiki_section(areas, preferences, layout=layout)
+    section = render_wiki_section(areas, layout=layout)
     return replace_marker_section(content, BEGIN_MARKER, END_MARKER, section)

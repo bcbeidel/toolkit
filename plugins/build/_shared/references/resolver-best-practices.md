@@ -106,6 +106,8 @@ cases:
 
 **Trigger evals with both positive and negative cases.** "X routes to Y" and "X does NOT route to Z" — negative cases catch overlap ("save this research" shouldn't land in `.raw/` just because the text mentions raw data). ~15% negative is a reasonable floor.
 
+**Context bundles for skills that defer to the resolver.** Some skills (notably `/wiki:ingest`) read filing and vocabulary lookups from RESOLVER.md instead of hard-coding paths. When such a skill is in use, add a context row for it — e.g., `\| Ingesting a source \| <project-schema-doc>, <filing-target>/ \|`. The skill walks the bundle to discover where pages go and what `type:` / `confidence:` vocabulary applies. Without the bundle, the skill falls back to asking the user, which is fine but slower.
+
 **Regeneration over editing.** The managed region is rebuilt from disk, not patched. Regeneration is idempotent; when it produces no diff, the resolver is in sync. A diff on regenerate is the signal that something drifted.
 
 ## Anti-Patterns
