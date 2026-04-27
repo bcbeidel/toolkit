@@ -8,6 +8,49 @@ Pre-restructure releases used a single version. Post-restructure, each plugin
 
 ## [Unreleased]
 
+## [wiki-0.4.0] - 2026-04-27
+
+### Changed
+
+- **`_index.md` files retired.** Project navigation no longer relies on
+  per-directory `_index.md` manifests. `wiki:setup` no longer invokes
+  reindex, and the AGENTS.md template emits a single RESOLVER.md
+  pointer plus a Glob+frontmatter discovery convention in place of the
+  Areas table and per-directory index links.
+- **`wiki:setup` simplified.** The Reindex step is removed; the AGENTS.md
+  managed section drops the Areas table and per-area `_index.md`
+  bullets. When a repo crosses the resolver threshold, setup recommends
+  `/build:build-resolver` rather than maintaining its own directory
+  registry.
+- **`wiki:lint` documentation aligned to implementation.** The
+  Index-Sync check (which was implemented only for the `wiki/` page
+  subtree, never for project navigation) is removed from the SKILL.md.
+  The `--fix` flag is removed from the documentation — `lint.py` does
+  not implement it; this was longstanding documentation drift.
+
+### Removed
+
+- `plugins/wiki/scripts/reindex.py` and `plugins/wiki/tests/test_reindex.py`
+  — the reindex mechanism is retired.
+- Reindex references in `wiki:research` and `wiki:ingest` skill docs
+  and shared CLI command reference.
+
+## [build-0.17.0] - 2026-04-27
+
+### Changed
+
+- **Resolver detects filing dirs by frontmatter `type:` and naming
+  pattern, not `_index.md`.** `build-resolver`'s Step 2 scan and
+  `check-resolver`'s dark-capability scan no longer require an
+  `_index.md` in a filing directory; a consistent naming pattern or
+  shared frontmatter `type:` is the primary signal.
+- **Discovery within a directory uses Glob + frontmatter Read.**
+  `resolver-best-practices.md`, audit-dimensions, and the repair
+  playbook codify the pattern: filing rows point at directory
+  conventions; agents Glob the naming pattern and Read frontmatter
+  to identify the right file. The "consult `_index.md` first" idiom
+  is retired.
+
 ## [build-0.16.0] - 2026-04-27
 
 ### Changed
