@@ -35,11 +35,11 @@ Routing table for filing new content and loading context. Machine-managed region
 | scoped context | `.context/` | `<slug>.context.md` |
 | shared reference | `plugins/<plugin>/_shared/references/` | `<slug>.md` |
 
-## Context — what to load before acting
+## Context — what to look at before acting
 
-| When doing… | Load first |
+| When doing… | Look in |
 |---|---|
-| planning research | `.research/_index.md` |
+| planning research | `.research/` |
 | planning work | `.plans/_index.md` |
 | authoring a rule | `_shared/references/rule-best-practices.md` |
 
@@ -82,7 +82,7 @@ cases:
 
 **Disk-derived, not hand-curated.** Hand-editing the filing table is the failure mode the check catches. The filing table reflects observable reality (what directories exist, what their `_index.md` says); the check flags drift in both directions — tables that lie about the repo and repos that grew directories the table doesn't know about.
 
-**Cross-link, don't restate.** Filing rows point at `_index.md` files and directory conventions; they don't copy contents. Context rows point at shared-reference docs; they don't summarize them. Duplication produces drift on the first rename and rewards maintenance effort in the wrong place.
+**Cross-link, don't restate.** Filing rows point at `_index.md` files and directory conventions; they don't copy contents. Context rows point at specific files to read or directories to look in (the agent consults `_index.md` first, descending on need); they don't summarize the docs. Duplication produces drift on the first rename and rewards maintenance effort in the wrong place.
 
 **Primary-subject filing.** Content is filed by its primary subject, not by source format, producing skill, or incidental metadata. A Slack thread about a person goes to `.people/`, not `.inbox/`; a research doc about a pipeline goes to `.research/`, not `.pipelines/`. The filing row's column order — *content type first, location second* — enforces this.
 
@@ -98,7 +98,7 @@ cases:
 
 **Filing rows point at directories, not individual files.** Directories evolve; filenames don't. A row pointing at `.research/` with a naming pattern survives a hundred new files; a row pointing at `.research/2026-04-21-resolvers.research.md` rots on the next entry.
 
-**Context rows bundle the 2–3 docs a task needs.** A task rarely needs one doc — authoring a hook needs routing + hook best practices + the relevant primitive doc. Bundling is how the resolver compresses context; single-doc rows leave Claude to assemble the bundle at invocation time.
+**Context rows bundle the 2–3 entries a task needs.** A task rarely needs one entry — authoring a hook needs routing + hook best practices + the relevant primitive doc. An entry is either a specific file or a directory to look in; a directory counts as one entry, not N files. Bundling is how the resolver compresses context; single-entry rows leave Claude to assemble the bundle at invocation time.
 
 **Explicit out-of-scope list.** Directories the resolver intentionally ignores (`.raw/`, `.cache/`, `node_modules/`, `.git/`) are listed by name so the auditor doesn't flag them as dark capabilities. Silence is ambiguous; explicit exclusion is load-bearing.
 
@@ -123,6 +123,16 @@ cases:
 **Deep nested resolver hierarchy before the flat one earns its keep.** One resolver at the root handles the vast majority of filing and context decisions. Nested per-plugin resolvers are a scaling option, not a starting shape. Build the root resolver first; add nesting when cross-plugin routing genuinely conflicts.
 
 **Skill-dispatch entries in the filing/context tables.** "When user says 'plan something' → run `/work:plan-work`" belongs in skill descriptions, not the resolver. Conflating dispatch with information routing bloats the resolver and duplicates logic Anthropic already ships.
+
+## Nesting
+
+Nesting is a scaling option: a directory with enough internal filing and context structure to warrant its own routing table gets its own `RESOLVER.md`. Routing follows the **most specific resolver on the filing path** — walking up from the target directory, the nearest `RESOLVER.md` wins. The root resolver covers everything not claimed by a nested one.
+
+**Each resolver owns its evals.** A nested `plugins/build/RESOLVER.md` carries a sibling `plugins/build/.resolver/evals.yml`; the root `.resolver/evals.yml` does not test nested rows. Co-location matches how the auditor operates — one resolver at a time — and keeps nested resolvers self-contained when copied, moved, or extracted.
+
+**The auditor scopes to one resolver.** `/build:check-resolver` takes a target path, walks up to the nearest `RESOLVER.md`, and audits that file plus its sibling `.resolver/evals.yml`. Auditing every resolver in a repo means running the skill once per resolver root; there is no recursive whole-repo mode.
+
+**Don't nest until the flat resolver hurts.** A single root resolver handles most repos indefinitely. Nest only when filing rules genuinely diverge per subtree — a plugin's content really does file differently from the project's — not when the root table feels long. Long is cheap; nested drift is expensive.
 
 ## Safety & Maintenance
 

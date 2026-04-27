@@ -47,11 +47,11 @@ Every FAIL and WARN finding maps to a canonical repair. Before applying, state t
 **TO:** Either delete the row or `mkdir .designs/` and add an `_index.md`
 **REASON:** A filing row that doesn't resolve routes new content into nothing.
 
-### Signal: `context-paths-resolve` — context bundle points at missing doc
+### Signal: `context-paths-resolve` — context bundle points at missing path
 
-**CHANGE:** Update the path to the doc's current location, or remove the entry from the bundle
+**CHANGE:** Update the path to its current location (file or directory), or remove the entry from the bundle
 **FROM:** Bundle lists `_shared/references/hook-best-practices.md` at path no longer present
-**TO:** Correct to `plugins/build/_shared/references/hook-best-practices.md` (or remove)
+**TO:** Correct to `plugins/build/_shared/references/hook-best-practices.md` (or remove). A directory entry like `.research/` is also valid — the agent consults its `_index.md` and descends on need.
 **REASON:** Broken context loads train Claude to skip the resolver.
 
 ### Signal: `filing-rows-unique` — duplicate filing rows
@@ -114,15 +114,8 @@ Every FAIL and WARN finding maps to a canonical repair. Before applying, state t
 
 **Signal:** Bundle is empty or has >6 entries.
 
-**CHANGE:** Narrow to 1–4 load-bearing docs
-**REASON:** Empty bundles defeat the purpose; large bundles equal "just load everything" and waste context budget.
-
-**Signal:** Bundle lists directories, not files.
-
-**CHANGE:** Replace directory stems with specific file paths
-**FROM:** `| authoring a hook | [_shared/references/] |`
-**TO:** `| authoring a hook | [_shared/references/hook-best-practices.md, _shared/references/primitive-routing.md] |`
-**REASON:** Directory pointers invite re-scan on every task; file pointers are constant-time loads.
+**CHANGE:** Narrow to 1–4 load-bearing entries (files or directories)
+**REASON:** Empty bundles defeat the purpose; large bundles equal "just look everywhere" and waste context budget. A directory counts as one entry — the agent consults its `_index.md` and descends on need.
 
 ### Dimension 3: Eval Representativeness
 

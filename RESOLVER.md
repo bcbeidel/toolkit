@@ -35,3 +35,5 @@ Routing table for filing new content and loading context. Machine-managed region
 ## Notes
 
 Add context bundles or filing conventions here; prose outside the managed region survives regeneration.
+
+When filing into a directory not listed above (and not in **Out of scope**), run `/build:check-resolver` first. It either confirms the directory is a dark capability that needs a filing row, or surfaces drift to regenerate. Routing follows the most specific `RESOLVER.md` on the filing path — today the root resolver is the only one, but nested resolvers may be introduced for directories with rich substructure.

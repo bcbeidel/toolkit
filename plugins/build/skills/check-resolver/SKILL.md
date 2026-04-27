@@ -1,7 +1,7 @@
 ---
 name: check-resolver
 description: Audit a root-level resolver — verify AGENTS.md pointer, managed-region integrity, filing-table coverage against disk, context-table actionability, and trigger-eval pass rate. Use when the user wants to "audit a resolver", "check RESOLVER.md", "validate routing table", "find dark capabilities", or "are my filing rules current".
-argument-hint: "[repo root path — defaults to CWD]"
+argument-hint: "[target directory — defaults to CWD; walks up to the nearest RESOLVER.md and audits that one]"
 user-invocable: true
 references:
   - ../../_shared/references/resolver-best-practices.md
@@ -19,14 +19,16 @@ The audit rubric mirrors the authoring principles in [resolver-best-practices.md
 
 ### 1. Discover Resolver Artifacts
 
-Locate three artifacts at the target root:
+Walk up from the target directory looking for `RESOLVER.md`. The first ancestor that has one becomes the **resolver root** for this audit; all checks scope to that resolver and its subtree.
+
+Locate three artifacts at the resolver root:
 - `RESOLVER.md`
-- `AGENTS.md` (for the pointer check)
-- `.resolver/evals.yml`
+- `AGENTS.md` (for the pointer check) — at the resolver root
+- `.resolver/evals.yml` — sibling to `RESOLVER.md` under the resolver root
 
-Report: "Found resolver at <path>. Auditing N filing rows, M context rows, K eval cases."
+Report: "Found resolver at <resolver root>. Auditing N filing rows, M context rows, K eval cases."
 
-If `RESOLVER.md` is missing, emit FAIL and stop — nothing to audit.
+If no `RESOLVER.md` is found anywhere up to the filesystem root, emit FAIL and stop — nothing to audit. To audit every resolver in a repo with nested resolvers, run this skill once per resolver root.
 
 ### 2. Tier 1 — Deterministic Checks
 
@@ -59,7 +61,7 @@ Output per dimension: `evidence → reasoning → verdict (WARN or PASS) → rec
 
 ### 4. Tier 3 — Cross-Artifact Checks
 
-**Dark capabilities scan.** For every directory at the repo root (depth 1–2), check whether it appears in the filing table, the out-of-scope list, or a baked-in ambient list (`.git`, `node_modules`, `dist`, `build`, `.cache`, `.venv`, `target`, `__pycache__`). Anything unclassified → WARN.
+**Dark capabilities scan.** Mechanized in `check_resolver.py` as Tier-1 `dark-capability`. For every directory under the resolver root (depth 1–2 from that root), check whether it appears in the filing table, the context table, the out-of-scope list, the ambient default list (`.git`, `node_modules`, `dist`, `build`, `.cache`, `.venv`, `target`, `__pycache__`, `.resolver`), or contains a nested `RESOLVER.md` (delegation — that subtree belongs to the nested resolver, not this one). Anything unclassified → WARN. Subdirectories of a filing dir are not auto-classified.
 
 **Staleness signal.** Compare `RESOLVER.md` mtime against a fresh regeneration output (simulated via the same scan `build-resolver` would run). Differences → WARN ("filing table drifted from disk; regenerate").
 
@@ -138,6 +140,6 @@ WARN  .resolver/evals.yml — no negative cases in 8 eval rows
 
 ## Handoff
 
-**Receives:** Target repo root (defaults to CWD); optional `--run-evals` flag.
+**Receives:** Target directory (defaults to CWD); walks up to the nearest `RESOLVER.md` and audits that resolver. Optional `--run-evals` flag.
 **Produces:** Structured findings report in file/issue/severity format.
 **Chainable to:** `/build:build-resolver --regenerate` (rebuild managed region); `/build:build-resolver --add-filing <type>` (add missing row).

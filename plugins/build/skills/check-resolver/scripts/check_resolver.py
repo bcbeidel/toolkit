@@ -1,18 +1,30 @@
 #!/usr/bin/env python3
 """Deterministic Tier-1 checks for the RESOLVER.md managed region.
 
-Six checks per target repo root:
+Given a target directory, walks up to the nearest ``RESOLVER.md`` and
+audits that resolver. The discovered ancestor becomes the resolver
+root, and all checks scope to its subtree (not the filesystem repo).
+
+Seven checks per resolver root:
 
 - **markers-present** — both ``<!-- resolver:begin -->`` and
   ``<!-- resolver:end -->`` appear exactly once. FAIL otherwise.
 - **filing-paths-resolve** — every Location column value in the filing
   table resolves to a directory on disk. FAIL on miss.
 - **context-paths-resolve** — every doc path in the context table's
-  "Load first" column resolves to a file on disk. FAIL on miss.
+  "Load first" column resolves to a file or directory on disk. FAIL
+  on miss. Directories are valid context entries — the convention
+  is to look in the directory's ``_index.md`` first and descend
+  on need.
 - **filing-rows-unique** — the filing table's first column (content
   type) has no duplicates. FAIL on duplicate.
 - **context-rows-unique** — the context table's first column (task)
   has no duplicates. FAIL on duplicate.
+- **dark-capability** — every depth 1–2 directory under the resolver
+  root is classified by filing table, context table, out-of-scope
+  list, the ambient default set, or a nested ``RESOLVER.md``
+  (delegation — that subtree belongs to the nested resolver). WARN
+  on any unclassified directory.
 - **mtime-stale** — RESOLVER.md mtime older than 90 days. WARN.
 
 Paths containing template placeholders (``<...>``, ``*``) are skipped
@@ -38,12 +50,33 @@ EXIT_INTERRUPTED = 130
 RESOLVER_FILENAME = "RESOLVER.md"
 MARKER_BEGIN = "<!-- resolver:begin -->"
 MARKER_END = "<!-- resolver:end -->"
-STALE_SECONDS = 90 * 24 * 60 * 60
+SECONDS_PER_DAY = 24 * 60 * 60
+STALE_DAYS = 90
+STALE_SECONDS = STALE_DAYS * SECONDS_PER_DAY
+
+# Directories ignored by the dark-capability scan regardless of resolver
+# contents. Mirrors the ambient list documented in audit-dimensions.md.
+# `.resolver` is the resolver's own machinery (siblings to RESOLVER.md).
+AMBIENT_BASENAMES = frozenset(
+    {
+        ".git",
+        "node_modules",
+        "dist",
+        "build",
+        ".cache",
+        ".venv",
+        "target",
+        "__pycache__",
+        ".resolver",
+    }
+)
 
 H2_RE = re.compile(r"^##\s+(.+?)\s*$", re.MULTILINE)
 TABLE_ROW_RE = re.compile(r"^\s*\|(.+)\|\s*$")
 SEPARATOR_ROW_RE = re.compile(r"^\s*\|[\s\-|:]+\|\s*$")
 PLACEHOLDER_RE = re.compile(r"[<>*]")
+OOS_BULLET_LINE_RE = re.compile(r"^\s*[-*]\s+")
+OOS_PATH_RE = re.compile(r"`([^`]+)`")
 
 
 def emit_fail(path: Path, check: str, detail: str, recommendation: str) -> None:
@@ -150,7 +183,7 @@ def check_markers(resolver_path: Path, text: str) -> bool:
     return False
 
 
-def check_filing_table(resolver_path: Path, repo_root: Path, region: str) -> bool:
+def check_filing_table(resolver_path: Path, resolver_root: Path, region: str) -> bool:
     rows = find_section_table(region, "Filing")
     ok = True
     seen_keys: dict[str, int] = {}
@@ -174,7 +207,7 @@ def check_filing_table(resolver_path: Path, repo_root: Path, region: str) -> boo
             seen_keys[content_type] = idx
         if PLACEHOLDER_RE.search(location):
             continue
-        resolved = (repo_root / location).resolve()
+        resolved = (resolver_root / location).resolve()
         if not resolved.is_dir():
             emit_fail(
                 resolver_path,
@@ -187,7 +220,7 @@ def check_filing_table(resolver_path: Path, repo_root: Path, region: str) -> boo
     return ok
 
 
-def check_context_table(resolver_path: Path, repo_root: Path, region: str) -> bool:
+def check_context_table(resolver_path: Path, resolver_root: Path, region: str) -> bool:
     rows = find_section_table(region, "Context")
     ok = True
     seen_tasks: dict[str, int] = {}
@@ -211,45 +244,204 @@ def check_context_table(resolver_path: Path, repo_root: Path, region: str) -> bo
         for doc_path in extract_paths_from_load_cell(load_cell):
             if PLACEHOLDER_RE.search(doc_path):
                 continue
-            resolved = (repo_root / doc_path).resolve()
-            if not resolved.is_file():
+            resolved = (resolver_root / doc_path).resolve()
+            if not resolved.exists():
                 emit_fail(
                     resolver_path,
                     "context-paths-resolve",
                     f"context doc '{doc_path}' (task '{task}') "
-                    "does not resolve to a file",
+                    "does not resolve to a file or directory",
                     "Correct the path, or remove the entry from the bundle",
                 )
                 ok = False
     return ok
 
 
+def parse_out_of_scope(region: str) -> set[str]:
+    """Extract directory paths from the 'Out of scope' bullet list."""
+    paths: set[str] = set()
+    in_section = False
+    for line in region.splitlines():
+        h2 = H2_RE.match(line)
+        if h2:
+            heading = h2.group(1).strip().lower()
+            if heading.startswith("out of scope"):
+                in_section = True
+                continue
+            if in_section:
+                break
+            continue
+        if not in_section:
+            continue
+        if not OOS_BULLET_LINE_RE.match(line):
+            continue
+        for match in OOS_PATH_RE.finditer(line):
+            paths.add(match.group(1).strip().rstrip("/"))
+    return paths
+
+
+def collect_classified(region: str) -> tuple[set[str], set[str], set[str]]:
+    """Return (filing_dirs, recursive_dirs, oos_dirs) drawn from the managed region.
+
+    - **filing_dirs**: filing-table locations. Only the directory itself is
+      classified — subdirectories beneath a filing dir are *dark* unless
+      separately classified, since the filing rule names files directly
+      inside.
+    - **recursive_dirs**: context-table paths plus the out-of-scope list.
+      Descendants are classified — the agent descends into context dirs on
+      need and out-of-scope dirs are pruned entirely.
+    - **oos_dirs**: out-of-scope subset of recursive_dirs, used to skip
+      descent during the depth-2 walk.
+    """
+    filing_dirs: set[str] = set()
+    for cells in find_section_table(region, "Filing"):
+        if len(cells) < 2:
+            continue
+        location = strip_backticks(cells[1]).rstrip("/")
+        if location and not PLACEHOLDER_RE.search(location):
+            filing_dirs.add(location)
+    context_dirs: set[str] = set()
+    for cells in find_section_table(region, "Context"):
+        if len(cells) < 2:
+            continue
+        for doc_path in extract_paths_from_load_cell(cells[1]):
+            if PLACEHOLDER_RE.search(doc_path):
+                continue
+            context_dirs.add(doc_path.rstrip("/"))
+    oos_dirs = parse_out_of_scope(region)
+    recursive_dirs = context_dirs | oos_dirs
+    return filing_dirs, recursive_dirs, oos_dirs
+
+
+def is_classified(rel: str, filing_dirs: set[str], recursive_dirs: set[str]) -> bool:
+    if rel in filing_dirs or rel in recursive_dirs:
+        return True
+    if any(rel.startswith(p + "/") for p in recursive_dirs):
+        return True
+    rel_prefix = rel + "/"
+    return any(p.startswith(rel_prefix) for p in (filing_dirs | recursive_dirs))
+
+
+def is_under_oos(rel: str, oos: set[str]) -> bool:
+    return rel in oos or any(rel.startswith(prefix + "/") for prefix in oos)
+
+
+def emit_dark(resolver_path: Path, rel: str) -> None:
+    emit_warn(
+        resolver_path,
+        "dark-capability",
+        f"directory '{rel}/' not in filing table, context table, or out of scope",
+        "Add a filing row, mark out-of-scope, or place a nested "
+        "RESOLVER.md inside it; regenerate via "
+        "/build:build-resolver --regenerate",
+    )
+
+
+def scan_subdir(
+    resolver_path: Path,
+    entry: Path,
+    rel: str,
+    filing_dirs: set[str],
+    recursive_dirs: set[str],
+) -> bool:
+    """Scan one depth-1 directory's children. Returns True if all clean."""
+    ok = True
+    try:
+        children = sorted(entry.iterdir())
+    except (OSError, PermissionError):
+        return ok
+    for sub in children:
+        if not sub.is_dir():
+            continue
+        if sub.name in AMBIENT_BASENAMES:
+            continue
+        if (sub / RESOLVER_FILENAME).is_file():
+            continue
+        sub_rel = f"{rel}/{sub.name}"
+        if is_classified(sub_rel, filing_dirs, recursive_dirs):
+            continue
+        emit_dark(resolver_path, sub_rel)
+        ok = False
+    return ok
+
+
+def check_dark_capabilities(
+    resolver_path: Path, resolver_root: Path, region: str
+) -> bool:
+    """Walk depth 1–2 directories and warn on any unclassified entry.
+
+    A directory is classified when it appears in the filing table, the
+    context table, the out-of-scope list, the ambient basename set, or
+    contains a nested ``RESOLVER.md`` (delegation seed for future
+    nested-resolver work). Subdirectories of a filing dir are *not*
+    auto-classified — the filing rule covers files inside the dir, not
+    nested directories.
+    """
+    filing_dirs, recursive_dirs, oos_dirs = collect_classified(region)
+    ok = True
+    try:
+        depth1 = sorted(resolver_root.iterdir())
+    except (OSError, PermissionError) as err:
+        print(f"error: cannot list {resolver_root}: {err}", file=sys.stderr)
+        return False
+    for entry in depth1:
+        if not entry.is_dir():
+            continue
+        name = entry.name
+        if name in AMBIENT_BASENAMES:
+            continue
+        if (entry / RESOLVER_FILENAME).is_file():
+            continue
+        rel = name
+        if not is_classified(rel, filing_dirs, recursive_dirs):
+            emit_dark(resolver_path, rel)
+            ok = False
+            continue
+        if is_under_oos(rel, oos_dirs):
+            continue
+        if not scan_subdir(resolver_path, entry, rel, filing_dirs, recursive_dirs):
+            ok = False
+    return ok
+
+
 def check_mtime(resolver_path: Path) -> None:
     age_seconds = time.time() - resolver_path.stat().st_mtime
     if age_seconds > STALE_SECONDS:
-        days = int(age_seconds / 86400)
+        days = int(age_seconds / SECONDS_PER_DAY)
         emit_warn(
             resolver_path,
             "mtime-stale",
-            f"RESOLVER.md mtime is {days} days old (threshold 90)",
+            f"RESOLVER.md mtime is {days} days old (threshold {STALE_DAYS})",
             "Run /build:build-resolver --regenerate to refresh "
             "against current disk state",
         )
 
 
-def check_repo(repo_root: Path) -> bool:
-    if not repo_root.is_dir():
-        print(f"error: not a directory: {repo_root}", file=sys.stderr)
+def find_resolver_root(target: Path) -> Path | None:
+    """Walk up from ``target`` returning the nearest dir with RESOLVER.md."""
+    current = target.resolve()
+    while True:
+        if (current / RESOLVER_FILENAME).is_file():
+            return current
+        if current.parent == current:
+            return None
+        current = current.parent
+
+
+def check_target(target: Path) -> bool:
+    if not target.is_dir():
+        print(f"error: not a directory: {target}", file=sys.stderr)
         raise SystemExit(EXIT_USAGE)
-    resolver_path = repo_root / RESOLVER_FILENAME
-    if not resolver_path.is_file():
+    resolver_root = find_resolver_root(target)
+    if resolver_root is None:
         emit_fail(
-            resolver_path,
+            target / RESOLVER_FILENAME,
             "markers-present",
-            f"{RESOLVER_FILENAME} does not exist at repo root",
+            f"no {RESOLVER_FILENAME} found walking up from {target}",
             "Create RESOLVER.md via /build:build-resolver",
         )
         return False
+    resolver_path = resolver_root / RESOLVER_FILENAME
     try:
         text = resolver_path.read_text(encoding="utf-8")
     except (OSError, UnicodeDecodeError) as err:
@@ -262,9 +454,11 @@ def check_repo(repo_root: Path) -> bool:
     region = extract_managed_region(text)
     if region is None:
         return False
-    if not check_filing_table(resolver_path, repo_root, region):
+    if not check_filing_table(resolver_path, resolver_root, region):
         ok = False
-    if not check_context_table(resolver_path, repo_root, region):
+    if not check_context_table(resolver_path, resolver_root, region):
+        ok = False
+    if not check_dark_capabilities(resolver_path, resolver_root, region):
         ok = False
     check_mtime(resolver_path)
     return ok
@@ -280,7 +474,9 @@ def get_parser() -> argparse.ArgumentParser:
         nargs="*",
         type=Path,
         default=[Path()],
-        help="One or more repo-root paths (defaults to current directory).",
+        help="One or more target directories (defaults to current "
+        "directory). Walks up to the nearest RESOLVER.md and audits "
+        "that resolver.",
     )
     return parser
 
@@ -289,8 +485,8 @@ def main(argv: list[str] | None = None) -> int:
     args = get_parser().parse_args(argv)
     try:
         all_ok = True
-        for repo_root in args.paths:
-            if not check_repo(repo_root):
+        for target in args.paths:
+            if not check_target(target):
                 all_ok = False
         return 0 if all_ok else 1
     except KeyboardInterrupt:

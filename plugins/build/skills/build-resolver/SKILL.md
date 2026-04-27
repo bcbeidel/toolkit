@@ -1,7 +1,7 @@
 ---
 name: build-resolver
 description: Scaffold a root-level RESOLVER.md — a dual routing table (filing for writes, context for reads) plus an AGENTS.md pointer and a trigger-eval sidecar at `.resolver/evals.yml`. Use when the user wants to "create a resolver", "scaffold RESOLVER.md", "add a routing table for filing and context", or "set up dynamic context routing".
-argument-hint: "[repo root path — defaults to CWD]"
+argument-hint: "[target directory — defaults to CWD; walks up to nearest existing RESOLVER.md, or scaffolds at target]"
 user-invocable: true
 references:
   - ../../_shared/references/resolver-best-practices.md
@@ -28,18 +28,22 @@ Redirect when:
 
 ### 1. Detect Existing Resolver
 
-Check `RESOLVER.md` and `.resolver/evals.yml` at the target root. If either exists, switch to regenerate mode:
+Walk up from the target directory looking for an existing `RESOLVER.md`. The first ancestor that has one becomes the **resolver root** for this run.
 
-- Preserve human prose outside `<!-- resolver:begin -->` / `<!-- resolver:end -->` markers
-- Preserve existing context-table rows and out-of-scope list
-- Rebuild the filing table from a fresh disk scan
-- Re-run evals after writing
+- **Found** → regenerate mode at the discovered resolver root:
+  - Preserve human prose outside `<!-- resolver:begin -->` / `<!-- resolver:end -->` markers
+  - Preserve existing context-table rows and out-of-scope list
+  - Rebuild the filing table from a fresh disk scan scoped to the resolver root's subtree
+  - Re-run evals after writing (Step 8)
+- **Not found** → scaffold mode at the target directory itself:
+  - The target becomes the resolver root
+  - Confirm with the user before scaffolding a nested resolver (anything other than the repo root) — nesting earns its place only when filing rules genuinely diverge per subtree (see [resolver-best-practices.md](../../_shared/references/resolver-best-practices.md) → "Nesting")
 
-Announce the mode and what will change before proceeding.
+Announce the mode, the resolver root, and what will change before proceeding. All subsequent steps operate scoped to the resolver root, not necessarily the repo root.
 
-### 2. Scan Target Repo
+### 2. Scan Resolver Root
 
-Walk the repo root and collect:
+Walk the resolver root's subtree (depth 1–2) and collect:
 
 - **Directories with `_index.md`** — primary filing targets. Read each `_index.md`'s frontmatter `name` and `description`.
 - **Directories without `_index.md` but with frontmatter-tagged files** (e.g., `type: research` across files in `.research/`) — secondary filing candidates.
@@ -63,7 +67,7 @@ This is human-provided. Ask:
 
 > "Name up to 5 recurring tasks whose reference-doc set should be bundled. Examples: 'authoring a hook', 'planning research', 'debugging the data pipeline'. For each, list the docs to load first."
 
-Validate that each listed doc path resolves. If not, flag and ask for a correction before writing.
+Validate that each listed entry resolves to a file or directory. Directory entries are valid — the convention is "look in this directory's `_index.md` first, descend on need." If a path doesn't resolve, flag and ask for a correction before writing.
 
 ### 5. Seed Trigger Evals
 
@@ -85,15 +89,17 @@ Iterate on feedback. Hold the write until the user approves.
 
 ### 7. Write
 
-- Create `RESOLVER.md` at the target repo root
-- Create `.resolver/evals.yml` (create `.resolver/` if missing)
-- Apply the AGENTS.md pointer diff (create AGENTS.md with just the pointer if it doesn't exist; warn that an AGENTS.md with more context is recommended)
+- Create `RESOLVER.md` at the resolver root
+- Create `.resolver/evals.yml` as a sibling under the resolver root (create `.resolver/` if missing) — co-located so the resolver and its evals move together
+- Apply the AGENTS.md pointer diff (use the AGENTS.md at the resolver root; create one with just the pointer if it doesn't exist; warn that an AGENTS.md with more context is recommended)
 
 Report each file path.
 
 ### 8. Hand Off
 
-Offer: "Run `/build:check-resolver` against the new resolver?" Run it on approval. Evals failing on the first run means the seeded expectations don't match the filing/context shape — fix the evals, not the resolver.
+In **regenerate mode** (Step 1), run `/build:check-resolver --run-evals` automatically after writing — the managed region changed, so the seeded prompts must be re-proven against the new routing. Report the eval pass rate alongside the audit findings.
+
+In **fresh-scaffold mode**, offer: "Run `/build:check-resolver` against the new resolver?" Run it on approval; pass `--run-evals` only if the user asks. Evals failing on the first run means the seeded expectations don't match the filing/context shape — fix the evals, not the resolver.
 
 ## Example
 
@@ -137,6 +143,6 @@ Step 8: runs `/build:check-resolver`. All Tier-1 checks PASS; two Tier-2 WARN on
 
 ## Handoff
 
-**Receives:** Target repo root (defaults to CWD).
-**Produces:** `RESOLVER.md` at root, `.resolver/evals.yml`, and an AGENTS.md pointer line (appended or created).
+**Receives:** Target directory (defaults to CWD); walks up to the nearest existing `RESOLVER.md` for regenerate mode, or scaffolds at the target for fresh-scaffold mode.
+**Produces:** `RESOLVER.md` at the resolver root, sibling `.resolver/evals.yml`, and an AGENTS.md pointer line at the resolver root (appended or created).
 **Chainable to:** `/build:check-resolver` (audits the three artifacts; runs evals; flags dark capabilities).

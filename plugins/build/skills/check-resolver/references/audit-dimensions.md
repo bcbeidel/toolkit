@@ -41,10 +41,11 @@ Handle deterministic checks (pointer presence, path resolution, YAML parse, mtim
 | `check_pointer.py` | `pointer-resolves` | The path named in the pointer exists on disk | FAIL | AGENTS.md pointer, not skill mandates |
 | `check_resolver.py` | `markers-present` | `<!-- resolver:begin -->` and `<!-- resolver:end -->` each appear exactly once | FAIL | Machine-managed region |
 | `check_resolver.py` | `filing-paths-resolve` | Every directory in the filing table exists | FAIL | Disk-derived, not hand-curated |
-| `check_resolver.py` | `context-paths-resolve` | Every doc path in the context table exists | FAIL | Cross-link, don't restate |
+| `check_resolver.py` | `context-paths-resolve` | Every doc path in the context table resolves to a file or directory | FAIL | Cross-link, don't restate |
 | `check_resolver.py` | `filing-rows-unique` | No two filing rows share a content-type | FAIL | Two tables, one file |
 | `check_resolver.py` | `context-rows-unique` | No two context rows share a task | FAIL | Two tables, one file |
 | `check_evals.py` | `evals-parse` | `.resolver/evals.yml` is valid YAML with the expected schema | FAIL | Trigger evals prove routing |
+| `check_resolver.py` | `dark-capability` | Every depth 1–2 directory is in filing, context, out-of-scope, ambient set, or contains a nested `RESOLVER.md` (delegation) | WARN | Reachability + staleness |
 | `check_resolver.py` | `mtime-stale` | `RESOLVER.md` mtime older than 90 days | WARN | Reachability + staleness |
 | `check_evals.py` | `eval-pass-stale` | Last recorded eval-pass timestamp older than 30 days | WARN | Reachability + staleness |
 
@@ -85,18 +86,17 @@ For each dimension: **verdict** (WARN, PASS, or N/A), **evidence**, **recommenda
 
 *(principle — [Cross-link, don't restate](../../../_shared/references/resolver-best-practices.md))*
 
-**What it checks:** Does each context-table row name concrete doc paths (not vague prose)? Is the bundle size appropriate — enough to compress useful context, not so many that the bundle defeats the purpose?
+**What it checks:** Does each context-table row name concrete paths (files or directories), not vague prose? Is the bundle size appropriate — enough to compress useful context, not so many that the bundle defeats the purpose?
 
 **Fail signals (→ WARN):**
-- A context row's "Load first" column contains prose ("the style guide") without a resolvable path
-- A bundle lists zero docs (empty right-hand column)
-- A bundle lists >6 docs (approaching a "just load everything" pattern)
-- Doc paths point at directories rather than files (invites re-scan cost on every task)
+- A context row's column contains prose ("the style guide") without a resolvable path
+- A bundle lists zero entries (empty right-hand column)
+- A bundle lists >6 entries (approaching a "just look everywhere" pattern)
 
 **Pass signals:**
-- Each bundle lists 1–4 concrete file paths
-- Paths are specific files, not directory stems
-- Bundle scope matches the task named (authoring a hook loads hook + routing, not the whole style guide)
+- Each bundle lists 1–4 concrete entries (files or directories)
+- Each entry resolves to a real path; directories follow the convention of having an `_index.md` to consult first
+- Bundle scope matches the task named (authoring a hook points at hook + routing, not the whole style guide)
 
 **Canonical Repair:** See `repair-playbook.md` → Dimension 2.
 
@@ -139,9 +139,11 @@ For each dimension: **verdict** (WARN, PASS, or N/A), **evidence**, **recommenda
 
 ### Signal: dark capabilities — directory on disk not classified
 
-**What it checks:** For every depth 1–2 directory, classify as: in-filing, in-context, in-out-of-scope, or ambient (baked-in list: `.git/`, `node_modules/`, `dist/`, `build/`, `.cache/`, `.venv/`, `target/`, `__pycache__/`). Unclassified directories are "dark capabilities" — reachable on disk but invisible to Claude's filing decisions.
+**What it checks:** For every depth 1–2 directory, classify as: in-filing, in-context, in-out-of-scope, ambient (baked-in list: `.git/`, `node_modules/`, `dist/`, `build/`, `.cache/`, `.venv/`, `target/`, `__pycache__/`, `.resolver/`), or *delegated* (the directory contains a nested `RESOLVER.md`). Unclassified directories are "dark capabilities" — reachable on disk but invisible to Claude's filing decisions. Subdirectories of a filing dir are *not* auto-classified — the filing rule names files directly inside.
 
-**Fail signals (→ WARN):** Depth 1–2 directory exists with no row in filing, context, or out-of-scope, and is not in the ambient default list.
+**Mechanized.** This signal is implemented deterministically by `check_resolver.py` (Tier 1, `dark-capability`) and surfaces here as a Tier-3 cross-reference; the LLM rubric does not re-evaluate it.
+
+**Fail signals (→ WARN):** Depth 1–2 directory exists with no row in filing, context, or out-of-scope; not in the ambient default list; no nested `RESOLVER.md` inside.
 
 **Pass signals:** Every depth 1–2 directory is classified.
 
@@ -186,9 +188,10 @@ PASS anchor: every .research/, .plans/, .designs/ has a filing row; .git/ and no
 FAIL anchor: .inbox/ exists on disk with 10 files; no filing row names it; no out-of-scope entry
 
 ## Dimension 2: Context Actionability
-Criterion: Does each context row list 1-4 concrete file paths that resolve?
+Criterion: Does each context row list 1-4 concrete entries (files or directories) that resolve?
 
 PASS anchor: "authoring a hook" → [_shared/references/primitive-routing.md, _shared/references/hook-best-practices.md]
+PASS anchor: "planning research" → [.research/]   (directory entry; agent consults _index.md first)
 FAIL anchor: "building features" → "read the style guide"
 
 ## Dimension 3: Eval Representativeness
