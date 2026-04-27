@@ -8,6 +8,33 @@ Pre-restructure releases used a single version. Post-restructure, each plugin
 
 ## [Unreleased]
 
+## [build-0.16.0] - 2026-04-27
+
+### Changed
+
+- **Resolver context entries may be files OR directories (#364).** The
+  `context-paths-resolve` Tier-1 check accepts either; a directory
+  counts as one entry, and the agent consults its `_index.md` first
+  and descends on need. Removes the "directory pointers cost re-scan"
+  anti-pattern from the audit rubric and repair playbook. Updates
+  `check_resolver.py`, `audit-dimensions.md`, `repair-playbook.md`,
+  and `resolver-best-practices.md`.
+- **Resolver skills walk up to the nearest `RESOLVER.md` (#364).**
+  `build-resolver` and `check-resolver` no longer assume the target
+  is the repo root — they walk up from any target directory and scope
+  work to the discovered resolver root. `.resolver/evals.yml` lives
+  as a sibling of each `RESOLVER.md` so nested resolvers stay
+  self-contained. `resolver-best-practices.md` gains a `## Nesting`
+  section documenting the model.
+- **Regenerate auto-runs evals (#364).** `build-resolver` Step 8
+  invokes `/build:check-resolver --run-evals` automatically in
+  regenerate mode, enforcing the Step-1 "re-run evals after writing"
+  promise that previously had no enforcement.
+- **`check_resolver.py` cleanup (#364).** Extracts `SECONDS_PER_DAY`
+  and `STALE_DAYS` named constants; renames `repo_root` →
+  `resolver_root` in helper signatures for terminological consistency
+  with the new nesting model.
+
 ## [build-0.15.0] - 2026-04-23
 
 ### Added
