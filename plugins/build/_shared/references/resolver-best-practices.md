@@ -40,7 +40,7 @@ Routing table for filing new content and loading context. Machine-managed region
 | When doing… | Look in |
 |---|---|
 | planning research | `.research/` |
-| planning work | `.plans/_index.md` |
+| planning work | `.plans/` |
 | authoring a rule | `_shared/references/rule-best-practices.md` |
 
 ## Out of scope
@@ -65,7 +65,7 @@ cases:
   - prompt: "save this investigation as research on agentic resolvers"
     expected_filing: .research/
   - prompt: "I want to plan the next refactor"
-    expected_context: [.plans/_index.md]
+    expected_context: [.plans/]
   - prompt: "dump this stripe webhook payload for later"
     expected_filing: .raw/
   - prompt: "authoring a new rule for staging models"
@@ -78,11 +78,11 @@ cases:
 
 **Root placement, sibling to AGENTS.md.** The resolver must be reachable from the root of the context or the model can't find it. A nested resolver inside `plugins/` or `.docs/` is invisible to a first-turn task because AGENTS.md is the only file loaded unconditionally.
 
-**Machine-managed region, human context.** The filing table is generated from disk conventions (directories with `_index.md`, frontmatter `type:` fields, naming patterns). The managed region is bounded by `<!-- resolver:begin -->` / `<!-- resolver:end -->` markers matching the wiki-managed pattern already in use. Prose outside the markers survives regeneration; edits inside are stomped and flagged by the auditor.
+**Machine-managed region, human context.** The filing table is generated from disk conventions (frontmatter `type:` fields, naming patterns). The managed region is bounded by `<!-- resolver:begin -->` / `<!-- resolver:end -->` markers matching the wiki-managed pattern already in use. Prose outside the markers survives regeneration; edits inside are stomped and flagged by the auditor.
 
-**Disk-derived, not hand-curated.** Hand-editing the filing table is the failure mode the check catches. The filing table reflects observable reality (what directories exist, what their `_index.md` says); the check flags drift in both directions — tables that lie about the repo and repos that grew directories the table doesn't know about.
+**Disk-derived, not hand-curated.** Hand-editing the filing table is the failure mode the check catches. The filing table reflects observable reality (what directories exist, what frontmatter their files carry, what naming patterns they follow); the check flags drift in both directions — tables that lie about the repo and repos that grew directories the table doesn't know about.
 
-**Cross-link, don't restate.** Filing rows point at `_index.md` files and directory conventions; they don't copy contents. Context rows point at specific files to read or directories to look in (the agent consults `_index.md` first, descending on need); they don't summarize the docs. Duplication produces drift on the first rename and rewards maintenance effort in the wrong place.
+**Cross-link, don't restate.** Filing rows point at directory conventions; they don't copy contents. Context rows point at specific files to read or directories to look in. Discovery within a directory uses Glob on the directory's naming pattern + frontmatter Read on candidates. Duplication produces drift on the first rename and rewards maintenance effort in the wrong place.
 
 **Primary-subject filing.** Content is filed by its primary subject, not by source format, producing skill, or incidental metadata. A Slack thread about a person goes to `.people/`, not `.inbox/`; a research doc about a pipeline goes to `.research/`, not `.pipelines/`. The filing row's column order — *content type first, location second* — enforces this.
 
@@ -110,7 +110,7 @@ cases:
 
 ## Anti-Patterns
 
-**Filing table that restates `_index.md` contents.** `_index.md` already describes what a directory holds; the resolver row should link to it, not paraphrase. Paraphrase drifts on the first `_index.md` edit.
+**Filing table that restates frontmatter descriptions.** The frontmatter is the source of truth for what a file is about; the resolver row should point at the directory and naming convention, not paraphrase per-file content. Paraphrase drifts on the first frontmatter edit.
 
 **Context entries pointing at vague docs.** `"read the style guide"` without a path is not actionable; the auditor flags it WARN. Every context row names one or more concrete paths that resolve.
 
