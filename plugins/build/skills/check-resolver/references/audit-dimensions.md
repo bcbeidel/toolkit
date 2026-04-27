@@ -70,13 +70,13 @@ For each dimension: **verdict** (WARN, PASS, or N/A), **evidence**, **recommenda
 **What it checks:** Does the filing table reflect the directories that actually exist? Dark capabilities — directories on disk not listed in the filing table and not in the out-of-scope list — are the "surgeon the hospital can't find" failure mode.
 
 **Fail signals (→ WARN):**
-- A tracked directory (one with `_index.md`, or frontmatter-tagged contents) exists but no filing row names it
+- A tracked directory (one with frontmatter-tagged contents or a consistent naming pattern) exists but no filing row names it
 - A filing row points at a directory type (e.g., "research") but multiple such directories exist and the row names only one
 - Out-of-scope list is empty despite `.git/`, `node_modules/`, or similar ambient directories present
 
 **Pass signals:**
 - Every depth-1 directory classified (in filing, in context, in out-of-scope, or in the ambient default list)
-- Filing rows match `_index.md`-declared purposes
+- Filing rows match the directory's frontmatter `type:` or naming-pattern purpose
 
 **Canonical Repair:** See `repair-playbook.md` → Dimension 1.
 
@@ -95,7 +95,7 @@ For each dimension: **verdict** (WARN, PASS, or N/A), **evidence**, **recommenda
 
 **Pass signals:**
 - Each bundle lists 1–4 concrete entries (files or directories)
-- Each entry resolves to a real path; directories follow the convention of having an `_index.md` to consult first
+- Each entry resolves to a real path; directories follow the convention of being explored via Glob on the directory's naming pattern + frontmatter Read
 - Bundle scope matches the task named (authoring a hook points at hook + routing, not the whole style guide)
 
 **Canonical Repair:** See `repair-playbook.md` → Dimension 2.
@@ -169,7 +169,7 @@ For each dimension: **verdict** (WARN, PASS, or N/A), **evidence**, **recommenda
 You are auditing a resolver (RESOLVER.md, AGENTS.md pointer, .resolver/evals.yml) against three dimensions. Evaluate all three in a single response.
 
 Directory scan results for this repo:
-<bulleted list of depth 1-2 directories, each tagged with _index.md presence and file count>
+<bulleted list of depth 1-2 directories, each tagged with naming-pattern / frontmatter-type presence and file count>
 
 For each dimension:
 1. Quote the specific text from RESOLVER.md or evals.yml that is most relevant (evidence)
@@ -191,7 +191,7 @@ FAIL anchor: .inbox/ exists on disk with 10 files; no filing row names it; no ou
 Criterion: Does each context row list 1-4 concrete entries (files or directories) that resolve?
 
 PASS anchor: "authoring a hook" → [_shared/references/primitive-routing.md, _shared/references/hook-best-practices.md]
-PASS anchor: "planning research" → [.research/]   (directory entry; agent consults _index.md first)
+PASS anchor: "planning research" → [.research/]   (directory entry; agent uses Glob + frontmatter Read)
 FAIL anchor: "building features" → "read the style guide"
 
 ## Dimension 3: Eval Representativeness

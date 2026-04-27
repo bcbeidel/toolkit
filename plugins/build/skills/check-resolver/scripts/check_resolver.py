@@ -14,8 +14,8 @@ Seven checks per resolver root:
 - **context-paths-resolve** — every doc path in the context table's
   "Load first" column resolves to a file or directory on disk. FAIL
   on miss. Directories are valid context entries — the convention
-  is to look in the directory's ``_index.md`` first and descend
-  on need.
+  is to Glob the directory's naming pattern and read frontmatter
+  ``description`` to identify the right file.
 - **filing-rows-unique** — the filing table's first column (content
   type) has no duplicates. FAIL on duplicate.
 - **context-rows-unique** — the context table's first column (task)
