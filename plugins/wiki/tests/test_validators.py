@@ -125,15 +125,40 @@ class TestCheckResolverRecommendation:
         assert issues[0]["file"] == "RESOLVER.md"
         assert "/build:build-resolver" in issues[0]["issue"]
 
-    def test_ignores_dir_with_only_one_convention_file(self, tmp_path: Path) -> None:
+    def test_ignores_dir_with_only_one_frontmatter_file(self, tmp_path: Path) -> None:
         from wiki.project import check_resolver_recommendation
 
-        # Three dirs but one only has a single convention file → 2 qualify, no warn
+        # Three dirs but one only has a single frontmatter file → 2 qualify, no warn
         _seed_conventionful_dirs(tmp_path, [".context", ".plans"])
         thin = tmp_path / ".designs"
         thin.mkdir()
         (thin / "lone.design.md").write_text(_md("Lone"))
         assert check_resolver_recommendation(tmp_path) == []
+
+    def test_ignores_files_without_frontmatter(self, tmp_path: Path) -> None:
+        from wiki.project import check_resolver_recommendation
+
+        # Three dirs but the files have no frontmatter → none qualify, no warn
+        for name in ("notes", "drafts", "ideas"):
+            d = tmp_path / name
+            d.mkdir()
+            (d / "a.md").write_text("# Plain markdown\n\nNo frontmatter here.\n")
+            (d / "b.md").write_text("# Another\n\nAlso plain.\n")
+        assert check_resolver_recommendation(tmp_path) == []
+
+    def test_accepts_generic_naming(self, tmp_path: Path) -> None:
+        from wiki.project import check_resolver_recommendation
+
+        # Frontmatter-bearing files with arbitrary names — no canonical
+        # suffixes — should still trigger the warning.
+        for name in ("notebooks", "specs", "guides"):
+            d = tmp_path / name
+            d.mkdir()
+            (d / "first.md").write_text(_md("First"))
+            (d / "second.md").write_text(_md("Second"))
+        issues = check_resolver_recommendation(tmp_path)
+        assert len(issues) == 1
+        assert issues[0]["severity"] == "warn"
 
     def test_ignores_ambient_dirs(self, tmp_path: Path) -> None:
         from wiki.project import check_resolver_recommendation

@@ -41,14 +41,14 @@ class TestSummaryLine:
             {"file": str(root / "a.md"), "issue": "Problem A", "severity": "fail"},
             {"file": str(root / "b.md"), "issue": "Problem B", "severity": "warn"},
         ]
-        stdout, _, _ = _run_audit("--root", str(root), "--no-urls", issues=issues)
+        stdout, _, _ = _run_audit("--root", str(root), issues=issues)
         assert "1 fail" in stdout
         assert "1 warn" in stdout
 
     def test_no_issues_shows_all_passed(self, tmp_path: Path) -> None:
         root = tmp_path / "project"
         root.mkdir()
-        stdout, _, _ = _run_audit("--root", str(root), "--no-urls", issues=[])
+        stdout, _, _ = _run_audit("--root", str(root), issues=[])
         assert "All checks passed." in stdout
 
 
@@ -63,7 +63,7 @@ class TestTableFormat:
                 "severity": "fail",
             },
         ]
-        stdout, _, _ = _run_audit("--root", str(root), "--no-urls", issues=issues)
+        stdout, _, _ = _run_audit("--root", str(root), issues=issues)
         assert str(root) not in stdout
         assert "docs/context/api/auth.md" in stdout
 
@@ -74,7 +74,7 @@ class TestTableFormat:
             {"file": str(root / "a.md"), "issue": "Problem", "severity": "fail"},
             {"file": str(root / "b.md"), "issue": "Drift", "severity": "warn"},
         ]
-        stdout, _, _ = _run_audit("--root", str(root), "--no-urls", issues=issues)
+        stdout, _, _ = _run_audit("--root", str(root), issues=issues)
         assert "fail" in stdout
         assert "warn" in stdout
 
@@ -86,7 +86,7 @@ class TestExitCodes:
         issues = [
             {"file": str(root / "a.md"), "issue": "Problem", "severity": "fail"},
         ]
-        _, _, code = _run_audit("--root", str(root), "--no-urls", issues=issues)
+        _, _, code = _run_audit("--root", str(root), issues=issues)
         assert code == 1
 
     def test_exit_0_on_warn_only(self, tmp_path: Path) -> None:
@@ -95,7 +95,7 @@ class TestExitCodes:
         issues = [
             {"file": str(root / "a.md"), "issue": "Drift", "severity": "warn"},
         ]
-        _, _, code = _run_audit("--root", str(root), "--no-urls", issues=issues)
+        _, _, code = _run_audit("--root", str(root), issues=issues)
         assert code == 0
 
     def test_exit_1_on_warn_with_strict(self, tmp_path: Path) -> None:
@@ -105,14 +105,14 @@ class TestExitCodes:
             {"file": str(root / "a.md"), "issue": "Drift", "severity": "warn"},
         ]
         _, _, code = _run_audit(
-            "--root", str(root), "--no-urls", "--strict", issues=issues,
+            "--root", str(root), "--strict", issues=issues,
         )
         assert code == 1
 
     def test_exit_0_on_no_issues(self, tmp_path: Path) -> None:
         root = tmp_path / "project"
         root.mkdir()
-        _, _, code = _run_audit("--root", str(root), "--no-urls", issues=[])
+        _, _, code = _run_audit("--root", str(root), issues=[])
         assert code == 0
 
 
@@ -124,7 +124,7 @@ class TestJsonOutput:
             {"file": str(root / "a.md"), "issue": "Problem", "severity": "fail"},
         ]
         stdout, _, _ = _run_audit(
-            "--root", str(root), "--no-urls", "--json", issues=issues,
+            "--root", str(root), "--json", issues=issues,
         )
         parsed = json.loads(stdout)
         assert isinstance(parsed, list)
@@ -143,7 +143,7 @@ class TestSingleFileMode:
         # Single file mode — mock validate_file instead
         with patch("wiki.project.validate_file", return_value=[]) as mock_vf:
             stdout, _, code = _run_audit(
-                "--root", str(root), "--no-urls", str(md_file),
+                "--root", str(root), str(md_file),
             )
         mock_vf.assert_called_once()
         assert code == 0
@@ -181,7 +181,7 @@ class TestChainAutoDetection:
 
         with _patch("wiki.project.validate_project", return_value=[]), \
              _patch("wiki.skill_chain.validate_chain") as mock_chain:
-            _run_audit("--root", str(root), "--no-urls")
+            _run_audit("--root", str(root))
 
         mock_chain.assert_not_called()
 
@@ -193,7 +193,7 @@ class TestChainAutoDetection:
         self._write_chain_manifest(root / "my.chain.md", goal="")
 
         with patch("wiki.project.validate_project", return_value=[]):
-            stdout, _, exit_code = _run_audit("--root", str(root), "--no-urls")
+            stdout, _, exit_code = _run_audit("--root", str(root))
 
         # termination check produces a fail → exit code 1
         assert exit_code == 1
@@ -212,6 +212,6 @@ class TestChainAutoDetection:
 
         with _patch("wiki.project.validate_project", return_value=[]), \
              _patch("wiki.skill_chain.validate_chain") as mock_chain:
-            _run_audit("--root", str(root), "--no-urls")
+            _run_audit("--root", str(root))
 
         mock_chain.assert_not_called()

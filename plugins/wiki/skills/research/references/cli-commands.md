@@ -16,7 +16,7 @@ the `scripts/` directory at the root of the `wiki` plugin (`plugins/wiki/scripts
 ## Validate a Document
 
 ```bash
-python <plugin-scripts-dir>/lint.py <file> --root . [--no-urls]
+python <plugin-scripts-dir>/lint.py <file> --root . [--urls]
 ```
 
 ## Check URL Reachability

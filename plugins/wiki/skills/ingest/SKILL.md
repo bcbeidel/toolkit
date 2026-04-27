@@ -227,7 +227,7 @@ existing text, stop — append instead or flag a contradiction.
 After all page updates and creations, run lint:
 
 ```bash
-python3 <plugin-scripts-dir>/lint.py --root <project-root> --no-urls
+python3 <plugin-scripts-dir>/lint.py --root <project-root>
 ```
 
 Report results to the user:

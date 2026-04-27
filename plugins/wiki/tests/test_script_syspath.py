@@ -24,7 +24,7 @@ class TestLintSysPath:
         result = subprocess.run(
             [
                 sys.executable, str(SCRIPTS_DIR / "lint.py"),
-                "--root", str(tmp_path), "--no-urls",
+                "--root", str(tmp_path),
             ],
             capture_output=True,
             text=True,
@@ -56,7 +56,7 @@ class TestLintSingleFileSysPath:
         result = subprocess.run(
             [
                 sys.executable, str(SCRIPTS_DIR / "lint.py"),
-                str(doc), "--root", str(tmp_path), "--no-urls",
+                str(doc), "--root", str(tmp_path),
             ],
             capture_output=True,
             text=True,

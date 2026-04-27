@@ -19,7 +19,7 @@ does not modify any files.
 ## Workflow
 
 1. **Run** `lint.py` against the project root (see [How to Run](#how-to-run))
-2. **Checks** — the script applies five check categories; results are collected (see [The Checks](#the-checks))
+2. **Checks** — the script applies four check categories; results are collected (see [The Checks](#the-checks))
 3. **Interpret** — present the findings table to the user (see [Interpreting Results](#interpreting-results))
 4. **Cleanup** — for actionable findings (missing setup, blocked URLs), offer guided resolution (see [Cleanup Actions](#cleanup-actions))
 
@@ -28,23 +28,20 @@ Each phase depends on the previous. Do not offer cleanup actions before presenti
 ## How to Run
 
 ```bash
-# Default: run all checks including URL reachability
+# Default: fast, offline checks only
 python <plugin-scripts-dir>/lint.py --root .
 
-# Skip URL reachability checks (fast, offline-friendly)
-python <plugin-scripts-dir>/lint.py --root . --no-urls
+# Include URL reachability (network-dependent, off by default)
+python <plugin-scripts-dir>/lint.py --root . --urls
 
 # Validate a single file
-python <plugin-scripts-dir>/lint.py path/to/file.md --root . --no-urls
+python <plugin-scripts-dir>/lint.py path/to/file.md --root .
 
 # JSON output for programmatic use
 python <plugin-scripts-dir>/lint.py --root . --json
 
 # Exit 1 on any issue (including warnings)
 python <plugin-scripts-dir>/lint.py --root . --strict
-
-# Custom word count threshold for context files (default: 800)
-python <plugin-scripts-dir>/lint.py --root . --context-max-words 500
 ```
 
 Exit code: 1 if any `fail`, 0 if only `warn`. Use `--strict` to exit 1 on any issue.
@@ -59,28 +56,25 @@ Verifies:
 - **warn:** Source items should be URL strings, not dicts
 - **warn:** Context files should have `related` fields
 
-### 2. Content Length (warn)
+### 2. Source URL Reachability (fail + warn) — opt-in
 
-Warns when context files exceed 800 words (configurable via `--context-max-words`).
-Artifacts are excluded.
+Checks that every URL in `sources` is reachable via HTTP. **Off by
+default** (network-dependent, slow). Enable with `--urls`. URLs
+returning 403/429 are downgraded to `warn` — these sites likely block
+automated checks, not dead links.
 
-### 3. Source URL Reachability (fail + warn)
-
-Checks that every URL in `sources` is reachable via HTTP.
-Skipped with `--no-urls`. URLs returning 403/429 are downgraded to
-`warn` — these sites likely block automated checks, not dead links.
-
-### 4. Related Path Validation (fail)
+### 3. Related Path Validation (fail)
 
 Checks that local file paths in `related` exist on disk.
 
-### 5. Resolver Threshold (warn)
+### 4. Resolver Threshold (warn)
 
 Warns when no `RESOLVER.md` exists at the project root but ≥3 top-level
-directories follow a filing convention (≥2 files matching `*.context.md`,
-`*.plan.md`, `*.design.md`, or `*.research.md`). The recommendation is to
-run `/build:build-resolver`. Routing-artifact quality (when a resolver
-*does* exist) is not checked here — see [Resolver Evaluation](#resolver-evaluation).
+directories contain ≥2 markdown files with valid YAML frontmatter
+(ambient dirs like `.git`, `node_modules`, `.venv` excluded). The
+recommendation is to run `/build:build-resolver`. Routing-artifact
+quality (when a resolver *does* exist) is not checked here — see
+[Resolver Evaluation](#resolver-evaluation).
 
 ## Interpreting Results
 
@@ -189,6 +183,6 @@ warns when no `RESOLVER.md` exists but the repo crosses the threshold.
 
 ## Handoff
 
-**Receives:** Project root path (defaults to CWD); optional flags (--no-urls, --strict)
+**Receives:** Project root path (defaults to CWD); optional flags (--urls, --strict)
 **Produces:** Validation report listing warnings and failures by file; read-only — no modifications made
 **Chainable to:** `/build:check-skill` (per-skill quality); `/build:check-resolver` (routing-artifact audit when RESOLVER.md exists); `/build:build-resolver` (when threshold is crossed without one)

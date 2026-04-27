@@ -130,62 +130,12 @@ class TestRenderNavigation:
         assert "_index.md" not in result
 
 
-class TestRenderMetadataFormat:
-    def test_renders_metadata_format_section(self) -> None:
+class TestRenderNavigationHeader:
+    def test_renders_navigation_header(self) -> None:
         from wiki.agents_md import render_wiki_section
 
         result = render_wiki_section(areas=[])
-        assert "### File Metadata Format" in result
-        assert "name: Title" in result
-        assert "description: What this covers" in result
-        assert "type: research" in result
-        assert "sources: []" in result
-        assert "related: []" in result
-
-
-class TestRenderLostInTheMiddleCue:
-    def test_renders_navigation_cue(self) -> None:
-        from wiki.agents_md import render_wiki_section
-
-        result = render_wiki_section(areas=[])
-        # The "lost in the middle" cue: key info at start and end
         assert "## Context Navigation" in result
-        assert "Read the `description` field before reading the full file." in result
-        assert "Documents put key insights first and last" in result
-
-
-class TestRenderDocumentStandards:
-    def test_renders_document_standards_section(self) -> None:
-        from wiki.agents_md import render_wiki_section
-
-        result = render_wiki_section(areas=[])
-        assert "### Document Standards" in result
-
-    def test_renders_structure_guidance(self) -> None:
-        from wiki.agents_md import render_wiki_section
-
-        result = render_wiki_section(areas=[])
-        assert "Key insights first" in result
-        assert "detail in the middle" in result
-        assert "takeaways at the bottom" in result
-
-    def test_renders_word_count_guidance(self) -> None:
-        from wiki.agents_md import render_wiki_section
-
-        result = render_wiki_section(areas=[])
-        assert "200-800 words" in result
-
-    def test_renders_linking_guidance(self) -> None:
-        from wiki.agents_md import render_wiki_section
-
-        result = render_wiki_section(areas=[])
-        assert "bidirectional" in result.lower()
-
-    def test_renders_one_concept_per_file(self) -> None:
-        from wiki.agents_md import render_wiki_section
-
-        result = render_wiki_section(areas=[])
-        assert "one concept per file" in result.lower()
 
 
 class TestRenderMarkers:
@@ -208,7 +158,6 @@ class TestMigrateLegacyMarkers:
             "# AGENTS.md\n"
             "preamble\n"
             "<!-- wos:begin -->\n"
-            "<!-- wos:layout: flat -->\n"
             "## Context Navigation\n"
             "old body\n"
             "<!-- wos:end -->\n"
@@ -217,10 +166,8 @@ class TestMigrateLegacyMarkers:
         result = update_agents_md(legacy, areas=[])
         assert "<!-- wos:begin -->" not in result
         assert "<!-- wos:end -->" not in result
-        assert "<!-- wos:layout:" not in result
         assert "<!-- wiki:begin -->" in result
         assert "<!-- wiki:end -->" in result
-        assert "<!-- wiki:layout: flat -->" in result
         # Content outside markers preserved
         assert "preamble" in result
         assert "epilogue" in result
@@ -231,7 +178,6 @@ class TestMigrateLegacyMarkers:
         content = (
             "# AGENTS.md\n"
             "<!-- wiki:begin -->\n"
-            "<!-- wiki:layout: separated -->\n"
             "body\n"
             "<!-- wiki:end -->\n"
         )

@@ -6,9 +6,7 @@
 """Run validation checks on a project.
 
 Usage:
-    python scripts/lint.py [FILE] [--root DIR] [--no-urls] [--json]
-                           [--strict] [--context-max-words N]
-                           [--context-min-words N] [--skill-max-lines N]
+    python scripts/lint.py [FILE] [--root DIR] [--urls] [--json] [--strict]
 """
 from __future__ import annotations
 
@@ -46,9 +44,9 @@ def main() -> None:
         help="Project root directory (default: current directory)",
     )
     parser.add_argument(
-        "--no-urls",
+        "--urls",
         action="store_true",
-        help="Skip URL reachability checks",
+        help="Verify source URL reachability over HTTP (off by default)",
     )
     parser.add_argument(
         "--json",
@@ -71,9 +69,9 @@ def main() -> None:
     # Single-file or project mode
     if args.file:
         file_path = Path(args.file).resolve()
-        issues = validate_file(file_path, root, verify_urls=not args.no_urls)
+        issues = validate_file(file_path, root, verify_urls=args.urls)
     else:
-        issues = validate_project(root, verify_urls=not args.no_urls)
+        issues = validate_project(root, verify_urls=args.urls)
 
     # Wiki validation — auto-activated when wiki/SCHEMA.md is present
     wiki_schema = root / "wiki" / "SCHEMA.md"

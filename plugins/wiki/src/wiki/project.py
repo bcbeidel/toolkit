@@ -18,10 +18,6 @@ _AMBIENT_DIRS = frozenset({
     ".eggs", "__pycache__", "node_modules", "dist", "build", "target",
 })
 
-_CONVENTION_SUFFIXES = (
-    ".context.md", ".plan.md", ".design.md", ".research.md",
-)
-
 _RESOLVER_THRESHOLD = 3
 
 # ── Per-file helper ────────────────────────────────────────────────
@@ -185,12 +181,12 @@ def validate_project(
 
 
 def _conventionful_dirs(root: Path) -> List[str]:
-    """Return names of top-level directories that follow a filing convention.
+    """Return names of top-level directories that look like filing targets.
 
-    A directory counts when it contains ≥2 markdown files whose name ends in
-    one of the canonical filing suffixes (`.context.md`, `.plan.md`,
-    `.design.md`, `.research.md`). Walks the subtree but skips ambient
-    directory names at any depth.
+    A directory counts when it contains ≥2 markdown files with YAML
+    frontmatter (file begins with a ``---`` delimiter). Naming patterns
+    are not enforced — any project that uses frontmatter qualifies.
+    Walks the subtree but skips ambient directory names at any depth.
     """
     found: List[str] = []
     try:
@@ -205,12 +201,26 @@ def _conventionful_dirs(root: Path) -> List[str]:
         for md in child.rglob("*.md"):
             if any(part in _AMBIENT_DIRS for part in md.parts):
                 continue
-            if md.name.endswith(_CONVENTION_SUFFIXES):
+            if _has_frontmatter(md):
                 count += 1
                 if count >= 2:
                     found.append(child.name)
                     break
     return found
+
+
+def _has_frontmatter(path: Path) -> bool:
+    """Return True if the file's first non-empty line is a ``---`` delimiter."""
+    try:
+        with path.open("r", encoding="utf-8", errors="replace") as fh:
+            for line in fh:
+                stripped = line.strip()
+                if not stripped:
+                    continue
+                return stripped == "---"
+    except OSError:
+        return False
+    return False
 
 
 def check_resolver_recommendation(root: Path) -> List[dict]:
