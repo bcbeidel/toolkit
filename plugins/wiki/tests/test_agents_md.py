@@ -90,25 +90,44 @@ class TestDiscoverAreas:
 # ── render_wiki_section ──────────────────────────────────────────
 
 
-class TestRenderWithAreas:
-    def test_renders_area_table(self) -> None:
-        from wiki.agents_md import render_wiki_section
-
-        areas = [
-            {"name": "Python Basics", "path": "docs/context/python-basics"},
-            {"name": "Testing", "path": "docs/context/testing"},
-        ]
-        result = render_wiki_section(areas)
-        assert "| Area | Path |" in result
-        assert "| Python Basics | docs/context/python-basics |" in result
-        assert "| Testing | docs/context/testing |" in result
-
-    def test_areas_section_omitted_when_empty(self) -> None:
+class TestRenderNavigation:
+    def test_renders_resolver_pointer(self) -> None:
         from wiki.agents_md import render_wiki_section
 
         result = render_wiki_section(areas=[])
-        assert "### Areas" not in result
-        assert "| Area | Path |" not in result
+        assert "[RESOLVER.md](RESOLVER.md)" in result
+        assert "Consult it before filing or loading context." in result
+
+    def test_renders_glob_discovery_convention(self) -> None:
+        from wiki.agents_md import render_wiki_section
+
+        result = render_wiki_section(areas=[])
+        assert "Glob" in result
+        assert "frontmatter" in result
+
+    def test_does_not_render_areas_table_with_or_without_areas(self) -> None:
+        from wiki.agents_md import render_wiki_section
+
+        # With areas: still no Areas table.
+        areas = [
+            {"name": "Python Basics", "path": "docs/context/python-basics"},
+        ]
+        with_areas = render_wiki_section(areas)
+        assert "### Areas" not in with_areas
+        assert "| Area | Path |" not in with_areas
+
+        # Without areas: also no Areas table.
+        empty = render_wiki_section(areas=[])
+        assert "### Areas" not in empty
+        assert "| Area | Path |" not in empty
+
+    def test_does_not_render_index_md_cue(self) -> None:
+        from wiki.agents_md import render_wiki_section
+
+        result = render_wiki_section(areas=[
+            {"name": ".context", "path": ".context"},
+        ])
+        assert "_index.md" not in result
 
 
 class TestRenderWithPreferences:
@@ -291,7 +310,7 @@ class TestUpdateReplaceExisting:
         areas = [{"name": "API", "path": "docs/context/api"}]
         result = update_agents_md(content, areas)
         assert "old content" not in result
-        assert "| API | docs/context/api |" in result
+        assert "[RESOLVER.md](RESOLVER.md)" in result
         assert BEGIN_MARKER in result
         assert END_MARKER in result
 
@@ -326,8 +345,12 @@ class TestUpdatePreservesOutsideContent:
         assert "old" not in result
 
 
-class TestUpdateAreasAppearInOutput:
-    def test_areas_in_updated_output(self) -> None:
+class TestUpdateAreasNotRendered:
+    def test_areas_not_rendered_in_updated_output(self) -> None:
+        """`update_agents_md` accepts `areas=` for API compatibility but
+        no longer renders an Areas table — directory-level routing lives
+        in RESOLVER.md, and per-file discovery uses Glob + frontmatter Read.
+        """
         from wiki.agents_md import update_agents_md
 
         content = "# AGENTS.md\n"
@@ -336,8 +359,9 @@ class TestUpdateAreasAppearInOutput:
             {"name": "Backend", "path": "docs/context/backend"},
         ]
         result = update_agents_md(content, areas)
-        assert "| Frontend | docs/context/frontend |" in result
-        assert "| Backend | docs/context/backend |" in result
+        assert "### Areas" not in result
+        assert "| Frontend | docs/context/frontend |" not in result
+        assert "[RESOLVER.md](RESOLVER.md)" in result
 
 
 class TestUpdatePreferencesPreserved:
@@ -356,18 +380,6 @@ class TestUpdatePreferencesPreserved:
 
 
 class TestExtractAreas:
-    def test_round_trip(self) -> None:
-        """Areas rendered then extracted produce identical name/path values."""
-        from wiki.agents_md import extract_areas, render_wiki_section
-
-        areas = [
-            {"name": "How agents plan tasks", "path": "docs/context/planning"},
-            {"name": "API reference", "path": "docs/context/api"},
-        ]
-        content = f"# AGENTS.md\n\n{render_wiki_section(areas)}"
-        result = extract_areas(content)
-        assert result == areas
-
     def test_preserves_human_descriptions(self) -> None:
         """Human-written descriptions (col1 != col2) are preserved as-is."""
         from wiki.agents_md import BEGIN_MARKER, END_MARKER, extract_areas
@@ -405,8 +417,9 @@ class TestExtractAreas:
 
 
 class TestUpdateAgentsMdAreasNone:
-    def test_preserves_existing_area_descriptions(self) -> None:
-        """When areas=None, existing human-written descriptions survive."""
+    def test_areas_table_in_existing_content_is_removed_on_update(self) -> None:
+        """A pre-existing Areas table inside the managed region is dropped on
+        re-render — directory-level routing now lives in RESOLVER.md."""
         from wiki.agents_md import BEGIN_MARKER, END_MARKER, update_agents_md
 
         content = (
@@ -419,25 +432,26 @@ class TestUpdateAgentsMdAreasNone:
             f"{END_MARKER}\n"
         )
         result = update_agents_md(content)  # areas=None by default
-        assert "| How LLM agents decompose tasks | docs/context/planning |" in result
+        assert "### Areas" not in result
+        assert "[RESOLVER.md](RESOLVER.md)" in result
 
     def test_produces_no_areas_section_when_none_exist(self) -> None:
-        """When areas=None and no Areas table present, output has no Areas table."""
-        from wiki.agents_md import extract_areas, render_wiki_section, update_agents_md
+        """When no Areas table is present, output also has none."""
+        from wiki.agents_md import render_wiki_section, update_agents_md
 
         base = render_wiki_section(areas=[])
         content = f"# AGENTS.md\n\n{base}"
-        assert extract_areas(content) == []
         result = update_agents_md(content)
         assert "### Areas" not in result
 
-    def test_existing_callers_with_explicit_areas_unaffected(self) -> None:
-        """Passing areas explicitly still works as before."""
+    def test_explicit_areas_still_no_table_rendered(self) -> None:
+        """Passing areas= is accepted for API compatibility but no table is rendered."""
         from wiki.agents_md import update_agents_md
 
         areas = [{"name": "Backend", "path": "docs/context/backend"}]
         result = update_agents_md("# AGENTS.md\n", areas=areas)
-        assert "| Backend | docs/context/backend |" in result
+        assert "### Areas" not in result
+        assert "| Backend | docs/context/backend |" not in result
 
 
 # ── has_working_agreements ─────────────────────────────────────
