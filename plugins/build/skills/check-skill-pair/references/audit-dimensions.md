@@ -20,7 +20,7 @@ Severity:
 
 ### principles-doc-presence
 
-**What it checks:** `plugins/build/_shared/references/<primitive>-best-practices.md` exists and is a non-empty file.
+**What it checks:** `<SHARED_REF_DIR>/<primitive>-best-practices.md` exists and is a non-empty file.
 **Pass:** file exists with at least one H1.
 **Fail:** file is missing or empty.
 **Severity:** fail.
@@ -28,7 +28,7 @@ Severity:
 
 ### build-skill-presence
 
-**What it checks:** `plugins/build/skills/build-<primitive>/SKILL.md` exists.
+**What it checks:** `<SKILL_ROOT>/build-<primitive>/SKILL.md` exists.
 **Pass:** file exists with valid YAML frontmatter (`name` present).
 **Fail:** file is missing, empty, or lacks frontmatter.
 **Severity:** fail.
@@ -36,7 +36,7 @@ Severity:
 
 ### check-skill-presence
 
-**What it checks:** `plugins/build/skills/check-<primitive>/SKILL.md` exists.
+**What it checks:** `<SKILL_ROOT>/check-<primitive>/SKILL.md` exists.
 **Pass:** file exists with valid YAML frontmatter (`name` present).
 **Fail:** file is missing, empty, or lacks frontmatter.
 **Severity:** fail.
@@ -44,7 +44,7 @@ Severity:
 
 ### audit-dimensions-presence
 
-**What it checks:** `plugins/build/skills/check-<primitive>/references/audit-dimensions.md` exists.
+**What it checks:** `<SKILL_ROOT>/check-<primitive>/references/audit-dimensions.md` exists.
 **Pass:** file exists with at least one dimension entry.
 **Fail:** file is missing or has no dimensions.
 **Severity:** fail.
@@ -52,7 +52,7 @@ Severity:
 
 ### repair-playbook-presence
 
-**What it checks:** `plugins/build/skills/check-<primitive>/references/repair-playbook.md` exists.
+**What it checks:** `<SKILL_ROOT>/check-<primitive>/references/repair-playbook.md` exists.
 **Pass:** file exists with at least one repair entry.
 **Fail:** file is missing or has no repair entries.
 **Severity:** fail.
@@ -60,7 +60,7 @@ Severity:
 
 ### routing-registration-presence
 
-**What it checks:** `plugins/build/_shared/references/primitive-routing.md` contains both route lines: `/build:build-<primitive>` and `/build:check-<primitive>`.
+**What it checks:** `<SHARED_REF_DIR>/primitive-routing.md` contains both route lines: `/build:build-<primitive>` and `/build:check-<primitive>`.
 **Pass:** both route lines appear as literal strings in the doc.
 **Fail:** both route lines are absent.
 **Severity:** fail (both missing) / warn (one missing).

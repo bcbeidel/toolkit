@@ -21,6 +21,7 @@ references:
   - ../../_shared/references/skill-best-practices.md
   - ../../_shared/references/primitive-routing.md
   - ../../_shared/references/skill-pair-best-practices.md
+  - ../../_shared/references/skill-locations.md
   - references/audit-dimensions.md
   - references/repair-playbook.md
 ---
@@ -46,8 +47,12 @@ section), accepted either labeled (`**Pass:**`) or inferred
 ("Passes when…"). This check is prose-heuristic and stays out of the
 script.
 
-**Workflow sequence:** 1. Scope → 2. Run audit_pair.py →
-3. Required-Fields Pass → 4. Report → 5. Opt-In Repair Loop
+**Workflow sequence:** 1. Scope → 2. Target → 3. Run audit_pair.py →
+4. Required-Fields Pass → 5. Report → 6. Opt-In Repair Loop
+
+`<SKILL_ROOT>` and `<SHARED_REF_DIR>` resolve from the chosen target
+— see [skill-locations.md](../../_shared/references/skill-locations.md)
+for the prefix table.
 
 ## 1. Scope
 
@@ -58,20 +63,35 @@ primitive, not a configuration. Confirm scope aloud in one line:
 
 The six artifact slots `audit_pair.py` inspects:
 
-- Principles doc: `plugins/build/_shared/references/<name>-best-practices.md`
-- Build skill: `plugins/build/skills/build-<name>/SKILL.md`
-- Check skill: `plugins/build/skills/check-<name>/SKILL.md`
-- Audit dimensions: `plugins/build/skills/check-<name>/references/audit-dimensions.md`
-- Repair playbook: `plugins/build/skills/check-<name>/references/repair-playbook.md`
-- Routing registration: `plugins/build/_shared/references/primitive-routing.md` (both route lines)
+- Principles doc: `<SHARED_REF_DIR>/<name>-best-practices.md`
+- Build skill: `<SKILL_ROOT>/build-<name>/SKILL.md`
+- Check skill: `<SKILL_ROOT>/check-<name>/SKILL.md`
+- Audit dimensions: `<SKILL_ROOT>/check-<name>/references/audit-dimensions.md`
+- Repair playbook: `<SKILL_ROOT>/check-<name>/references/repair-playbook.md`
+- Routing registration: `<SHARED_REF_DIR>/primitive-routing.md` (both route lines; required for `plugin` target, optional otherwise)
 
-## 2. Run audit_pair.py
+## 2. Target
 
-Execute the deterministic audit:
+Pick the placement scope before invoking the script. If `$ARGUMENTS`
+includes `--target <plugin|project|user>`, use it. Otherwise apply
+the inference rule from
+[skill-locations.md](../../_shared/references/skill-locations.md):
+walk up CWD for a plugin source tree, then for a project `.claude/`
+directory, falling back to `user`. Surface the inferred target in
+one line and confirm before invoking the script.
+
+## 3. Run audit_pair.py
+
+Execute the deterministic audit, passing the resolved target:
 
 ```bash
-python3 plugins/build/skills/check-skill-pair/scripts/audit_pair.py <name>
+python3 plugins/build/skills/check-skill-pair/scripts/audit_pair.py \
+  --target <plugin|project|user> <name>
 ```
+
+The default target is `plugin` (back-compat). Project- and
+user-target audits resolve artifacts under `.claude/skills/` or
+`~/.claude/skills/` respectively.
 
 The script emits a findings table, a summary line, and an exit code
 (non-zero if any `fail` findings). If the script prints `No pair
@@ -84,7 +104,7 @@ coverage, and Tier-3 shared principles path + check-half frontmatter
 refs + build→check handoff + routing registration + dogfood-script
 info.
 
-## 3. Required-Fields Pass
+## 4. Required-Fields Pass
 
 The one check the script leaves to judgment: each dimension entry
 in `audit-dimensions.md` should carry six fields — *name*, *what it
@@ -100,7 +120,7 @@ there is nothing to read.
 Read the file once, iterate dimension entries (H3 headings), and
 append any findings to the Tier-1/2/3 set the script produced.
 
-## 4. Report
+## 5. Report
 
 The script already emits a findings table and summary line. If the
 Required-Fields Pass added any findings, merge them into the
@@ -122,7 +142,7 @@ Example script output (shape):
 0 fail, 1 warn, 1 info across 6 artifact slots
 ```
 
-## 5. Opt-In Repair Loop
+## 6. Opt-In Repair Loop
 
 Ask exactly once:
 
@@ -231,7 +251,8 @@ plugins/build/skills/check-skill-pair/scripts/audit_pair.py`.
 ## Handoff
 
 **Receives:** primitive name — kebab-case, no path prefix (e.g.,
-`bash-script`, not `plugins/build/skills/build-bash-script/`).
+`bash-script`, not `<SKILL_ROOT>/build-bash-script/`); optional
+`--target` flag selecting `plugin` (default), `project`, or `user`.
 
 **Produces:** a findings table with one row per audit-dimension /
 slot, each row carrying the check name, the artifact path, the

@@ -15,6 +15,23 @@ from pathlib import Path
 # resolution (Path(__file__).parents[1]) would be wrong.
 DEFAULT_REPO_ROOT = Path(__file__).resolve().parents[5]
 
+# Target prefixes per skill-locations.md. `<SKILL_ROOT>` is where build-/check-
+# skills live; `<SHARED_REF_DIR>` holds the principles doc and routing doc.
+TARGET_PREFIXES: dict[str, dict[str, str]] = {
+    "plugin": {
+        "skill_root": "plugins/build/skills",
+        "shared_ref_dir": "plugins/build/_shared/references",
+    },
+    "project": {
+        "skill_root": ".claude/skills",
+        "shared_ref_dir": ".claude/skills/_shared/references",
+    },
+    "user": {
+        "skill_root": "~/.claude/skills",
+        "shared_ref_dir": "~/.claude/skills/_shared/references",
+    },
+}
+
 
 @dataclass(frozen=True)
 class Finding:
@@ -193,33 +210,41 @@ def resolve_reference(skill_dir: Path, ref: str) -> Path:
     return (skill_dir / ref).resolve()
 
 
+def resolve_target_paths(target: str, root: Path) -> tuple[Path, Path]:
+    """Resolve `<SKILL_ROOT>` and `<SHARED_REF_DIR>` for a target.
+
+    `plugin` and `project` prefixes are interpreted relative to ``root``.
+    ``user`` prefixes start with ``~`` and are expanded to the user's home
+    directory; ``root`` is ignored for that target.
+    """
+    prefixes = TARGET_PREFIXES[target]
+    if target == "user":
+        skill_root = Path(prefixes["skill_root"]).expanduser()
+        shared_ref_dir = Path(prefixes["shared_ref_dir"]).expanduser()
+    else:
+        skill_root = root / prefixes["skill_root"]
+        shared_ref_dir = root / prefixes["shared_ref_dir"]
+    return skill_root, shared_ref_dir
+
+
 def tier1_existence(
-    primitive: str, root: Path
+    primitive: str, root: Path, target: str = "plugin"
 ) -> tuple[list[Finding], dict[str, Path]]:
     """Return findings plus a dict of resolved artifact paths (even if missing)."""
+    skill_root, shared_ref_dir = resolve_target_paths(target, root)
     paths = {
-        "principles_doc": root
-        / "plugins/build/_shared/references"
-        / f"{primitive}-best-practices.md",
-        "build_skill": root
-        / "plugins/build/skills"
-        / f"build-{primitive}"
-        / "SKILL.md",
-        "check_skill": root
-        / "plugins/build/skills"
-        / f"check-{primitive}"
-        / "SKILL.md",
-        "audit_dims": root
-        / "plugins/build/skills"
+        "principles_doc": shared_ref_dir / f"{primitive}-best-practices.md",
+        "build_skill": skill_root / f"build-{primitive}" / "SKILL.md",
+        "check_skill": skill_root / f"check-{primitive}" / "SKILL.md",
+        "audit_dims": skill_root
         / f"check-{primitive}"
         / "references"
         / "audit-dimensions.md",
-        "repair_playbook": root
-        / "plugins/build/skills"
+        "repair_playbook": skill_root
         / f"check-{primitive}"
         / "references"
         / "repair-playbook.md",
-        "routing_doc": root / "plugins/build/_shared/references/primitive-routing.md",
+        "routing_doc": shared_ref_dir / "primitive-routing.md",
     }
     findings: list[Finding] = []
 
@@ -274,7 +299,16 @@ def tier1_existence(
             )
         )
 
-    routing_text = read_text(paths["routing_doc"]) or ""
+    # Routing-doc registration is required for `plugin` target, optional
+    # for `project` / `user`. When the routing doc is absent at a non-plugin
+    # target, the registration check is skipped silently — projects and
+    # users that maintain a routing doc still get the same enforcement.
+    routing_text = read_text(paths["routing_doc"])
+    if routing_text is None and target != "plugin":
+        return findings, paths
+    routing_text = routing_text or ""
+    severity_both_missing = "fail" if target == "plugin" else "warn"
+    severity_one_missing = "warn"
     build_route = f"/build:build-{primitive}"
     check_route = f"/build:check-{primitive}"
     has_build_route = build_route in routing_text
@@ -286,7 +320,7 @@ def tier1_existence(
                 "routing-registration-presence",
                 rel(paths["routing_doc"]),
                 f"both {build_route} and {check_route} route lines missing",
-                "fail",
+                severity_both_missing,
             )
         )
     elif not has_build_route:
@@ -296,7 +330,7 @@ def tier1_existence(
                 "routing-registration-presence",
                 rel(paths["routing_doc"]),
                 f"{build_route} route line missing",
-                "warn",
+                severity_one_missing,
             )
         )
     elif not has_check_route:
@@ -306,7 +340,7 @@ def tier1_existence(
                 "routing-registration-presence",
                 rel(paths["routing_doc"]),
                 f"{check_route} route line missing",
-                "warn",
+                severity_one_missing,
             )
         )
 
@@ -384,7 +418,7 @@ def tier2_content(paths: dict[str, Path], root: Path) -> list[Finding]:
 
 
 def tier3_cross_reference(
-    primitive: str, paths: dict[str, Path], root: Path
+    primitive: str, paths: dict[str, Path], root: Path, target: str = "plugin"
 ) -> list[Finding]:
     findings: list[Finding] = []
 
@@ -488,7 +522,8 @@ def tier3_cross_reference(
                 )
             )
 
-    scripts_dir = root / "plugins/build/skills" / f"check-{primitive}" / "scripts"
+    skill_root, _ = resolve_target_paths(target, root)
+    scripts_dir = skill_root / f"check-{primitive}" / "scripts"
     if scripts_dir.is_dir():
         py_scripts = list(scripts_dir.glob("*.py"))
         sh_scripts = list(scripts_dir.glob("*.sh")) + list(scripts_dir.glob("*.bash"))
@@ -539,9 +574,11 @@ def summary_counts(findings: list[Finding]) -> tuple[int, int, int]:
     return fails, warns, infos
 
 
-def audit(primitive: str, root: Path) -> tuple[list[Finding], bool]:
+def audit(
+    primitive: str, root: Path, target: str = "plugin"
+) -> tuple[list[Finding], bool]:
     """Return (findings, no_pair_found)."""
-    t1, paths = tier1_existence(primitive, root)
+    t1, paths = tier1_existence(primitive, root, target)
     # "No pair found": principles doc + both SKILLs all absent → nothing to audit.
     critical_missing = sum(
         1
@@ -551,7 +588,7 @@ def audit(primitive: str, root: Path) -> tuple[list[Finding], bool]:
     if critical_missing == 3:
         return [], True
     t2 = tier2_content(paths, root)
-    t3 = tier3_cross_reference(primitive, paths, root)
+    t3 = tier3_cross_reference(primitive, paths, root, target)
     return t1 + t2 + t3, False
 
 
@@ -568,10 +605,20 @@ def main(argv: list[str] | None = None) -> int:
         default=DEFAULT_REPO_ROOT,
         help="Repo root (default: resolved from script location).",
     )
+    parser.add_argument(
+        "--target",
+        choices=("plugin", "project", "user"),
+        default="plugin",
+        help=(
+            "Placement scope per skill-locations.md: `plugin` (toolkit-style "
+            "plugins/build/...), `project` (.claude/skills/...), or `user` "
+            "(~/.claude/skills/...). Default: plugin (back-compat)."
+        ),
+    )
     args = parser.parse_args(argv)
 
     try:
-        findings, no_pair = audit(args.primitive, args.root.resolve())
+        findings, no_pair = audit(args.primitive, args.root.resolve(), args.target)
     except KeyboardInterrupt:
         return 130
 

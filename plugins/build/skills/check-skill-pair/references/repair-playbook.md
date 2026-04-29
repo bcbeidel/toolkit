@@ -27,7 +27,7 @@ ensures the rubric is internally consistent with the input.
 
 ### build-skill-presence
 
-**Finding:** `plugins/build/skills/build-<primitive>/SKILL.md` is
+**Finding:** `<SKILL_ROOT>/build-<primitive>/SKILL.md` is
 missing.
 **Diagnosis:** the scaffold half was deleted or never created.
 **Fix:** run `/build:build-skill-pair <primitive>` — the Save step
@@ -37,7 +37,7 @@ written.
 
 ### check-skill-presence
 
-**Finding:** `plugins/build/skills/check-<primitive>/SKILL.md` is
+**Finding:** `<SKILL_ROOT>/check-<primitive>/SKILL.md` is
 missing.
 **Diagnosis:** the audit half was deleted or never created.
 **Fix:** run `/build:build-skill-pair <primitive>`. Same rationale

@@ -17,6 +17,7 @@ references:
   - ../../_shared/references/skill-best-practices.md
   - ../../_shared/references/primitive-routing.md
   - ../../_shared/references/skill-pair-best-practices.md
+  - ../../_shared/references/skill-locations.md
 ---
 
 # Build Skill Pair
@@ -27,27 +28,52 @@ point at the same principles doc so creation and review never drift.
 The distillation step — reconciling multiple inputs into one
 internally-consistent rubric — is where this skill earns its keep.
 
-**Workflow sequence:** 1. Route → 2. Scope Gate → 3. Intake →
-4. Distill → 5. Draft → 6. Review Gate → 7. Save → 8. Register →
-9. Handoff
+**Workflow sequence:** 1. Route → 2. Target → 3. Scope Gate →
+4. Intake → 5. Distill → 6. Draft → 7. Review Gate → 8. Save →
+9. Register → 10. Handoff
+
+Throughout this skill, `<SKILL_ROOT>` and `<SHARED_REF_DIR>` are
+placeholders that resolve from the chosen target — see
+[skill-locations.md](../../_shared/references/skill-locations.md) for
+the prefix table.
 
 ## 1. Route
 
 Confirm the user wants a *pair*, not a single skill. Single skills
 route to `/build:build-skill`; auditing an existing pair routes to
 `/build:check-skill` on each half. If the principles doc already
-exists at `plugins/build/_shared/references/<primitive>-best-practices.md`,
-Distill becomes a pass-through — read the existing doc and proceed to
-Draft without regenerating.
+exists at `<SHARED_REF_DIR>/<primitive>-best-practices.md`, Distill
+becomes a pass-through — read the existing doc and proceed to Draft
+without regenerating.
 
-## 2. Scope Gate
+## 2. Target
+
+Pick the placement scope before any path-dependent step.
+[skill-locations.md](../../_shared/references/skill-locations.md)
+defines three targets — `plugin`, `project`, `user` — and the prefix
+each one resolves to. Resolution rule:
+
+1. If `$ARGUMENTS` carries a `--target <plugin|project|user>` flag,
+   use it. Otherwise apply the inference rule from skill-locations.md
+   (CWD walk-up: plugin source tree → project `.claude/` → user
+   fallback).
+2. Surface the resolved target to the user with the resolved
+   `<SKILL_ROOT>` and `<SHARED_REF_DIR>`. Wait for explicit
+   confirmation before continuing — inference is a default, not a
+   commitment.
+3. The Register step (#9) is required for `plugin` and optional for
+   `project` / `user` per the routing-doc rule in
+   skill-locations.md.
+
+## 3. Scope Gate
 
 Refuse — and recommend an alternative — when any of these signal:
 
 1. **Primitive already has a pair.** If
-   `plugins/build/skills/build-<primitive>/` exists, stop. Offer to
-   revise the existing pair (run `/build:check-skill` on both halves
-   and iterate from findings) instead of scaffolding over it.
+   `<SKILL_ROOT>/build-<primitive>/` exists at the resolved target,
+   stop. Offer to revise the existing pair (run `/build:check-skill`
+   on both halves and iterate from findings) instead of scaffolding
+   over it.
 2. **No best-practice material at all.** Distillation needs raw
    material. The skill's value is synthesis, not invention —
    scaffolding without input produces a rubric indistinguishable
@@ -63,7 +89,7 @@ Refuse — and recommend an alternative — when any of these signal:
 If any signal fires, state the signal, name the alternative, and
 stop. Do not proceed to Intake.
 
-## 3. Intake
+## 4. Intake
 
 If `$ARGUMENTS` is non-empty, parse it as `[primitive-name]` and
 pre-fill question 1. Otherwise ask, one question at a time:
@@ -97,7 +123,7 @@ Provenance does not survive into the distilled doc — git history
 (the PR or the commit that landed the pair) is where that lives.
 This intake is purely raw material for the Distill step.
 
-**5. Routing-doc placement** — does the new primitive belong as:
+**5. Routing-doc placement** *(plugin target only — skip otherwise)* — does the new primitive belong as:
 
 - **A new top-level primitive class** (new category alongside rules,
   hooks, skills, subagents, scripts) → append a paragraph to
@@ -111,7 +137,7 @@ If unclear, read
 [primitive-routing.md](../../_shared/references/primitive-routing.md)
 and propose a placement; confirm with the user.
 
-## 4. Distill
+## 5. Distill
 
 For each piece of input material from Intake #4: extract patterns
 *and the rationale behind each*. Patterns without rationale are
@@ -123,8 +149,8 @@ resolution does not need to be recorded in the distilled doc (git
 history carries that); what matters is that the final rubric is
 internally consistent.
 
-Produce `plugins/build/_shared/references/<primitive>-best-practices.md`
-with this structure:
+Produce `<SHARED_REF_DIR>/<primitive>-best-practices.md` with this
+structure:
 
 ```
 ---
@@ -151,7 +177,7 @@ description: Authoring guide for <primitive> — ... Referenced by build-<primit
 <how to keep the primitive honest over time>
 ```
 
-## 5. Draft (five artifacts)
+## 6. Draft (five artifacts)
 
 Produce all five before the Review Gate — present them together so the
 user sees the whole pair.
@@ -183,27 +209,27 @@ One entry per dimension: *finding* → *diagnosis* → *fix recipe*
 (code snippet or prose). The repair playbook is what turns an audit
 finding into a pull request; it must be concrete, not advisory.
 
-## 6. Review Gate
+## 7. Review Gate
 
-Present all five artifacts plus the proposed diff to
-`primitive-routing.md`. Wait for explicit user approval before writing
-any file. If the user requests changes, revise and re-present —
-continue until the user approves or cancels. Proceed to Save only on
+Present all five artifacts plus — for `plugin` target — the proposed
+diff to `primitive-routing.md`. Wait for explicit user approval before
+writing any file. If the user requests changes, revise and re-present
+— continue until the user approves or cancels. Proceed to Save only on
 explicit approval.
 
-This gate exists because five new files + a routing-doc change is a
-large commit to land silently. The user needs to see the whole shape,
-not just the parts.
+This gate exists because five new files (plus a routing-doc change in
+plugin mode) is a large commit to land silently. The user needs to
+see the whole shape, not just the parts.
 
-## 7. Save
+## 8. Save
 
-Write all five files to their paths:
+Resolve the five paths against the target chosen in Step 2 and write:
 
-- `plugins/build/_shared/references/<primitive>-best-practices.md`
-- `plugins/build/skills/build-<primitive>/SKILL.md`
-- `plugins/build/skills/check-<primitive>/SKILL.md`
-- `plugins/build/skills/check-<primitive>/references/audit-dimensions.md`
-- `plugins/build/skills/check-<primitive>/references/repair-playbook.md`
+- `<SHARED_REF_DIR>/<primitive>-best-practices.md`
+- `<SKILL_ROOT>/build-<primitive>/SKILL.md`
+- `<SKILL_ROOT>/check-<primitive>/SKILL.md`
+- `<SKILL_ROOT>/check-<primitive>/references/audit-dimensions.md`
+- `<SKILL_ROOT>/check-<primitive>/references/repair-playbook.md`
 
 Do not `chmod` — these are markdown. Tier-1 deterministic-check
 scripts under `check-<primitive>/scripts/` are out of scope here —
@@ -211,9 +237,10 @@ this skill scaffolds the SKILL.md contract and the rubric, not the
 scripts that enforce deterministic dimensions. Route those to the
 script-building skills; see the Handoff for the dogfooding rule.
 
-## 8. Register
+## 9. Register
 
-Update `plugins/build/_shared/references/primitive-routing.md`:
+**Plugin target** — required. Update
+`<SHARED_REF_DIR>/primitive-routing.md`:
 
 - **New top-level primitive class** — add a one-paragraph entry under
   *What Each Primitive Was Designed For* and extend the *Routing Test*
@@ -227,14 +254,21 @@ The diff was presented at the Review Gate; write it now.
 
 A pair that's not in `primitive-routing.md` is discoverable only by
 grep — the routing doc is how other skills and future authors find
-the new primitive. Skipping this step is how pairs become orphans.
+the new primitive. Skipping this step (in plugin mode) is how pairs
+become orphans.
 
-## 9. Handoff
+**Project / user target** — optional. If
+`<SHARED_REF_DIR>/primitive-routing.md` exists at the resolved scope,
+update it the same way. If not, skip with an informational note in the
+handoff: project- and user-scoped pairs are still discoverable through
+Claude Code's normal skill loader.
+
+## 10. Handoff
 
 Offer the audit:
 
-> "Run `/build:check-skill plugins/build/skills/build-<name>/SKILL.md`
-> and `/build:check-skill plugins/build/skills/check-<name>/SKILL.md`
+> "Run `/build:check-skill <SKILL_ROOT>/build-<name>/SKILL.md`
+> and `/build:check-skill <SKILL_ROOT>/check-<name>/SKILL.md`
 > to audit both halves?"
 
 Also flag follow-on work the user may want: bumping the build plugin
@@ -308,12 +342,12 @@ Output: five files plus a routing-doc diff adding a paragraph under
   would bypass the rubric this skill's whole design tells users to
   respect.
 - Recovery if the pair is scaffolded in error: `rm -rf
-  plugins/build/skills/build-<name>/ plugins/build/skills/check-<name>/
-  plugins/build/_shared/references/<name>-best-practices.md` and
-  revert the `primitive-routing.md` change. The artifacts are
+  <SKILL_ROOT>/build-<name>/ <SKILL_ROOT>/check-<name>/
+  <SHARED_REF_DIR>/<name>-best-practices.md` and revert the
+  `primitive-routing.md` change (plugin mode). The artifacts are
   self-contained (no settings.json entries, no shared-module
-  registration beyond the routing doc), so removal leaves no
-  dangling state.
+  registration beyond the routing doc), so removal leaves no dangling
+  state.
 
 ## Handoff
 
@@ -322,13 +356,14 @@ best-practice input material (files / URLs / pasted text /
 named-model-knowledge), and a routing-doc placement decision (new
 top-level class or variant of an existing class).
 
-**Produces:** five files — the distilled principles doc under
-`plugins/build/_shared/references/`, `build-<primitive>/SKILL.md`,
+**Produces:** five files at the chosen target — the distilled
+principles doc under `<SHARED_REF_DIR>/`, `build-<primitive>/SKILL.md`,
 `check-<primitive>/SKILL.md`,
 `check-<primitive>/references/audit-dimensions.md`, and
-`check-<primitive>/references/repair-playbook.md` — plus one updated
-`primitive-routing.md` registering the new primitive and its two
-routes.
+`check-<primitive>/references/repair-playbook.md`. In `plugin` mode,
+also produces an updated `primitive-routing.md`. In `project` /
+`user` mode, the routing-doc update is skipped unless one already
+exists at the chosen scope.
 
 **Chainable to:** `/build:check-skill-pair <primitive>` for
 pair-level integrity (principles doc present, audit/playbook
