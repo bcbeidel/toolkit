@@ -219,5 +219,8 @@ __marimo__/
 .prompts/*
 !**/.gitkeep
 
+# Skill scanner output
+scan-output/
+
 # macOS
 .DS_Store

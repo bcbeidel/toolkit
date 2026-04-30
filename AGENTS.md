@@ -50,6 +50,12 @@ Each plugin's skills live at `plugins/<plugin>/skills/<name>/SKILL.md`.
 Python package: `plugins/wiki/src/wiki/` (editable install).
 Shared scripts: `plugins/wiki/scripts/`.
 
+`build/check-skill` audits authorship quality (structure, completeness,
+prompt clarity); `skill-audit-*` (the CI workflows under
+`.github/workflows/skill-audit-*.yml`) audits adversarial content
+(prompt injection, exfiltration, supply-chain risk). They are
+independent, complementary signals — both pass for a skill to merge.
+
 ## Preferences
 
 - **Directness:** Be direct. State problems and disagreements plainly without hedging or softening.

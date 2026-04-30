@@ -1,0 +1,9 @@
+# Skill scanner — exact-pinned. Regenerate the lockfile with:
+#   pip install pip-tools
+#   pip-compile --generate-hashes \
+#     -o .github/scripts/requirements.lock \
+#     .github/scripts/requirements.txt
+# CI installs from the lockfile with `pip install --require-hashes -r requirements.lock`,
+# never from this file directly.
+cisco-ai-skill-scanner==2.0.9
+anthropic==0.76.0

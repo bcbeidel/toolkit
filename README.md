@@ -62,6 +62,43 @@ for any missing metadata.
 See each plugin's skill directory for the full skill catalogue
 (`plugins/<plugin>/skills/`).
 
+## Security scanning
+
+Every PR that touches `plugins/`, `policy/`, or the scanner pipeline runs
+the [Cisco AI Skill Scanner](https://github.com/cisco-ai-defense/skill-scanner)
+plus a Claude evaluator and posts a single `Skill Security Audit Report`
+comment on the PR. The gate blocks merge on `overall_severity=high` unless
+the PR carries the `security-override` label.
+
+The scanner runs in two coupled workflows:
+
+- `.github/workflows/skill-audit-scan.yml` — `pull_request`, `contents: read`
+  only, runs against the PR head. Produces a `scan-<plugin>` artifact.
+- `.github/workflows/skill-audit-report.yml` — `workflow_run`, checks out
+  trusted `main`, posts the comment, enforces the gate.
+
+Detection rules (taxonomy, escalation signals, prohibited extensions) live
+in [`policy/skill-scan-policy.yml`](policy/skill-scan-policy.yml). The
+SHA256 of that file is recorded as `policy_fingerprint` on every scan.
+
+Run locally before pushing:
+
+```bash
+export ANTHROPIC_API_KEY=<key>
+make scan PLUGIN=build      # one plugin
+make scan-all               # every plugin
+make scan-clean             # remove scan-output/
+```
+
+`make scan` mirrors the CI workflow: same policy file, same hash-locked
+deps in `.github/scripts/requirements.lock`, same `--fail-on-severity high`
+threshold. A clean local scan should match what CI produces on the same SHA.
+
+Composition with `/build:check-skill`: that skill audits authorship quality
+(structure, completeness, prompt clarity); `skill-audit-*` audits adversarial
+content (prompt injection, exfiltration, supply-chain risk). They are
+independent, complementary signals.
+
 ## Local Development
 
 ```bash

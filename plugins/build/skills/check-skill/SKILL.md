@@ -260,3 +260,4 @@ confirmation via the opt-in repair loop.
 **Chainable to:** `/build:build-skill` (to rebuild a flagged skill
 from scratch); `/work:start-work` (for bulk repair across multiple
 skills).
+

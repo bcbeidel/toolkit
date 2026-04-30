@@ -1,0 +1,142 @@
+# Skill scan policy — single source of truth for scanner thresholds and rules.
+#
+# The SHA256 of this file is emitted on every scan as `policy_fingerprint`
+# so the policy version in effect at gate time is recorded in workflow logs.
+#
+# When you change this file, expect the policy_fingerprint to change in
+# every subsequent scan summary — that is intentional.
+
+version: 1
+
+# File extensions that may not be committed inside plugins/.
+# Matching files trigger a CRITICAL finding before the LLM scanner runs.
+# Rationale: opaque content cannot be reviewed by the scanner or by humans.
+prohibited_extensions:
+  - .zip
+  - .tar
+  - .tar.gz
+  - .tgz
+  - .pyc
+  - .pyo
+  - .so
+  - .dll
+  - .dylib
+  - .exe
+  - .jar
+  - .war
+  - .whl
+  - .bin
+  - .o
+  - .a
+
+# Risk-pattern → OWASP LLM Top 10 → MITRE ATLAS taxonomy.
+# Any in-house judge or alternate scanner can normalize findings to the same
+# canonical taxonomy.
+taxonomy:
+  prompt_injection:
+    owasp_llm: Prompt Injection
+    mitre_atlas: Initial Access / Execution
+    description: Direct instruction override, jailbreak strings, system-prompt bypass
+  transitive_trust_abuse:
+    owasp_llm: Prompt Injection / Excessive Agency
+    mitre_atlas: Initial Access / Collection / Execution
+    description: Instructions imported from external content, docs, URLs, or fetched material
+  skill_discovery_abuse:
+    owasp_llm: Excessive Agency
+    mitre_atlas: Discovery / Execution
+    description: Capability inflation, protocol manipulation, deceptive tool declaration
+  data_exfiltration:
+    owasp_llm: Sensitive Information Disclosure
+    mitre_atlas: Collection / Exfiltration
+    description: External send/upload/POST of code, docs, tokens, env vars, credentials
+  tool_chaining_abuse:
+    owasp_llm: Sensitive Information Disclosure / Excessive Agency
+    mitre_atlas: Collection / Exfiltration
+    description: Read-or-collect followed by send/upload chains
+  hardcoded_secrets:
+    owasp_llm: Sensitive Information Disclosure
+    mitre_atlas: Credential Access / Collection
+    description: Live credentials, tokens, keys, or embedded sensitive values
+  command_injection:
+    owasp_llm: Improper Output Handling / Excessive Agency
+    mitre_atlas: Execution
+    description: User-controlled command, SQL, or script composition
+  code_execution:
+    owasp_llm: Improper Output Handling / Excessive Agency
+    mitre_atlas: Execution
+    description: eval, exec, subprocess execution, dynamic interpreters, shell escapes
+  obfuscation:
+    owasp_llm: Prompt Injection / Improper Output Handling
+    mitre_atlas: Defense Evasion
+    description: Base64, hex, unicode, zero-width, homoglyph, or layered evasion
+  supply_chain_attack:
+    owasp_llm: Supply Chain
+    mitre_atlas: Initial Access / Execution / Persistence
+    description: Package install, remote script fetch-and-execute, dependency/tool injection
+  unauthorized_tool_use:
+    owasp_llm: Excessive Agency
+    mitre_atlas: Execution / Discovery
+    description: Undeclared shell, git, network, package-manager, or infra tool use
+  tool_poisoning:
+    owasp_llm: Excessive Agency
+    mitre_atlas: Persistence / Collection
+    description: Tampering with tool behavior, wrappers, or returned data
+  tool_shadowing:
+    owasp_llm: Supply Chain / Excessive Agency
+    mitre_atlas: Persistence / Defense Evasion / Execution
+    description: Lookalike, replaced, or shadowed tools and scripts
+  resource_abuse:
+    owasp_llm: Unbounded Consumption
+    mitre_atlas: Impact
+    description: Expensive loops, recursion, uncontrolled traversal, or compute abuse
+  autonomy_abuse:
+    owasp_llm: Excessive Agency / Unbounded Consumption
+    mitre_atlas: Execution / Impact
+    description: Unbounded retries, recursive self-invocation, uncontrolled multi-step chains
+  social_engineering:
+    owasp_llm: Misinformation / Prompt Injection
+    mitre_atlas: Initial Access
+    description: Deceptive metadata, scam-like descriptions, manipulative instructions
+
+# Severity escalation signals. When a finding's content matches any of these
+# substrings (case-insensitive) in its description or rule_id, the evaluator
+# may bump severity by one level (low→medium, medium→high). HIGH stays HIGH.
+escalation_signals:
+  - env_var
+  - environment variable
+  - network
+  - egress
+  - curl
+  - wget
+  - eval
+  - exec
+  - subprocess
+  - base64
+  - obfusc
+  - unicode
+
+# Critical-severity classifiers — direct evidence of these patterns is always CRITICAL.
+critical_signals:
+  - exfil
+  - data exfiltration
+  - direct prompt injection
+  - shell escape
+  - path traversal
+  - tool poisoning
+  - tool shadowing
+
+# Coverage classes (populated by evaluate-findings.py once the scanner exposes
+# per-analyzer telemetry). Listed here so the policy file is the canonical
+# reference for what the gate enforces.
+coverage_classes:
+  full:
+    min_analyzability: 0.90
+    behaviour: pass
+  reduced:
+    min_analyzability: 0.70
+    behaviour: pass-with-warning
+  low:
+    min_analyzability: 0.0
+    behaviour: escalate-to-high-gate
+  scan_failed:
+    behaviour: block-merge
