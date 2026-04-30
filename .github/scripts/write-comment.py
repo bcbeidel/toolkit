@@ -1,19 +1,18 @@
 #!/usr/bin/env python3
-"""Format a risk-summary.json as a GitHub PR audit comment.
+"""Render a risk-summary.json as a GitHub PR audit comment.
 
 Step 2 of the split evaluator/comment-writer architecture. Receives only
 the structured risk summary produced by evaluate-findings.py — never raw
-skill content — and formats it as Markdown via Claude. Skill content never
-reaches this step, so a malicious skill cannot inject instructions into
-the posted security report.
+skill content — and renders it deterministically as Markdown. No LLM call:
+the narrative + recommendation already live in the summary; the table and
+provenance are pure templating. This makes the comment reproducible and
+removes truncation risk for plugins with many findings.
 
 The output always begins with the stable marker `<!-- skill-audit:report -->`
 so post-audit-comment.sh can upsert by HTML comment match.
 
 Example:
     ./write-comment.py risk-summary.json audit-comment.md
-
-Dependencies: anthropic (declared in .github/scripts/requirements.lock).
 """
 
 from __future__ import annotations
@@ -24,11 +23,8 @@ import os
 import sys
 from pathlib import Path
 
-import anthropic
-
 EXIT_INTERRUPTED = 130
 
-DEFAULT_MODEL = "claude-opus-4-6"
 COMMENT_MARKER = "<!-- skill-audit:report -->"
 
 SEVERITY_BADGE = {
@@ -38,32 +34,101 @@ SEVERITY_BADGE = {
     "high": "![high](https://img.shields.io/badge/severity-HIGH-red)",
 }
 
+MERGE_BLOCKED_NOTICE = (
+    "⛔ **MERGE BLOCKED** — the security scan failed and could not "
+    "produce findings. Resolve the workflow error before merging."
+)
 
-def build_prompt(plugin_name: str, summary: dict) -> str:
-    return (
-        f"Plugin: `{plugin_name}`\n\n"
-        f"Risk Summary (structured data — no raw skill content):\n"
-        f"{json.dumps(summary, indent=2)}\n\n"
-        "Format this as a GitHub PR comment in Markdown. Structure:\n"
-        f"1. Header: `## Security Audit: {plugin_name}`\n"
-        "2. Severity badge on its own line\n"
-        "3. If `scan_failed` is true, lead with a clear MERGE BLOCKED notice; "
-        "otherwise the narrative paragraph\n"
-        "4. A Markdown table of top findings: | Severity | Analyzer | Description |\n"
-        "   (omit the table if there are no findings)\n"
-        "5. **Recommendation:** line\n"
-        "6. A compact provenance footer with: scanner_version, model_used, "
-        "policy_fingerprint, and "
-        "`*Assessed by [skill-scanner](https://github.com/cisco-ai-defense/skill-scanner) + "
-        "Claude evaluator*`\n\n"
-        "Keep it concise and actionable. Do not reproduce raw skill content. "
-        "Output only the Markdown comment body."
+
+def _md_escape_cell(text: str) -> str:
+    """Make a string safe to drop into a Markdown table cell on one line."""
+    return str(text).replace("|", "\\|").replace("\r", " ").replace("\n", " ").strip()
+
+
+def render_findings_table(findings: list[dict]) -> str:
+    if not findings:
+        return "_No findings._"
+    header = "| # | Severity | Analyzer | Rule | Description |\n|---|---|---|---|---|\n"
+    rows = [
+        "| {idx} | {sev} | {analyzer} | {rule} | {desc} |".format(
+            idx=i,
+            sev=_md_escape_cell(f.get("severity", "UNKNOWN")),
+            analyzer=_md_escape_cell(f.get("analyzer", "unknown")),
+            rule=_md_escape_cell(f.get("rule_id", "UNKNOWN")),
+            desc=_md_escape_cell(f.get("description", "")),
+        )
+        for i, f in enumerate(findings, start=1)
+    ]
+    return header + "\n".join(rows) + "\n"
+
+
+def render_comment(plugin_name: str, summary: dict) -> str:
+    severity = summary.get("overall_severity", "none")
+    badge = SEVERITY_BADGE.get(severity, SEVERITY_BADGE["none"])
+    findings = summary.get("findings", [])
+    finding_count = summary.get("finding_count", len(findings))
+    scan_failed = bool(summary.get("scan_failed", False))
+
+    parts: list[str] = [
+        COMMENT_MARKER,
+        "",
+        f"## Security Audit: {plugin_name}",
+        "",
+        badge,
+        "",
+    ]
+
+    if scan_failed:
+        parts.extend([MERGE_BLOCKED_NOTICE, ""])
+    else:
+        narrative = summary.get(
+            "narrative",
+            f"Scan completed for {plugin_name}. {finding_count} finding(s) detected.",
+        )
+        parts.extend([narrative, ""])
+
+    parts.extend(
+        [
+            f"### Findings ({finding_count})",
+            "",
+            render_findings_table(findings),
+            "",
+        ]
     )
+
+    recommendation = summary.get(
+        "recommendation",
+        "Review the findings above before merging.",
+    )
+    parts.extend([f"**Recommendation:** {recommendation}", ""])
+
+    parts.extend(
+        [
+            "---",
+            "",
+            "**Provenance:**",
+            f"- Scanner: `{summary.get('scanner_version', 'unknown')}`",
+            f"- Evaluator model: `{summary.get('model_used', 'unknown')}`",
+            f"- Policy fingerprint: `{summary.get('policy_fingerprint', 'unknown')}`",
+        ]
+    )
+    if summary.get("commit_sha"):
+        parts.append(f"- Commit: `{summary['commit_sha']}`")
+    parts.extend(
+        [
+            "",
+            "*Assessed by [skill-scanner](https://github.com/cisco-ai-defense/skill-scanner) "
+            "+ Claude evaluator.*",
+            "",
+        ]
+    )
+
+    return "\n".join(parts)
 
 
 def get_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Format risk-summary.json as a GitHub PR audit comment.",
+        description="Render risk-summary.json as a GitHub PR audit comment.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument("summary_file", type=Path, help="Path to risk-summary.json.")
@@ -75,38 +140,14 @@ def get_parser() -> argparse.ArgumentParser:
 
 def run(args: argparse.Namespace) -> int:
     plugin_name = os.environ.get("PLUGIN_NAME", "unknown-plugin")
-    model = os.environ.get("EVALUATOR_MODEL", DEFAULT_MODEL)
-
     try:
         summary = json.loads(args.summary_file.read_text(encoding="utf-8"))
     except (FileNotFoundError, json.JSONDecodeError) as e:
         print(f"error loading summary file: {e}", file=sys.stderr)
         return 1
 
-    severity = summary.get("overall_severity", "none")
-    summary["_severity_badge"] = SEVERITY_BADGE.get(severity, SEVERITY_BADGE["none"])
-
-    client = anthropic.Anthropic()
-    response = client.messages.create(
-        model=model,
-        max_tokens=1024,
-        system=[
-            {
-                "type": "text",
-                "text": (
-                    "You are a security report formatter for GitHub pull requests. "
-                    "You receive only structured risk summaries — never raw skill content. "
-                    "Format summaries as clear, concise, actionable Markdown PR comments. "
-                    "Do not reference or reproduce any skill source content."
-                ),
-                "cache_control": {"type": "ephemeral"},
-            }
-        ],
-        messages=[{"role": "user", "content": build_prompt(plugin_name, summary)}],
-    )
-
-    body = response.content[0].text
-    args.comment_file.write_text(f"{COMMENT_MARKER}\n{body}\n", encoding="utf-8")
+    body = render_comment(plugin_name, summary)
+    args.comment_file.write_text(body, encoding="utf-8")
     print(f"PR comment written to: {args.comment_file}")
     return 0
 

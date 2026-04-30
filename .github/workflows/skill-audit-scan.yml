@@ -170,7 +170,7 @@ jobs:
             "plugin": "${PLUGIN}",
             "pr_number": "${PR_NUMBER}",
             "commit_sha": "${HEAD_SHA}",
-            "scanner-version": "${SCANNER_VERSION:-unknown}",
+            "scanner_version": "${SCANNER_VERSION:-unknown}",
             "prohibit_outcome": "${PROHIBIT_OUTCOME}",
             "scan_outcome": "${SCAN_OUTCOME}"
           }

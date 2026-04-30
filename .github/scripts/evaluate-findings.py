@@ -151,16 +151,17 @@ def call_evaluator(
     plugin_name: str,
     findings: list[dict],
 ) -> dict:
+    """Ask Claude for a narrative + recommendation only.
+
+    The findings table is rendered deterministically by write-comment.py;
+    the LLM contributes only the human-readable framing.
+    """
     severity_counts = {
         sev: sum(1 for f in findings if f["severity"] == sev)
         for sev in ("CRITICAL", "HIGH", "MEDIUM", "LOW")
     }
 
-    sorted_findings = sorted(
-        findings,
-        key=lambda f: SEVERITY_ORDER.get(f["severity"], 0),
-        reverse=True,
-    )[:20]
+    sample = findings[:20]
 
     prompt = (
         f"Plugin: {plugin_name}\n"
@@ -170,14 +171,10 @@ def call_evaluator(
         f"HIGH={severity_counts['HIGH']}, "
         f"MEDIUM={severity_counts['MEDIUM']}, "
         f"LOW={severity_counts['LOW']}\n\n"
-        f"Findings (structured metadata only):\n"
-        f"{json.dumps(sorted_findings, indent=2)}\n\n"
+        f"Highest-severity findings (structured metadata only, up to 20):\n"
+        f"{json.dumps(sample, indent=2)}\n\n"
         "Produce a JSON object with exactly these fields:\n"
-        '- "overall_severity": one of "none", "low", "medium", "high"\n'
         '- "narrative": 2–3 sentence summary of the security posture\n'
-        '- "top_findings": list of up to 5 most critical findings, '
-        'each with "severity", "analyzer", "description" fields\n'
-        '- "finding_count": integer total\n'
         '- "recommendation": one sentence on what the reviewer should do\n\n'
         "Return only valid JSON. No markdown fences, no explanation."
     )
@@ -234,6 +231,12 @@ def run(args: argparse.Namespace) -> int:
     critical_signals = parse_simple_yaml_list(policy_file, "critical_signals")
     findings = apply_escalation(findings, escalation_signals, critical_signals)
 
+    # Sort by severity desc once; this ordering is what the comment renders.
+    findings.sort(
+        key=lambda f: SEVERITY_ORDER.get(f["severity"], 0),
+        reverse=True,
+    )
+
     overall_severity = compute_overall_severity(findings)
     if scan_failed:
         overall_severity = "high"
@@ -246,6 +249,7 @@ def run(args: argparse.Namespace) -> int:
     # Authoritative fields the LLM cannot override.
     summary["overall_severity"] = overall_severity
     summary["finding_count"] = len(findings)
+    summary["findings"] = findings
     summary["scan_failed"] = scan_failed
     summary["policy_fingerprint"] = policy_fingerprint(policy_file)
     summary["scanner_version"] = scanner_version
@@ -259,7 +263,6 @@ def run(args: argparse.Namespace) -> int:
         if scan_failed
         else f"Scan completed for {plugin_name}. {len(findings)} finding(s) detected.",
     )
-    summary.setdefault("top_findings", findings[:5])
     summary.setdefault(
         "recommendation",
         "Scan failed; do not merge until the workflow runs successfully."

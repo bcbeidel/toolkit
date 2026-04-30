@@ -75,6 +75,7 @@ jobs:
           pattern: scan-*
 
       - name: Process each plugin's scan
+        id: process
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -83,6 +84,8 @@ jobs:
         run: |
           set -euo pipefail
           overall_gate_ok=1
+          head_sha=""
+          summary_lines=()
 
           for artifact_dir in scan-artifacts/*/; do
             [ -d "${artifact_dir}" ] || continue
@@ -98,6 +101,7 @@ jobs:
             pr_number="$(jq -r '.pr_number' "${ctx}")"
             commit_sha="$(jq -r '.commit_sha' "${ctx}")"
             scanner_version="$(jq -r '.scanner_version' "${ctx}")"
+            head_sha="${commit_sha}"
 
             printf '\n── Processing plugin: %s (PR #%s) ──\n' "${plugin}" "${pr_number}"
 
@@ -112,7 +116,7 @@ jobs:
                 "${findings}" \
                 "scan-output/${plugin}/risk-summary.json"
 
-            # 2. Format the PR comment markdown
+            # 2. Render the PR comment markdown (deterministic; no LLM)
             PLUGIN_NAME="${plugin}" \
               python .github/scripts/write-comment.py \
                 "scan-output/${plugin}/risk-summary.json" \
@@ -123,16 +127,63 @@ jobs:
             COMMENT_FILE="scan-output/${plugin}/audit-comment.md" \
               bash .github/scripts/post-audit-comment.sh
 
-            # 4. Enforce gate (records pass/fail per plugin; OR across plugins)
-            if ! PR_NUMBER="${pr_number}" \
-                 SUMMARY_FILE="scan-output/${plugin}/risk-summary.json" \
-                 bash .github/scripts/check-approvals.sh; then
+            # 4. Enforce gate per plugin; OR across plugins for the overall result
+            severity="$(jq -r '.overall_severity' "scan-output/${plugin}/risk-summary.json")"
+            count="$(jq -r '.finding_count' "scan-output/${plugin}/risk-summary.json")"
+            if PR_NUMBER="${pr_number}" \
+               SUMMARY_FILE="scan-output/${plugin}/risk-summary.json" \
+               bash .github/scripts/check-approvals.sh; then
+              summary_lines+=("- ✅ \`${plugin}\` — ${severity} (${count} finding(s))")
+            else
               echo "gate FAILED for plugin: ${plugin}"
               overall_gate_ok=0
+              summary_lines+=("- ❌ \`${plugin}\` — ${severity} (${count} finding(s))")
             fi
           done
+
+          # Persist for the publish-check step. workflow_run jobs do not
+          # auto-create PR-level checks; we publish one explicitly below.
+          {
+            printf 'head_sha=%s\n' "${head_sha}"
+            printf 'gate_ok=%s\n' "${overall_gate_ok}"
+          } >>"$GITHUB_OUTPUT"
+          printf '%s\n' "${summary_lines[@]}" >scan-output/check-summary.md
 
           if [[ "${overall_gate_ok}" -eq 0 ]]; then
             printf '\none or more plugins failed the severity gate.\n'
             exit 1
           fi
+
+      # Publish the gate decision as a check-run on the PR's head SHA so it
+      # appears in `gh pr checks` and can be required in branch protection.
+      # workflow_run jobs do not surface as PR checks by default.
+      - name: Publish PR-level check
+        if: always() && steps.process.outputs.head_sha != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          HEAD_SHA: ${{ steps.process.outputs.head_sha }}
+          GATE_OK: ${{ steps.process.outputs.gate_ok }}
+        run: |
+          set -euo pipefail
+          if [[ "${GATE_OK}" == "1" ]]; then
+            conclusion="success"
+            title="Skill security gate passed"
+          else
+            conclusion="failure"
+            title="Skill security gate failed — apply 'security-override' label and re-run to override"
+          fi
+          summary_body="$(cat scan-output/check-summary.md 2>/dev/null || printf 'No plugin scans processed.\n')"
+
+          jq -n \
+            --arg name "Skill Security Audit Report" \
+            --arg head_sha "${HEAD_SHA}" \
+            --arg conclusion "${conclusion}" \
+            --arg title "${title}" \
+            --arg summary "${summary_body}" \
+            '{name: $name, head_sha: $head_sha, status: "completed", conclusion: $conclusion, output: {title: $title, summary: $summary}}' \
+          | gh api "repos/${GITHUB_REPOSITORY}/check-runs" \
+              --method POST \
+              --input - \
+              --silent
+          printf 'published check-run: %s on %s\n' "${conclusion}" "${HEAD_SHA}"
