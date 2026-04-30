@@ -17,6 +17,7 @@ name: kebab-case-slug
 description: Use when <concrete trigger>. <One sentence of purpose.>
 version: 1.0.0
 owner: team-or-person
+license: MIT
 ---
 
 # <Human-readable title>
@@ -46,7 +47,7 @@ Load-bearing elements: the frontmatter identity (`name`, `description`, `version
 
 **Write the description as a retrieval signal.** Lead with "Use when…" and enumerate concrete invocation triggers — user phrases, file extensions, error strings, event types. Keep it short; long descriptions dilute the signal.
 
-**Declare identity in frontmatter.** Ship `name`, `description`, `version` (semver), and `owner`. Version bumps are the cache-busting signal consumers rely on; owner is who gets pinged when the skill rots. Invent no keys the skill spec does not sanction.
+**Declare identity in frontmatter.** Ship `name`, `description`, `version` (semver), and `owner`. Version bumps are the cache-busting signal consumers rely on; owner is who gets pinged when the skill rots. Add `license` (SPDX identifier such as `MIT`, or a short reference to a bundled `LICENSE` file) so reusers know the redistribution terms — match the host repo's license unless the skill ships under different terms. Invent no keys the skill spec does not sanction.
 
 **Keep the body short.** Under 300 lines, hard ceiling 400; lines under 120 characters. Move long scripts and reference material to sibling files. Every line is paid for in context tokens.
 

@@ -3,6 +3,7 @@ name: reversibility
 description: Assess decision risk by classifying as one-way or two-way door — use when calibrating how much analysis a decision deserves before committing
 argument-hint: "[decision to evaluate for reversibility]"
 user-invocable: true
+license: MIT
 ---
 
 <objective>

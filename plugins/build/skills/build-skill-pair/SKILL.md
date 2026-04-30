@@ -18,6 +18,7 @@ references:
   - ../../_shared/references/primitive-routing.md
   - ../../_shared/references/skill-pair-best-practices.md
   - ../../_shared/references/skill-locations.md
+license: MIT
 ---
 
 # Build Skill Pair

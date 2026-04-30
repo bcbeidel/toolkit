@@ -68,6 +68,7 @@ excluded from Tier 2.
 | Required frontmatter | canonical | Any of `name` / `description` / `version` / `owner` is missing or empty | fail |
 | Version shape | principle — *Declare identity* | `version` does not match `^\d+\.\d+\.\d+$` | fail |
 | Description cap | canonical | `description` exceeds 1024 chars, or combined with `when_to_use` exceeds 1536 | fail |
+| License presence | toolkit-opinion | Frontmatter has no `license` key. Spec-optional per Agent Skills; flagged as house-style guidance so reusers know redistribution terms | info |
 | Required sections | principle — *Declare triggers / preconditions / failure contract / example* | Missing any of `## When to use`, `## Prerequisites`, `## Steps`, `## Failure modes`, `## Examples` | fail |
 | Steps shape | principle — *Steps as numbered sequence* | Steps section is not an ordered list starting at 1 with sequential increments | fail (not ordered list) / warn (non-sequential) |
 | Examples content | principle — *Anchor with a concrete example* | Examples section lacks at least one fenced code block | warn |
@@ -87,6 +88,7 @@ excluded from Tier 2.
 - **Secrets scan:** the script prefers `gitleaks detect --no-git --source <file>`. When `gitleaks` is absent, it falls back to a built-in regex set (AWS keys `AKIA[0-9A-Z]{16}`, GitHub PATs `ghp_[A-Za-z0-9]{36}` / `github_pat_[A-Za-z0-9_]{82}`, OpenAI keys `sk-[A-Za-z0-9]{48}`, Anthropic keys `sk-ant-[A-Za-z0-9\-_]{80,}`, Stripe live keys `sk_live_[A-Za-z0-9]{24}`, and generic `password|secret|token|api_key|access_key|private_key` assignments). Any match is FAIL.
 - **Remote-exec / destructive-cmd:** emitted as WARN rather than FAIL — destructive commands are often legitimate when gated, and D7 Safety Gating judges whether the gate exists. The WARN text feeds Tier-2 as context.
 - **Prose pre-check:** wordlist and absolute-path matches emit WARN only. D4 Clarity and Consistency catches the non-obvious tail.
+- **License presence:** emits INFO (advisory, never affects exit code). The Agent Skills spec lists `license` as optional, not recommended — this finding is toolkit-opinion: setting `license` (an SPDX identifier or a short reference to a bundled `LICENSE` file) lets downstream reusers know the redistribution terms. Default to the host repo's license unless the skill ships under different terms.
 
 ---
 

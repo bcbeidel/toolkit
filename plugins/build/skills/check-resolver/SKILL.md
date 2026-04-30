@@ -7,6 +7,7 @@ references:
   - ../../_shared/references/resolver-best-practices.md
   - references/audit-dimensions.md
   - references/repair-playbook.md
+license: MIT
 ---
 
 # /build:check-resolver

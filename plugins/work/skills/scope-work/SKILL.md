@@ -11,6 +11,7 @@ user-invocable: true
 references:
   - references/spec-format-guide.md
   - references/exploration-patterns.md
+license: MIT
 ---
 
 # Scope Work

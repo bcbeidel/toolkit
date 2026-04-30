@@ -24,6 +24,7 @@ references:
   - ../../_shared/references/skill-locations.md
   - references/audit-dimensions.md
   - references/repair-playbook.md
+license: MIT
 ---
 
 # Check Skill Pair

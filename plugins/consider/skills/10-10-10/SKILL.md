@@ -3,6 +3,7 @@ name: 10-10-10
 description: Evaluate decisions by considering impact across three time horizons — use when short-term emotions and long-term consequences may point in different directions
 argument-hint: "[decision you're weighing or struggling with]"
 user-invocable: true
+license: MIT
 ---
 
 <objective>

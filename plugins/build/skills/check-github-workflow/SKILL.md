@@ -19,6 +19,7 @@ references:
   - ../../_shared/references/github-workflow-best-practices.md
   - references/audit-dimensions.md
   - references/repair-playbook.md
+license: MIT
 ---
 
 # Check GitHub Workflow

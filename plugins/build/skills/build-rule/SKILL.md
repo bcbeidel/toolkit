@@ -6,6 +6,7 @@ user-invocable: true
 references:
   - ../../_shared/references/rule-best-practices.md
   - ../../_shared/references/primitive-routing.md
+license: MIT
 ---
 
 # /build:build-rule

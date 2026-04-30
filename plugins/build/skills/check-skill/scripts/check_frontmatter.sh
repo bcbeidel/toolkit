@@ -7,6 +7,9 @@
 # Required keys:    `name`, `description`, `version`, `owner` present and non-empty.
 # Version shape:    matches ^[0-9]+\.[0-9]+\.[0-9]+$ (semver).
 # Description cap:  `description` ≤ 1024 chars; combined with `when_to_use` ≤ 1536.
+# License (INFO):   advisory — emits INFO when `license` is absent. Spec-optional
+#                   per Agent Skills, but recommended as toolkit house style so
+#                   reusers know redistribution terms. Never changes exit code.
 #
 # Name slug format and reserved-token checks live in check_identity.sh.
 #
@@ -43,6 +46,8 @@ Checks:
   Required keys   `name` / `description` / `version` / `owner` present, non-empty
   Version shape   ^[0-9]+\.[0-9]+\.[0-9]+$ (semver MAJOR.MINOR.PATCH)
   Description cap `description` ≤ 1024 chars (combined with `when_to_use` ≤ 1536)
+  License (INFO)  `license` advisory — emits INFO when absent (toolkit-opinion;
+                  never affects exit code)
 
 Options:
   -h, --help   Show this help and exit.
@@ -82,6 +87,12 @@ preflight() {
 emit_fail() {
   local path="$1" check="$2" detail="$3" rec="$4"
   printf 'FAIL  %s — %s: %s\n' "${path}" "${check}" "${detail}"
+  printf '  Recommendation: %s\n' "${rec}"
+}
+
+emit_info() {
+  local path="$1" check="$2" detail="$3" rec="$4"
+  printf 'INFO  %s — %s: %s\n' "${path}" "${check}" "${detail}"
   printf '  Recommendation: %s\n' "${rec}"
 }
 
@@ -165,6 +176,20 @@ check_required_key() {
   return 0
 }
 
+check_license_present() {
+  # Toolkit-opinion advisory: emit INFO when `license` is absent.
+  # Spec-optional per Agent Skills; flagged here as house style.
+  # Never changes exit code.
+  local file="$1"
+  if read_value "${file}" "license" >/dev/null 2>&1; then
+    return 0
+  fi
+  emit_info "${file}" "License field" \
+    "frontmatter has no 'license' key (toolkit-opinion advisory)" \
+    "Add 'license: <SPDX id or LICENSE-file reference>' — match the host repo's license unless the skill ships under different terms"
+  return 0
+}
+
 check_version_shape() {
   local file="$1"
   local val
@@ -238,6 +263,7 @@ check_file() {
 
   check_version_shape    "${file}" || fail=1
   check_description_cap  "${file}" || fail=1
+  check_license_present  "${file}"  # advisory; never affects exit code
 
   return "${fail}"
 }

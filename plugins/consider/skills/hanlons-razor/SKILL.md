@@ -3,6 +3,7 @@ name: hanlons-razor
 description: Interpret behavior charitably — attribute to mistakes before malice; use when behavior seems hostile or frustrating and an adversarial interpretation is forming
 argument-hint: "[situation where someone's behavior seems problematic]"
 user-invocable: true
+license: MIT
 ---
 
 <objective>

@@ -11,6 +11,7 @@ user-invocable: true
 references:
   - references/technique-registry.md
   - references/assessment-rubric.md
+license: MIT
 ---
 
 # Refine Prompt

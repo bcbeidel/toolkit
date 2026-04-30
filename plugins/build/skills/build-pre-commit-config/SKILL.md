@@ -18,6 +18,7 @@ user-invocable: true
 references:
   - ../../_shared/references/pre-commit-config-best-practices.md
   - ../../_shared/references/primitive-routing.md
+license: MIT
 ---
 
 # Build Pre-Commit Config

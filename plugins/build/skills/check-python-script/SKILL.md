@@ -18,6 +18,7 @@ references:
   - ../../_shared/references/python-script-best-practices.md
   - references/audit-dimensions.md
   - references/repair-playbook.md
+license: MIT
 ---
 
 # Check Python Script

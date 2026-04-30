@@ -3,6 +3,7 @@ name: via-negativa
 description: Improve by removing problems rather than adding solutions — use when a system or process has accumulated complexity and improvement by addition has hit diminishing returns
 argument-hint: "[system, process, or situation to improve]"
 user-invocable: true
+license: MIT
 ---
 
 <objective>

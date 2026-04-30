@@ -15,6 +15,7 @@ references:
   - references/plan-template.md
   - references/examples/small-plan.md
   - references/examples/medium-plan.md
+license: MIT
 ---
 
 # Plan Work

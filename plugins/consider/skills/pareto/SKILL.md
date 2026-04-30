@@ -3,6 +3,7 @@ name: pareto
 description: Apply the 80/20 rule to find the highest-leverage inputs — use when effort and results feel misaligned or there are too many things competing for attention
 argument-hint: "[area where effort and results feel misaligned]"
 user-invocable: true
+license: MIT
 ---
 
 <objective>

@@ -3,6 +3,7 @@ name: one-thing
 description: Identify the single highest-leverage action that makes everything else easier — use when there are too many competing priorities and focus needs to be established before work begins
 argument-hint: "[goal or area where focus is needed]"
 user-invocable: true
+license: MIT
 ---
 
 <objective>

@@ -14,6 +14,7 @@ references:
   - ../../_shared/references/skill-best-practices.md
   - references/audit-dimensions.md
   - references/repair-playbook.md
+license: MIT
 ---
 
 # /build:check-skill
@@ -82,9 +83,11 @@ doc changes, the dimensions should follow.
    ```
 
    Emit all Tier-1 output immediately, before any LLM work. Exit
-   codes: 0 on clean / WARN-only, 1 on FAIL, 64 on arg error, 69 on
-   missing dependency. Treat exit 1 as the "exclude from Tier 2"
-   signal.
+   codes: 0 on clean / WARN-only / INFO-only, 1 on FAIL, 64 on arg
+   error, 69 on missing dependency. Treat exit 1 as the "exclude
+   from Tier 2" signal. INFO findings are toolkit-opinion advisories
+   (no spec backing) — surface them in the report but do not exclude
+   from Tier 2.
 
 3. **Apply orchestration rules.** Skills with a FAIL from
    `check_identity.sh`, `check_frontmatter.sh`, `check_structure.sh`
@@ -132,9 +135,9 @@ doc changes, the dimensions should follow.
    [repair-playbook.md](references/repair-playbook.md). Sort within
    each severity: Tier-1 deterministic first, then Tier-2 in
    dimension order, then Tier-3 collisions; ties break
-   alphabetically. FAIL precedes WARN overall. Close with a summary
-   line: `N skills audited, M findings (X fail, Y warn)` or
-   `N skills audited — no findings`.
+   alphabetically. Severity order: FAIL → WARN → INFO. Close with a
+   summary line: `N skills audited, M findings (X fail, Y warn,
+   Z info)` or `N skills audited — no findings`.
 
 7. **Offer the opt-in repair loop.** Ask: "Apply fixes? Enter y
    (all), n (skip), or comma-separated numbers." For each selected

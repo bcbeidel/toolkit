@@ -3,6 +3,7 @@ name: swot
 description: Map strengths, weaknesses, opportunities, and threats systematically — use when evaluating a strategic position or deciding how to proceed with both internal and external factors at play
 argument-hint: "[project, product, team, or strategy to evaluate]"
 user-invocable: true
+license: MIT
 ---
 
 <objective>

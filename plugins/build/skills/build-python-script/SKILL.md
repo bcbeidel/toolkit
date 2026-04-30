@@ -15,6 +15,7 @@ user-invocable: true
 references:
   - ../../_shared/references/python-script-best-practices.md
   - ../../_shared/references/primitive-routing.md
+license: MIT
 ---
 
 # Build Python Script

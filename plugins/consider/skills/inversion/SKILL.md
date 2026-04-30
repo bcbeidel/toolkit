@@ -3,6 +3,7 @@ name: inversion
 description: Solve problems backwards by identifying what would guarantee failure — use when direct optimization feels stuck or failure modes are unclear
 argument-hint: "[goal or outcome to achieve]"
 user-invocable: true
+license: MIT
 ---
 
 <objective>

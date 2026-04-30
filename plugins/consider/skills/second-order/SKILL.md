@@ -3,6 +3,7 @@ name: second-order
 description: Think through the consequences of consequences before acting — use when an action has obvious immediate effects but the downstream consequences haven't been traced
 argument-hint: "[decision or action to evaluate]"
 user-invocable: true
+license: MIT
 ---
 
 <objective>

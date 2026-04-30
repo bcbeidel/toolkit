@@ -17,6 +17,7 @@ user-invocable: true
 references:
   - ../../_shared/references/github-workflow-best-practices.md
   - ../../_shared/references/primitive-routing.md
+license: MIT
 ---
 
 # Build GitHub Workflow

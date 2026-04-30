@@ -6,6 +6,7 @@ description: >
   URL, file path, or pasted text for knowledge capture.
 argument-hint: "[URL | file path | pasted content]"
 user-invocable: true
+license: MIT
 ---
 
 # Ingest

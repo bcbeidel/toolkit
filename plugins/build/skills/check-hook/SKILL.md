@@ -13,6 +13,7 @@ references:
   - references/audit-dimensions.md
   - references/repair-playbook.md
   - references/platform-limitations.md
+license: MIT
 ---
 
 # Check Hook

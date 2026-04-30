@@ -3,6 +3,7 @@ name: occams-razor
 description: Find the simplest explanation or solution that accounts for all known facts — use when there are multiple competing explanations and the simplest hasn't been tried first
 argument-hint: "[phenomenon or problem with multiple possible explanations]"
 user-invocable: true
+license: MIT
 ---
 
 <objective>

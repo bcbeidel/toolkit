@@ -12,6 +12,7 @@ references:
   - references/execution-guide.md
   - references/recovery-patterns.md
   - references/multi-session-resumption.md
+license: MIT
 ---
 
 # Start Work

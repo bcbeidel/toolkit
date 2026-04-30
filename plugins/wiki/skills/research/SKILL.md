@@ -24,6 +24,7 @@ references:
   - references/research-modes.md
   - references/cli-commands.md
   - references/MANIFEST.md
+license: MIT
 ---
 
 # Research Skill

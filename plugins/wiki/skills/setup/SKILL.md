@@ -9,6 +9,7 @@ argument-hint: "[project root — defaults to CWD]"
 user-invocable: true
 references:
   - references/working-agreements-capture.md
+license: MIT
 ---
 
 # Wiki Setup

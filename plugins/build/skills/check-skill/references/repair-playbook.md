@@ -22,6 +22,7 @@ before applying.
   - [Required frontmatter](#required-frontmatter)
   - [Version shape](#version-shape)
   - [Description cap](#description-cap)
+  - [License presence](#license-presence)
   - [Required sections](#required-sections)
   - [Steps shape](#steps-shape)
   - [Examples content](#examples-content)
@@ -130,6 +131,15 @@ Covers three subtypes:
 **FROM:** 1100-char description cramming capability + every trigger phrase into one field
 **TO:** description stays ≤1024 (the trigger opener and one-sentence purpose); trigger enumeration moves to `when_to_use`
 **REASON:** Description is the primary retrieval signal; compressing it erodes the routing surface. The `when_to_use` split preserves the full trigger set without truncating the routing-critical opener.
+
+### License presence
+
+**Signal:** Frontmatter has no `license` key (INFO; toolkit-opinion advisory).
+
+**CHANGE:** Add `license:` with an SPDX identifier or a short reference to a bundled `LICENSE` file.
+**FROM:** frontmatter lists `name` / `description` / `version` / `owner` only
+**TO:** same fields plus `license: MIT` (or whatever matches the host repo's `LICENSE`; use `license: Proprietary. LICENSE.txt has complete terms` when the skill bundles its own)
+**REASON:** Spec-optional per Agent Skills, but downstream reusers need to know redistribution terms before they can fork or ship a skill they discovered. Defaulting to the host repo's license keeps the contract honest without forcing per-skill licensing decisions. INFO only — never blocks Tier-2 evaluation.
 
 ### Required sections
 

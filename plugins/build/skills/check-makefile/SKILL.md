@@ -15,6 +15,7 @@ references:
   - ../../_shared/references/makefile-best-practices.md
   - references/audit-dimensions.md
   - references/repair-playbook.md
+license: MIT
 ---
 
 # Check Makefile

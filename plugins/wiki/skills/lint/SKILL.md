@@ -9,6 +9,7 @@ description: >
 argument-hint: "[path/to/file.md]"
 user-invocable: true
 references: []
+license: MIT
 ---
 
 # Audit Skill

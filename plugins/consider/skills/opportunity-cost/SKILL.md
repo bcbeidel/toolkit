@@ -3,6 +3,7 @@ name: opportunity-cost
 description: Evaluate what you give up by choosing one option over alternatives — use when a decision is being made without explicitly naming the best alternative foregone
 argument-hint: "[decision with multiple options to compare]"
 user-invocable: true
+license: MIT
 ---
 
 <objective>

@@ -7,6 +7,7 @@ description: >
   or "repair a chain".
 argument-hint: "[workflow goal or path/to/manifest.chain.md]"
 user-invocable: true
+license: MIT
 ---
 
 # Check Skill-Chain

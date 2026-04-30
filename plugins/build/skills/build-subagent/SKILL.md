@@ -14,6 +14,7 @@ user-invocable: true
 references:
   - ../../_shared/references/subagent-best-practices.md
   - ../../_shared/references/primitive-routing.md
+license: MIT
 ---
 
 # Build Subagent

@@ -13,6 +13,7 @@ references:
   - ../../_shared/references/skill-best-practices.md
   - ../../_shared/references/primitive-routing.md
   - references/platform-notes.md
+license: MIT
 ---
 
 # /build:build-skill
@@ -88,7 +89,9 @@ This skill is the workflow; the principles doc is the rubric.
    Required frontmatter: `name`, `description`, `version`, `owner`.
    Required body sections: `## When to use`, `## Prerequisites`,
    `## Steps`, `## Failure modes`, `## Examples`. Optional frontmatter
-   fields — `argument-hint`, `when_to_use`, `user-invocable: false`,
+   fields — `license` (SPDX id like `MIT`, or a short reference to a
+   bundled `LICENSE` file; default to the host repo's license),
+   `argument-hint`, `when_to_use`, `user-invocable: false`,
    `disable-model-invocation: true`, `paths:`, `allowed-tools`,
    `context: fork` + `agent:`, `model`, `effort`, `hooks`,
    `tested_with` — reach for only when the use case calls.

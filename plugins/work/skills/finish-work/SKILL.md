@@ -12,6 +12,7 @@ disable-model-invocation: true
 references:
   - references/option-execution.md
   - ../../_shared/references/plan-format.md
+license: MIT
 ---
 
 # Finish Work

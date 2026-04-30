@@ -18,6 +18,7 @@ user-invocable: true
 references:
   - ../../_shared/references/readme-best-practices.md
   - ../../_shared/references/primitive-routing.md
+license: MIT
 ---
 
 # Build README

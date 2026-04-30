@@ -3,6 +3,7 @@ name: eisenhower-matrix
 description: Prioritize tasks and decisions by mapping urgency against importance — use when facing competing demands and unclear where to focus first
 argument-hint: "[list of tasks, decisions, or competing priorities]"
 user-invocable: true
+license: MIT
 ---
 
 <objective>

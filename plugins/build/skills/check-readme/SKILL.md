@@ -23,6 +23,7 @@ references:
   - ../../_shared/references/readme-best-practices.md
   - references/audit-dimensions.md
   - references/repair-playbook.md
+license: MIT
 ---
 
 # Check README

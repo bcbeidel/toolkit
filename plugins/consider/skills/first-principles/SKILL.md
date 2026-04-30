@@ -3,6 +3,7 @@ name: first-principles
 description: Break down assumptions and rebuild reasoning from fundamental truths — use when a standard approach feels wrong or produces diminishing returns but no one has questioned its underlying assumptions
 argument-hint: "[problem or system to deconstruct]"
 user-invocable: true
+license: MIT
 ---
 
 <objective>

@@ -18,6 +18,7 @@ references:
   - ../../_shared/references/bash-script-best-practices.md
   - references/audit-dimensions.md
   - references/repair-playbook.md
+license: MIT
 ---
 
 # Check Bash Script

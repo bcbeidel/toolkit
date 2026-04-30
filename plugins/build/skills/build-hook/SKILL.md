@@ -12,6 +12,7 @@ references:
   - ../../_shared/references/hook-best-practices.md
   - ../../_shared/references/primitive-routing.md
   - references/hook-testing.md
+license: MIT
 ---
 
 # Build Hook

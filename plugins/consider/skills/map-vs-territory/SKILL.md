@@ -3,6 +3,7 @@ name: map-vs-territory
 description: Recognize where your mental model diverges from reality — use when a plan or model is driving decisions and its assumptions haven't been stress-tested
 argument-hint: "[situation where assumptions may not match reality]"
 user-invocable: true
+license: MIT
 ---
 
 <objective>

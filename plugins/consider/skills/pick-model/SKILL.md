@@ -3,6 +3,7 @@ name: pick-model
 description: "Select the right AI model for a task based on external benchmarks, pricing, and effort tradeoffs. Use when the user asks \"which model should I use?\", \"what's the best model for X?\", \"help me pick a model\", \"model comparison\", \"should I use Opus or Sonnet?\", or needs to decide between AI models for a specific workload. Also use when someone mentions cost optimization for LLM usage or wants to know if a cheaper model would work."
 argument-hint: "[task or workload to select a model for]"
 user-invocable: true
+license: MIT
 ---
 
 <objective>

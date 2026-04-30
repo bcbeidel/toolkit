@@ -16,6 +16,7 @@ references:
   - references/adhoc-validation.md
   - references/failure-diagnosis.md
   - ../../_shared/references/plan-format.md
+license: MIT
 ---
 
 # Verify Work

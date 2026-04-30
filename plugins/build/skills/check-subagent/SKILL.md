@@ -17,6 +17,7 @@ references:
   - ../../_shared/references/subagent-best-practices.md
   - references/audit-dimensions.md
   - references/repair-playbook.md
+license: MIT
 ---
 
 # Check Subagent
