@@ -17,6 +17,7 @@ Handle deterministic checks (pointer presence, path resolution, YAML parse, mtim
   - [Dimension 1: Filing Coverage](#dimension-1-filing-coverage)
   - [Dimension 2: Context Actionability](#dimension-2-context-actionability)
   - [Dimension 3: Eval Representativeness](#dimension-3-eval-representativeness)
+  - [Dimension 4: Brief Presence and Content](#dimension-4-brief-presence-and-content)
 - [Tier 3: Cross-Artifact Checks](#tier-3-cross-artifact-checks)
 - [Evaluation Prompt Template](#evaluation-prompt-template)
 - [Output Format](#output-format)
@@ -55,7 +56,7 @@ Handle deterministic checks (pointer presence, path resolution, YAML parse, mtim
 
 ## Tier-2 — Semantic Dimensions
 
-Present all three dimensions as a locked rubric in a single call. Include `RESOLVER.md` verbatim, the directory scan output, and `.resolver/evals.yml`.
+Present all four dimensions as a locked rubric in a single call. Include `RESOLVER.md` verbatim, the directory scan output, `.resolver/evals.yml`, and (if present) `.briefs/<slug>.brief.md`.
 
 **Per-dimension calls are an anti-pattern** — per-criterion splits score 11.5 points lower (Hong et al., 2026, RULERS).
 
@@ -120,6 +121,31 @@ For each dimension: **verdict** (WARN, PASS, or N/A), **evidence**, **recommenda
 - Mix of filing and context cases proportional to the respective table sizes
 
 **Canonical Repair:** See `repair-playbook.md` → Dimension 3.
+
+---
+
+### Dimension 4: Brief Presence and Content
+
+*(principle — [brief-best-practices.md](../../../_shared/references/brief-best-practices.md))*
+
+**What it checks:** Does `.briefs/<slug>.brief.md` exist (slug = `resolver` for root-scoped, target dir slug for nested), with the five required H2 sections (*User ask*, *So-what*, *Scope boundaries*, *Planned artifacts*, *Planned handoffs*)? Does the *So-what* paragraph name a specific gap or recurring problem this resolver addresses, rather than reading as a category description? Are scope boundaries concrete?
+
+This dimension is **brief-presence-and-content** in cross-checker rubric vocabulary; it is included in the locked Tier-2 rubric so the same single LLM call evaluates filing, context, evals, and brief together (per RULERS — per-criterion splits cost calibration).
+
+**Fail signals (→ WARN):**
+- Brief is missing entirely (resolver was scaffolded before the brief pattern, or Step 0 was skipped)
+- One or more of the five required H2 sections is absent
+- *So-what* reads as a category description ("documents the resolver for this repo") rather than a specific intent (the recurring task that motivated dynamic context routing here)
+- *Scope boundaries* is empty or carries vague hedges
+
+**Pass signals:**
+- Brief file exists with all five required sections
+- *So-what* names a specific gap (e.g., "team kept filing research into `.context/` because the convention was undocumented") rather than a category description
+- *In* / *Out* lists carry concrete items (filing rows, context bundles, named recurring tasks) rather than "the usual"
+
+**Severity:** WARN (presence and content). Briefs are throw-away — a missing brief does not break the resolver, but it leaves the build untraceable.
+
+**Canonical Repair:** See `repair-playbook.md` → Dimension 4: Brief Presence and Content.
 
 ---
 
@@ -200,11 +226,18 @@ Criterion: >=1 case per filing row; >=15% negative cases; mix of filing and cont
 PASS anchor: 12 cases covering all 5 filing rows plus 3 context rows, with 2 negative cases
 FAIL anchor: 5 cases all positive filing, no context cases, no negative cases
 
+## Dimension 4: Brief Presence and Content
+Criterion: .briefs/<slug>.brief.md exists with five required H2s (User ask, So-what, Scope boundaries, Planned artifacts, Planned handoffs); So-what is non-generic; scope boundaries are concrete. N/A is acceptable when the brief is intentionally absent (e.g., a resolver pre-dating the brief pattern with no impending re-build).
+
+PASS anchor: brief present, So-what names a specific filing-convention drift the team kept hitting, scope boundaries list the affected directories
+FAIL anchor: brief missing; or brief present but So-what reads "documents the resolver for this repo" with empty scope boundaries
+
 ---
 
 <RESOLVER.md verbatim>
 <.resolver/evals.yml verbatim>
 <directory scan output>
+<.briefs/<slug>.brief.md verbatim, or "(missing)">
 
 ---
 

@@ -5,6 +5,7 @@ argument-hint: "[target directory — defaults to CWD; walks up to the nearest R
 user-invocable: true
 references:
   - ../../_shared/references/resolver-best-practices.md
+  - ../../_shared/references/brief-best-practices.md
   - references/audit-dimensions.md
   - references/repair-playbook.md
 license: MIT
@@ -52,11 +53,12 @@ Rules with a FAIL finding from the first five rows are **excluded from Tier 2** 
 
 ### 3. Tier 2 — Semantic Dimensions (One LLM Call)
 
-Present the three judgment dimensions from [audit-dimensions.md](references/audit-dimensions.md) as a locked rubric in one call. Include `RESOLVER.md` verbatim, the output of the directory scan, and the `.resolver/evals.yml` contents.
+Present the four judgment dimensions from [audit-dimensions.md](references/audit-dimensions.md) as a locked rubric in one call. Include `RESOLVER.md` verbatim, the output of the directory scan, the `.resolver/evals.yml` contents, and (if present) the `.briefs/<slug>.brief.md` contents.
 
 1. **Filing Coverage** — Does the filing table reflect the directories that actually exist on disk? Flag dark capabilities (directories not in table and not in out-of-scope list).
 2. **Context Actionability** — Does each context row list at least one concrete doc path (not vague references)? Is the bundle size appropriate (1–4 docs)?
 3. **Eval Representativeness** — Do the evals cover both filing and context routing? Are there negative cases? Is coverage ≥1 case per filing row?
+4. **Brief Presence and Content** — Does `.briefs/<slug>.brief.md` exist with the five required H2 sections (*User ask*, *So-what*, *Scope boundaries*, *Planned artifacts*, *Planned handoffs*)? Is the *So-what* anchored in a specific filing/context drift rather than reading as a category description? Are scope boundaries concrete? Severity is WARN — briefs are throw-away; missing briefs leave the build untraceable but do not break the resolver.
 
 Output per dimension: `evidence → reasoning → verdict (WARN or PASS) → recommendation`. Default-closed on borderline evidence.
 
@@ -89,7 +91,7 @@ For each selected finding, draw the canonical repair from `repair-playbook.md`. 
 ## Key Instructions
 
 - Run Tier-1 first; exclude malformed resolvers from Tier 2
-- Present the three Tier-2 dimensions in a single locked-rubric call; per-dimension calls degrade agreement (RULERS, Hong et al. 2026)
+- Present the four Tier-2 dimensions in a single locked-rubric call; per-dimension calls degrade agreement (RULERS, Hong et al. 2026)
 - Include `RESOLVER.md` verbatim in the Tier-2 prompt — never summarize
 - Gate the dark-capabilities scan on depth — depth 1–2 is the sweet spot; deeper scans overwhelm with transient build outputs
 - Run evals only when `--run-evals` is passed; eval execution is slow and costs LLM calls, so keep it opt-in
