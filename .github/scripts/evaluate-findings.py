@@ -2,14 +2,14 @@
 """Evaluate skill-scanner findings and produce risk-summary.json.
 
 Step 1 of the split evaluator/comment-writer architecture. Reads scanner
-findings (rule_id, severity, analyzer, description per finding) and asks
-Claude for a 2-3 sentence narrative plus the top findings. Raw skill
-content is never passed to this step — only structured scanner metadata —
-so prompt injection from skill text cannot reach the LLM call.
+findings and asks Claude for a 2-3 sentence narrative. The LLM call
+receives only metadata (rule_id, severity, analyzer, description,
+category) — never file paths, snippets, or other raw skill content — so
+prompt injection from skill text cannot reach the LLM call.
 
-The output schema (risk-summary.json) must not contain skill_text,
-excerpt, snippet, or any raw skill content. The downstream comment-writer
-trusts that contract.
+The persisted risk-summary.json carries the full per-finding detail
+(file_path, line_number, snippet) for the deterministic comment renderer
+to use. The injection boundary is the LLM prompt, not the summary file.
 
 Example:
     FINDINGS_FILE=findings.json SUMMARY_FILE=risk-summary.json \\
@@ -35,6 +35,9 @@ EXIT_INTERRUPTED = 130
 SEVERITY_ORDER = {"CRITICAL": 4, "HIGH": 3, "MEDIUM": 2, "LOW": 1, "UNKNOWN": 0}
 DEFAULT_MODEL = "claude-opus-4-6"
 DEFAULT_POLICY_PATH = "policy/skill-scan-policy.yml"
+SNIPPET_MAX_CHARS = 200
+TITLE_MAX_CHARS = 200
+LLM_SAFE_FIELDS = ("rule_id", "severity", "analyzer", "description", "category")
 
 
 def policy_fingerprint(policy_file: Path) -> str:
@@ -70,10 +73,13 @@ def parse_simple_yaml_list(policy_file: Path, key: str) -> list[str]:
 
 
 def load_findings(findings_file: Path) -> tuple[list[dict], bool]:
-    """Load scanner findings and extract only structured metadata.
+    """Load scanner findings and extract structured fields.
 
-    Returns (findings, scan_failed). Raw skill content (skill_text,
-    excerpt, snippet, etc.) is discarded — never forwarded.
+    Returns (findings, scan_failed). Each finding carries metadata fields
+    (rule_id, severity, analyzer, description, category) plus locator
+    fields (skill_name, file_path, line_number, snippet). Locator fields
+    are persisted to risk-summary.json for the comment renderer; only
+    LLM_SAFE_FIELDS are passed to the LLM evaluator.
     """
     if not findings_file.exists():
         print(
@@ -90,17 +96,40 @@ def load_findings(findings_file: Path) -> tuple[list[dict], bool]:
 
     scan_failed = bool(data.get("scan_failed", False))
 
+    raw_findings: list[dict] = []
     if "results" in data:
-        raw_findings = [f for r in data["results"] for f in r.get("findings", [])]
+        for r in data["results"]:
+            skill_name = str(r.get("skill_name", "") or "")
+            for f in r.get("findings", []):
+                raw_findings.append({**f, "_skill_name": skill_name})
     else:
-        raw_findings = data.get("findings", [])
+        raw_findings = list(data.get("findings", []))
+
+    def _opt_str(value, limit: int) -> str | None:
+        if value is None:
+            return None
+        return str(value)[:limit]
+
+    def _opt_int(value) -> int | None:
+        if value is None:
+            return None
+        try:
+            return int(value)
+        except (TypeError, ValueError):
+            return None
 
     structured = [
         {
             "rule_id": str(f.get("rule_id", "UNKNOWN"))[:100],
             "severity": str(f.get("severity", "UNKNOWN")).upper(),
             "analyzer": str(f.get("analyzer", "unknown"))[:100],
+            "category": str(f.get("category", "uncategorized"))[:100],
+            "title": _opt_str(f.get("title"), TITLE_MAX_CHARS),
             "description": str(f.get("description", "No description"))[:500],
+            "skill_name": str(f.get("_skill_name", ""))[:200],
+            "file_path": _opt_str(f.get("file_path"), 300),
+            "line_number": _opt_int(f.get("line_number")),
+            "snippet": _opt_str(f.get("snippet"), SNIPPET_MAX_CHARS),
         }
         for f in raw_findings
     ]
@@ -161,7 +190,13 @@ def call_evaluator(
         for sev in ("CRITICAL", "HIGH", "MEDIUM", "LOW")
     }
 
-    sample = findings[:20]
+    # Redact locator fields (file_path, snippet, etc.) before sending
+    # to the LLM. Snippets contain raw skill content; passing them
+    # through here would re-open the prompt-injection surface.
+    sample = [
+        {k: f[k] for k in LLM_SAFE_FIELDS if k in f}
+        for f in findings[:20]
+    ]
 
     prompt = (
         f"Plugin: {plugin_name}\n"
@@ -250,6 +285,17 @@ def run(args: argparse.Namespace) -> int:
     summary["overall_severity"] = overall_severity
     summary["finding_count"] = len(findings)
     summary["findings"] = findings
+    summary["severity_counts"] = {
+        sev: sum(1 for f in findings if f["severity"] == sev)
+        for sev in ("CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO")
+    }
+    category_counts: dict[str, int] = {}
+    for f in findings:
+        cat = f.get("category") or "uncategorized"
+        category_counts[cat] = category_counts.get(cat, 0) + 1
+    summary["category_counts"] = dict(
+        sorted(category_counts.items(), key=lambda kv: (-kv[1], kv[0]))
+    )
     summary["scan_failed"] = scan_failed
     summary["policy_fingerprint"] = policy_fingerprint(policy_file)
     summary["scanner_version"] = scanner_version

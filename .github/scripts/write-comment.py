@@ -39,26 +39,85 @@ MERGE_BLOCKED_NOTICE = (
     "produce findings. Resolve the workflow error before merging."
 )
 
+DESC_CELL_MAX = 160
+EXCERPT_CELL_MAX = 100
+SEVERITY_ROWS = ("CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO")
+
 
 def _md_escape_cell(text: str) -> str:
     """Make a string safe to drop into a Markdown table cell on one line."""
     return str(text).replace("|", "\\|").replace("\r", " ").replace("\n", " ").strip()
 
 
+def _truncate(text: str, limit: int) -> str:
+    if len(text) <= limit:
+        return text
+    return text[: max(0, limit - 1)].rstrip() + "…"
+
+
+def _format_location(f: dict) -> str:
+    skill = f.get("skill_name") or ""
+    path = f.get("file_path") or ""
+    line = f.get("line_number")
+    parts: list[str] = []
+    if skill and path:
+        parts.append(f"{skill}/{path}")
+    elif path:
+        parts.append(path)
+    elif skill:
+        parts.append(skill)
+    else:
+        return "—"
+    if line is not None:
+        parts.append(f":{line}")
+    return "".join(parts)
+
+
+def render_severity_table(severity_counts: dict[str, int]) -> str:
+    rows = ["| Severity | Count |", "|---|---|"]
+    for sev in SEVERITY_ROWS:
+        rows.append(f"| {sev} | {severity_counts.get(sev, 0)} |")
+    return "\n".join(rows) + "\n"
+
+
+def render_category_table(category_counts: dict[str, int]) -> str:
+    if not category_counts:
+        return ""
+    rows = ["| Category | Count |", "|---|---|"]
+    rows.extend(
+        f"| {_md_escape_cell(cat)} | {count} |"
+        for cat, count in category_counts.items()
+    )
+    return "\n".join(rows) + "\n"
+
+
 def render_findings_table(findings: list[dict]) -> str:
     if not findings:
         return "_No findings._"
-    header = "| # | Severity | Analyzer | Rule | Description |\n|---|---|---|---|---|\n"
-    rows = [
-        "| {idx} | {sev} | {analyzer} | {rule} | {desc} |".format(
-            idx=i,
-            sev=_md_escape_cell(f.get("severity", "UNKNOWN")),
-            analyzer=_md_escape_cell(f.get("analyzer", "unknown")),
-            rule=_md_escape_cell(f.get("rule_id", "UNKNOWN")),
-            desc=_md_escape_cell(f.get("description", "")),
+    header = (
+        "| # | Severity | Category | Location | Rule | Description | Excerpt |\n"
+        "|---|---|---|---|---|---|---|\n"
+    )
+    rows = []
+    for i, f in enumerate(findings, start=1):
+        snippet = f.get("snippet") or ""
+        excerpt_cell = (
+            f"`{_md_escape_cell(_truncate(snippet, EXCERPT_CELL_MAX))}`"
+            if snippet
+            else "—"
         )
-        for i, f in enumerate(findings, start=1)
-    ]
+        desc_text = _truncate(f.get("description", ""), DESC_CELL_MAX)
+        rows.append(
+            "| {idx} | {sev} | {cat} | {loc} | {rule} | {desc} | {exc} |".format(
+                idx=i,
+                sev=_md_escape_cell(f.get("severity", "UNKNOWN")),
+                cat=_md_escape_cell(f.get("category", "uncategorized")),
+                loc=_md_escape_cell(_format_location(f)),
+                rule=_md_escape_cell(f.get("rule_id", "UNKNOWN")),
+                desc=_md_escape_cell(desc_text),
+                exc=excerpt_cell,
+            )
+        )
     return header + "\n".join(rows) + "\n"
 
 
@@ -86,6 +145,28 @@ def render_comment(plugin_name: str, summary: dict) -> str:
             f"Scan completed for {plugin_name}. {finding_count} finding(s) detected.",
         )
         parts.extend([narrative, ""])
+
+    severity_counts = summary.get("severity_counts") or {}
+    category_counts = summary.get("category_counts") or {}
+
+    if findings and not scan_failed:
+        parts.extend(
+            [
+                "### Severity breakdown",
+                "",
+                render_severity_table(severity_counts),
+                "",
+            ]
+        )
+        if category_counts:
+            parts.extend(
+                [
+                    "### Category breakdown",
+                    "",
+                    render_category_table(category_counts),
+                    "",
+                ]
+            )
 
     parts.extend(
         [

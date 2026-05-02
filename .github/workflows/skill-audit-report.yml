@@ -147,7 +147,32 @@ jobs:
             printf 'head_sha=%s\n' "${head_sha}"
             printf 'gate_ok=%s\n' "${overall_gate_ok}"
           } >>"$GITHUB_OUTPUT"
-          printf '%s\n' "${summary_lines[@]}" >scan-output/check-summary.md
+
+          # Build the check-run summary: per-plugin tally lines first, then
+          # the rendered audit comment(s) embedded so the PR-page check view
+          # carries actionable detail (paths, severity, excerpts) rather
+          # than just a count. Truncate per GitHub's 65k summary cap.
+          {
+            printf '%s\n' "${summary_lines[@]}"
+            printf '\n'
+            for artifact_dir in scan-artifacts/*/; do
+              [ -d "${artifact_dir}" ] || continue
+              plugin="$(jq -r '.plugin' "${artifact_dir}context.json" 2>/dev/null || true)"
+              [ -n "${plugin}" ] || continue
+              comment="scan-output/${plugin}/audit-comment.md"
+              [ -f "${comment}" ] || continue
+              printf -- '---\n\n'
+              cat "${comment}"
+              printf '\n'
+            done
+          } >scan-output/check-summary.md
+          # Hard-cap to GitHub's check-run summary limit (65535 chars).
+          if [ "$(wc -c <scan-output/check-summary.md)" -gt 65000 ]; then
+            head -c 64500 scan-output/check-summary.md >scan-output/check-summary.trim
+            printf '\n\n_… output truncated; see PR comment(s) for the full report._\n' \
+              >>scan-output/check-summary.trim
+            mv scan-output/check-summary.trim scan-output/check-summary.md
+          fi
 
           if [[ "${overall_gate_ok}" -eq 0 ]]; then
             printf '\none or more plugins failed the severity gate.\n'
