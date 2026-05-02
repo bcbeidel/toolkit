@@ -1,6 +1,6 @@
 ---
 name: Audit Skill Dimensions
-description: Evaluation criteria for auditing a Claude Code SKILL.md — Tier-1 deterministic format checks, Tier-2 eight-dimension semantic rubric mirroring the authoring principles, and Tier-3 cross-skill conflict detection.
+description: Evaluation criteria for auditing a Claude Code SKILL.md — Tier-1 deterministic format checks, Tier-2 nine-dimension semantic rubric mirroring the authoring principles, and Tier-3 cross-skill conflict detection.
 ---
 
 # Audit Skill Dimensions
@@ -32,6 +32,7 @@ dimension follows.
   - [Dimension 6: Failure Handling](#dimension-6-failure-handling)
   - [Dimension 7: Safety Gating](#dimension-7-safety-gating)
   - [Dimension 8: Example Realism](#dimension-8-example-realism)
+  - [Dimension 9: Mechanical-Work Partition](#dimension-9-mechanical-work-partition)
 - [Evaluation Prompt Template](#evaluation-prompt-template)
 - [Tier 3: Cross-Skill Description Collision](#tier-3-cross-skill-description-collision)
 - [Output Format](#output-format)
@@ -94,7 +95,7 @@ excluded from Tier 2.
 
 ## Tier 2: Semantic Dimensions (One LLM Call per Skill)
 
-Present all eight dimensions as a locked rubric in a single call per
+Present all nine dimensions as a locked rubric in a single call per
 skill. Include the full SKILL.md body verbatim — never summarize.
 
 **Per-dimension calls are an anti-pattern.** Per-criterion separate calls
@@ -290,6 +291,29 @@ verdict "N/A".
 
 ---
 
+### Dimension 9: Mechanical-Work Partition
+
+*(principle — [Partition mechanical work from judgment](../../../_shared/references/skill-best-practices.md))*
+
+**What it checks:** Whether mechanical substeps (file existence, regex match, count, schema validity, fixed-list lookup, exit-code branching) are extracted to sibling scripts the SKILL.md invokes — or kept inline as prose the LLM has to re-derive on every invocation.
+
+**Scope:** Only WARN when the prose describes mechanical work the LLM is expected to perform without script support. Judgment-only skills (rubric application, scope decisions, narrative writing) return PASS with verdict "N/A".
+
+**Fail signals (→ WARN):**
+- A step instructs the LLM to perform a check that is purely mechanical: "Verify the file exists", "Count the occurrences of X", "Validate the YAML matches schema Y", "Check whether all entries appear in the registered list" — with no sibling script invoked
+- A step asks the LLM to parse, extract, or compare structured data the script could feed it as already-parsed output
+- The skill bundles no `scripts/` sibling but contains multiple mechanical-shaped steps
+- The skill describes pattern-matching against a fixed regex, fixed list, or known schema as if it were judgment
+
+**Pass signals:**
+- Mechanical substeps invoke sibling scripts under `scripts/` and the LLM reasons over the script's output (text, JSON, exit code)
+- The skill is judgment-only (rubric application, narrative writing, scope decisions) and no extraction applies
+- Inline mechanical work is acknowledged with a one-line reason (e.g., a single trivial check whose script would add maintenance burden disproportionate to the cost)
+
+**Canonical Repair:** See `repair-playbook.md` → Dimension 9.
+
+---
+
 ## Evaluation Prompt Template
 
 Use this skeleton for every Tier-2 LLM call. Criterion statements and
@@ -297,7 +321,7 @@ anchor examples come from the rubric above — do not generate them
 per-audit.
 
 ```
-You are auditing a Claude Code SKILL.md file. Evaluate all eight
+You are auditing a Claude Code SKILL.md file. Evaluate all nine
 dimensions below in a single response.
 
 Tier-1 signals for this skill (use as context, not as dimension gating):
@@ -371,6 +395,16 @@ identifiers, show side effects, and avoid synthetic placeholders?
 PASS anchor: example with real file paths, realistic parameters, and visible outputs/side effects
 FAIL anchor: `foo`/`bar`/`Widget` placeholders, `"example"` strings, no side effect shown
 
+## Dimension 9: Mechanical-Work Partition
+Criterion: Are mechanical substeps (file existence, regex match,
+count, schema validity, fixed-list lookup, exit-code branching)
+extracted to sibling scripts the SKILL.md invokes, with the LLM
+reasoning over the script's output? (Returns N/A when the workflow
+is judgment-only.)
+
+PASS anchor: a step invokes `scripts/extract.py` and the LLM reasons over its JSON output; or the skill is judgment-only (rubric application, narrative writing) and no extraction applies
+FAIL anchor: prose like "Verify the file exists at <path>" or "Count the entries in the registry" with no sibling script — the LLM is expected to re-derive the mechanical work on every invocation
+
 ---
 
 <skill file verbatim>
@@ -435,7 +469,8 @@ Sort order: FAIL findings first, WARN findings second, HINT last; within
 each severity, Tier-1 deterministic findings first, then Tier-2
 dimensions in numerical order (Description Retrieval → Trigger
 Conditions → Step Discipline → Clarity → Prerequisites → Failure
-Handling → Safety Gating → Example Realism), then Tier-3 collisions;
+Handling → Safety Gating → Example Realism → Mechanical-Work
+Partition), then Tier-3 collisions;
 ties break alphabetically by file path.
 
 Final summary line: `N skills audited, M findings (X fail, Y warn)` or

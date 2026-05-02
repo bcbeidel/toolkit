@@ -55,6 +55,8 @@ Load-bearing elements: the frontmatter identity (`name`, `description`, `version
 
 **Write Steps as a numbered sequence of atomic actions.** Ordered list starting at 1, one action per step, imperative voice addressed to the agent. Keep conditional nesting shallow; deeper branching usually means a second skill. No commentary or rationale inside the step body — reasoning lives in surrounding prose.
 
+**Partition mechanical work from judgment.** For each step, ask whether the work is *mechanical* (file existence, regex match, count, schema validity, fixed-list lookup, exit-code branching) or *judgment* (is this well-scoped, does this read well, does the description retrieve). Mechanical work belongs in a sibling script under `scripts/` that the SKILL.md invokes — the LLM reasons over the script's output, not the raw input. Doing mechanical work in prose is slower, less reliable per invocation, and pays the token cost every call. The toolkit's own audit skills (check-skill, check-resolver, check-rule) follow this partition: Tier-1 deterministic scripts feed Tier-2 LLM judgment. Apply the same shape to any skill whose workflow has a deterministic substrate, and note explicitly when the workflow is judgment-only.
+
 **State preconditions once, check them early.** List tools, env vars, versions, and assumed state in `## Prerequisites`, and verify the critical ones in step 1. Assumed state is the biggest source of silent failure.
 
 **Declare inputs, outputs, and their shapes.** Name parameters the skill consumes, artifacts it produces, and environment variables it reads. Implicit contracts invite guessing.

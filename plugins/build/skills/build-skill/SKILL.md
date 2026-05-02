@@ -61,7 +61,7 @@ This skill is the workflow; the principles doc is the rubric.
 
 2. **Capture intent.** Read `$ARGUMENTS`. Parse one of: a name + intent
    phrase (use the name, capture the trigger from the rest); a path to
-   an existing `SKILL.md` (route to the Improve sub-step at Step 8);
+   an existing `SKILL.md` (route to the Improve sub-step at Step 9);
    or empty (prompt the user). If the current conversation already
    contains a workflow the user wants to capture, extract the intent
    from the conversation — the tools invoked, the step sequence, the
@@ -84,7 +84,20 @@ This skill is the workflow; the principles doc is the rubric.
    `[existing skill]`. Merge, replace, or narrow the scope?" Routing
    ambiguity forces Claude to pick arbitrarily.
 
-5. **Draft the skill.** Follow the anatomy in
+5. **Partition mechanical work from judgment.** Walk the intended
+   step list and label each substep as *mechanical* (file exists,
+   regex match, count, schema valid, fixed-list lookup, exit-code
+   branching) or *judgment* (is this well-scoped, does this read
+   well, does the description retrieve). For each mechanical
+   substep, propose extracting it to a sibling under `scripts/` and
+   invoking it from `SKILL.md` so the LLM reasons over the script's
+   output, not raw input — `skill-best-practices.md` covers the
+   rationale. Show the user the partition and the proposed scripts
+   before drafting. If the workflow is judgment-only with no
+   mechanical substrate, say so explicitly and move on; do not
+   invent scripts to fill the slot.
+
+6. **Draft the skill.** Follow the anatomy in
    [skill-best-practices.md](../../_shared/references/skill-best-practices.md).
    Required frontmatter: `name`, `description`, `version`, `owner`.
    Required body sections: `## When to use`, `## Prerequisites`,
@@ -101,23 +114,24 @@ This skill is the workflow; the principles doc is the rubric.
    platform-owned and rejected at load time. First ~5K tokens survive
    Claude Code compaction — lead with load-bearing content.
 
-6. **Present for approval.** Before writing, narrate the design
+7. **Present for approval.** Before writing, narrate the design
    choices in 3–6 bullets. Cover the frontmatter choices and why any
    non-default field is set; the structure choices (ordering, where
-   gates sit); and what was skipped and why (often more educational
-   than what was used). A reader who doesn't know skill authoring
-   should be able to follow the narration and disagree with any
-   choice. Iterate on feedback. Hold the write until the user
-   approves.
+   gates sit); the partition outcome from Step 5 (which substeps
+   became scripts and why, or that the workflow is judgment-only);
+   and what was skipped and why (often more educational than what
+   was used). A reader who doesn't know skill authoring should be
+   able to follow the narration and disagree with any choice.
+   Iterate on feedback. Hold the write until the user approves.
 
-7. **Write.** Create the skill directory if it doesn't exist. Write
+8. **Write.** Create the skill directory if it doesn't exist. Write
    `SKILL.md` to the full path from Step 3. Copy any bundled files
    (scripts, references) the draft names. Report the path. Claude
    Code picks up the new skill on next load. Then invoke
    `/build:check-skill` on the new skill — surface any findings and
    offer the repair loop before moving on.
 
-8. **Improve (alternate path from Step 2).** When Step 2 resolves to
+9. **Improve (alternate path from Step 2).** When Step 2 resolves to
    an existing `SKILL.md`, read it; run `/build:check-skill`; collect
    findings; ask the user which to address (y / n /
    comma-separated); apply canonical repairs from the playbook; show
@@ -127,11 +141,11 @@ This skill is the workflow; the principles doc is the rubric.
    appearing, try a different framing rather than tightening
    constraints with ALL-CAPS directives.
 
-9. **Package and present (optional).** Only when the `present_files`
-   tool is available (Claude.ai / Copilot / Cowork — see
-   [platform-notes.md](references/platform-notes.md)), package the
-   skill with `python -m scripts.package_skill <path/to/skill-folder>`
-   and direct the user to the resulting `.skill` file.
+10. **Package and present (optional).** Only when the `present_files`
+    tool is available (Claude.ai / Copilot / Cowork — see
+    [platform-notes.md](references/platform-notes.md)), package the
+    skill with `python -m scripts.package_skill <path/to/skill-folder>`
+    and direct the user to the resulting `.skill` file.
 
 ## Failure modes
 
@@ -146,7 +160,7 @@ This skill is the workflow; the principles doc is the rubric.
 - **User declines the draft at the approval gate.** Expected.
   Recovery: capture the specific objection, revise the draft, and
   re-present; do not write until the objection is addressed.
-- **check-skill findings block the write.** After Step 7, if
+- **check-skill findings block the write.** After Step 8, if
   `/build:check-skill` surfaces FAIL findings on the new skill,
   apply the canonical repair from `repair-playbook.md` and re-audit
   until only WARNs remain (or until the user explicitly accepts a
@@ -176,17 +190,26 @@ Step 3 — Scope: `.claude/` exists in the repo → project scope →
 
 Step 4 — No existing `process-pdfs` skill; no description collision.
 
-Step 5 — Drafts `SKILL.md` with required frontmatter (`name: process-pdfs`,
-`description: Use when…`, `version: 0.1.0`, `owner: <team>`) and
-required body sections.
+Step 5 — Partition: PDF detection (file extension + magic-byte check)
+and the `pdftotext` invocation are mechanical → extract to
+`scripts/extract_text.py` (input path → stdout text + exit code).
+Output sanity-check (is the text non-empty, are page breaks plausible)
+is judgment → keep inline. Narrates the partition before drafting.
 
-Step 6 — Narrates:
+Step 6 — Drafts `SKILL.md` with required frontmatter (`name: process-pdfs`,
+`description: Use when…`, `version: 0.1.0`, `owner: <team>`) and
+required body sections; Steps invoke `scripts/extract_text.py` for the
+mechanical work.
+
+Step 7 — Narrates:
 > - `name: process-pdfs` — gerund form, improves trigger match for "processing PDFs"
 > - Prerequisites names `pdftotext` (poppler) and a sample tests directory — cross-checked against Steps
+> - Partition: detection + extraction in `scripts/extract_text.py`; output sanity-check inline
 > - No `disable-model-invocation` — this is read-only; auto-triggering is safe
 > - Skipped `context: fork` — the user will want to see tool calls while iterating
 
-Step 7 — On approval, writes `.claude/skills/process-pdfs/SKILL.md`.
+Step 8 — On approval, writes `.claude/skills/process-pdfs/SKILL.md`
+and `.claude/skills/process-pdfs/scripts/extract_text.py`.
 Runs `/build:check-skill` — 0 findings. Reports the path.
 </example>
 
@@ -201,7 +224,7 @@ Runs `/build:check-skill` — 0 findings. Reports the path.
   (`/build:check-skill`'s Tier-1 flags unknown structural shapes)
 - Lead with load-bearing content in the first ~5K tokens —
   compaction-safe window
-- Hold the write until the user approves the draft (Step 6 gate)
+- Hold the write until the user approves the draft (Step 7 gate)
 - After writing, run `/build:check-skill` — this skill must produce
   skills that pass the deterministic checks
 
