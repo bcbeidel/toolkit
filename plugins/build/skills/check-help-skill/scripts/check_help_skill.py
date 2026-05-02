@@ -243,7 +243,7 @@ def check_patterns(
     text: str, patterns: list[str], severity: str, check_id: str, label: str
 ) -> list[Finding]:
     return [
-        (severity, check_id, f"{label}: pattern {pat!r}")
+        (severity, check_id, f"{label} matched")
         for pat in patterns
         if re.search(pat, text)
     ]
