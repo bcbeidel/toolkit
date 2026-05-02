@@ -66,6 +66,14 @@ Severity:
 **Severity:** fail (both missing) / warn (one missing).
 **Principles section:** *Patterns That Work — Pair registered in `primitive-routing.md`*.
 
+### brief-presence-and-content
+
+**What it checks:** `.briefs/<primitive>.brief.md` exists at the repo root, carries the five required H2 sections (*User ask*, *So-what*, *Scope boundaries*, *Planned artifacts*, *Planned handoffs*), and the *So-what* paragraph reads as specific to this primitive's intent rather than generic. The presence half is deterministic (handled by `audit_pair.py`); the content-quality half (so-what genericness, scope-boundary concreteness) is LLM judgment, applied in the Required-Fields / Brief-Quality pass alongside the existing dimension-fields check.
+**Pass:** brief file exists, all five required sections are present, the *So-what* names a specific gap / user / problem rather than a category description, and *Scope boundaries* lists concrete in/out items rather than "the usual".
+**Warn:** brief is missing entirely; or one or more required sections are absent; or the *So-what* reads as a category description (e.g., "this codifies best practices for X") rather than a specific intent; or *Scope boundaries* is empty / vague.
+**Severity:** warn (presence and content). Briefs are throw-away — a missing brief does not break the pair, but it leaves the build untraceable to its original intent.
+**Principles section:** *What a Brief Is* and *Anti-Patterns* in [brief-best-practices.md](../../../../_shared/references/brief-best-practices.md).
+
 ## Tier-2: Content
 
 ### principles-doc-structure

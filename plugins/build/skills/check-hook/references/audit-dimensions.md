@@ -142,3 +142,11 @@ Each dimension enforces a specific section of
 **Fail:** Never — this dimension is always advisory.
 **Severity:** `warn`
 **Principles section:** §Safety & Maintenance (CLAUDE.md overlap)
+
+### brief-presence-and-content
+
+**What:** A `.briefs/<hook-name>.brief.md` exists at the repo root capturing the build's intent, carries the five required H2 sections (*User ask*, *So-what*, *Scope boundaries*, *Planned artifacts*, *Planned handoffs*), and the *So-what* paragraph names a specific enforcement gap rather than a category description.
+**Pass:** Brief file exists; all five required sections are present; *So-what* names a specific scenario the hook prevents (a real near-miss, a class of mistakes the team kept making) rather than reading as "deterministically enforces X"; *Scope boundaries* lists concrete in/out items.
+**Fail:** Brief is missing entirely; or one or more required sections are absent; or the *So-what* reads as a category description; or *Scope boundaries* is empty / vague.
+**Severity:** `warn` (presence and content). Briefs are throw-away — a missing brief does not break the hook, but it leaves the build untraceable to its original intent. Hooks built before the brief pattern existed will trip this; a retroactive brief is acceptable.
+**Principles section:** [brief-best-practices.md](../../../_shared/references/brief-best-practices.md) §What a Brief Is and §Anti-Patterns

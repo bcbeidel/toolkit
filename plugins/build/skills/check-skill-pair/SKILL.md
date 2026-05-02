@@ -22,6 +22,7 @@ references:
   - ../../_shared/references/primitive-routing.md
   - ../../_shared/references/skill-pair-best-practices.md
   - ../../_shared/references/skill-locations.md
+  - ../../_shared/references/brief-best-practices.md
   - references/audit-dimensions.md
   - references/repair-playbook.md
 license: MIT
@@ -36,20 +37,25 @@ only surface when you look at the six artifacts *together*.
 
 The deterministic audit runs in one step via
 [`scripts/audit_pair.py`](scripts/audit_pair.py). It emits Tier-1
-existence findings (six artifact slots), Tier-2 content findings
-(required H2 sections in the principles doc, audit-dimensions vs
-repair-playbook coverage), and Tier-3
-cross-reference findings (shared principles path, check-half
-frontmatter refs, build→check handoff, routing registration, dogfood
-script info). A second pass layers one LLM-judgment check on top:
-**audit-dimensions required-fields** — each dimension entry should
-carry six fields (name, what, pass, fail, severity, principles-doc
-section), accepted either labeled (`**Pass:**`) or inferred
-("Passes when…"). This check is prose-heuristic and stays out of the
-script.
+existence findings (six artifact slots **plus** brief presence with
+required-section verification), Tier-2 content findings (required
+H2 sections in the principles doc, audit-dimensions vs
+repair-playbook coverage), and Tier-3 cross-reference findings
+(shared principles path, check-half frontmatter refs, build→check
+handoff, routing registration, dogfood script info). Two judgment
+passes layer LLM checks on top: **audit-dimensions required-fields**
+— each dimension entry should carry six fields (name, what, pass,
+fail, severity, principles-doc section), accepted either labeled
+(`**Pass:**`) or inferred ("Passes when…"); and
+**brief-content-quality** — when `.briefs/<primitive>.brief.md`
+exists, the *So-what* paragraph should name a specific gap / user /
+problem rather than read as a category description, and *Scope
+boundaries* should list concrete in/out items. Both judgment passes
+are prose-heuristic and stay out of the script.
 
 **Workflow sequence:** 1. Scope → 2. Target → 3. Run audit_pair.py →
-4. Required-Fields Pass → 5. Report → 6. Opt-In Repair Loop
+4. Required-Fields Pass → 4b. Brief-Content-Quality Pass →
+5. Report → 6. Opt-In Repair Loop
 
 `<SKILL_ROOT>` and `<SHARED_REF_DIR>` resolve from the chosen target
 — see [skill-locations.md](../../_shared/references/skill-locations.md)
@@ -120,6 +126,29 @@ there is nothing to read.
 
 Read the file once, iterate dimension entries (H3 headings), and
 append any findings to the Tier-1/2/3 set the script produced.
+
+## 4b. Brief-Content-Quality Pass
+
+Skip if Tier-1 flagged the brief as missing — there is nothing to
+read.
+
+Read `.briefs/<primitive>.brief.md` and judge two qualities:
+
+- **So-what is non-generic.** A paragraph that could apply to any
+  build of this primitive ("this codifies best practices for X",
+  "captures conventions for Y") fails. The *So-what* should name the
+  specific gap, user, or recurring problem this build addresses. A
+  retroactive brief authored after the fact is acceptable; what
+  matters is that the paragraph is anchored in specifics, not in
+  category framing.
+- **Scope boundaries are concrete.** *In* and *Out* lists should
+  carry concrete items (file paths, audit dimensions, named
+  workflows), not vague hedges ("the usual stuff", "anything
+  related to X"). Empty boundary lists are a fail.
+
+A brief failing either judgment is a `warn` finding under the
+`brief-presence-and-content` dimension. Append the finding to the
+Tier-1 set the script produced.
 
 ## 5. Report
 

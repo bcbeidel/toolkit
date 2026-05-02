@@ -8,6 +8,49 @@ Pre-restructure releases used a single version. Post-restructure, each plugin
 
 ## [Unreleased]
 
+## [build-0.18.0] - 2026-05-02
+
+### Added
+
+- **`BRIEF.md` pattern for multi-artifact orchestrators (#379).** The
+  three multi-artifact `build/*` orchestrators — `build-skill-pair`,
+  `build-hook`, `build-resolver` — now write a per-build
+  `.briefs/<slug>.brief.md` at intake (Step 0) capturing user ask,
+  so-what, scope boundaries, and two checklists (planned artifacts,
+  planned handoffs). Mid-workflow re-reads counter the lossy-compression
+  drift toward generic rubrics. Paste-excerpt handoffs carry semantic
+  frame to leaf skills verbatim. A canonical anti-shortcut guard
+  appears in each orchestrator's Anti-Pattern Guards. The Review Gate
+  verifies the `Planned artifacts` checklist before accepting the
+  build.
+- **`brief-presence-and-content` audit dimension.** All three checker
+  counterparts (`check-skill-pair`, `check-hook`, `check-resolver`)
+  gain a new dimension covering both presence (deterministic — file
+  exists with the five required H2 sections) and content quality
+  (LLM judgment — so-what is non-generic, scope boundaries are
+  concrete). For `check-skill-pair`, `audit_pair.py` extends Tier-1
+  with the deterministic presence half; the SKILL.md body adds a
+  Brief-Content-Quality judgment pass. For `check-hook` and
+  `check-resolver`, the dimension lives entirely in the rubric and
+  the SKILL.md body. Severity is `warn` — briefs are throw-away;
+  missing briefs leave builds untraceable but do not break the pair.
+- **`brief-best-practices.md` shared reference.** New
+  `plugins/build/_shared/references/brief-best-practices.md`
+  documents brief format, paste-excerpt convention, slug-per-orchestrator
+  rules, update-don't-recreate semantics, and the anti-shortcut guard
+  rationale. Referenced by all three orchestrators and their checkers.
+- **`.briefs/` filing row in `RESOLVER.md`.** Registers the throw-away
+  brief artifact as a routable filing target inside the managed
+  region.
+
+### Changed
+
+- **`build-resolver` workflow steps renumbered.** Existing steps 0–8
+  shifted to 1–9 to accommodate the new Step 0 (Capture Brief).
+  Internal narration step references updated. External callers
+  reference resolver workflow by behavior, not step number, and are
+  unaffected.
+
 ## [wiki-0.4.0] - 2026-04-27
 
 ### Changed

@@ -6,6 +6,7 @@ user-invocable: true
 references:
   - ../../_shared/references/resolver-best-practices.md
   - ../../_shared/references/primitive-routing.md
+  - ../../_shared/references/brief-best-practices.md
 license: MIT
 ---
 
@@ -15,7 +16,31 @@ Scaffold the three linked artifacts that make a resolver work: `RESOLVER.md` at 
 
 ## Workflow
 
-### 0. Verify Primitive
+### 0. Capture Brief
+
+Capture intent before any other workflow step. Write
+`.briefs/<slug>.brief.md` from the user's intake. The slug is
+`resolver` for a root-scoped resolver, or the target directory slug
+for a nested resolver (e.g., `plugins-resolver`). Format follows
+[brief-best-practices.md](../../_shared/references/brief-best-practices.md):
+five required H2 sections (*User ask*, *So-what*, *Scope boundaries*,
+*Planned artifacts*, *Planned handoffs*) plus an empty *Decisions log*.
+
+Pre-populate the two checklists from the planned workflow:
+
+- **Planned artifacts** — the three files produced by Step 8 Write:
+  `RESOLVER.md` at the resolver root, sibling `.resolver/evals.yml`,
+  and the AGENTS.md pointer line.
+- **Planned handoffs** — `/build:check-resolver` (in regenerate mode,
+  with `--run-evals`).
+
+If `.briefs/<slug>.brief.md` already exists, read it and ask whether
+to update (default yes) or abandon and recreate (default no). Update
+means: append to *Decisions log*, refresh checklists if scope
+materially changed, retain *User ask* and *So-what* unless the user
+explicitly revises them. Do not overwrite the brief silently.
+
+### 1. Verify Primitive
 
 A resolver is right when:
 - The repo has ≥3 tracked directories with filing conventions (each typically marked by a consistent naming pattern or shared frontmatter `type:`)
@@ -27,7 +52,7 @@ Redirect when:
 - The user wants skill-dispatch routing (intent → which skill runs) → that's handled by SKILL.md `description`; not a resolver concern
 - The user wants per-skill hygiene for `_shared/references/` wiring → separate problem; not this pair
 
-### 1. Detect Existing Resolver
+### 2. Detect Existing Resolver
 
 Walk up from the target directory looking for an existing `RESOLVER.md`. The first ancestor that has one becomes the **resolver root** for this run.
 
@@ -42,7 +67,7 @@ Walk up from the target directory looking for an existing `RESOLVER.md`. The fir
 
 Announce the mode, the resolver root, and what will change before proceeding. All subsequent steps operate scoped to the resolver root, not necessarily the repo root.
 
-### 2. Scan Resolver Root
+### 3. Scan Resolver Root
 
 Walk the resolver root's subtree (depth 1–2) and collect:
 
@@ -53,7 +78,12 @@ Walk the resolver root's subtree (depth 1–2) and collect:
 
 Report the scan summary: N directories detected, K tagged as filing candidates, M tagged ambient.
 
-### 3. Elicit Filing Table
+### 4. Elicit Filing Table
+
+Re-read the brief's *So-what* and *Scope boundaries* before
+elicitation. Filing rows that drift toward generic naming
+(`.misc/`, `.docs/`) rather than the repo's actual conventions are
+the lossy-compression failure mode the brief exists to counter.
 
 Present autodetected filing rows as proposed content. For each, show: content type (inferred from a sample of frontmatter `description` fields, or asked of the user), location (directory), naming pattern. Ask the user to confirm, correct, or extend.
 
@@ -61,7 +91,12 @@ For directories the scan could not classify, ask directly: "`.inbox/` has 4 file
 
 The filing table is the one machine-generated part of the managed region. Capture final decisions per row.
 
-### 4. Elicit Context Table
+### 5. Elicit Context Table
+
+Re-read the brief's *So-what* before eliciting context bundles.
+Generic task names ("when working on the project") are a smell;
+the brief should anchor the bundles to the *specific* recurring
+tasks named at intake.
 
 This is human-provided. Ask:
 
@@ -69,7 +104,7 @@ This is human-provided. Ask:
 
 Validate that each listed entry resolves to a file or directory. Directory entries are valid — the convention is to Glob the directory's naming pattern and read frontmatter to identify the right file. If a path doesn't resolve, flag and ask for a correction before writing.
 
-### 5. Seed Trigger Evals
+### 6. Seed Trigger Evals
 
 Propose 10–20 eval cases drawn from:
 - One positive case per filing row ("save this X" → expected location)
@@ -78,16 +113,23 @@ Propose 10–20 eval cases drawn from:
 
 Ask the user to confirm, edit, or add cases. A resolver shipped without evals is a decoration.
 
-### 6. Review Gate
+### 7. Review Gate
 
 Show the full proposed output:
 - `RESOLVER.md` contents (filing + context + out-of-scope inside markers, notes section outside)
 - `AGENTS.md` diff (one pointer line; placement proposed based on existing structure)
 - `.resolver/evals.yml` contents
 
+**Checklist verification.** Before accepting the build, read
+`.briefs/<slug>.brief.md` and confirm every item in *Planned
+artifacts* is checked off. Unchecked items are a Review-Gate fail —
+either the artifact was forgotten, or scope changed and the brief
+needs updating with a *Decisions log* entry justifying the drop.
+*Planned handoffs* may remain unchecked here; those land in Step 9.
+
 Iterate on feedback. Hold the write until the user approves.
 
-### 7. Write
+### 8. Write
 
 - Create `RESOLVER.md` at the resolver root
 - Create `.resolver/evals.yml` as a sibling under the resolver root (create `.resolver/` if missing) — co-located so the resolver and its evals move together
@@ -95,9 +137,9 @@ Iterate on feedback. Hold the write until the user approves.
 
 Report each file path.
 
-### 8. Hand Off
+### 9. Hand Off
 
-In **regenerate mode** (Step 1), run `/build:check-resolver --run-evals` automatically after writing — the managed region changed, so the seeded prompts must be re-proven against the new routing. Report the eval pass rate alongside the audit findings.
+In **regenerate mode** (Step 2), run `/build:check-resolver --run-evals` automatically after writing — the managed region changed, so the seeded prompts must be re-proven against the new routing. Report the eval pass rate alongside the audit findings. Paste the brief's *So-what* into the check-resolver invocation prompt verbatim, not as a `.briefs/<slug>.brief.md` pointer.
 
 In **fresh-scaffold mode**, offer: "Run `/build:check-resolver` against the new resolver?" Run it on approval; pass `--run-evals` only if the user asks. Evals failing on the first run means the seeded expectations don't match the filing/context shape — fix the evals, not the resolver.
 
@@ -106,27 +148,29 @@ In **fresh-scaffold mode**, offer: "Run `/build:check-resolver` against the new 
 <example>
 User: `/build:build-resolver`
 
-Step 2 scan: finds `.research/`, `.plans/`, `.designs/`, `.context/`, `.prompts/`, `plugins/build/_shared/references/`. Detects frontmatter `type:` patterns or consistent naming in four of these. Flags `.raw/` as ambient (no frontmatter pattern, no consistent naming).
+Step 0 captures a brief at `.briefs/resolver.brief.md` with the user's intake, planned-artifact and planned-handoff checklists.
 
-Step 3: proposes 6 filing rows; user confirms 5, drops `.prompts/` as out-of-scope.
+Step 3 scan: finds `.research/`, `.plans/`, `.designs/`, `.context/`, `.prompts/`, `plugins/build/_shared/references/`. Detects frontmatter `type:` patterns or consistent naming in four of these. Flags `.raw/` as ambient (no frontmatter pattern, no consistent naming).
 
-Step 4: user names three recurring tasks — "authoring a rule", "authoring a hook", "planning research" — with 2–3 doc paths each.
+Step 4: proposes 6 filing rows; user confirms 5, drops `.prompts/` as out-of-scope.
 
-Step 5: skill proposes 12 eval cases (5 positive filing, 3 positive context, 4 negative); user accepts 10, edits 2.
+Step 5: user names three recurring tasks — "authoring a rule", "authoring a hook", "planning research" — with 2–3 doc paths each.
 
-Step 6 Review Gate: presents all three artifacts. User approves.
+Step 6: skill proposes 12 eval cases (5 positive filing, 3 positive context, 4 negative); user accepts 10, edits 2.
 
-Step 7 writes:
+Step 7 Review Gate: presents all three artifacts plus brief-checklist verification. User approves.
+
+Step 8 writes:
 - `RESOLVER.md` (42 lines)
 - `.resolver/evals.yml` (35 lines)
 - `AGENTS.md` — inserts pointer line under existing "Context Navigation"
 
-Step 8: runs `/build:check-resolver`. All Tier-1 checks PASS; two Tier-2 WARN on thin context bundles ("authoring a rule" loads only one doc — consider adding primitive-routing.md). User applies WARN fix via repair loop.
+Step 9: runs `/build:check-resolver`. All Tier-1 checks PASS; two Tier-2 WARN on thin context bundles ("authoring a rule" loads only one doc — consider adding primitive-routing.md). User applies WARN fix via repair loop.
 </example>
 
 ## Key Instructions
 
-- Run the Step 0 primitive check — redirect if the repo doesn't cross the resolver threshold (≥3 tracked dirs with conventions, or ≥5 cross-skill reference docs)
+- Run the Step 1 primitive check — redirect if the repo doesn't cross the resolver threshold (≥3 tracked dirs with conventions, or ≥5 cross-skill reference docs)
 - Preserve human prose outside managed-region markers on regeneration — the managed region is disk-derived; everything else is author's
 - The filing table is generated from the disk scan, not invented — if the scan produces nothing for a directory, ask rather than fabricate
 - The context table is human-provided — do not synthesize task→doc bundles from model defaults; the user names recurring tasks
@@ -140,6 +184,14 @@ Step 8: runs `/build:check-resolver`. All Tier-1 checks PASS; two Tier-2 WARN on
 3. **Synthesizing context entries from model defaults.** Context bundles are repo-specific; the user must name the recurring tasks and confirm the doc set. Manufactured entries rot on the first regeneration.
 4. **Writing with zero eval cases.** Even 5 eval cases are better than 0; refuse to write `.resolver/evals.yml` empty.
 5. **Overwriting existing human prose.** On regenerate mode, verify the managed-region markers exist and that only the region between them changes. Abort if the file exists but markers are missing — ask the user to reconcile.
+6. **Inlining a chained skill instead of invoking it.** When handing off
+   to `/build:check-resolver` (regenerate mode auto-runs it; fresh-scaffold
+   mode offers it), MUST invoke the chained skill via the Skill tool.
+   MUST NOT read its SKILL.md and inline a partial implementation. The
+   shortcut bypasses the chained skill's rubric and leaves no audit
+   trail that the proper skill was used. Paste the brief's *So-what*
+   into the invocation prompt verbatim — leaf and chained skills do
+   not navigate to the brief.
 
 ## Handoff
 

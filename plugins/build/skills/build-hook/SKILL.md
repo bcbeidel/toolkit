@@ -11,6 +11,7 @@ user-invocable: true
 references:
   - ../../_shared/references/hook-best-practices.md
   - ../../_shared/references/primitive-routing.md
+  - ../../_shared/references/brief-best-practices.md
   - references/hook-testing.md
 license: MIT
 ---
@@ -22,9 +23,35 @@ gate deterministically, bypassing LLM judgment. See
 [hook-best-practices.md](../../_shared/references/hook-best-practices.md) for the
 rubric both halves of the pair share.
 
-**Workflow sequence:** 1. Route → 2. Scope Gate → 3. Elicit → 4. Draft →
-5. Safety Check → 6. Stop Hook Guard (conditional) → 7. Rule Overlap →
-8. Review Gate → 9. Save → 10. Test
+**Workflow sequence:** 0. Brief → 1. Route → 2. Scope Gate → 3. Elicit →
+4. Draft → 5. Safety Check → 6. Stop Hook Guard (conditional) →
+7. Rule Overlap → 8. Review Gate → 9. Save → 10. Test
+
+## 0. Brief
+
+Capture intent before any other action. Write
+`.briefs/<hook-name>.brief.md` from the user's intake. The slug is
+the hook name derived from the enforcement goal (e.g.,
+`block-main-push`, `redact-secrets-on-save`); pre-fill from
+`$ARGUMENTS` `[hook event] [enforcement goal]` if present, otherwise
+ask now. Format follows
+[brief-best-practices.md](../../_shared/references/brief-best-practices.md):
+five required H2 sections (*User ask*, *So-what*, *Scope boundaries*,
+*Planned artifacts*, *Planned handoffs*) plus an empty *Decisions log*.
+
+Pre-populate the two checklists from the planned workflow:
+
+- **Planned artifacts** — the two files produced by Step 9 Save:
+  hook script under `.claude/hooks/<name>.sh` and the `settings.json`
+  entry snippet (shown for manual application, not auto-patched).
+- **Planned handoffs** — `/build:check-hook` (audit). If a structured
+  payload requires non-trivial parsing past the trivial-glue
+  threshold, also `/build:check-bash-script` or
+  `/build:check-python-script` once the script is written.
+
+If `.briefs/<hook-name>.brief.md` already exists, read it and ask
+whether to update (default yes) or abandon and recreate (default no).
+Do not overwrite the brief silently.
 
 ## 1. Route
 
@@ -68,9 +95,16 @@ handler-type question. Otherwise ask one at a time:
 
 ## 4. Draft
 
+Re-read the brief's *So-what* and *Scope boundaries* before drafting.
+Drift toward generic "block X / enforce Y" framing in the script
+header or the settings entry comment is the lossy-compression
+failure mode the brief exists to counter.
+
 Produce two artifacts, referencing the Anatomy section of the principles
 doc for every shape decision (skeleton, matcher syntax, JSON output contract,
-settings.json entry, path-expansion variables).
+settings.json entry, path-expansion variables). Tick each item in
+*Planned artifacts* off in `.briefs/<hook-name>.brief.md` as it is
+drafted.
 
 **Artifact 1 — Hook script.** Start from the skeleton in
 [hook-best-practices.md §Anatomy §Script skeleton](../../_shared/references/hook-best-practices.md).
@@ -125,6 +159,13 @@ The user decides — overlap is often intentional.
 Present both artifacts — script and settings.json entry — and wait for
 explicit user approval before writing. If the user requests changes, revise
 and re-present. Proceed only on explicit approval.
+
+**Checklist verification.** Before accepting the build, read
+`.briefs/<hook-name>.brief.md` and confirm every item in *Planned
+artifacts* is checked off. Unchecked items are a Review-Gate fail —
+either the artifact was forgotten, or scope changed and the brief
+needs updating with a *Decisions log* entry justifying the drop.
+*Planned handoffs* may remain unchecked here; those land in Step 10.
 
 ## 9. Save
 
@@ -202,6 +243,14 @@ offers `/build:check-hook` to audit the configuration.
 3. **`async: true` with `exit 2`.** Async hooks run after execution regardless of exit code.
 4. **Writing files before the Review Gate.** Skipping the gate bypasses the only safety checkpoint.
 5. **Auto-patching `settings.json`.** Always show the snippet; let the user apply.
+6. **Inlining a chained skill instead of invoking it.** When a hook's
+   script grows past trivial glue and warrants `/build:check-bash-script`
+   or `/build:check-python-script`, MUST invoke the chained skill
+   via the Skill tool (paste the brief's *So-what* + the relevant
+   audit dimension into the prompt). MUST NOT read its SKILL.md and
+   inline a partial implementation. The shortcut bypasses the chained
+   skill's rubric and leaves no audit trail that the proper skill
+   was used.
 
 ## Key Instructions
 

@@ -136,6 +136,27 @@ Every FAIL and WARN finding maps to a canonical repair. Before applying, state t
 **CHANGE:** Add cases from the missing side in proportion to the table sizes
 **REASON:** Coverage gaps hide routing defects in the uncovered table.
 
+### Dimension 4: Brief Presence and Content
+
+**Signal:** `.briefs/<slug>.brief.md` is missing.
+
+**CHANGE:** Write a brief at `.briefs/<slug>.brief.md` per [brief-best-practices.md](../../../_shared/references/brief-best-practices.md), with the five required H2 sections.
+**FROM:** No file at `.briefs/resolver.brief.md`; the resolver was scaffolded before the brief pattern existed.
+**TO:** A retroactive brief naming the specific filing/context drift the resolver was built to address. *Planned artifacts* and *Planned handoffs* checklists can be marked complete after the fact.
+**REASON:** Briefs make builds traceable to original intent; a retroactive brief is acceptable since briefs are throw-away.
+
+**Signal:** Brief present but *So-what* reads as a category description.
+
+**CHANGE:** Rewrite *So-what* anchored in the specific scenario.
+**FROM:** "Documents the routing table for this repository's filing conventions."
+**TO:** "Team members kept filing research investigations into `.context/` because the convention was undocumented; this resolver makes filing rules first-class so future investigations land in `.research/` automatically."
+**REASON:** Generic so-what defeats the brief's purpose — the build becomes untraceable to the actual problem it solved.
+
+**Signal:** Brief missing one or more required H2 sections.
+
+**CHANGE:** Add the missing section(s); pre-populate *Planned artifacts* and *Planned handoffs* from the existing resolver artifacts and prior `/build:check-resolver` invocations.
+**REASON:** The five required sections are the brief's structural contract; missing sections defeat the dimension-coverage check.
+
 ---
 
 ## Tier-3 — Cross-Artifact

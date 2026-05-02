@@ -354,6 +354,54 @@ REQUIRED_H2_PREFIXES = [
     "Safety",
 ]
 
+REQUIRED_BRIEF_H2_PREFIXES = [
+    "User ask",
+    "So-what",
+    "Scope boundaries",
+    "Planned artifacts",
+    "Planned handoffs",
+]
+
+
+def tier1_brief_presence(primitive: str, root: Path) -> list[Finding]:
+    """Check `.briefs/<primitive>.brief.md` presence and required sections.
+
+    Briefs are throw-away intent artifacts written by multi-artifact
+    orchestrators at intake; missing or incomplete briefs are `warn`,
+    not `fail` — the pair still functions, but the build that produced
+    it lacked the intent-capture step.
+    """
+    brief_path = root / ".briefs" / f"{primitive}.brief.md"
+    rel = str(brief_path.relative_to(root)) if brief_path.is_relative_to(root) else str(
+        brief_path
+    )
+    findings: list[Finding] = []
+    text = read_text(brief_path)
+    if text is None:
+        findings.append(
+            Finding(
+                1,
+                "brief-presence-and-content",
+                rel,
+                "missing — multi-artifact builds should capture intent in a brief",
+                "warn",
+            )
+        )
+        return findings
+    h2s = extract_h2(text)
+    for required in REQUIRED_BRIEF_H2_PREFIXES:
+        if not any(h.startswith(required) for h in h2s):
+            findings.append(
+                Finding(
+                    1,
+                    "brief-presence-and-content",
+                    rel,
+                    f"missing required section: {required}",
+                    "warn",
+                )
+            )
+    return findings
+
 
 def tier2_content(paths: dict[str, Path], root: Path) -> list[Finding]:
     findings: list[Finding] = []
@@ -589,7 +637,8 @@ def audit(
         return [], True
     t2 = tier2_content(paths, root)
     t3 = tier3_cross_reference(primitive, paths, root, target)
-    return t1 + t2 + t3, False
+    brief = tier1_brief_presence(primitive, root)
+    return t1 + brief + t2 + t3, False
 
 
 def main(argv: list[str] | None = None) -> int:

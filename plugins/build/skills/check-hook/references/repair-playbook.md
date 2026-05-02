@@ -205,3 +205,9 @@ Remove committed `set -x` — uncomment locally only.
 - **Drop the hook:** if the advisory is sufficient and the hook generates false positives.
 
 Never auto-resolve. The user chooses.
+
+### brief-presence-and-content
+
+**Finding:** `.briefs/<hook-name>.brief.md` is missing, lacks one or more of the five required H2 sections, or the *So-what* reads as a category description rather than a specific intent statement.
+**Diagnosis:** The hook was scaffolded before the brief pattern existed, the orchestrator skipped Step 0, or the *So-what* drifted toward generic framing ("deterministically enforces X" rather than "the team kept pushing to main; this hook prevents the specific incident from 2026-04-22").
+**Fix:** for missing-or-incomplete-presence, write or extend `.briefs/<hook-name>.brief.md` per [brief-best-practices.md](../../../_shared/references/brief-best-practices.md). For generic *So-what*, ask the user for the specific scenario the hook prevents — a real near-miss, a class of mistakes the team kept making — and rewrite the paragraph anchored in those specifics. Briefs are throw-away; a retroactive brief authored after the fact is acceptable.

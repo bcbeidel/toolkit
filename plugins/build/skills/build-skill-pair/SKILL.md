@@ -18,6 +18,7 @@ references:
   - ../../_shared/references/primitive-routing.md
   - ../../_shared/references/skill-pair-best-practices.md
   - ../../_shared/references/skill-locations.md
+  - ../../_shared/references/brief-best-practices.md
 license: MIT
 ---
 
@@ -29,7 +30,7 @@ point at the same principles doc so creation and review never drift.
 The distillation step — reconciling multiple inputs into one
 internally-consistent rubric — is where this skill earns its keep.
 
-**Workflow sequence:** 1. Route → 2. Target → 3. Scope Gate →
+**Workflow sequence:** 0. Brief → 1. Route → 2. Target → 3. Scope Gate →
 4. Intake → 5. Distill → 6. Draft → 7. Review Gate → 8. Save →
 9. Register → 10. Handoff
 
@@ -37,6 +38,35 @@ Throughout this skill, `<SKILL_ROOT>` and `<SHARED_REF_DIR>` are
 placeholders that resolve from the chosen target — see
 [skill-locations.md](../../_shared/references/skill-locations.md) for
 the prefix table.
+
+## 0. Brief
+
+Capture intent before any other action. Write
+`.briefs/<primitive>.brief.md` from the user's intake (the slug is the
+primitive name from Intake #1 — pre-fill from `$ARGUMENTS` if present,
+otherwise ask now). Format follows
+[brief-best-practices.md](../../_shared/references/brief-best-practices.md):
+five required H2 sections (*User ask*, *So-what*, *Scope boundaries*,
+*Planned artifacts*, *Planned handoffs*) plus an empty *Decisions log*
+appended-to throughout the workflow.
+
+Pre-populate the two checklists from the planned workflow:
+
+- **Planned artifacts** — the five files produced by Step 8 Save:
+  principles doc, both SKILL.mds, audit-dimensions.md,
+  repair-playbook.md (plus `primitive-routing.md` diff for plugin
+  target).
+- **Planned handoffs** — `/build:check-skill-pair`,
+  `/build:check-skill` on each half, and (conditional on the check
+  half needing Tier-1 scripts) `/build:build-bash-script` or
+  `/build:build-python-script` per *Language Selection* in
+  `primitive-routing.md`.
+
+If `.briefs/<primitive>.brief.md` already exists, read it and ask
+whether to update (default yes) or abandon and recreate (default no).
+Update means: append to *Decisions log*, refresh checklists if scope
+materially changed, retain *User ask* and *So-what* unless the user
+explicitly revises them. Do not overwrite the brief silently.
 
 ## 1. Route
 
@@ -140,6 +170,11 @@ and propose a placement; confirm with the user.
 
 ## 5. Distill
 
+Re-read the brief's *So-what* before drafting the rubric. The
+distilled doc must read as specific to the brief's intent — generic
+"best practices for X" framing is the lossy-compression failure mode
+the brief exists to counter.
+
 For each piece of input material from Intake #4: extract patterns
 *and the rationale behind each*. Patterns without rationale are
 cargo-culting; refuse to carry them into the rubric.
@@ -180,8 +215,14 @@ description: Authoring guide for <primitive> — ... Referenced by build-<primit
 
 ## 6. Draft (five artifacts)
 
+Re-read the brief's *So-what* and *Scope boundaries* before drafting
+the audit dimensions. Audit dimensions inherited from defaults
+(rather than from the principles distilled at intake) are the
+primary intra-skill drift symptom.
+
 Produce all five before the Review Gate — present them together so the
-user sees the whole pair.
+user sees the whole pair. Tick each item in *Planned artifacts* off
+in `.briefs/<primitive>.brief.md` as it is drafted.
 
 **Artifact 1 — Principles doc.** Output of Step 4.
 
@@ -217,6 +258,13 @@ diff to `primitive-routing.md`. Wait for explicit user approval before
 writing any file. If the user requests changes, revise and re-present
 — continue until the user approves or cancels. Proceed to Save only on
 explicit approval.
+
+**Checklist verification.** Before accepting the build, read
+`.briefs/<primitive>.brief.md` and confirm every item in *Planned
+artifacts* is checked off. Unchecked items are a Review-Gate fail —
+either the artifact was forgotten, or scope changed and the brief
+needs updating with a *Decisions log* entry justifying the drop.
+*Planned handoffs* may remain unchecked here; those land in Step 10.
 
 This gate exists because five new files (plus a routing-doc change in
 plugin mode) is a large commit to land silently. The user needs to
@@ -285,6 +333,15 @@ section — Python wins on interpretability — applies here too. This
 skill is meta-infrastructure; it does not get to bypass its own
 routing.
 
+**Paste-excerpt handoff.** When invoking
+`/build:build-bash-script` or `/build:build-python-script`, paste the
+brief's *So-what* paragraph and the specific audit dimension the
+script will enforce directly into the leaf skill's invocation prompt
+— verbatim, not as a `.briefs/<primitive>.brief.md` pointer. Leaf
+skills do not navigate to the brief; the semantic frame must travel
+with the prompt. Tick the corresponding item in *Planned handoffs*
+off as each leaf invocation completes.
+
 ## Example
 
 Invocation: `/build:build-skill-pair terraform-module`
@@ -323,6 +380,11 @@ Output: five files plus a routing-doc diff adding a paragraph under
 4. **Writing before Review Gate approval.** Five files plus a routing
    diff is a large drop. Present the whole shape first; write only
    after explicit approval.
+5. **Inlining a chained skill instead of invoking it.** MUST invoke
+   `/build:<chained-skill>` via the Skill tool. MUST NOT read its
+   SKILL.md and inline a partial implementation. The shortcut bypasses
+   the chained skill's rubric and leaves no audit trail that the
+   proper skill was used.
 
 ## Key Instructions
 

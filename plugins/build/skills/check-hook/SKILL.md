@@ -10,6 +10,7 @@ argument-hint: "[settings.json path]"
 user-invocable: true
 references:
   - ../../_shared/references/hook-best-practices.md
+  - ../../_shared/references/brief-best-practices.md
   - references/audit-dimensions.md
   - references/repair-playbook.md
   - references/platform-limitations.md
@@ -23,7 +24,8 @@ Audit a project's Claude Code hooks configuration against the rubric in
 Read-only until the opt-in Repair Loop.
 
 **Workflow sequence:** 1. Scope → 2. Primitive Routing Scan →
-3. Judgment Checks → 4. Platform Scope → 5. Report → 6. Opt-In Repair Loop
+3. Judgment Checks → 3b. Brief-Quality Pass → 4. Platform Scope →
+5. Report → 6. Opt-In Repair Loop
 
 ## 1. Scope
 
@@ -62,6 +64,27 @@ authoritative.
 
 For each finding, capture: dimension name, offending hook / command / file,
 specific issue, severity (`fail` / `warn`).
+
+## 3b. Brief-Quality Pass
+
+For each hook script audited, look for `.briefs/<hook-name>.brief.md`
+at the repo root (the slug is the hook script's basename without
+`.sh`). Apply the `brief-presence-and-content` dimension from
+[audit-dimensions.md](references/audit-dimensions.md):
+
+- **Presence.** File exists with the five required H2 sections
+  (*User ask*, *So-what*, *Scope boundaries*, *Planned artifacts*,
+  *Planned handoffs*).
+- **Content quality.** *So-what* names a specific scenario the hook
+  prevents — a real near-miss, a class of mistakes the team kept
+  making — rather than reading as a category description.
+- **Scope concreteness.** *In* / *Out* lists carry concrete items,
+  not vague hedges.
+
+Each shortfall is a `warn` finding under the
+`brief-presence-and-content` dimension. Append to the findings set.
+Hooks built before the brief pattern existed will trip this; the
+repair playbook recommends a retroactive brief.
 
 ## 4. Platform Scope
 
