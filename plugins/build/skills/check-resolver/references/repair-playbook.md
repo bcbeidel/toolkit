@@ -136,9 +136,7 @@ Every FAIL and WARN finding maps to a canonical repair. Before applying, state t
 **CHANGE:** Add cases from the missing side in proportion to the table sizes
 **REASON:** Coverage gaps hide routing defects in the uncovered table.
 
----
-
-## Dimension 4: Brief Presence and Content
+### Dimension 4: Brief Presence and Content
 
 **Signal:** `.briefs/<slug>.brief.md` is missing.
 
