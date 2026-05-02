@@ -41,6 +41,7 @@ before applying.
   - [Dimension 6: Failure Handling](#dimension-6-failure-handling)
   - [Dimension 7: Safety Gating](#dimension-7-safety-gating)
   - [Dimension 8: Example Realism](#dimension-8-example-realism)
+  - [Dimension 9: Mechanical-Work Partition](#dimension-9-mechanical-work-partition)
 - [Tier 3: Description Collisions](#tier-3-description-collisions)
 
 ---
@@ -397,6 +398,26 @@ bash
 ```
 ```
 **REASON:** Domain-specific identifiers let the evaluator (human or Claude) recognize the context and apply the skill the way they would to new cases. Synthetic placeholders defeat the point of the example.
+
+### Dimension 9: Mechanical-Work Partition
+
+**Signal:** Mechanical substeps (file existence, regex match, count, schema validity, fixed-list lookup, exit-code branching) live as inline prose the LLM is expected to perform every invocation, with no sibling script invoked.
+
+**CHANGE:** Extract the mechanical work to a script under `scripts/` and have the SKILL.md invoke it. The LLM reasons over the script's output (text, JSON, exit code). Keep judgment substeps (does this read well, is the scope right) inline.
+**FROM:**
+```markdown
+## Steps
+1. Read every `*.md` file under `references/`.
+2. For each file, parse the frontmatter and verify `name` is set, `version` matches `^\d+\.\d+\.\d+$`, and `description` is under 1024 chars.
+3. Report any failures.
+```
+**TO:**
+```markdown
+## Steps
+1. Run `python scripts/audit_frontmatter.py references/` — emits one JSON object per file with `path`, `name`, `version_ok`, `description_len`, and `failures: []`.
+2. Read the script's output. For each entry with non-empty `failures`, decide whether the failure is repair-now or repair-later based on severity, then report the partition to the user.
+```
+**REASON:** Mechanical work in prose is slower per invocation, less reliable run-to-run, and pays the token cost every call. The toolkit's own check-* skills follow this partition — Tier-1 deterministic scripts feed Tier-2 LLM judgment. Apply the same shape to any skill whose work has a deterministic substrate; judgment-only skills (rubric application, scope decisions) skip this repair.
 
 ---
 

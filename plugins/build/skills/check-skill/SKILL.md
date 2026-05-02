@@ -21,7 +21,7 @@ license: MIT
 
 Evaluate the quality of an existing Claude Code skill. Three tiers,
 in order: deterministic format checks (no LLM), per-skill semantic
-checks (eight always-on dimensions in a single locked-rubric call),
+checks (nine always-on dimensions in a single locked-rubric call),
 then cross-skill description collision detection.
 
 This skill evaluates the skills themselves — not files against skills.
@@ -102,20 +102,21 @@ doc changes, the dimensions should follow.
    Safety Gating; hedge WARNs inform D4 Clarity and Consistency).
 
 4. **Run Tier-2 semantic checks.** For each structurally valid
-   skill, one locked-rubric LLM call assesses all eight always-on
+   skill, one locked-rubric LLM call assesses all nine always-on
    dimensions in
    [audit-dimensions.md](references/audit-dimensions.md):
    (1) Description Retrieval Signal, (2) Trigger Conditions,
    (3) Step Discipline, (4) Clarity and Consistency,
    (5) Prerequisites and Contract, (6) Failure Handling,
-   (7) Safety Gating, (8) Example Realism. Include the full
-   `SKILL.md` body verbatim — never summarize. Present all eight
-   dimensions in one call; per-dimension calls degrade agreement by
-   ~11.5 points (RULERS, Hong et al. 2026). Dimensions that don't
-   apply return PASS silently (e.g., Safety Gating on a read-only
-   skill). Output per dimension: evidence → reasoning → verdict
-   (WARN / PASS / N/A) → recommendation. Default-closed: borderline
-   evidence surfaces as WARN, not PASS.
+   (7) Safety Gating, (8) Example Realism, (9) Mechanical-Work
+   Partition. Include the full `SKILL.md` body verbatim — never
+   summarize. Present all nine dimensions in one call; per-dimension
+   calls degrade agreement by ~11.5 points (RULERS, Hong et al.
+   2026). Dimensions that don't apply return PASS silently (e.g.,
+   Safety Gating on a read-only skill; Mechanical-Work Partition on
+   a judgment-only skill). Output per dimension: evidence →
+   reasoning → verdict (WARN / PASS / N/A) → recommendation.
+   Default-closed: borderline evidence surfaces as WARN, not PASS.
 
 5. **Run Tier-3 description-collision detection.** Compare
    descriptions across the skill collection and flag pairs whose
@@ -220,9 +221,9 @@ WARN  plugins/build/skills/foo/SKILL.md — Description collides with baz/SKILL.
   as expensive LLM calls
 - Feed Tier-1 WARN signals (destructive-cmd hits, hedge hits) as
   context into the Tier-2 prompt — they inform the evaluator for
-  D7 Safety Gating and D4 Clarity, not the dimension set (all eight
+  D7 Safety Gating and D4 Clarity, not the dimension set (all nine
   dimensions always run)
-- Present all eight Tier-2 dimensions as a single locked-rubric
+- Present all nine Tier-2 dimensions as a single locked-rubric
   call per skill — per-dimension calls degrade agreement by ~11.5
   points (RULERS, Hong et al. 2026)
 - Include the full SKILL.md body verbatim in every LLM evaluation
@@ -247,7 +248,7 @@ WARN  plugins/build/skills/foo/SKILL.md — Description collides with baz/SKILL.
    — every Recommendation names the specific change, drawn from
    `repair-playbook.md`.
 6. **Trigger-gating Tier-2 dimensions** — don't skip dimensions
-   based on whether the skill "opts into" a shape; run all eight
+   based on whether the skill "opts into" a shape; run all nine
    always. Dimensions that don't apply return PASS silently.
 
 ## Handoff

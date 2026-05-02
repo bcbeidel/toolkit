@@ -8,6 +8,35 @@ Pre-restructure releases used a single version. Post-restructure, each plugin
 
 ## [Unreleased]
 
+## [build-0.19.0] - 2026-05-02
+
+### Added
+
+- **Mechanical-Work Partition principle and audit dimension.** A
+  new authoring principle in `skill-best-practices.md` —
+  *Partition mechanical work from judgment* — instructs skill
+  authors to extract mechanical substeps (file existence, regex
+  match, count, schema validity, fixed-list lookup, exit-code
+  branching) into sibling scripts under `scripts/` and have the
+  SKILL.md reason over the script's output, rather than
+  performing the mechanical work in prose every invocation.
+- **`build-skill` Step 5 — Partition mechanical work from
+  judgment.** New step (between Conflict Check and Draft) walks
+  the intended step list, labels each substep as mechanical or
+  judgment, and proposes script extraction before drafting.
+  Existing Steps 5–9 renumbered to 6–10; example walkthrough
+  updated to demonstrate the partition. Cross-references updated
+  in failure modes, key instructions, and the improve sub-step
+  pointer.
+- **`check-skill` Tier-2 Dimension 9 — Mechanical-Work
+  Partition.** Tier-2 LLM rubric now runs nine dimensions in a
+  single locked-rubric call (was eight). Dimension 9 flags
+  inline-prose mechanical work as WARN; judgment-only skills
+  return PASS with verdict N/A. `audit-dimensions.md` and
+  `repair-playbook.md` gain mirrored entries; SKILL.md body and
+  Anti-Pattern Guards updated to reference all nine dimensions.
+  Locked-rubric single-call property preserved.
+
 ## [build-0.18.0] - 2026-05-02
 
 ### Added
