@@ -74,6 +74,26 @@ For*; if it is a variant of an existing class, extend the relevant
 sub-section (most commonly *Language Selection*). Show the diff and
 write on confirmation.
 
+### brief-presence-and-content
+
+**Finding:** `.briefs/<primitive>.brief.md` is missing, or carries
+fewer than the five required H2 sections (*User ask*, *So-what*,
+*Scope boundaries*, *Planned artifacts*, *Planned handoffs*), or
+the *So-what* reads as a category description rather than a specific
+intent statement.
+**Diagnosis:** the pair was scaffolded before the brief pattern
+existed, the orchestrator skipped Step 0, or the brief was written
+but the *So-what* drifted toward generic framing.
+**Fix:** for missing-or-incomplete-presence, write or extend
+`.briefs/<primitive>.brief.md` per
+[brief-best-practices.md](../../../_shared/references/brief-best-practices.md).
+For generic *So-what*, ask the user to name the specific gap, user,
+or recurring problem this primitive addresses; rewrite the paragraph
+to anchor in those specifics. Briefs are throw-away — a retroactive
+brief authored after the fact is acceptable; it does not need to
+reconstruct the original intake conversation, only capture what the
+build *should have* recorded.
+
 ## Tier-2: Content
 
 ### principles-doc-structure
