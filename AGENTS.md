@@ -41,7 +41,7 @@ Before filing new content or loading context beyond a skill's eager
 
 | Plugin | Path | Skills |
 |--------|------|--------|
-| `build` | `plugins/build/` | `build-skill`, `build-skill-pair`, `build-rule`, `build-hook`, `build-subagent`, `build-bash-script`, `build-python-script`, `build-makefile`, `build-pre-commit-config`, `build-github-workflow`, `build-readme`, `build-resolver`, `refine-prompt`, `check-skill`, `check-skill-pair`, `check-rule`, `check-hook`, `check-subagent`, `check-bash-script`, `check-python-script`, `check-makefile`, `check-pre-commit-config`, `check-github-workflow`, `check-readme`, `check-resolver`, `check-skill-chain` |
+| `build` | `plugins/build/` | `build-skill`, `build-skill-pair`, `build-help-skill`, `build-rule`, `build-hook`, `build-subagent`, `build-bash-script`, `build-python-script`, `build-makefile`, `build-pre-commit-config`, `build-github-workflow`, `build-readme`, `build-resolver`, `refine-prompt`, `check-skill`, `check-skill-pair`, `check-help-skill`, `check-rule`, `check-hook`, `check-subagent`, `check-bash-script`, `check-python-script`, `check-makefile`, `check-pre-commit-config`, `check-github-workflow`, `check-readme`, `check-resolver`, `check-skill-chain` |
 | `wiki` | `plugins/wiki/` | `setup`, `research`, `ingest`, `lint` |
 | `work` | `plugins/work/` | `scope-work`, `plan-work`, `start-work`, `verify-work`, `finish-work` |
 | `consider` | `plugins/consider/` | 16 mental models + meta |

@@ -56,6 +56,8 @@ Route: `/build:build-subagent` scaffolds a `.claude/agents/<name>.md` definition
 
 **Resolvers** exist for repos whose dynamic context — where to file new content and which docs to load before recurring tasks — has outgrown AGENTS.md alone. A resolver is a root-level `RESOLVER.md` with two machine-managed tables (filing and context) plus a one-line AGENTS.md pointer and a `.resolver/evals.yml` sidecar; the managed region regenerates from disk conventions, and evals prove the routing. Not a skill-dispatch resolver (that's handled by the `description` field on each SKILL.md), not a shared-reference linter (that's authoring-time hygiene, a separate concern). Route: `/build:build-resolver` to scaffold or regenerate the three artifacts; `/build:check-resolver` to audit the pointer, managed region, path resolution, filing coverage, context actionability, eval representativeness, dark capabilities, and staleness against the rubric in [resolver-best-practices.md](resolver-best-practices.md).
 
+**Help-skills** exist as a per-plugin orientation surface — the SKILL.md a caller loads when they ask "what's in this plugin / which skill fits". A help-skill is a specialized SKILL.md whose subject is the plugin itself: a one-sentence synopsis, a disk-derived index of sibling skills inside a managed region, two or three curated workflow chains showing how skills compose, and pointers to AGENTS.md / RESOLVER.md / the plugin README. Reachable as `/<plugin>:help` and as auto-triggered context when an agent matches the meta-trigger. It is the *pull* alternative to a `UserPromptSubmit` hook that injects a global routing table on every prompt — on-demand, no token tax, scoped to one plugin, drift-resistant by construction. Not a generic SKILL.md (route to `/build:build-skill`), not a top-level repo README (route to `/build:build-readme`), not a global cross-plugin router (per-plugin scoping is intentional). Route: `/build:build-help-skill <plugin>` to scaffold a help-skill for a plugin; `/build:check-help-skill <path>` to audit one against coverage, freshness, frontmatter fidelity, plus five judgment dimensions and a cross-entity trigger-collision check, per the rubric in [help-skill-best-practices.md](help-skill-best-practices.md).
+
 ## Routing Test
 
 Two questions route most decisions:
@@ -71,6 +73,7 @@ If neither resolves it:
 - The artifact is a project's top-level `README.md` → **README**
 - YAML file under `.github/workflows/` that fires on repository events → **GitHub Actions workflow**
 - Root-level routing table for filing new content and loading context doc bundles → **Resolver**
+- Per-plugin orientation surface listing sibling skills and curated workflows → **Help-skill**
 
 ## When You've Chosen the Wrong Primitive
 
