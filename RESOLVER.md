@@ -12,6 +12,7 @@ Routing table for filing new content and loading context. Machine-managed region
 | Design doc / RFC / architectural sketch | `.designs/` | `YYYY-MM-DD-<slug>.design.md` |
 | Research investigation (SIFT framework) | `.research/` | `YYYY-MM-DD-<slug>.research.md` |
 | Reusable prompt (skill-dev, maintenance, automation) | `.prompts/` | `<slug>.md` |
+| Build session brief (intent capture for multi-artifact `build/*` runs) | `.briefs/` | `<slug>.brief.md` |
 
 ## Context — what to load before acting
 
