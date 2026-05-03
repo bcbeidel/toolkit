@@ -14,7 +14,30 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import sys
 from pathlib import Path
+
+# Ensure `import wiki` works whether pip-installed or run from plugin cache.
+# The wiki package lives in the wiki plugin (sibling to this work plugin), not
+# in the work plugin itself.
+# Prefer CLAUDE_PLUGIN_ROOT env var (set by Claude Code for hooks/MCP);
+# fall back to navigating from __file__ (required for skill-invoked scripts).
+_env_root = os.environ.get("CLAUDE_PLUGIN_ROOT", "")
+# plugins/work/skills/start-work/scripts/ → start-work → skills → work → plugins
+_plugins_dir = (
+    Path(_env_root).parent
+    if _env_root and os.path.isdir(_env_root)
+    else Path(__file__).resolve().parent.parent.parent.parent.parent
+)
+_wiki_root = _plugins_dir / "wiki"
+_wiki_marker = _wiki_root / "src" / "wiki" / "__init__.py"
+# Defense-in-depth: only insert the resolved root into sys.path if it
+# actually looks like the wiki plugin (a misset CLAUDE_PLUGIN_ROOT or
+# adversarial path on disk would otherwise let arbitrary modules shadow
+# `wiki.*` imports below).
+if _wiki_marker.is_file() and str(_wiki_root) not in sys.path:
+    sys.path.insert(0, str(_wiki_root))
 
 
 def main() -> None:
