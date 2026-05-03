@@ -16,6 +16,12 @@ license: MIT
 Design a `*.chain.md` manifest from a workflow goal, or check an existing
 skill-chain manifest for structural and contract correctness with an opt-in repair loop.
 
+This skill ships **no scripts of its own**. `scripts/lint.py` referenced
+in Manifest mode below is the plugin-shared script at
+`plugins/wiki/scripts/lint.py` (same script `/wiki:lint` invokes).
+Inputs are validated by argparse; the script does not call subprocess
+with `shell=True` or take untrusted command strings.
+
 ## Workflow
 
 ### Detect Mode

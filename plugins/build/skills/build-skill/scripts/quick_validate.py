@@ -3,6 +3,7 @@
 Quick validation script for skills - minimal version
 """
 
+import argparse
 import sys
 import os
 import re
@@ -93,11 +94,21 @@ def validate_skill(skill_path):
 
     return True, "Skill is valid!"
 
-if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python quick_validate.py <skill_directory>")
-        sys.exit(1)
-    
-    valid, message = validate_skill(sys.argv[1])
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        description="Quick validation of a skill directory's SKILL.md frontmatter.",
+    )
+    parser.add_argument(
+        "skill_directory",
+        type=Path,
+        help="Path to the skill directory to validate.",
+    )
+    args = parser.parse_args()
+
+    valid, message = validate_skill(args.skill_directory)
     print(message)
-    sys.exit(0 if valid else 1)
+    return 0 if valid else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

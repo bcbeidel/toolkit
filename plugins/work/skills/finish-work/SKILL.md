@@ -22,6 +22,17 @@ with safety verification and optional plan lifecycle updates.
 
 **Announce at start:** "I'm using the finish-work skill to complete this work."
 
+## Trust Model
+
+Branch names, file paths, plan content, and PR title/body strings are
+trusted user input — they originate from the user's repository and
+authored plan, not from external sources. Shell commands constructed
+from these (e.g., `gh pr create`, `git branch -D`, `git worktree remove`)
+run with the agent's normal permissions; the user's review of the plan
+and explicit option choice in Step 5 is the authorization for those
+commands. This skill does not execute arbitrary content from anywhere
+else.
+
 ## Workflow
 
 ### 1. Verify Readiness

@@ -27,6 +27,15 @@ conventions, and project docs.
 
 **Announce at start:** "I'm using the verify-work skill to verify this work."
 
+## Trust Model
+
+Plan files are trusted user input — the user authored the plan (or
+approved its generation in `/work:plan-work`) and the Validation section
+is part of that authored content. Commands listed there run with the
+agent's normal permissions; the user's review of the plan is the
+authorization for those commands. This skill does not execute arbitrary
+content from anywhere else.
+
 ## Workflow
 
 ### 1. Determine Mode

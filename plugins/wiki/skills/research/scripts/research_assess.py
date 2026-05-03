@@ -18,23 +18,15 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import sys
 from pathlib import Path
 
-# Ensure `import wiki` works whether pip-installed or run from plugin cache.
-# Prefer CLAUDE_PLUGIN_ROOT env var (set by Claude Code for hooks/MCP);
-# fall back to navigating from __file__ (required for skill-invoked scripts).
-_env_root = os.environ.get("CLAUDE_PLUGIN_ROOT", "")
+# Locate the wiki plugin root via fixed `__file__` navigation.
 # plugins/wiki/skills/research/scripts/ → research/ → skills/ → plugins/wiki/
-_plugin_root = (
-    Path(_env_root) if _env_root and os.path.isdir(_env_root)
-    else Path(__file__).resolve().parent.parent.parent.parent
-)
+_plugin_root = Path(__file__).resolve().parent.parent.parent.parent
 # Defense-in-depth: only insert the resolved root into sys.path if it
-# actually looks like the wiki plugin (CLAUDE_PLUGIN_ROOT pointed at an
-# attacker-controlled directory would otherwise let arbitrary modules
-# shadow `wiki.*` imports below).
+# actually looks like the wiki plugin. Marker check is the import-shadowing
+# guardrail.
 _wiki_marker = _plugin_root / "src" / "wiki" / "__init__.py"
 if _wiki_marker.is_file() and str(_plugin_root) not in sys.path:
     sys.path.insert(0, str(_plugin_root))

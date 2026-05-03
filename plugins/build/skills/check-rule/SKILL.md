@@ -34,6 +34,15 @@ resolves to a path, scope discovery to that file or directory. When
 `$ARGUMENTS` is empty, scan `.claude/rules/` and (if the user maintains
 personal rules) `~/.claude/rules/`.
 
+Reading `~/.claude/rules/` is intentional: a rule library spans both
+project rules (`.claude/rules/`) and personal rules (`~/.claude/rules/`),
+and an audit that ignores the personal half misses real findings.
+Discovery and the audit phases (Tiers 1-3) are read-only; only the
+opt-in repair loop in Step 6 writes, and only after user confirmation
+on each change. The home-directory scope is narrowed by passing an
+explicit path argument — e.g. `/build:check-rule .claude/rules/` to
+audit project rules only.
+
 Report: "Found N rules. Auditing..."
 
 ### 2. Tier 1 — Deterministic Format Checks
