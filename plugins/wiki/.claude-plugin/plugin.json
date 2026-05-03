@@ -1,6 +1,6 @@
 {
   "name": "wiki",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Skills for building and maintaining structured project context — setup, research, ingest, and lint.",
   "author": {
     "name": "Brandon Beidel"
