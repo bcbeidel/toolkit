@@ -15,8 +15,11 @@ license: MIT
 
 # Audit Skill
 
-Observe and report on project content quality. Read-only -- reports but
-does not modify any files.
+Observe and report on project content quality. Read-only by default —
+reports findings without modifying files. The one exception is a
+single opt-in additive edit (adding an `@AGENTS.md` line to `CLAUDE.md`)
+performed only on explicit user confirmation; all other cleanup actions
+delegate to other skills.
 
 This skill ships **no scripts of its own**. `lint.py` is a plugin-shared
 script under `plugins/wiki/scripts/lint.py`; `<plugin-scripts-dir>` in
@@ -144,7 +147,9 @@ After presenting audit results, offer to help resolve actionable warnings:
 
 ## Key Instructions
 
-- Audit is strictly read-only — no log files, no side effects
+- Audit is read-only by default — no log files, no side effects. The
+  only write is the opt-in `@AGENTS.md` line added to `CLAUDE.md`,
+  performed only after user confirmation.
 - Use `/wiki:setup` to initialize missing project structure
 - Empty project (no convention-following directories) exits 0 with no issues
 
