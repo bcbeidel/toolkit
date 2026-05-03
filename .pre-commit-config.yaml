@@ -1,0 +1,21 @@
+# Pre-commit hooks for toolkit. Bootstrap once per clone:
+#   pip install pre-commit
+#   pre-commit install
+#
+# Run on demand without committing:
+#   pre-commit run --all-files
+#   pre-commit run skill-security-scan --all-files
+repos:
+  - repo: local
+    hooks:
+      - id: skill-security-scan
+        name: Skill security scan (cisco-ai-skill-scanner, no LLM)
+        description: >-
+          Run static skill-scanner analyzers against any plugins/<plugin>/skills/<skill>/
+          directory containing staged changes. Fails on HIGH or CRITICAL findings.
+          Does not call the LLM analyzer — fast, offline, no API key required.
+        entry: .github/scripts/precommit-scan-skills.sh
+        language: script
+        files: '^plugins/[^/]+/skills/[^/]+/'
+        require_serial: true
+        pass_filenames: true

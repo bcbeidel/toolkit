@@ -8,8 +8,28 @@ python -m pytest plugins/wiki/tests/ plugins/check/tests/ -v
 ruff check plugins/
 ```
 
-A pre-commit hook runs `ruff check plugins/` on staged Python files.
-Requires ruff to be installed (`pip install ruff` or via `.[dev]`).
+### Pre-commit hooks
+
+Bootstrap once per clone:
+
+```bash
+pip install pre-commit
+pre-commit install
+```
+
+Hooks defined in `.pre-commit-config.yaml`:
+
+- **`skill-security-scan`** — runs `cisco-ai-skill-scanner` (static analyzers
+  only, no LLM) against any `plugins/<plugin>/skills/<skill>/` directory with
+  staged changes. Fails the commit on HIGH or CRITICAL findings. Requires
+  `pip install cisco-ai-skill-scanner==2.0.9`.
+
+Run on demand without committing:
+
+```bash
+pre-commit run --all-files                      # every hook, every file
+pre-commit run skill-security-scan --all-files  # one hook, every file
+```
 
 ## Versioning (SemVer)
 
