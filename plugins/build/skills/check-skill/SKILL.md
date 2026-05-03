@@ -44,14 +44,21 @@ doc changes, the dimensions should follow.
 
 ## Prerequisites
 
-- Seven Tier-1 scripts under `scripts/` relative to this SKILL.md
+- Eight Tier-1 scripts under `scripts/` relative to this SKILL.md
   (`check_identity.sh`, `check_frontmatter.sh`, `check_structure.sh`,
   `check_size.sh`, `check_prose.sh`, `scan_secrets.sh`,
-  `scan_dangerous_patterns.sh`)
-- `bash` 3.2+, POSIX utilities (`awk`, `find`, `basename`, `head`,
-  `grep`, `dirname`)
+  `scan_dangerous_patterns.sh`, `scan_cisco.py`)
+- `bash` 3.2+, `python3` 3.9+, POSIX utilities (`awk`, `find`,
+  `basename`, `head`, `grep`, `dirname`)
 - Optional: `gitleaks` on `PATH` for stronger secret scanning
   (`scan_secrets.sh` falls back to a built-in regex set when absent)
+- Optional: `skill-scanner` on `PATH` for the Cisco AI skill-scanner
+  Tier-1 dimension (`scan_cisco.py` emits a single INFO line and
+  exits 0 when absent — install via
+  `pip install --require-hashes -r .github/scripts/requirements.lock`)
+- Optional: `SCAN_USE_LLM=1` (or `--llm` when invoking the script
+  directly) routes the scanner's LLM analyzer too; requires
+  `ANTHROPIC_API_KEY` in env
 - `$ARGUMENTS` may carry a `SKILL.md` path, a `skills/` directory, or
   be empty (scans the current plugin's `skills/` excluding
   `_shared/`)
@@ -63,7 +70,7 @@ doc changes, the dimensions should follow.
    it (excluding `_shared/`). Empty → scan the current plugin's
    `skills/` directory. Report: "Found N skills. Auditing...".
 
-2. **Run Tier-1 deterministic checks.** Invoke all seven scripts
+2. **Run Tier-1 deterministic checks.** Invoke all eight scripts
    against the discovered skill set. Scripts live in `scripts/`
    relative to this SKILL.md; Claude resolves the absolute path from
    the skill's base directory at invocation time. (`$CLAUDE_PLUGIN_ROOT`
@@ -74,14 +81,20 @@ doc changes, the dimensions should follow.
    SCRIPTS="${SKILL_DIR}/scripts"
    TARGETS="$ARGUMENTS"  # path(s) from user; default: plugin's skills/
 
-   bash "$SCRIPTS/check_identity.sh"          $TARGETS
-   bash "$SCRIPTS/check_frontmatter.sh"       $TARGETS
-   bash "$SCRIPTS/check_structure.sh"         $TARGETS
-   bash "$SCRIPTS/check_size.sh"              $TARGETS
-   bash "$SCRIPTS/check_prose.sh"             $TARGETS
-   bash "$SCRIPTS/scan_secrets.sh"            $TARGETS
-   bash "$SCRIPTS/scan_dangerous_patterns.sh" $TARGETS
+   bash    "$SCRIPTS/check_identity.sh"          $TARGETS
+   bash    "$SCRIPTS/check_frontmatter.sh"       $TARGETS
+   bash    "$SCRIPTS/check_structure.sh"         $TARGETS
+   bash    "$SCRIPTS/check_size.sh"              $TARGETS
+   bash    "$SCRIPTS/check_prose.sh"             $TARGETS
+   bash    "$SCRIPTS/scan_secrets.sh"            $TARGETS
+   bash    "$SCRIPTS/scan_dangerous_patterns.sh" $TARGETS
+   python3 "$SCRIPTS/scan_cisco.py"              $TARGETS  # CRITICAL/HIGH → FAIL; MEDIUM → WARN; LOW/INFO → INFO
    ```
+
+   The `scan_cisco.py` step runs static analyzers only by default. If
+   the user asks for the LLM analyzer too, prepend `SCAN_USE_LLM=1`
+   to the invocation (or pass `--llm` directly). LLM mode requires
+   `ANTHROPIC_API_KEY` in env and is slower / costlier — opt-in only.
 
    Emit all Tier-1 output immediately, before any LLM work. Exit
    codes: 0 on clean / WARN-only / INFO-only, 1 on FAIL, 64 on arg
@@ -93,8 +106,9 @@ doc changes, the dimensions should follow.
 3. **Apply orchestration rules.** Skills with a FAIL from
    `check_identity.sh`, `check_frontmatter.sh`, `check_structure.sh`
    (missing required section or Steps-not-ordered-list),
-   `check_size.sh` (>400 lines), or `scan_secrets.sh` are **excluded
-   from Tier 2** — malformed skills don't reach the LLM step.
+   `check_size.sh` (>400 lines), `scan_secrets.sh`, or
+   `scan_cisco.py` (scanner CRITICAL/HIGH) are **excluded from
+   Tier 2** — malformed or unsafe skills don't reach the LLM step.
    `check_structure.sh` WARNs (Examples-without-fenced-block,
    non-sequential Steps), `check_size.sh` WARNs (>300 lines, line
    length), `check_prose.sh` WARNs, and `scan_dangerous_patterns.sh`
@@ -157,6 +171,15 @@ doc changes, the dimensions should follow.
   the script's install hint; re-run once the dependency is on PATH.
   `gitleaks` absence specifically triggers the fallback regex path
   in `scan_secrets.sh` — not a hard failure.
+- **Skill scanner not installed.** `scan_cisco.py` emits a single
+  INFO line with the install command and exits 0; the rest of the
+  audit continues. Recovery: install per Prerequisites, or rely on
+  the CI `Skill Security Audit Scan` workflow for the authoritative
+  pass.
+- **`--llm` requested without `ANTHROPIC_API_KEY`.** `scan_cisco.py`
+  exits 64 with a one-line message naming the missing env var.
+  Recovery: export the key, or omit the LLM mode (default static
+  analyzers cover most rules).
 - **`$ARGUMENTS` path does not exist.** Any script exits 64.
   Recovery: report the bad path and ask the user to correct it.
 - **No structurally valid skills for Tier 2.** Every audited skill
