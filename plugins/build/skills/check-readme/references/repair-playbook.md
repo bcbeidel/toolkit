@@ -282,7 +282,7 @@ rm -rf /var/lib/project
 **REASON** Accidental destruction is unrecoverable; warnings must be
 visually prominent.
 
-### Signal: `pipe-to-shell — curl | sh pattern without a manual alternative`
+### Signal: `pipe-to-shell — installer pattern without a manual alternative`
 
 **CHANGE** Add a manual alternative in the same section (download +
 inspect + run) and an explicit warning on the piped form.

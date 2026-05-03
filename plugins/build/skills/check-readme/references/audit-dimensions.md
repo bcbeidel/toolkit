@@ -173,8 +173,8 @@ warnings that a reader scanning the document would see. Pipe-to-shell
 installers list a manual alternative within the same section.
 
 **Common fail signal:** "Note: this will delete all your data" in a
-normal sentence after the `rm -rf` block; `curl ... | sh` with no
-alternative; a sudo-requiring step with no explanation of why.
+normal sentence after the `rm -rf` block; pipe-to-shell installer with
+no manual alternative; a sudo-requiring step with no explanation of why.
 
 ### D6 Maintenance Posture
 
