@@ -31,7 +31,12 @@ _plugin_root = (
     Path(_env_root) if _env_root and os.path.isdir(_env_root)
     else Path(__file__).resolve().parent.parent.parent.parent
 )
-if str(_plugin_root) not in sys.path:
+# Defense-in-depth: only insert the resolved root into sys.path if it
+# actually looks like the wiki plugin (CLAUDE_PLUGIN_ROOT pointed at an
+# attacker-controlled directory would otherwise let arbitrary modules
+# shadow `wiki.*` imports below).
+_wiki_marker = _plugin_root / "src" / "wiki" / "__init__.py"
+if _wiki_marker.is_file() and str(_plugin_root) not in sys.path:
     sys.path.insert(0, str(_plugin_root))
 
 

@@ -24,6 +24,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -136,6 +137,19 @@ def load_findings(findings_file: Path) -> tuple[list[dict], bool]:
     return structured, scan_failed
 
 
+def _signal_matches(haystack: str, signals: list[str]) -> bool:
+    """Left-anchored token match: each signal must start at a word
+    boundary. Prevents `direct prompt injection` from matching inside
+    `indirect prompt injection`. Right side stays open so policy stems
+    like `obfusc` (→ obfuscate/obfuscation) and `exfil` (→ exfiltrate/
+    exfiltration) keep matching their intended forms.
+    """
+    for sig in signals:
+        if re.search(rf"(?<!\w){re.escape(sig.lower())}", haystack):
+            return True
+    return False
+
+
 def apply_escalation(
     findings: list[dict],
     escalation_signals: list[str],
@@ -144,7 +158,7 @@ def apply_escalation(
     """Bump severity by one level when a finding matches an escalation signal.
 
     Match against `critical_signals` first → CRITICAL outright.
-    Case-insensitive substring match across description + rule_id.
+    Case-insensitive whole-token match across description + rule_id.
     """
     bump = {
         "LOW": "MEDIUM",
@@ -155,10 +169,10 @@ def apply_escalation(
     }
     for f in findings:
         haystack = (f["description"] + " " + f["rule_id"]).lower()
-        if any(sig.lower() in haystack for sig in critical_signals):
+        if _signal_matches(haystack, critical_signals):
             f["severity"] = "CRITICAL"
             continue
-        if any(sig.lower() in haystack for sig in escalation_signals):
+        if _signal_matches(haystack, escalation_signals):
             f["severity"] = bump.get(f["severity"], f["severity"])
     return findings
 

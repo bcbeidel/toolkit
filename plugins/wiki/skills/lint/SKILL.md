@@ -18,6 +18,12 @@ license: MIT
 Observe and report on project content quality. Read-only -- reports but
 does not modify any files.
 
+This skill ships **no scripts of its own**. `lint.py` is a plugin-shared
+script under `plugins/wiki/scripts/lint.py`; `<plugin-scripts-dir>` in
+the invocation lines below resolves there. Inputs are validated by
+argparse; the script does not call `subprocess` with `shell=True` or
+take untrusted command strings.
+
 ## Workflow
 
 1. **Run** `lint.py` against the project root (see [How to Run](#how-to-run))
