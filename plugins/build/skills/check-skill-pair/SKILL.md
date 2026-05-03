@@ -16,6 +16,7 @@ description: >
   "validate the skill pair for X". Not for auditing a single
   SKILL.md — route to `/build:check-skill`. Not for re-distilling
   a stale principles doc — route to `/build:build-skill-pair`.
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 argument-hint: "[primitive-name]"
 references:
   - ../../_shared/references/skill-best-practices.md

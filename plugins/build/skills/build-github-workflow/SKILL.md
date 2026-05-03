@@ -12,6 +12,7 @@ description: >
   a github actions workflow for X", or "write a release workflow".
   Not for composite actions (`action.yml` — separate primitive), org
   rulesets, Dependabot configs, or GitHub Apps.
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 argument-hint: "[purpose]"
 user-invocable: true
 references:

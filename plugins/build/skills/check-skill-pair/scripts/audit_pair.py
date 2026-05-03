@@ -15,6 +15,12 @@ from pathlib import Path
 # resolution (Path(__file__).parents[1]) would be wrong.
 DEFAULT_REPO_ROOT = Path(__file__).resolve().parents[5]
 
+# Primitive names are kebab-case identifiers (build-skill, check-makefile, etc.).
+# Validating at the CLI boundary keeps untrusted input out of path construction
+# downstream — the name is interpolated into directory paths, so traversal-style
+# inputs like `../foo` would otherwise resolve outside the intended skill root.
+_PRIMITIVE_NAME_RE = re.compile(r"^[a-z][a-z0-9-]*$")
+
 # Target prefixes per skill-locations.md. `<SKILL_ROOT>` is where build-/check-
 # skills live; `<SHARED_REF_DIR>` holds the principles doc and routing doc.
 TARGET_PREFIXES: dict[str, dict[str, str]] = {
@@ -665,6 +671,14 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     args = parser.parse_args(argv)
+
+    if not _PRIMITIVE_NAME_RE.match(args.primitive):
+        print(
+            f"error: primitive name must match {_PRIMITIVE_NAME_RE.pattern} "
+            f"(got: {args.primitive!r})",
+            file=sys.stderr,
+        )
+        return 64
 
     try:
         findings, no_pair = audit(args.primitive, args.root.resolve(), args.target)

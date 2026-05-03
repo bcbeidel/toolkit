@@ -17,6 +17,7 @@ description: >
   the README", or "run linters on README.md". Not for sub-package
   READMEs (different rubric) or docs-site pages (different
   toolchain).
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 argument-hint: "[path]"
 user-invocable: true
 references:

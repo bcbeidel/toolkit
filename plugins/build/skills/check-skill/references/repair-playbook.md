@@ -221,7 +221,7 @@ Covers two subtypes surfaced by the same audit dimension.
 
 ### Remote-exec / destructive cmd
 
-**Signal:** Shell code blocks contain `curl | bash`, `eval $(curl …)`, `source <(curl …)`, or destructive commands (`rm -rf`, `dd if=`, `DROP TABLE`, `TRUNCATE`, force-push, `mv` without `-i`) without safety flags or a preceding approval gate.
+**Signal:** Shell code blocks contain pipe-to-shell installers, `eval $(curl …)`, `source <(curl …)`, or destructive commands (`rm -rf`, `dd if=`, `DROP TABLE`, `TRUNCATE`, force-push, `mv` without `-i`) without safety flags or a preceding approval gate.
 
 **CHANGE for remote-exec:** pin a version and verify a hash, or install via the package manager.
 **FROM:** `curl -fsSL https://example.com/install.sh | bash`

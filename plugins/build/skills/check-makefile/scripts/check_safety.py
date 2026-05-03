@@ -9,7 +9,7 @@ destructive-named targets for five classes of issue:
   - sudo (FAIL): `sudo` invocation in a recipe.
   - global-install (FAIL): `npm install -g`, unscoped `pip install`,
     `gem install` without `--user-install`.
-  - curl-pipe (FAIL): `curl … | sh` or `curl … | bash`.
+  - curl-pipe (FAIL): pipe-to-shell pattern (curl piped into sh or bash).
   - destructive-guard (WARN): targets named `deploy`, `publish`,
     `release`, or `prod-*` must begin their recipe with a
     confirmation-variable guard (e.g., `CONFIRM`, `CONFIRMED`, `YES`).
@@ -170,7 +170,7 @@ def _scan_file(path: Path) -> bool:
 
         if _CURL_PIPE_RE.search(line):
             print(
-                f"FAIL  {path} — curl-pipe: `curl | sh`/`curl | bash` on line {lineno}"
+                f"FAIL  {path} — curl-pipe: pipe-to-shell pattern on line {lineno}"
             )
             print(
                 "  Recommendation: Pin a specific version, verify a "

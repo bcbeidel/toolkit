@@ -10,6 +10,7 @@ description: >
   or "build an automation script in python". Not for long-running
   services, packages with multiple modules, or Claude Code hooks — route
   to the appropriate primitive instead.
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 argument-hint: "[purpose]"
 user-invocable: true
 references:

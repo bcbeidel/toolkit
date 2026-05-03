@@ -6,6 +6,7 @@ description: >
   "check lint", "check health", "validate documents", "run validation",
   "audit content quality", "review documents", "check coverage",
   "check freshness", "run health check", or "what needs attention".
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 argument-hint: "[path/to/file.md]"
 user-invocable: true
 references: []
@@ -16,6 +17,12 @@ license: MIT
 
 Observe and report on project content quality. Read-only -- reports but
 does not modify any files.
+
+This skill ships **no scripts of its own**. `lint.py` is a plugin-shared
+script under `plugins/wiki/scripts/lint.py`; `<plugin-scripts-dir>` in
+the invocation lines below resolves there. Inputs are validated by
+argparse; the script does not call `subprocess` with `shell=True` or
+take untrusted command strings.
 
 ## Workflow
 

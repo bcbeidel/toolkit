@@ -9,6 +9,7 @@ description: >
   agent", "scaffold an agent", or "make a custom agent". Not for
   skills (route to `/build:build-skill`), hooks (route to
   `/build:build-hook`), or rules (route to `/build:build-rule`).
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob, WebFetch, WebSearch
 argument-hint: "[name or intent]"
 user-invocable: true
 references:

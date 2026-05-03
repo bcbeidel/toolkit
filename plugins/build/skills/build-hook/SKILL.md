@@ -6,6 +6,7 @@ description: >
   "create a hook", "add a PostToolUse hook", "build a hook", "enforce
   quality on tool use", "set up automated quality gates", "run a script
   after tool use", or "block dangerous operations automatically".
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 argument-hint: "[hook event] [enforcement goal]"
 user-invocable: true
 references:

@@ -6,6 +6,7 @@ description: >-
   Audits a Claude Code SKILL.md for format compliance, content
   quality, and cross-skill description collisions across three tiers
   (deterministic scripts → LLM rubric → cross-skill conflict).
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 argument-hint: "[path/to/SKILL.md or skills/ directory — scans the plugin's skills when omitted]"
 user-invocable: true
 version: 1.0.0

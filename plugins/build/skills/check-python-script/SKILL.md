@@ -12,6 +12,7 @@ description: >
   safe", "what's wrong with my script", or "why is my script
   failing". Not for general-purpose shell scripts — route to
   `/build:check-bash-script`.
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 argument-hint: "[path]"
 user-invocable: true
 references:

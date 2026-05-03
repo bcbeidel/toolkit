@@ -420,12 +420,13 @@ def check_mtime(resolver_path: Path) -> None:
 def find_resolver_root(target: Path) -> Path | None:
     """Walk up from ``target`` returning the nearest dir with RESOLVER.md."""
     current = target.resolve()
-    while True:
+    for _ in range(64):
         if (current / RESOLVER_FILENAME).is_file():
             return current
         if current.parent == current:
             return None
         current = current.parent
+    return None
 
 
 def check_target(target: Path) -> bool:

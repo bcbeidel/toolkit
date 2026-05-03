@@ -8,6 +8,7 @@ description: >
   `clean`. Use when the user wants to "create a makefile", "scaffold
   a makefile", or "new makefile for [X]". Not for POSIX-`make`,
   compilation-driving Makefiles, or multi-module recursive builds.
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 argument-hint: "[purpose]"
 user-invocable: true
 references:
@@ -230,7 +231,7 @@ expensive commands.
 **Safety.** `clean` scoped to `$(BUILD_DIR)` or an explicit allowlist
 — never unscoped `rm -rf`. Destructive targets (`deploy`, `publish`,
 `release`) begin with a `CONFIRM=1` guard. No `sudo`, `npm install
--g`, unscoped `pip install`, `curl | sh`.
+-g`, unscoped `pip install`, pipe-to-shell installers.
 
 **Recipe hygiene.** Recipes ≤ 5 lines. `@` prefix only on `echo`,
 `printf`, `:`. Variable expansions in recipes are quoted as

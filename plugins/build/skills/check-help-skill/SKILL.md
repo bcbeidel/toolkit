@@ -7,6 +7,7 @@ description: >-
   current". Audits a plugins/<plugin>/skills/help/SKILL.md against the
   help-skill rubric — coverage, freshness, frontmatter fidelity, plus
   five judgment dimensions.
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 argument-hint: "[path to help-skill SKILL.md, or plugin name]"
 user-invocable: true
 version: 1.0.0

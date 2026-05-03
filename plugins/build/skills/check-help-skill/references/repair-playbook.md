@@ -361,8 +361,8 @@ prompted it.
 
 ### Signal: `pipe-to-shell`
 
-**CHANGE** Remove the `curl … | bash` invocation. If installer
-guidance is needed, link to a workflow skill instead.
+**CHANGE** Remove the pipe-to-shell installer invocation. If
+installer guidance is needed, link to a workflow skill instead.
 
 **REASON** Help-skills are orientation surfaces; supply-chain
 installers belong inside workflow skills with explicit safety

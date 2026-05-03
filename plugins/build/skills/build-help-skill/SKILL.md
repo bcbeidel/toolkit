@@ -6,6 +6,7 @@ description: >-
   plugin index skill", or wants to give a plugin an orientation
   surface that lists its skills and common workflows. Produces a
   SKILL.md at plugins/<plugin>/skills/help/SKILL.md.
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 argument-hint: "[plugin name]"
 user-invocable: true
 version: 1.0.0

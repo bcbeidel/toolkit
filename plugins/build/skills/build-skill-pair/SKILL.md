@@ -12,6 +12,7 @@ description: >
   for a new primitive". Not for creating a single skill — route to
   `/build:build-skill`. Not for auditing an existing pair — route to
   `/build:check-skill` on each half.
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob, WebFetch
 argument-hint: "[primitive-name]"
 references:
   - ../../_shared/references/skill-best-practices.md

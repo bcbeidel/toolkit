@@ -13,6 +13,7 @@ description: >
   workflow", "check this workflow", "review my github actions", "is
   this workflow safe", "lint my workflow", or "run zizmor on this".
   Not for composite actions — different rubric.
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 argument-hint: "[path]"
 user-invocable: true
 references:

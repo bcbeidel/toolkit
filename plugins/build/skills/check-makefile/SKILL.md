@@ -9,6 +9,7 @@ description: >
   user wants to "audit a makefile", "check my makefile", or "lint
   a makefile". Not for POSIX-`make`, compilation trees, or
   recursive multi-module builds.
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 argument-hint: "[path]"
 user-invocable: true
 references:
@@ -74,17 +75,17 @@ script's FAIL exit — all nine contribute findings to the merge.
 SCRIPTS="${SKILL_DIR}/scripts"
 TARGETS="$ARGUMENTS"
 
-"$SCRIPTS/check_secrets.py"        $TARGETS   # FAIL: secret patterns — excludes from Tier-2
-"$SCRIPTS/check_structure.py"      $TARGETS   # FAIL: SHELL/.SHELLFLAGS; WARN: MAKEFLAGS, .DEFAULT_GOAL, .DELETE_ON_ERROR, header
-"$SCRIPTS/check_phony.py"          $TARGETS   # WARN: non-file targets missing from .PHONY
-"$SCRIPTS/check_help.py"           $TARGETS   # WARN: missing help target, missing ## descriptions
-"$SCRIPTS/check_indent.py"         $TARGETS   # FAIL: space-indented recipe lines
-"$SCRIPTS/check_naming.py"         $TARGETS   # WARN: non-conforming public target names
-"$SCRIPTS/check_variables.py"      $TARGETS   # WARN: bare = without comment, top-level $(shell …)
-"$SCRIPTS/check_safety.py"         $TARGETS   # FAIL: sudo/global-install/curl|sh/unguarded rm; WARN: unconfirmed destructive targets
-"$SCRIPTS/check_recipes.py"        $TARGETS   # WARN: literal `make`, @ discipline, || true without comment, recipe length
-bash "$SCRIPTS/check_checkmake.sh" $TARGETS   # INFO if checkmake absent; WARN on checkmake findings
-bash "$SCRIPTS/check_size.sh"      $TARGETS   # WARN: file > 300 non-blank lines or lines > 120 chars
+"$SCRIPTS/check_secrets.py"        "$TARGETS"   # FAIL: secret patterns — excludes from Tier-2
+"$SCRIPTS/check_structure.py"      "$TARGETS"   # FAIL: SHELL/.SHELLFLAGS; WARN: MAKEFLAGS, .DEFAULT_GOAL, .DELETE_ON_ERROR, header
+"$SCRIPTS/check_phony.py"          "$TARGETS"   # WARN: non-file targets missing from .PHONY
+"$SCRIPTS/check_help.py"           "$TARGETS"   # WARN: missing help target, missing ## descriptions
+"$SCRIPTS/check_indent.py"         "$TARGETS"   # FAIL: space-indented recipe lines
+"$SCRIPTS/check_naming.py"         "$TARGETS"   # WARN: non-conforming public target names
+"$SCRIPTS/check_variables.py"      "$TARGETS"   # WARN: bare = without comment, top-level $(shell …)
+"$SCRIPTS/check_safety.py"         "$TARGETS"   # FAIL: sudo/global-install/pipe-to-shell/unguarded rm; WARN: unconfirmed destructive targets
+"$SCRIPTS/check_recipes.py"        "$TARGETS"   # WARN: literal `make`, @ discipline, || true without comment, recipe length
+bash "$SCRIPTS/check_checkmake.sh" "$TARGETS"   # INFO if checkmake absent; WARN on checkmake findings
+bash "$SCRIPTS/check_size.sh"      "$TARGETS"   # WARN: file > 300 non-blank lines or lines > 120 chars
 ```
 
 The scripts live next to `SKILL.md` under `scripts/` and are
@@ -102,7 +103,7 @@ directory at invocation time.
 | `check_indent.py` | Every recipe line starts with a real tab (`\t`), not spaces |
 | `check_naming.py` | Public target names match `^[a-z][a-z0-9-]*$`; internal helpers prefixed with `_` (if they omit `##`) |
 | `check_variables.py` | Top-level assignments use `:=` / `?=` / `+=` (not bare `=` unless accompanied by `# deferred:` / `# recursive:` comment); no top-level `$(shell …)` outside an allowlist of cheap commands (`git rev-parse`, `uname`, `pwd`) |
-| `check_safety.py` | `rm -rf $(VAR)` requires a non-empty guard, a `$(BUILD_DIR)`-scoped path, or `--` before args; no `sudo`; no `npm install -g`, unscoped `pip install`, `gem install` without `--user-install`; no `curl \| sh` or `curl \| bash`; destructive target names (`deploy`, `publish`, `release`, `prod-*`) begin their recipe with a confirmation guard |
+| `check_safety.py` | `rm -rf $(VAR)` requires a non-empty guard, a `$(BUILD_DIR)`-scoped path, or `--` before args; no `sudo`; no `npm install -g`, unscoped `pip install`, `gem install` without `--user-install`; no pipe-to-shell installers (curl/wget into sh/bash); destructive target names (`deploy`, `publish`, `release`, `prod-*`) begin their recipe with a confirmation guard |
 | `check_recipes.py` | Literal `make` (not `$(MAKE)`) as a command token; `@` prefix only on `echo`, `printf`, `:`; `\|\| true` requires an adjacent explanatory comment; recipe line count per target ≤ 10 |
 | `check_checkmake.sh` | Wraps `checkmake` if available; emits INFO + exits 0 when absent |
 | `check_size.sh` | File length ≤ 300 non-blank lines; per-line length ≤ 120 chars |
@@ -119,7 +120,7 @@ gracefully).
   this skill's scope until the strict-shell contract holds)
 - `check_indent.py` space-indent FAIL (file does not parse as a
   valid Makefile)
-- `check_safety.py` `sudo` / global-install / `curl | sh` / unguarded
+- `check_safety.py` `sudo` / global-install / pipe-to-shell / unguarded
   `rm -rf` FAIL (correctness bugs that bias every judgment
   dimension toward false negatives)
 

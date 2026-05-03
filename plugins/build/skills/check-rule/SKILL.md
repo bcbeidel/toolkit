@@ -1,6 +1,7 @@
 ---
 name: check-rule
 description: Check a Claude Code rule library under `.claude/rules/` for path-glob validity, vague phrasing, contradictions, and oversize files. Use when the user wants to "audit rules", "check rule quality", "find conflicting rules", "review my rules", or "are my rules well-formed".
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 argument-hint: "[path to rule file or directory — scans .claude/rules/ if omitted]"
 user-invocable: true
 references:

@@ -5,6 +5,7 @@ description: >
   for structural and contract issues. Use when the user wants to "design a
   skill-chain", "create a workflow", "check a chain manifest", "audit a chain",
   or "repair a chain".
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 argument-hint: "[workflow goal or path/to/manifest.chain.md]"
 user-invocable: true
 license: MIT

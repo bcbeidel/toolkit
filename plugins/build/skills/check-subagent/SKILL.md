@@ -11,6 +11,7 @@ description: >
   a subagent definition", or "are my subagents well-formed". Not for
   skills (route to `/build:check-skill`), hooks (route to
   `/build:check-hook`), or rules (route to `/build:check-rule`).
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 argument-hint: "[path]"
 user-invocable: true
 references:

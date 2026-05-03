@@ -10,6 +10,7 @@ description: >
   "build a bash glue script", or "scaffold a shell script". Not for
   POSIX `sh` portability targets, Claude Code hooks, or scripts that
   would be cleaner in Python — route to the appropriate primitive.
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 argument-hint: "[purpose]"
 user-invocable: true
 references:

@@ -1,6 +1,7 @@
 ---
 name: check-resolver
 description: Audit a root-level resolver — verify AGENTS.md pointer, managed-region integrity, filing-table coverage against disk, context-table actionability, and trigger-eval pass rate. Use when the user wants to "audit a resolver", "check RESOLVER.md", "validate routing table", "find dark capabilities", or "are my filing rules current".
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 argument-hint: "[target directory — defaults to CWD; walks up to the nearest RESOLVER.md and audits that one]"
 user-invocable: true
 references:

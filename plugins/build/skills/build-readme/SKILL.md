@@ -222,7 +222,7 @@ tag. No shell-prompt prefixes (`$`, `>`, `#`). Placeholders marked
 with `<...>`. Code-block lines ≤80 characters.
 
 **Safety.** No real secrets, tokens, credentials, or hostnames in
-the draft. No `curl … | sh` installers without a documented manual
+the draft. No pipe-to-shell installers without a documented manual
 alternative. No destructive commands without a warning callout.
 Example domains/IPs are RFC-reserved only (`example.com`, `*.test`,
 `127.0.0.1`, RFC 5737 ranges).

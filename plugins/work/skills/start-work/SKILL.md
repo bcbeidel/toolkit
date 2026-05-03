@@ -6,6 +6,7 @@ description: >
   Enforces the approval gate. Use when the
   user wants to "execute the plan", "run the plan", "implement this
   plan", "start work", or "start building".
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 argument-hint: "[plan file path]"
 user-invocable: true
 references:

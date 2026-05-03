@@ -5,6 +5,7 @@ description: >
   setting up context structure, configuring project documentation,
   or re-run to verify and repair an existing setup. Idempotent — safe to
   run multiple times.
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 argument-hint: "[project root — defaults to CWD]"
 user-invocable: true
 references:

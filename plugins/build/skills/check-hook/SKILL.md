@@ -6,6 +6,7 @@ description: >
   and idempotency. Use when the user wants to "audit hooks", "check hooks",
   "review hooks", "check my hooks", "what quality gates are missing", or
   "are my hooks safe".
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 argument-hint: "[settings.json path]"
 user-invocable: true
 references:

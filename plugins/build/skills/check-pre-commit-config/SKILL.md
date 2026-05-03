@@ -11,6 +11,7 @@ description: >
   pre-commit config safe", "lint pre-commit", or "what's wrong with
   my pre-commit". Not for hand-rolled `.git/hooks/` — out of scope.
   Not for CI pipelines — route elsewhere.
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 argument-hint: "[path-to-repo-root-or-config-file]"
 user-invocable: true
 references:
