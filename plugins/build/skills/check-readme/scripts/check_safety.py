@@ -5,10 +5,11 @@ Five orthogonal sub-checks:
   - destructive (FAIL): rm -rf, dd if=, mkfs, DROP DATABASE, --force
     inside a fenced block without a blockquote/bold warning in the
     three lines preceding the fence.
-  - pipe-to-shell (FAIL): `curl ... | sh`, `wget ... | bash`, `iex
-    (iwr ...)` without a manual-alternative marker in the same H2
-    section (a second fenced block, or prose containing "inspect",
-    "download", "manual", or "alternatively").
+  - pipe-to-shell (FAIL): pipe-to-shell installer patterns (curl/wget
+    piped into sh/bash/zsh, or PowerShell `iex (iwr ...)`) without a
+    manual-alternative marker in the same H2 section (a second fenced
+    block, or prose containing "inspect", "download", "manual", or
+    "alternatively").
   - tls-disable (FAIL): instructions to disable TLS / SELinux /
     firewall / certificate verification.
   - non-reserved-hosts (FAIL): hostnames outside reserved TLDs or
