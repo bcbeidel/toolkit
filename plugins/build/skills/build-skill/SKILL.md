@@ -241,8 +241,8 @@ Runs `/build:check-skill` — 0 findings. Reports the path.
    atomic actions.*
 4. **Embedded secrets.** Credentials in committed skill files are a
    breach. Principle: *No embedded secrets.*
-5. **Unverified remote execution in steps.** `curl | bash` /
-   `eval $(curl …)` are supply-chain vectors. Principle: *No
+5. **Unverified remote execution in steps.** Pipe-to-shell installers
+   and `eval $(curl …)` are supply-chain vectors. Principle: *No
    unverified remote execution.*
 6. **Destructive step without approval gate.** `rm -rf`, `DROP TABLE`,
    force-push, production deploy without a preceding confirmation.
