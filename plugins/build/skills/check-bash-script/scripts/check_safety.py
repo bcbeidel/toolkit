@@ -2,7 +2,7 @@
 """Tier-1 bash safety checker.
 
 Emits findings for three safety violations:
-  - eval (FAIL): `eval` invocation without a justification comment on
+  - eval-call (FAIL): `eval` invocation without a justification comment on
     the same or immediately preceding line.
   - gnu-flags (WARN): GNU-only coreutils flags without a declared
     `requires: gnu-coreutils` header.
